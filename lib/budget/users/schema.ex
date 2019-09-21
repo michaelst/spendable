@@ -17,6 +17,7 @@ defmodule Budget.User do
     |> cast(attrs, [:first_name, :last_name, :email, :password])
     |> validate_required([:email, :password])
     |> hash_password()
+    |> unique_constraint(:email, name: :users_email_index)
   end
 
   defp hash_password(%{changes: %{password: plain_text}} = changeset) do

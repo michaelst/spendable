@@ -1,11 +1,11 @@
 defmodule Budget.UserView do
   use BudgetWeb, :view
 
-  def render(:show, user), do: json(user)
+  def render("show.json", user) do
+    {:ok, token, _claims} = Budget.Guardian.encode_and_sign(user)
 
-  def json(user) do
     user
     |> Map.take([:id, :first_name, :last_name, :email])
-    |> Map.put(:token, value)
+    |> Map.put(:token, token)
   end
 end
