@@ -8,7 +8,9 @@ defmodule Budget.Controllers.UserController do
     |> case do
       {:ok, user} ->
         render(conn, :show, user)
-      {:error, changeset} -> changeset
+
+      {:error, changeset} ->
+        changeset
     end
   end
 end
