@@ -6,7 +6,8 @@ defmodule Budget.Controllers.UserController do
     |> Budget.User.changeset(params)
     |> Budget.Repo.insert()
     |> case do
-      {:ok, user} -> user
+      {:ok, user} ->
+        render(conn, :show, user)
       {:error, changeset} -> changeset
     end
   end
