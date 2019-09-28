@@ -1,0 +1,11 @@
+language: elixir
+elixir:
+  - '1.9.1'
+otp_release:
+  - '22.0.7'
+services:
+  - postgresql
+cache:
+  directories:
+    - deps
+    - _build
