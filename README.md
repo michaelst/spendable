@@ -1,5 +1,7 @@
 # Budget
 
+[![Build Status](https://travis-ci.org/michaelst/budget-api.svg?branch=master)](https://travis-ci.org/michaelst/budget-api)
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
