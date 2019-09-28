@@ -1,8 +1,8 @@
 language: elixir
 elixir:
-  - '1.9.1-otp-22'
+  - '1.9.1'
 otp_release:
-  - '22.0'
+  - '22.0.7'
 services:
   - postgresql
 cache:
