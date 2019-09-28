@@ -5,9 +5,10 @@ defmodule BudgetWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Budget.Controllers do
+  scope "/" do
     pipe_through :api
 
-    post "/users", UserController, :create
+    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: BudgetWeb.Schema
+    forward "/", Absinthe.Plug, schema: BudgetWeb.Schema
   end
 end
