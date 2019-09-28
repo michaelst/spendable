@@ -3,7 +3,7 @@ use Mix.Config
 # Configure your database
 config :budget, Budget.Repo,
   username: "postgres",
-  password: "postgres",
+  password: nil,
   database: "budget_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
