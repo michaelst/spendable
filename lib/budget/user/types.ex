@@ -17,5 +17,14 @@ defmodule Budget.User.Types do
       arg(:password, :string)
       resolve(&Budget.User.Resolver.create/2)
     end
+
+    field :update_user, :user do
+      arg(:id, non_null(:id))
+      arg(:first_name, :string)
+      arg(:last_name, :string)
+      arg(:email, :string)
+      arg(:password, :string)
+      resolve(&Budget.User.Resolver.update/2)
+    end
   end
 end
