@@ -19,7 +19,6 @@ defmodule Budget.User.Types do
     end
 
     field :update_user, :user do
-      arg(:id, non_null(:id))
       arg(:first_name, :string)
       arg(:last_name, :string)
       arg(:email, :string)

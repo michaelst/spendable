@@ -2,17 +2,17 @@ defmodule Budget.User.Resolver.UpdateTest do
   use BudgetWeb.ConnCase, async: true
 
   alias Budget.User
+  alias Budget.Guardian
   alias Budget.Repo
 
   test "update", %{conn: conn} do
     email = "#{Ecto.UUID.generate()}@example.com"
-
     user = struct(User) |> User.changeset(%{email: email, password: "password"}) |> Repo.insert!()
+    {:ok, token, _} = Guardian.encode_and_sign(user)
 
     query = """
       mutation {
         updateUser(
-          id: #{user.id}
           firstName: "Michael"
           last_name: "St Clair"
         ) {
@@ -24,6 +24,7 @@ defmodule Budget.User.Resolver.UpdateTest do
 
     response =
       conn
+      |> put_req_header("authorization", "Bearer #{token}")
       |> post("/", %{query: query})
       |> json_response(200)
 

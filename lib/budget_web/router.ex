@@ -3,6 +3,10 @@ defmodule BudgetWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Guardian.Plug.Pipeline, module: Budget.Guardian, error_handler: BudgetWeb.AuthErrorHandler
+    plug(Guardian.Plug.VerifyHeader, realm: "Bearer")
+    plug(Guardian.Plug.LoadResource, allow_blank: true)
+    plug BudgetWeb.Context
   end
 
   scope "/" do
