@@ -16,3 +16,7 @@ config :budget, BudgetWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :budget, Plaid, base_url: "https://sandbox.plaid.com"
+
+config :tesla, adapter: Tesla.Mock
