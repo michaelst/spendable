@@ -22,6 +22,4 @@ defmodule Budget.User.Resolver do
     |> User.changeset(params)
     |> Repo.update()
   end
-
-  def update(_args, _context), do: {:error, "Forbidden"}
 end

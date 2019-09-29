@@ -19,6 +19,7 @@ defmodule Budget.User.Types do
     end
 
     field :update_user, :user do
+      middleware(Budget.Middleware.CheckAuthentication)
       arg(:first_name, :string)
       arg(:last_name, :string)
       arg(:email, :string)

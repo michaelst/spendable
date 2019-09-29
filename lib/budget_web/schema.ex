@@ -14,7 +14,7 @@ defmodule BudgetWeb.Schema do
   end
 
   def middleware(middleware, _field, %{identifier: :mutation}) do
-  middleware ++ [Budgget.Middleware.ChangesetErrors]
+  middleware ++ [Budget.Middleware.ChangesetErrors]
 end
 # if it's any other object keep things as is
 def middleware(middleware, _field, _object), do: middleware
