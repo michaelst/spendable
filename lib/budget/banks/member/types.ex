@@ -7,7 +7,6 @@ defmodule Budget.Banks.Member.Types do
     field :insitution_id, :string
     field :logo, :string
     field :name, :string
-    field :plaid_token, :string
     field :provider, :string
     field :status, :string
   end

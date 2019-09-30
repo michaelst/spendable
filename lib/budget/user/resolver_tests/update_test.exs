@@ -1,14 +1,8 @@
 defmodule Budget.User.Resolver.UpdateTest do
   use BudgetWeb.ConnCase, async: true
 
-  alias Budget.User
-  alias Budget.Guardian
-  alias Budget.Repo
-
   test "update", %{conn: conn} do
-    email = "#{Ecto.UUID.generate()}@example.com"
-    user = struct(User) |> User.changeset(%{email: email, password: "password"}) |> Repo.insert!()
-    {:ok, token, _} = Guardian.encode_and_sign(user)
+    {_user, token} = Budget.TestUtils.create_user()
 
     query = """
       mutation {

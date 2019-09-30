@@ -25,6 +25,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :exq,
+  namespace: "budget-api",
+  queues: ["default"]
+
 config :budget, Budget.Guardian,
   issuer: "Budget",
   secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"

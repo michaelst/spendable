@@ -20,4 +20,24 @@ defmodule Plaid do
   def categories() do
     client() |> Tesla.post("/categories/get", %{})
   end
+
+  def institution(id) do
+    client()
+    |> Tesla.post("/institutions/get_by_id", %{
+      institution_id: id,
+      public_key: Application.get_env(:budget, Plaid)[:public_key],
+      options: %{
+        include_optional_metadata: true
+      }
+    })
+  end
+
+  def member(token) do
+    client()
+    |> Tesla.post("/item/get", %{
+      client_id: Application.get_env(:budget, Plaid)[:client_id],
+      secret: Application.get_env(:budget, Plaid)[:secret_key],
+      access_token: token
+    })
+  end
 end

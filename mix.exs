@@ -40,6 +40,7 @@ defmodule Budget.MixProject do
       {:castore, "~> 0.1.0"},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
+      {:exq, "~> 0.13.3"},
       {:gettext, "~> 0.11"},
       {:guardian, "~> 1.0"},
       {:jason, "~> 1.0"},

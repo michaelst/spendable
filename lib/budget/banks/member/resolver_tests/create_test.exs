@@ -2,10 +2,6 @@ defmodule Budget.Member.Resolver.CreateTest do
   use BudgetWeb.ConnCase, async: true
   import Tesla.Mock
 
-  alias Budget.User
-  alias Budget.Repo
-  alias Budget.Guardian
-
   setup do
     mock(fn
       %{method: :post, url: "https://sandbox.plaid.com/item/public_token/exchange"} ->
@@ -14,22 +10,42 @@ defmodule Budget.Member.Resolver.CreateTest do
           item_id: "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
           request_id: "Aim3b"
         })
+
+      %{method: :post, url: "https://sandbox.plaid.com/item/get"} ->
+        json(%{
+          item: %{
+            error: nil,
+            institution_id: "ins_109508",
+            item_id: "Ed6bjNrDLJfGvZWwnkQlfxwoNz54B5C97ejBr",
+            webhook: "https://plaid.com/example/hook"
+          },
+          request_id: "m8MDnv9okwxFNBV"
+        })
+
+      %{method: :post, url: "https://sandbox.plaid.com/institutions/get_by_id"} ->
+        json(%{
+          institution: %{
+            name: "Plaid Bank",
+            primary_color: "#1f1f1f",
+            url: "https://plaid.com",
+            logo: "https://plaid.com"
+          },
+          request_id: "m8MDnv9okwxFNBV"
+        })
     end)
 
     :ok
   end
 
   test "create member from plaid public token", %{conn: conn} do
-    email = "#{Ecto.UUID.generate()}@example.com"
-    user = struct(User) |> User.changeset(%{email: email, password: "password"}) |> Repo.insert!()
-    {:ok, token, _} = Guardian.encode_and_sign(user)
+    {user, token} = Budget.TestUtils.create_user()
 
     query = """
       mutation {
         createBankMember(
           publicToken: "test"
         ) {
-          id, externalId
+          id, externalId, name, logo, status
         }
       }
     """
@@ -44,9 +60,14 @@ defmodule Budget.Member.Resolver.CreateTest do
              "data" => %{
                "createBankMember" => %{
                  "externalId" => "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
+                 "name" => "Plaid Bank",
+                 "logo" => "https://plaid.com",
+                 "status" => nil,
                  "id" => _
                }
              }
            } = response
+
+    Budget.TestUtils.assert_job(Budget.Jobs.Banks.SyncMember, [user.id, "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op"])
   end
 end

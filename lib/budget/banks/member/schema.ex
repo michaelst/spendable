@@ -4,7 +4,7 @@ defmodule Budget.Banks.Member do
 
   schema "bank_members" do
     field :external_id, :string
-    field :insitution_id, :string
+    field :institution_id, :string
     field :logo, :string
     field :name, :string
     field :plaid_token, :string
@@ -19,7 +19,7 @@ defmodule Budget.Banks.Member do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:external_id, :insitution_id, :logo, :name, :plaid_token, :provider, :status, :user_id])
+    |> cast(attrs, [:external_id, :institution_id, :logo, :name, :plaid_token, :provider, :status, :user_id])
     |> validate_required([:name, :user_id, :external_id, :provider])
   end
 end

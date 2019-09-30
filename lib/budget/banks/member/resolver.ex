@@ -1,19 +1,13 @@
 defmodule Budget.Banks.Member.Resolver do
-  alias Budget.Banks.Member
-  alias Budget.Repo
-
   def create(params, %{context: %{current_user: user}}) do
-    {:ok, %{body: %{"access_token" => access_token, "item_id" => item_id}}} =
-      Plaid.exchange_public_token(params.public_token)
+    case Budget.Banks.Member.Sync.create(params, user) do
+      {:ok, member} ->
+        {:ok, _} = Exq.enqueue(Exq, "default", Budget.Jobs.Banks.SyncMember, [user.id, member.external_id])
 
-    struct(Member)
-    |> Member.changeset(%{
-      user_id: user.id,
-      name: "test",
-      plaid_token: access_token,
-      external_id: item_id,
-      provider: "Plaid"
-    })
-    |> Repo.insert()
+        {:ok, member}
+
+      result ->
+        result
+    end
   end
 end
