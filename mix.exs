@@ -40,7 +40,7 @@ defmodule Budget.MixProject do
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
       {:gettext, "~> 0.11"},
-      {:guardian, "~> 1.0"},
+      {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
