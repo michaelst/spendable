@@ -5,6 +5,7 @@ otp_release:
   - '22.0.7'
 services:
   - postgresql
+  - redis-server
 cache:
   directories:
     - deps
