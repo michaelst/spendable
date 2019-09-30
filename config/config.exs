@@ -14,7 +14,7 @@ config :budget,
 config :budget, BudgetWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "NoM/w1aErkEg8aarboi9MDakr7zalCnOmhuuNqZtu2cB5PRdK6lXWD/BeMywMcWO",
-  render_errors: [view: BudgetWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: BudgetWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Budget.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
