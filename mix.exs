@@ -36,7 +36,7 @@ defmodule Budget.MixProject do
     [
       {:absinthe, "~> 1.5.0-beta"},
       {:absinthe_plug, "~> 1.5.0-alpha"},
-      {:bcrypt_elixir, "~> 1.0"},
+      {:bcrypt_elixir, "~> 2.0"},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
       {:gettext, "~> 0.11"},
