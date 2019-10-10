@@ -21,12 +21,12 @@ defmodule Budget.Repo.Migrations.BankSetup do
       add(:external_id, :string)
       add(:user_id, references(:users), null: false)
       add(:bank_member_id, references(:bank_members), null: false)
-      add(:sub_type, :string)
-      add(:type, :string)
       add(:available_balance, :decimal, precision: 19, scale: 4)
       add(:balance, :decimal, precision: 19, scale: 4)
       add(:name, :string, null: false)
       add(:number, :string)
+      add(:sub_type, :string)
+      add(:type, :string)
 
       timestamps()
     end

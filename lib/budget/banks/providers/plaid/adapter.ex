@@ -1,15 +1,5 @@
 defmodule Budget.Banks.Providers.Plaid.Adapter do
-  def format(%{"access_token" => token, "item_id" => item_id}, user, :member) do
-    {:ok,
-     %{
-       body: %{
-         "item" => %{
-           "error" => status,
-           "institution_id" => institution_id
-         }
-       }
-     }} = Plaid.member(token)
-
+  def format(%{"item" => details}, user_id, :member) do
     {:ok,
      %{
        body: %{
@@ -21,14 +11,27 @@ defmodule Budget.Banks.Providers.Plaid.Adapter do
      }} = Plaid.institution(institution_id)
 
     %{
-      external_id: item_id,
-      institution_id: institution_id,
+      external_id: details["item_id"],
+      institution_id: details["institution_id"],
       logo: logo,
       name: name,
-      plaid_token: token,
       provider: "Plaid",
-      status: status,
-      user_id: user.id
+      status: details["status"],
+      user_id: user_id
+    }
+  end
+
+  def format(details, member_id, user_id, :account) do
+    %{
+      user_id: user_id,
+      member_id: member_id,
+      external_id: details["account_id"],
+      available_balance: details["balances"]["available"],
+      balance: details["balances"]["current"],
+      name: details["official_name"],
+      number: details["mask"],
+      sub_type: details["subtype"],
+      type: details["type"]
     }
   end
 end

@@ -40,4 +40,13 @@ defmodule Plaid do
       access_token: token
     })
   end
+
+  def accounts(token) do
+    client()
+    |> Tesla.post("/accounts/get", %{
+      client_id: Application.get_env(:budget, Plaid)[:client_id],
+      secret: Application.get_env(:budget, Plaid)[:secret_key],
+      access_token: token
+    })
+  end
 end
