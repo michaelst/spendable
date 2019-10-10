@@ -51,4 +51,8 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :budget, Plaid, base_url: "https://development.plaid.com"
+config :budget, Plaid, base_url: "https://sandbox.plaid.com"
+
+if File.exists?("config/dev.secret.exs") do
+  import_config "dev.secret.exs"
+end

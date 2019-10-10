@@ -1,9 +1,14 @@
 defmodule Budget.Banks.Member.Resolver do
-  def create(%{public_token: token}, %{context: %{current_user: user}}) do
-    {:ok, %{body: params}} = Plaid.exchange_public_token(token)
+  alias Budget.Banks.Member
+  alias Budget.Repo
+  alias Budget.Banks.Providers.Plaid.Adapter
 
-    struct(Member)
-    |> Member.changeset(Adapter.format(params["access_token"], user, :member))
+  def create(%{public_token: token}, %{context: %{current_user: user}}) do
+    {:ok, %{body: %{"access_token" => token}}} = Plaid.exchange_public_token(token)
+    {:ok, %{body: details}} = Plaid.member(token)
+
+    %Member{plaid_token: token}
+    |> Member.changeset(Adapter.format(details, user.id, :member))
     |> Repo.insert()
     |> case do
       {:ok, member} ->

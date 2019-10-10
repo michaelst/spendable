@@ -27,6 +27,7 @@ config :phoenix, :json_library, Jason
 
 config :exq,
   namespace: "budget-api",
+  start_on_application: false,
   queues: ["default"]
 
 config :budget, Budget.Guardian,

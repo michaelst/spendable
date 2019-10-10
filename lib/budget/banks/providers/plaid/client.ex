@@ -49,4 +49,23 @@ defmodule Plaid do
       access_token: token
     })
   end
+
+  def account_transactions(token, account_id, opts \\ []) do
+    count = opts[:count] || 500
+    offset = opts[:offset] || 0
+
+    client()
+    |> Tesla.post("/transactions/get", %{
+      client_id: Application.get_env(:budget, Plaid)[:client_id],
+      secret: Application.get_env(:budget, Plaid)[:secret_key],
+      access_token: token,
+      start_date: "2018-01-01",
+      end_date: Date.utc_today(),
+      options: %{
+        account_ids: [account_id],
+        count: count,
+        offset: offset
+      }
+    })
+  end
 end

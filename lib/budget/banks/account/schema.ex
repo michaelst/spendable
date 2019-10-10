@@ -2,7 +2,7 @@ defmodule Budget.Banks.Account do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "bank_members" do
+  schema "bank_accounts" do
     field :external_id, :string
     field :available_balance, :decimal
     field :balance, :decimal
@@ -12,15 +12,15 @@ defmodule Budget.Banks.Account do
     field :type, :string
 
     belongs_to :user, Budget.User
-    belongs_to :member, Budget.Member
+    belongs_to :bank_member, Budget.Banks.Member
 
     timestamps()
   end
 
   @doc false
-  def changeset(user, attrs) do
-    user
-    |> cast(attrs, [:external_id, :institution_id, :logo, :name, :plaid_token, :provider, :status, :user_id])
-    |> validate_required([:name, :user_id, :external_id, :provider])
+  def changeset(model, attrs) do
+    model
+    |> cast(attrs, __schema__(:fields) -- [:id])
+    |> validate_required([:name, :user_id, :external_id, :bank_member_id, :sub_type, :type])
   end
 end

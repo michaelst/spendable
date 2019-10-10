@@ -11,9 +11,10 @@ defmodule Budget.Application do
       # Start the Ecto repository
       Budget.Repo,
       # Start the endpoint when the application starts
-      BudgetWeb.Endpoint
+      BudgetWeb.Endpoint,
       # Starts a worker by calling: Budget.Worker.start_link(arg)
       # {Budget.Worker, arg},
+      %{id: Exq, start: {Exq, :start_link, []}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

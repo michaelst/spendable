@@ -6,7 +6,7 @@ defmodule Budget.Repo.Migrations.BankSetup do
       add(:external_id, :string, null: false)
       add(:user_id, references(:users), null: false)
       add(:institution_id, :string)
-      add(:logo, :string)
+      add(:logo, :text)
       add(:name, :string, null: false)
       add(:provider, :string, null: false)
       add(:status, :string)
@@ -18,15 +18,15 @@ defmodule Budget.Repo.Migrations.BankSetup do
     create unique_index(:bank_members, [:user_id, :external_id])
 
     create table(:bank_accounts) do
-      add(:external_id, :string)
+      add(:external_id, :string, null: false)
       add(:user_id, references(:users), null: false)
       add(:bank_member_id, references(:bank_members), null: false)
-      add(:available_balance, :decimal, precision: 19, scale: 4)
-      add(:balance, :decimal, precision: 19, scale: 4)
+      add(:available_balance, :decimal, precision: 17, scale: 2)
+      add(:balance, :decimal, precision: 17, scale: 2)
       add(:name, :string, null: false)
       add(:number, :string)
-      add(:sub_type, :string)
-      add(:type, :string)
+      add(:sub_type, :string, null: false)
+      add(:type, :string, null: false)
 
       timestamps()
     end
@@ -44,27 +44,27 @@ defmodule Budget.Repo.Migrations.BankSetup do
     create unique_index(:categories, [:external_id])
 
     create table(:bank_transactions) do
-      add(:external_id, :string)
+      add(:external_id, :string, null: false)
       add(:user_id, references(:users), null: false)
       add(:bank_account_id, references(:bank_accounts), null: false)
       add(:category_id, references(:categories))
-      add(:amount, :decimal, precision: 19, scale: 4)
-      add(:date, :date)
+      add(:amount, :decimal, precision: 17, scale: 2, null: false)
+      add(:date, :date, null: false)
       add(:location, :json)
-      add(:name, :string)
-      add(:pending, :boolean)
+      add(:name, :string, null: false)
+      add(:pending, :boolean, null: false)
 
       timestamps()
     end
 
-    create unique_index(:bank_transactions, [:user_id, :external_id])
+    create unique_index(:bank_transactions, [:bank_account_id, :external_id])
 
-    create table(:tranasactions) do
+    create table(:transactions) do
       add(:user_id, references(:users), null: false)
       add(:bank_transaction_id, references(:bank_transactions))
       add(:category_id, references(:categories))
-      add(:amount, :decimal, precision: 19, scale: 4)
-      add(:date, :date)
+      add(:amount, :decimal, precision: 17, scale: 2, null: false)
+      add(:date, :date, null: false)
       add(:name, :string)
       add(:note, :text)
 
