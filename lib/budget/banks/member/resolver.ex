@@ -12,7 +12,7 @@ defmodule Budget.Banks.Member.Resolver do
     |> Repo.insert()
     |> case do
       {:ok, member} ->
-        {:ok, _} = Exq.enqueue(Exq, "default", Budget.Jobs.Banks.SyncMember, [user.id, member.external_id])
+        {:ok, _} = Exq.enqueue(Exq, "default", Budget.Jobs.Banks.SyncMember, [member.id])
 
         {:ok, member}
 

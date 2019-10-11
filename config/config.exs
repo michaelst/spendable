@@ -36,10 +36,6 @@ config :budget, Budget.Guardian,
 
 config :tesla, :adapter, Tesla.Adapter.Mint
 
-config :budget, Plaid,
-  client_id: "5d902f478e856300113b2c16",
-  public_key: "37cc44ed343b19bae3920edf047df1"
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

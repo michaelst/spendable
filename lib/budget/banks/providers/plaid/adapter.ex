@@ -48,7 +48,7 @@ defmodule Budget.Banks.Providers.Plaid.Adapter do
       external_id: details["transaction_id"],
       location: details["location"],
       name: details["name"],
-      pending: details["pending"],
+      pending: details["pending"]
     }
   end
 
@@ -60,7 +60,7 @@ defmodule Budget.Banks.Providers.Plaid.Adapter do
       category_id: bank_transaction.category_id,
       amount: bank_transaction.amount,
       date: bank_transaction.date,
-      name: bank_transaction.name,
+      name: bank_transaction.name
     }
   end
 end

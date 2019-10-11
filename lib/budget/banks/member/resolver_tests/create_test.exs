@@ -38,7 +38,7 @@ defmodule Budget.Member.Resolver.CreateTest do
   end
 
   test "create member from plaid public token", %{conn: conn} do
-    {user, token} = Budget.TestUtils.create_user()
+    {_user, token} = Budget.TestUtils.create_user()
 
     query = """
       mutation {
@@ -63,11 +63,11 @@ defmodule Budget.Member.Resolver.CreateTest do
                  "name" => "Plaid Bank",
                  "logo" => "https://plaid.com",
                  "status" => nil,
-                 "id" => _
+                 "id" => member_id
                }
              }
            } = response
 
-    Budget.TestUtils.assert_job(Budget.Jobs.Banks.SyncMember, [user.id, "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op"])
+    Budget.TestUtils.assert_job(Budget.Jobs.Banks.SyncMember, [String.to_integer(member_id)])
   end
 end
