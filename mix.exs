@@ -34,21 +34,25 @@ defmodule Budget.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe, "~> 1.5.0-beta"},
       {:absinthe_plug, "~> 1.5.0-alpha"},
+      {:absinthe, "~> 1.5.0-beta"},
       {:bcrypt_elixir, "~> 2.0"},
+      {:castore, "~> 0.1.0"},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
+      {:exq, "~> 0.13.3"},
       {:gettext, "~> 0.11"},
       {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},
+      {:mint, "~> 0.4.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix, "~> 1.4.6"},
       {:plug_cowboy, "~> 2.0"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:tesla, "~> 1.3.0"}
     ]
   end
 

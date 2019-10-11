@@ -25,9 +25,16 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :exq,
+  namespace: "budget-api",
+  start_on_application: false,
+  queues: ["default"]
+
 config :budget, Budget.Guardian,
   issuer: "Budget",
   secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"
+
+config :tesla, :adapter, Tesla.Adapter.Mint
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

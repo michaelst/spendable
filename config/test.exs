@@ -16,3 +16,15 @@ config :budget, BudgetWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :exq, queues: []
+
+config :bcrypt_elixir, :log_rounds, 1
+
+config :budget, Plaid,
+  base_url: "https://sandbox.plaid.com",
+  client_id: "test",
+  secret_key: "test",
+  public_key: "test"
+
+config :tesla, adapter: Tesla.Mock

@@ -14,6 +14,8 @@ config :budget, BudgetWeb.Endpoint, url: [host: "example.com", port: 80]
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :budget, Plaid, base_url: "https://production.plaid.com"
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

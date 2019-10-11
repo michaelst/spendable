@@ -3,6 +3,7 @@ defmodule BudgetWeb.Schema do
 
   import_types(Budget.Auth.Types)
   import_types(Budget.User.Types)
+  import_types(Budget.Banks.Member.Types)
 
   query do
     field :health, :string, resolve: fn _, _ -> {:ok, "up"} end
@@ -11,6 +12,7 @@ defmodule BudgetWeb.Schema do
   mutation do
     import_fields(:auth_queries)
     import_fields(:user_queries)
+    import_fields(:bank_member_queries)
   end
 
   def middleware(middleware, _field, %{identifier: :mutation}) do

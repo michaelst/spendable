@@ -26,3 +26,5 @@ budget-*.tar
 npm-debug.log
 
 /.elixir_ls
+
+*.secret.exs

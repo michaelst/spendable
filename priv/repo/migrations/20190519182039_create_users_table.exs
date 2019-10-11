@@ -7,6 +7,7 @@ defmodule Budget.Repo.Migrations.CreateUsersTable do
       add(:last_name, :string)
       add(:email, :string, null: false)
       add(:password, :string, null: false)
+      
       timestamps()
     end
 
