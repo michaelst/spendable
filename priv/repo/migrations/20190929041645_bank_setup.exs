@@ -27,6 +27,7 @@ defmodule Budget.Repo.Migrations.BankSetup do
       add(:number, :string)
       add(:sub_type, :string, null: false)
       add(:type, :string, null: false)
+      add(:sync, :boolean, null: false, default: false)
 
       timestamps()
     end

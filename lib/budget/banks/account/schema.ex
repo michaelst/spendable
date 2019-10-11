@@ -9,6 +9,7 @@ defmodule Budget.Banks.Account do
     field :name, :string
     field :number, :string
     field :sub_type, :string
+    field :sync, :boolean, default: false
     field :type, :string
 
     belongs_to :user, Budget.User

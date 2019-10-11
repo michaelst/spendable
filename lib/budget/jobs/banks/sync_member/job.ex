@@ -10,6 +10,7 @@ defmodule Budget.Jobs.Banks.SyncMember do
     Repo.get!(Member, member_id)
     |> sync_member()
     |> sync_accounts()
+    |> Enum.filter(& &1.sync)
     |> Enum.each(&sync_transactions/1)
   end
 
