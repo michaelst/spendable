@@ -1,6 +1,6 @@
 jobs:
   include:
-    - stage: Tests
+    - stage: Build
       name: Tests
       language: elixir
       elixir: '1.9.1'
@@ -16,7 +16,7 @@ jobs:
 
     - name: Build
       language: minimal
-      script: docker build -t us.gcr.io/cloud-57/budget-api:latest .
+      script: docker build --build-arg SECRET_KEY_BASE --build-arg GUARDIAN_SECRET --build-arg PLAID_CLIENT_ID --build-arg PLAID_SECRET_KEY --build-arg PLAID_PUBLIC_KEY -t us.gcr.io/cloud-57/budget-api:latest .
 
     - stage: Deploy
       script: mix test
