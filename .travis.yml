@@ -10,3 +10,7 @@ cache:
   directories:
     - deps
     - _build
+jobs:
+  include:
+    - script: mix test
+    - script: mix release
