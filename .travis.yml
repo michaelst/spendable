@@ -20,22 +20,3 @@ deploy:
   script: mix test
   on:
     branch: travis-build-matrix
-
-#language: elixir
-#elixir:
-#  - '1.9.1'
-#otp_release:
-#  - '22.0.7'
-#services:
-#  - postgresql
-#  - redis-server
-#  - docker
-#cache:
-#  directories:
-#    - deps
-#    - _build
-#jobs:
-#  include:
-#    - script: mix test
-#    - script: docker build -t us.gcr.io/cloud-57/budget-api:latest .
-#      #if: branch = master
