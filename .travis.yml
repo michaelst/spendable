@@ -14,9 +14,6 @@ jobs:
           - _build
       script: mix test
 
-    - name: Build
-      language: minimal
-      script: docker build --build-arg SECRET_KEY_BASE --build-arg GUARDIAN_SECRET --build-arg PLAID_CLIENT_ID --build-arg PLAID_SECRET_KEY --build-arg PLAID_PUBLIC_KEY -t us.gcr.io/cloud-57/budget-api:latest .
-
-    - stage: Deploy
-      script: mix test
+    # - name: Build
+    #   language: minimal
+    #   script: docker build --build-arg SECRET_KEY_BASE --build-arg GUARDIAN_SECRET --build-arg PLAID_CLIENT_ID --build-arg PLAID_SECRET_KEY --build-arg PLAID_PUBLIC_KEY -t us.gcr.io/cloud-57/budget-api:latest .
