@@ -12,7 +12,7 @@ jobs:
         directories:
           - deps
           - _build
-      script: mix test
+      script: mix ecto.reset && mix test
 
     # - name: Build
     #   language: minimal
