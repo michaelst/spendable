@@ -2,37 +2,51 @@ defmodule Spendable.Banks.Category.Utils do
   alias Spendable.Banks.Category
   alias Spendable.Repo
 
-  def import_categories() do
+  def get_categories() do
     {:ok, %{body: %{"categories" => categories}}} = Plaid.categories()
+    categories
+  end
 
-    Enum.reduce(categories, %{}, fn category, acc ->
-      category["hierarchy"]
-      |> Enum.reverse()
-      |> case do
-        [name] ->
-          %{id: id} =
-            %Category{
-              name: name,
-              external_id: category["category_id"]
-            }
-            |> Repo.insert!()
+  def import_categories(categories) do
+    categories
+    |> Enum.group_by(fn category ->
+      case Enum.reverse(category["hierarchy"]) do
+        [_] ->
+          nil
 
-          Map.put(acc, name, id)
-
-        [name | parents] = all ->
-          parent_key = Enum.join(parents, ":")
-          new_key = Enum.join(all, ":")
-
-          %{id: id} =
-            %Category{
-              name: name,
+        [_name | parents] ->
+          Enum.join(parents, ":")
+      end
+    end)
+    |> Enum.sort_by(fn
+      {nil, _} -> 0
+      {parent_key, _} -> parent_key |> String.split(":") |> length()
+    end)
+    |> Enum.reduce(%{}, fn {parent_key, categories}, acc ->
+      {_count, categories} =
+        Repo.insert_all(
+          Category,
+          Enum.map(categories, fn category ->
+            %{
+              name: List.last(category["hierarchy"]),
               external_id: category["category_id"],
               parent_id: acc[parent_key]
             }
-            |> Repo.insert!()
+          end),
+          conflict_target: :external_id,
+          on_conflict: {:replace, [:name]},
+          returning: [:id, :name]
+        )
 
-          Map.put(acc, new_key, id)
-      end
+      categories
+      |> Enum.map(fn category ->
+        case parent_key do
+          nil -> {category.name, category.id}
+          _ -> {category.name <> ":" <> parent_key, category.id}
+        end
+      end)
+      |> Map.new()
+      |> Map.merge(acc)
     end)
   end
 end

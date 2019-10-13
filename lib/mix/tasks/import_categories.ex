@@ -1,10 +1,13 @@
 defmodule Mix.Tasks.Import.Categories do
   use Mix.Task
 
+  alias Spendable.Banks.Category.Utils
+
   @shortdoc "Import categories from Plaid."
   def run(_) do
     Mix.Task.run("app.start")
 
-    Spendable.Banks.Category.Utils.import_categories()
+    Utils.get_categories()
+    |> Utils.import_categories()
   end
 end

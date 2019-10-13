@@ -13,13 +13,8 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
     Banks.Providers.Plaid.Adapter
   }
 
-  alias Spendable.Banks.Category.TestData, as: CategoryTestData
-
   setup do
     mock(fn
-      %{method: :post, url: "https://sandbox.plaid.com/categories/get"} ->
-        json(CategoryTestData.categories())
-
       %{method: :post, url: "https://sandbox.plaid.com/item/get"} ->
         json(TestData.item())
 
@@ -48,8 +43,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
     {user, _} = Spendable.TestUtils.create_user()
     token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
     {:ok, %{body: details}} = Plaid.member(token)
-
-    Spendable.Banks.Category.Utils.import_categories()
 
     member =
       %Member{plaid_token: token}

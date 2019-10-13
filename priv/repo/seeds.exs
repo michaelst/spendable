@@ -1,11 +1,10 @@
-# Script for populating the database. You can run it as:
-#
-#     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     Spendable.Repo.insert!(%Spendable.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
+middleware = [
+  {Tesla.Middleware.BaseUrl, Application.get_env(:spendable, Plaid)[:base_url]},
+  Tesla.Middleware.JSON
+]
+
+{:ok, %{body: %{"categories" => categories}}} =
+  Tesla.client(middleware, {Tesla.Adapter.Mint, []})
+  |> Tesla.post("/categories/get", %{})
+
+Spendable.Banks.Category.Utils.import_categories(categories)

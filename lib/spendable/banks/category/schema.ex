@@ -6,7 +6,5 @@ defmodule Spendable.Banks.Category do
     field :name, :string
 
     belongs_to :parent, __MODULE__
-
-    timestamps()
   end
 end
