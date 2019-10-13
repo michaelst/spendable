@@ -14,7 +14,8 @@ jobs:
           - _build
       env:
         - MIX_ENV=test
-      script: mix ecto.reset && mix test
+      before_script: mix ecto.reset
+      script: mix test
 
     # - name: Build
     #   language: minimal
