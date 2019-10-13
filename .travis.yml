@@ -12,6 +12,8 @@ jobs:
         directories:
           - deps
           - _build
+      env:
+        - MIX_ENV=test
       script: mix ecto.reset && mix test
 
     # - name: Build
