@@ -1,7 +1,7 @@
-defmodule Budget.Banks.Member.Resolver do
-  alias Budget.Banks.Member
-  alias Budget.Repo
-  alias Budget.Banks.Providers.Plaid.Adapter
+defmodule Spendable.Banks.Member.Resolver do
+  alias Spendable.Banks.Member
+  alias Spendable.Repo
+  alias Spendable.Banks.Providers.Plaid.Adapter
 
   def create(%{public_token: token}, %{context: %{current_user: user}}) do
     {:ok, %{body: %{"access_token" => token}}} = Plaid.exchange_public_token(token)
@@ -12,7 +12,7 @@ defmodule Budget.Banks.Member.Resolver do
     |> Repo.insert()
     |> case do
       {:ok, member} ->
-        {:ok, _} = Exq.enqueue(Exq, "default", Budget.Jobs.Banks.SyncMember, [member.id])
+        {:ok, _} = Exq.enqueue(Exq, "default", Spendable.Jobs.Banks.SyncMember, [member.id])
 
         {:ok, member}
 

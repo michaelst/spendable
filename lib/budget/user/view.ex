@@ -1,8 +1,8 @@
-defmodule Budget.UserView do
-  use BudgetWeb, :view
+defmodule Spendable.UserView do
+  use SpendableWeb, :view
 
   def render("show.json", user) do
-    {:ok, token, _claims} = Budget.Guardian.encode_and_sign(user)
+    {:ok, token, _claims} = Spendable.Guardian.encode_and_sign(user)
 
     user
     |> Map.take([:id, :first_name, :last_name, :email])

@@ -1,4 +1,4 @@
-defmodule Budget.Banks.Member.Types do
+defmodule Spendable.Banks.Member.Types do
   use Absinthe.Schema.Notation
 
   object :bank_member do
@@ -13,9 +13,9 @@ defmodule Budget.Banks.Member.Types do
 
   object :bank_member_queries do
     field :create_bank_member, :bank_member do
-      middleware(Budget.Middleware.CheckAuthentication)
+      middleware(Spendable.Middleware.CheckAuthentication)
       arg(:public_token, non_null(:string))
-      resolve(&Budget.Banks.Member.Resolver.create/2)
+      resolve(&Spendable.Banks.Member.Resolver.create/2)
     end
   end
 end

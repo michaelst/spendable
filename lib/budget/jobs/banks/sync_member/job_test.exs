@@ -1,9 +1,9 @@
-defmodule Budget.Jobs.Banks.SyncMemberTest do
-  use Budget.DataCase, async: true
+defmodule Spendable.Jobs.Banks.SyncMemberTest do
+  use Spendable.DataCase, async: true
   import Tesla.Mock
   import Ecto.Query
 
-  alias Budget.{
+  alias Spendable.{
     Repo,
     Jobs.Banks.SyncMemberTest.TestData,
     Banks.Member,
@@ -13,7 +13,7 @@ defmodule Budget.Jobs.Banks.SyncMemberTest do
     Banks.Providers.Plaid.Adapter
   }
 
-  alias Budget.Banks.Category.TestData, as: CategoryTestData
+  alias Spendable.Banks.Category.TestData, as: CategoryTestData
 
   setup do
     mock(fn
@@ -45,18 +45,18 @@ defmodule Budget.Jobs.Banks.SyncMemberTest do
   end
 
   test "sync member" do
-    {user, _} = Budget.TestUtils.create_user()
+    {user, _} = Spendable.TestUtils.create_user()
     token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
     {:ok, %{body: details}} = Plaid.member(token)
 
-    Budget.Banks.Category.Utils.import_categories()
+    Spendable.Banks.Category.Utils.import_categories()
 
     member =
       %Member{plaid_token: token}
       |> Member.changeset(Adapter.format(details, user.id, :member))
       |> Repo.insert!()
 
-    Budget.Jobs.Banks.SyncMember.perform(member.id)
+    Spendable.Jobs.Banks.SyncMember.perform(member.id)
 
     assert [
              %{
@@ -88,7 +88,7 @@ defmodule Budget.Jobs.Banks.SyncMemberTest do
     |> Account.changeset(%{sync: true})
     |> Repo.update!()
 
-    Budget.Jobs.Banks.SyncMember.perform(member.id)
+    Spendable.Jobs.Banks.SyncMember.perform(member.id)
 
     assert 7 == from(Transaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
@@ -114,7 +114,7 @@ defmodule Budget.Jobs.Banks.SyncMemberTest do
              %{},
              %{},
              %{}
-           ] = from(Budget.Transaction, where: [user_id: ^user.id], preload: [:bank_transaction]) |> Repo.all()
+           ] = from(Spendable.Transaction, where: [user_id: ^user.id], preload: [:bank_transaction]) |> Repo.all()
 
     assert "6.33" |> Decimal.new() |> Decimal.equal?(amount)
   end

@@ -1,4 +1,4 @@
-defmodule BudgetWeb.ConnCase do
+defmodule SpendableWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -19,18 +19,18 @@ defmodule BudgetWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      alias BudgetWeb.Router.Helpers, as: Routes
+      alias SpendableWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint BudgetWeb.Endpoint
+      @endpoint SpendableWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Budget.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Spendable.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Budget.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Spendable.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

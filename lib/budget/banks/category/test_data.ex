@@ -1,4 +1,4 @@
-defmodule Budget.Banks.Category.TestData do
+defmodule Spendable.Banks.Category.TestData do
   def categories() do
     %{
       categories: [

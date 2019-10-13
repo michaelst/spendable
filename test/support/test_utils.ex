@@ -1,9 +1,9 @@
-defmodule Budget.TestUtils do
+defmodule Spendable.TestUtils do
   import ExUnit.Assertions
 
-  alias Budget.User
-  alias Budget.Guardian
-  alias Budget.Repo
+  alias Spendable.User
+  alias Spendable.Guardian
+  alias Spendable.Repo
 
   def create_user() do
     email = "#{Ecto.UUID.generate()}@example.com"

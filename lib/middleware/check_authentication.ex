@@ -1,4 +1,4 @@
-defmodule Budget.Middleware.CheckAuthentication do
+defmodule Spendable.Middleware.CheckAuthentication do
   @behaviour Absinthe.Middleware
 
   def call(resolution, _config) do

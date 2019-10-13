@@ -1,5 +1,5 @@
-defmodule BudgetWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :budget
+defmodule SpendableWeb.Endpoint do
+  use Phoenix.Endpoint, otp_app: :spendable
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -25,8 +25,8 @@ defmodule BudgetWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
     store: :cookie,
-    key: "_budget_key",
+    key: "_spendable_key",
     signing_salt: "kJiN34/t"
 
-  plug BudgetWeb.Router
+  plug SpendableWeb.Router
 end

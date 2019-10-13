@@ -1,5 +1,5 @@
-defmodule Budget.Repo do
+defmodule Spendable.Repo do
   use Ecto.Repo,
-    otp_app: :budget,
+    otp_app: :spendable,
     adapter: Ecto.Adapters.Postgres
 end

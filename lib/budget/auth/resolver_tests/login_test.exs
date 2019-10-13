@@ -1,11 +1,11 @@
-defmodule Budget.User.Resolver.LoginTest do
-  use BudgetWeb.ConnCase, async: true
-  alias Budget.User
+defmodule Spendable.User.Resolver.LoginTest do
+  use SpendableWeb.ConnCase, async: true
+  alias Spendable.User
 
   test "login", %{conn: conn} do
     email = "#{Ecto.UUID.generate()}@example.com"
 
-    struct(User) |> User.changeset(%{email: email, password: "password"}) |> Budget.Repo.insert!()
+    struct(User) |> User.changeset(%{email: email, password: "password"}) |> Spendable.Repo.insert!()
 
     query = """
       mutation {
@@ -39,7 +39,7 @@ defmodule Budget.User.Resolver.LoginTest do
   test "invalid login", %{conn: conn} do
     email = "#{Ecto.UUID.generate()}@example.com"
 
-    struct(User) |> User.changeset(%{email: email, password: "password"}) |> Budget.Repo.insert!()
+    struct(User) |> User.changeset(%{email: email, password: "password"}) |> Spendable.Repo.insert!()
 
     query = """
       mutation {

@@ -1,4 +1,4 @@
-defmodule Budget.Repo.Migrations.CreateUsersTable do
+defmodule Spendable.Repo.Migrations.CreateUsersTable do
   use Ecto.Migration
 
   def change do

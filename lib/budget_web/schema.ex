@@ -1,9 +1,9 @@
-defmodule BudgetWeb.Schema do
+defmodule SpendableWeb.Schema do
   use Absinthe.Schema
 
-  import_types(Budget.Auth.Types)
-  import_types(Budget.User.Types)
-  import_types(Budget.Banks.Member.Types)
+  import_types(Spendable.Auth.Types)
+  import_types(Spendable.User.Types)
+  import_types(Spendable.Banks.Member.Types)
 
   query do
     field :health, :string, resolve: fn _, _ -> {:ok, "up"} end
@@ -16,7 +16,7 @@ defmodule BudgetWeb.Schema do
   end
 
   def middleware(middleware, _field, %{identifier: :mutation}) do
-    middleware ++ [Budget.Middleware.ChangesetErrors]
+    middleware ++ [Spendable.Middleware.ChangesetErrors]
   end
 
   # if it's any other object keep things as is

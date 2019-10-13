@@ -1,4 +1,4 @@
-defmodule Budget.Middleware.ChangesetErrors do
+defmodule Spendable.Middleware.ChangesetErrors do
   @behaviour Absinthe.Middleware
 
   def call(resolution, _) do

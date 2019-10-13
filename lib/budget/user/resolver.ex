@@ -1,7 +1,7 @@
-defmodule Budget.User.Resolver do
-  alias Budget.User
-  alias Budget.Repo
-  alias Budget.Guardian
+defmodule Spendable.User.Resolver do
+  alias Spendable.User
+  alias Spendable.Repo
+  alias Spendable.Guardian
 
   def create(params, _context) do
     struct(User)

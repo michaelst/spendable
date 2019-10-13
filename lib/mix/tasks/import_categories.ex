@@ -5,6 +5,6 @@ defmodule Mix.Tasks.Import.Categories do
   def run(_) do
     Mix.Task.run("app.start")
 
-    Budget.Banks.Category.Utils.import_categories()
+    Spendable.Banks.Category.Utils.import_categories()
   end
 end

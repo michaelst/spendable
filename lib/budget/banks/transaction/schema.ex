@@ -1,4 +1,4 @@
-defmodule Budget.Banks.Transaction do
+defmodule Spendable.Banks.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,9 +10,9 @@ defmodule Budget.Banks.Transaction do
     field :name, :string
     field :pending, :boolean
 
-    belongs_to :category, Budget.Banks.Category
-    belongs_to :user, Budget.User
-    belongs_to :bank_account, Budget.Banks.Account
+    belongs_to :category, Spendable.Banks.Category
+    belongs_to :user, Spendable.User
+    belongs_to :bank_account, Spendable.Banks.Account
 
     timestamps()
   end

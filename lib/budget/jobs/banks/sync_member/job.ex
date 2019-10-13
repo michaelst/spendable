@@ -1,10 +1,10 @@
-defmodule Budget.Jobs.Banks.SyncMember do
-  alias Budget.Banks.Member
-  alias Budget.Banks.Account
-  alias Budget.Repo
-  alias Budget.Banks.Providers.Plaid.Adapter
-  alias Budget.Banks.Transaction, as: BankTransaction
-  alias Budget.Transaction
+defmodule Spendable.Jobs.Banks.SyncMember do
+  alias Spendable.Banks.Member
+  alias Spendable.Banks.Account
+  alias Spendable.Repo
+  alias Spendable.Banks.Providers.Plaid.Adapter
+  alias Spendable.Banks.Transaction, as: BankTransaction
+  alias Spendable.Transaction
 
   def perform(member_id) do
     Repo.get!(Member, member_id)

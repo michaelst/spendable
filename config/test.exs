@@ -1,16 +1,16 @@
 use Mix.Config
 
 # Configure your database
-config :budget, Budget.Repo,
+config :spendable, Spendable.Repo,
   username: "postgres",
   password: nil,
-  database: "budget_test",
+  database: "spendable_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :budget, BudgetWeb.Endpoint,
+config :spendable, SpendableWeb.Endpoint,
   http: [port: 4002],
   server: false
 
@@ -21,7 +21,7 @@ config :exq, queues: []
 
 config :bcrypt_elixir, :log_rounds, 1
 
-config :budget, Plaid,
+config :spendable, Plaid,
   base_url: "https://sandbox.plaid.com",
   client_id: "test",
   secret_key: "test",

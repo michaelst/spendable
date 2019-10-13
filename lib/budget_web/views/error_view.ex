@@ -1,5 +1,5 @@
-defmodule BudgetWeb.ErrorView do
-  use BudgetWeb, :view
+defmodule SpendableWeb.ErrorView do
+  use SpendableWeb, :view
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

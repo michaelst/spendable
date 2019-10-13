@@ -1,4 +1,4 @@
-defmodule Budget.User.Types do
+defmodule Spendable.User.Types do
   use Absinthe.Schema.Notation
 
   object :user do
@@ -15,16 +15,16 @@ defmodule Budget.User.Types do
       arg(:last_name, :string)
       arg(:email, :string)
       arg(:password, :string)
-      resolve(&Budget.User.Resolver.create/2)
+      resolve(&Spendable.User.Resolver.create/2)
     end
 
     field :update_user, :user do
-      middleware(Budget.Middleware.CheckAuthentication)
+      middleware(Spendable.Middleware.CheckAuthentication)
       arg(:first_name, :string)
       arg(:last_name, :string)
       arg(:email, :string)
       arg(:password, :string)
-      resolve(&Budget.User.Resolver.update/2)
+      resolve(&Spendable.User.Resolver.update/2)
     end
   end
 end

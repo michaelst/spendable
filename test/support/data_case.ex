@@ -1,4 +1,4 @@
-defmodule Budget.DataCase do
+defmodule Spendable.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -16,20 +16,20 @@ defmodule Budget.DataCase do
 
   using do
     quote do
-      alias Budget.Repo
+      alias Spendable.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Budget.DataCase
+      import Spendable.DataCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Budget.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Spendable.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Budget.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Spendable.Repo, {:shared, self()})
     end
 
     :ok

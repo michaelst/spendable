@@ -1,5 +1,5 @@
-defmodule Budget.User.Resolver.CreateTest do
-  use BudgetWeb.ConnCase, async: true
+defmodule Spendable.User.Resolver.CreateTest do
+  use SpendableWeb.ConnCase, async: true
 
   test "create", %{conn: conn} do
     query = """

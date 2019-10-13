@@ -1,6 +1,6 @@
-defmodule Budget.Banks.Category.Utils do
-  alias Budget.Banks.Category
-  alias Budget.Repo
+defmodule Spendable.Banks.Category.Utils do
+  alias Spendable.Banks.Category
+  alias Spendable.Repo
 
   def import_categories() do
     {:ok, %{body: %{"categories" => categories}}} = Plaid.categories()

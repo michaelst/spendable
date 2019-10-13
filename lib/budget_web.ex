@@ -1,12 +1,12 @@
-defmodule BudgetWeb do
+defmodule SpendableWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use BudgetWeb, :controller
-      use BudgetWeb, :view
+      use SpendableWeb, :controller
+      use SpendableWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,19 +19,19 @@ defmodule BudgetWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: BudgetWeb
+      use Phoenix.Controller, namespace: SpendableWeb
 
       import Plug.Conn
-      import BudgetWeb.Gettext
-      alias BudgetWeb.Router.Helpers, as: Routes
+      import SpendableWeb.Gettext
+      alias SpendableWeb.Router.Helpers, as: Routes
     end
   end
 
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/budget_web/templates",
-        namespace: BudgetWeb
+        root: "lib/spendable_web/templates",
+        namespace: SpendableWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
@@ -39,9 +39,9 @@ defmodule BudgetWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import BudgetWeb.ErrorHelpers
-      import BudgetWeb.Gettext
-      alias BudgetWeb.Router.Helpers, as: Routes
+      import SpendableWeb.ErrorHelpers
+      import SpendableWeb.Gettext
+      alias SpendableWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -56,7 +56,7 @@ defmodule BudgetWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import BudgetWeb.Gettext
+      import SpendableWeb.Gettext
     end
   end
 

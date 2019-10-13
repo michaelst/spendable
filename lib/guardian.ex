@@ -1,5 +1,5 @@
-defmodule Budget.Guardian do
-  use Guardian, otp_app: :budget
+defmodule Spendable.Guardian do
+  use Guardian, otp_app: :spendable
 
   def subject_for_token(resource, _claims) do
     # You can use any value for the subject of your token but
@@ -12,7 +12,7 @@ defmodule Budget.Guardian do
   end
 
   def resource_from_claims(%{"sub" => id}) do
-    resource = Budget.Repo.get!(Budget.User, id)
+    resource = Spendable.Repo.get!(Spendable.User, id)
     {:ok, resource}
   end
 

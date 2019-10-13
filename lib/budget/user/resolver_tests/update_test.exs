@@ -1,8 +1,8 @@
-defmodule Budget.User.Resolver.UpdateTest do
-  use BudgetWeb.ConnCase, async: true
+defmodule Spendable.User.Resolver.UpdateTest do
+  use SpendableWeb.ConnCase, async: true
 
   test "update", %{conn: conn} do
-    {_user, token} = Budget.TestUtils.create_user()
+    {_user, token} = Spendable.TestUtils.create_user()
 
     query = """
       mutation {

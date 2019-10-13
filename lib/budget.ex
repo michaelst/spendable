@@ -1,6 +1,6 @@
-defmodule Budget do
+defmodule Spendable do
   @moduledoc """
-  Budget keeps the contexts that define your domain
+  Spendable keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

@@ -1,5 +1,5 @@
-defmodule Budget.Member.Resolver.CreateTest do
-  use BudgetWeb.ConnCase, async: true
+defmodule Spendable.Member.Resolver.CreateTest do
+  use SpendableWeb.ConnCase, async: true
   import Tesla.Mock
 
   setup do
@@ -38,7 +38,7 @@ defmodule Budget.Member.Resolver.CreateTest do
   end
 
   test "create member from plaid public token", %{conn: conn} do
-    {_user, token} = Budget.TestUtils.create_user()
+    {_user, token} = Spendable.TestUtils.create_user()
 
     query = """
       mutation {
@@ -68,6 +68,6 @@ defmodule Budget.Member.Resolver.CreateTest do
              }
            } = response
 
-    Budget.TestUtils.assert_job(Budget.Jobs.Banks.SyncMember, [String.to_integer(member_id)])
+    Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [String.to_integer(member_id)])
   end
 end

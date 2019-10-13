@@ -1,4 +1,4 @@
-defmodule Budget.Repo.Migrations.BankSetup do
+defmodule Spendable.Repo.Migrations.BankSetup do
   use Ecto.Migration
 
   def change do

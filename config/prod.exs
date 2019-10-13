@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :budget, BudgetWeb.Endpoint,
+config :spendable, SpendableWeb.Endpoint,
   url: [host: "spendable.dev", port: 80],
   debug_errors: false,
   http: [
@@ -16,11 +16,11 @@ config :budget, BudgetWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :budget, Budget.Guardian,
+config :spendable, Spendable.Guardian,
 issuer: "spendable.dev",
 secret_key: System.get_env("GUARDIAN_SECRET")
 
-config :budget, Plaid,
+config :spendable, Plaid,
   base_url: "https://production.plaid.com",
   client_id: System.get_env("PLAID_CLIENT_ID"),
   secret_key: System.get_env("PLAID_SECRET_KEY"),

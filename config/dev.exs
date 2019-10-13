@@ -1,17 +1,17 @@
 use Mix.Config
 
 # Configure your database
-config :budget, Budget.Repo,
+config :spendable, Spendable.Repo,
   username: "postgres",
   password: "postgres",
-  database: "budget_dev",
+  database: "spendable_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
-config :budget, BudgetWeb.Endpoint,
+config :spendable, SpendableWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -51,7 +51,7 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :budget, Plaid, base_url: "https://sandbox.plaid.com"
+config :spendable, Plaid, base_url: "https://sandbox.plaid.com"
 
 if File.exists?("config/dev.secret.exs") do
   import_config "dev.secret.exs"

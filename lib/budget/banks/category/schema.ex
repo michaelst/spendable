@@ -1,4 +1,4 @@
-defmodule Budget.Banks.Category do
+defmodule Spendable.Banks.Category do
   use Ecto.Schema
 
   schema "categories" do

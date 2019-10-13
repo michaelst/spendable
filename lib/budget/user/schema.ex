@@ -1,4 +1,4 @@
-defmodule Budget.User do
+defmodule Spendable.User do
   use Ecto.Schema
   import Ecto.Changeset
 

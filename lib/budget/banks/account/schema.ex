@@ -1,4 +1,4 @@
-defmodule Budget.Banks.Account do
+defmodule Spendable.Banks.Account do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -12,8 +12,8 @@ defmodule Budget.Banks.Account do
     field :sync, :boolean, default: false
     field :type, :string
 
-    belongs_to :user, Budget.User
-    belongs_to :bank_member, Budget.Banks.Member
+    belongs_to :user, Spendable.User
+    belongs_to :bank_member, Spendable.Banks.Member
 
     timestamps()
   end

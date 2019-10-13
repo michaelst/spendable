@@ -7,15 +7,15 @@
 # General application configuration
 use Mix.Config
 
-config :budget,
-  ecto_repos: [Budget.Repo]
+config :spendable,
+  ecto_repos: [Spendable.Repo]
 
 # Configures the endpoint
-config :budget, BudgetWeb.Endpoint,
+config :spendable, SpendableWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "NoM/w1aErkEg8aarboi9MDakr7zalCnOmhuuNqZtu2cB5PRdK6lXWD/BeMywMcWO",
-  render_errors: [view: BudgetWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Budget.PubSub, adapter: Phoenix.PubSub.PG2]
+  render_errors: [view: SpendableWeb.ErrorView, accepts: ~w(json)],
+  pubsub: [name: Spendable.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -26,12 +26,12 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :exq,
-  namespace: "budget-api",
+  namespace: "spendable-api",
   start_on_application: false,
   queues: ["default"]
 
-config :budget, Budget.Guardian,
-  issuer: "Budget",
+config :spendable, Spendable.Guardian,
+  issuer: "Spendable",
   secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"
 
 config :tesla, :adapter, Tesla.Adapter.Mint
