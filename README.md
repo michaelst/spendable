@@ -1,6 +1,7 @@
 # Spendable
 
-[![Build Status](https://travis-ci.org/michaelst/budget-api.svg?branch=master)](https://travis-ci.org/michaelst/budget-api)
+[![Build Status](https://travis-ci.org/michaelst/budget-api.svg?branch=master)](https://travis-ci.org/michaelst/budget-api) 
+[![codecov](https://codecov.io/gh/michaelst/spendable-api/branch/master/graph/badge.svg)](https://codecov.io/gh/michaelst/spendable-api)
 
 To start your Phoenix server:
 
