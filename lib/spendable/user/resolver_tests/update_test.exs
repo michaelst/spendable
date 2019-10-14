@@ -19,7 +19,7 @@ defmodule Spendable.User.Resolver.UpdateTest do
     response =
       conn
       |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/", %{query: query})
+      |> post("/graphql", %{query: query})
       |> json_response(200)
 
     assert %{
@@ -47,7 +47,7 @@ defmodule Spendable.User.Resolver.UpdateTest do
 
     response =
       conn
-      |> post("/", %{query: query})
+      |> post("/graphql", %{query: query})
       |> json_response(200)
 
     assert %{

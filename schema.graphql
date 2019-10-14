@@ -1,0 +1,46 @@
+schema {
+  query: RootQueryType
+  mutation: RootMutationType
+}
+
+type BankMemberQueries {
+  createBankMember(public_token: String!): BankMember
+}
+
+type UserQueries {
+  createUser(password: String, email: String, last_name: String, first_name: String): User
+  updateUser(password: String, email: String, last_name: String, first_name: String): User
+}
+
+type AuthQueries {
+  login(password: String!, email: String!): User
+}
+
+type RootMutationType {
+  login(password: String!, email: String!): User
+  createUser(password: String, email: String, last_name: String, first_name: String): User
+  updateUser(password: String, email: String, last_name: String, first_name: String): User
+  createBankMember(public_token: String!): BankMember
+}
+
+type RootQueryType {
+  health: String
+}
+
+type BankMember {
+  id: Id
+  externalId: String
+  institutionId: String
+  logo: String
+  name: String
+  provider: String
+  status: String
+}
+
+type User {
+  id: Id
+  firstName: String
+  lastName: String
+  email: String
+  token: String
+}

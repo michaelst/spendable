@@ -17,7 +17,7 @@ defmodule Spendable.User.Resolver.CreateTest do
 
     response =
       conn
-      |> post("/", %{query: query})
+      |> post("/graphql", %{query: query})
       |> json_response(200)
 
     assert %{
@@ -47,7 +47,7 @@ defmodule Spendable.User.Resolver.CreateTest do
 
     response =
       conn
-      |> post("/", %{query: query})
+      |> post("/graphql", %{query: query})
       |> json_response(200)
 
     assert response == %{
@@ -80,12 +80,12 @@ defmodule Spendable.User.Resolver.CreateTest do
     """
 
     conn
-    |> post("/", %{query: query})
+    |> post("/graphql", %{query: query})
     |> json_response(200)
 
     response =
       conn
-      |> post("/", %{query: query})
+      |> post("/graphql", %{query: query})
       |> json_response(200)
 
     assert response == %{

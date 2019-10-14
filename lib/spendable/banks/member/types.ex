@@ -4,7 +4,7 @@ defmodule Spendable.Banks.Member.Types do
   object :bank_member do
     field :id, :id
     field :external_id, :string
-    field :insitution_id, :string
+    field :institution_id, :string
     field :logo, :string
     field :name, :string
     field :provider, :string

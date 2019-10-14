@@ -13,6 +13,6 @@ defmodule SpendableWeb.Router do
     pipe_through :api
 
     forward "/graphiql", Absinthe.Plug.GraphiQL, schema: SpendableWeb.Schema
-    forward "/", Absinthe.Plug, schema: SpendableWeb.Schema
+    forward "/graphql", Absinthe.Plug, schema: SpendableWeb.Schema
   end
 end
