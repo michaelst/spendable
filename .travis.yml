@@ -15,7 +15,8 @@ jobs:
       env:
         - MIX_ENV=test
       before_script: mix ecto.reset
-      script: mix test
+      script: mix do compile --warnings-as-errors, coveralls.json
+      after_success: bash <(curl -s https://codecov.io/bash)
 
     # - name: Build
     #   language: minimal

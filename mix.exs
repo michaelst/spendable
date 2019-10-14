@@ -11,6 +11,7 @@ defmodule Spendable.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      test_coverage: [tool: ExCoveralls],
       test_paths: ["test", "lib"]
     ]
   end
@@ -38,6 +39,7 @@ defmodule Spendable.MixProject do
       {:absinthe, "~> 1.5.0-beta"},
       {:bcrypt_elixir, "~> 2.0"},
       {:castore, "~> 0.1.0"},
+      {:excoveralls, "~> 0.11.2"},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
       {:exq, "~> 0.13.3"},
