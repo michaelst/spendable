@@ -39,7 +39,7 @@ defmodule Spendable.MixProject do
       {:absinthe, "~> 1.5.0-beta"},
       {:bcrypt_elixir, "~> 2.0"},
       {:castore, "~> 0.1.0"},
-      {:excoveralls, "~> 0.11.2"},
+      {:excoveralls, "~> 0.12.0"},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
       {:exq, "~> 0.13.3"},
