@@ -12,7 +12,6 @@ config :spendable,
 
 # Configures the endpoint
 config :spendable, SpendableWeb.Endpoint,
-  url: [host: "localhost"],
   secret_key_base: "NoM/w1aErkEg8aarboi9MDakr7zalCnOmhuuNqZtu2cB5PRdK6lXWD/BeMywMcWO",
   render_errors: [view: SpendableWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Spendable.PubSub, adapter: Phoenix.PubSub.PG2]

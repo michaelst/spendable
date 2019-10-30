@@ -6,7 +6,7 @@ defmodule Spendable.User.Resolver.CreateTest do
       mutation {
         createUser(
           firstName: "Michael",
-          last_name: "St Clair",
+          lastName: "St Clair",
           email: "michaelst57@gmail.com",
           password: "password"
         ) {

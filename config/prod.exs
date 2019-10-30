@@ -17,8 +17,8 @@ config :spendable, SpendableWeb.Endpoint,
 config :logger, level: :info
 
 config :spendable, Spendable.Guardian,
-issuer: "spendable.dev",
-secret_key: System.get_env("GUARDIAN_SECRET")
+  issuer: "spendable.dev",
+  secret_key: System.get_env("GUARDIAN_SECRET")
 
 config :spendable, Plaid,
   base_url: "https://production.plaid.com",
