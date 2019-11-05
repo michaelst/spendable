@@ -1,4 +1,4 @@
-defmodule SpendableWeb.Context do
+defmodule Spendable.Web.Context do
   @behaviour Plug
 
   def init(opts), do: opts

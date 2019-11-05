@@ -1,4 +1,4 @@
-defmodule SpendableWeb.ErrorHelpers do
+defmodule Spendable.Web.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -36,9 +36,9 @@ defmodule SpendableWeb.ErrorHelpers do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(SpendableWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(Spendable.Web.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(SpendableWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(Spendable.Web.Gettext, "errors", msg, opts)
     end
   end
 end

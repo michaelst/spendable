@@ -1,5 +1,5 @@
 defmodule Spendable.Member.Resolver.CreateTest do
-  use SpendableWeb.ConnCase, async: true
+  use Spendable.Web.ConnCase, async: true
   import Tesla.Mock
 
   setup do

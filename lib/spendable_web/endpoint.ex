@@ -1,5 +1,6 @@
-defmodule SpendableWeb.Endpoint do
+defmodule Spendable.Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :spendable
+  use Absinthe.Phoenix.Endpoint
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -28,5 +29,5 @@ defmodule SpendableWeb.Endpoint do
     key: "_spendable_key",
     signing_salt: "kJiN34/t"
 
-  plug SpendableWeb.Router
+  plug Spendable.Web.Router
 end

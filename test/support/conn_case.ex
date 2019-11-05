@@ -1,4 +1,4 @@
-defmodule SpendableWeb.ConnCase do
+defmodule Spendable.Web.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -19,10 +19,10 @@ defmodule SpendableWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      alias SpendableWeb.Router.Helpers, as: Routes
+      alias Spendable.Web.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint SpendableWeb.Endpoint
+      @endpoint Spendable.Web.Endpoint
     end
   end
 

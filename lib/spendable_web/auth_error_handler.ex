@@ -1,4 +1,4 @@
-defmodule SpendableWeb.AuthErrorHandler do
+defmodule Spendable.Web.AuthErrorHandler do
   import Plug.Conn
 
   def auth_error(conn, {type, _reason}, _opts) do

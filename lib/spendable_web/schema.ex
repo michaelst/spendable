@@ -1,4 +1,4 @@
-defmodule SpendableWeb.Schema do
+defmodule Spendable.Web.Schema do
   use Absinthe.Schema
 
   import_types(Spendable.Auth.Types)

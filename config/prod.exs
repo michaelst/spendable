@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :spendable, SpendableWeb.Endpoint,
+config :spendable, Spendable.Web.Endpoint,
   url: [host: "spendable.dev", port: 80],
   debug_errors: false,
   http: [

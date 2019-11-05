@@ -1,5 +1,5 @@
 defmodule Spendable.User.Resolver.LoginTest do
-  use SpendableWeb.ConnCase, async: true
+  use Spendable.Web.ConnCase, async: true
   alias Spendable.User
 
   test "login", %{conn: conn} do

@@ -1,5 +1,5 @@
 defmodule Spendable.User.Resolver.UpdateTest do
-  use SpendableWeb.ConnCase, async: true
+  use Spendable.Web.ConnCase, async: true
 
   test "update", %{conn: conn} do
     {_user, token} = Spendable.TestUtils.create_user()

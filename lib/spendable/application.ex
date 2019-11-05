@@ -11,7 +11,8 @@ defmodule Spendable.Application do
       # Start the Ecto repository
       Spendable.Repo,
       # Start the endpoint when the application starts
-      SpendableWeb.Endpoint,
+      Spendable.Web.Endpoint,
+      %{id: Absinthe.Subscription, start: {Absinthe.Subscription, :start_link, [Spendable.Web.Endpoint]}},
       # Starts a worker by calling: Spendable.Worker.start_link(arg)
       # {Spendable.Worker, arg},
       %{id: Exq, start: {Exq, :start_link, []}}
@@ -26,7 +27,7 @@ defmodule Spendable.Application do
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    SpendableWeb.Endpoint.config_change(changed, removed)
+    Spendable.Web.Endpoint.config_change(changed, removed)
     :ok
   end
 end

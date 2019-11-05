@@ -1,12 +1,12 @@
-defmodule SpendableWeb do
+defmodule Spendable.Web do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, views, channels and so on.
 
   This can be used in your application as:
 
-      use SpendableWeb, :controller
-      use SpendableWeb, :view
+      use Spendable.Web, :controller
+      use Spendable.Web, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -19,11 +19,11 @@ defmodule SpendableWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: SpendableWeb
+      use Phoenix.Controller, namespace: Spendable.Web
 
       import Plug.Conn
-      import SpendableWeb.Gettext
-      alias SpendableWeb.Router.Helpers, as: Routes
+      import Spendable.Web.Gettext
+      alias Spendable.Web.Router.Helpers, as: Routes
     end
   end
 
@@ -31,7 +31,7 @@ defmodule SpendableWeb do
     quote do
       use Phoenix.View,
         root: "lib/spendable_web/templates",
-        namespace: SpendableWeb
+        namespace: Spendable.Web
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
@@ -39,9 +39,9 @@ defmodule SpendableWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import SpendableWeb.ErrorHelpers
-      import SpendableWeb.Gettext
-      alias SpendableWeb.Router.Helpers, as: Routes
+      import Spendable.Web.ErrorHelpers
+      import Spendable.Web.Gettext
+      alias Spendable.Web.Router.Helpers, as: Routes
     end
   end
 
@@ -56,7 +56,7 @@ defmodule SpendableWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import SpendableWeb.Gettext
+      import Spendable.Web.Gettext
     end
   end
 

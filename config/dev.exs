@@ -11,7 +11,7 @@ config :spendable, Spendable.Repo,
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
-config :spendable, SpendableWeb.Endpoint,
+config :spendable, Spendable.Web.Endpoint,
   https: [
     port: 4040,
     cipher_suite: :strong,

@@ -11,9 +11,9 @@ config :spendable,
   ecto_repos: [Spendable.Repo]
 
 # Configures the endpoint
-config :spendable, SpendableWeb.Endpoint,
+config :spendable, Spendable.Web.Endpoint,
   secret_key_base: "NoM/w1aErkEg8aarboi9MDakr7zalCnOmhuuNqZtu2cB5PRdK6lXWD/BeMywMcWO",
-  render_errors: [view: SpendableWeb.ErrorView, accepts: ~w(json)],
+  render_errors: [view: Spendable.Web.ErrorView, accepts: ~w(json)],
   pubsub: [name: Spendable.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger

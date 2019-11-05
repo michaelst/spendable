@@ -1,4 +1,4 @@
-defmodule SpendableWeb.ChannelCase do
+defmodule Spendable.Web.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -21,7 +21,7 @@ defmodule SpendableWeb.ChannelCase do
       use Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint SpendableWeb.Endpoint
+      @endpoint Spendable.Web.Endpoint
     end
   end
 
