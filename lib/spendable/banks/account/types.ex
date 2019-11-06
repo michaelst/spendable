@@ -1,6 +1,8 @@
 defmodule Spendable.Banks.Account.Types do
   use Absinthe.Schema.Notation
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
+  alias Spendable.Banks.Account
+  alias Spendable.Banks.Account.Resolver
 
   object :bank_account do
     field :id, :id
@@ -12,6 +14,15 @@ defmodule Spendable.Banks.Account.Types do
     field :sub_type, :string
     field :sync, :boolean
     field :type, :string
-    field :bank_member, :bank_member, resolve: dataloader(Spendable)
+  end
+
+  object :bank_account_mutations do
+    field :update_bank_account, :bank_account do
+      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(Spendable.Middleware.LoadModel, module: Account)
+      arg(:id, non_null(:id))
+      arg(:sync, :boolean)
+      resolve(&Resolver.update/2)
+    end
   end
 end

@@ -15,6 +15,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:auth_queries)
     import_fields(:user_queries)
     import_fields(:bank_member_mutations)
+    import_fields(:bank_account_mutations)
   end
 
   def context(context) do
