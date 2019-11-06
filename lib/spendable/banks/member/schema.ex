@@ -12,6 +12,7 @@ defmodule Spendable.Banks.Member do
     field :status, :string
 
     belongs_to :user, Spendable.User
+    has_many :bank_accounts, Spendable.Banks.Account, foreign_key: :bank_member_id
 
     timestamps()
   end

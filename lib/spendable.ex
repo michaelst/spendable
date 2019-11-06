@@ -1,9 +1,9 @@
 defmodule Spendable do
-  @moduledoc """
-  Spendable keeps the contexts that define your domain
-  and business logic.
+  def data() do
+    Dataloader.Ecto.new(Spendable.Repo, query: &query/2)
+  end
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
-  """
+  def query(queryable, _params) do
+    queryable
+  end
 end
