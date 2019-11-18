@@ -1,7 +1,7 @@
 defmodule Spendable.Auth.Types do
   use Absinthe.Schema.Notation
 
-  object :auth_queries do
+  object :auth_mutations do
     field :login, type: :user do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))

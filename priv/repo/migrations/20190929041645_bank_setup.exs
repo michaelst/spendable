@@ -38,6 +38,7 @@ defmodule Spendable.Repo.Migrations.BankSetup do
       add(:external_id, :string)
       add(:name, :string)
       add(:parent_id, references(:categories))
+      add(:parent_name, :string)
     end
 
     create unique_index(:categories, [:external_id])

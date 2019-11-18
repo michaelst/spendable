@@ -30,11 +30,12 @@ defmodule Spendable.Banks.Category.Utils do
             %{
               name: List.last(category["hierarchy"]),
               external_id: category["category_id"],
-              parent_id: acc[parent_key]
+              parent_id: acc[parent_key],
+              parent_name: if(parent_key, do: parent_key |> String.split(":") |> Enum.join(" / "))
             }
           end),
           conflict_target: :external_id,
-          on_conflict: {:replace, [:name]},
+          on_conflict: {:replace, [:name, :parent_name]},
           returning: [:id, :name]
         )
 

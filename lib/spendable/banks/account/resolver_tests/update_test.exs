@@ -57,5 +57,7 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
                }
              }
            } == response
+
+    Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [member.id])
   end
 end
