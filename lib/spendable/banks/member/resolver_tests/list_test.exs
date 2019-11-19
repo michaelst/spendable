@@ -1,7 +1,7 @@
-defmodule Spendable.Banks.Category.Resolver.ListTest do
+defmodule Spendable.Banks.Member.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
 
-  test "update", %{conn: conn} do
+  test "list members", %{conn: conn} do
     {_user, token} = Spendable.TestUtils.create_user()
 
     query = """
