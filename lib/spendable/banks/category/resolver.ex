@@ -5,6 +5,6 @@ defmodule Spendable.Banks.Category.Resolver do
   alias Spendable.Repo
 
   def list(_parent, _args, _resolution) do
-    {:ok, from(Category, order_by: :name) |> Repo.all()}
+    {:ok, from(c in Category, order_by: fragment("lower(?)", c.name)) |> Repo.all()}
   end
 end

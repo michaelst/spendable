@@ -22,7 +22,8 @@ defmodule Spendable.Banks.Category.Resolver.ListTest do
 
     assert %{
              "data" => %{
-               "categories" => [%{"id" => "191", "name" => "ACH", "parentName" => "Transfer"} | _] = categories
+               "categories" =>
+                 [%{"id" => "589", "name" => "Accessories Store", "parentName" => "Outlet / Shops"} | _] = categories
              }
            } = response
 
