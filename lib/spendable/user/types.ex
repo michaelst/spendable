@@ -9,7 +9,7 @@ defmodule Spendable.User.Types do
     field :token, :string
   end
 
-  object :user_queries do
+  object :user_mutations do
     field :create_user, :user do
       arg(:first_name, :string)
       arg(:last_name, :string)

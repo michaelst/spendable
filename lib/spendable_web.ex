@@ -39,7 +39,6 @@ defmodule Spendable.Web do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import Spendable.Web.ErrorHelpers
       import Spendable.Web.Gettext
       alias Spendable.Web.Router.Helpers, as: Routes
     end

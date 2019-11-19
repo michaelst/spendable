@@ -2,20 +2,26 @@ defmodule Spendable.Web.Schema do
   use Absinthe.Schema
 
   import_types(Spendable.Auth.Types)
-  import_types(Spendable.User.Types)
-  import_types(Spendable.Banks.Member.Types)
   import_types(Spendable.Banks.Account.Types)
+  import_types(Spendable.Banks.Category.Types)
+  import_types(Spendable.Banks.Member.Types)
+  import_types(Spendable.Banks.Transaction.Types)
+  import_types(Spendable.Transaction.Types)
+  import_types(Spendable.User.Types)
 
   query do
     field :health, :string, resolve: fn _, _ -> {:ok, "up"} end
     import_fields(:bank_member_queries)
+    import_fields(:category_queries)
+    import_fields(:transaction_queries)
   end
 
   mutation do
-    import_fields(:auth_queries)
-    import_fields(:user_queries)
-    import_fields(:bank_member_mutations)
+    import_fields(:auth_mutations)
     import_fields(:bank_account_mutations)
+    import_fields(:bank_member_mutations)
+    import_fields(:user_mutations)
+    import_fields(:transaction_mutations)
   end
 
   def context(context) do

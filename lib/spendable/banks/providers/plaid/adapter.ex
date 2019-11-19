@@ -43,7 +43,7 @@ defmodule Spendable.Banks.Providers.Plaid.Adapter do
       bank_account_id: account_id,
       user_id: user_id,
       category_id: Repo.get_by!(Category, external_id: details["category_id"]).id,
-      amount: details["amount"],
+      amount: details["amount"] * -1,
       date: details["date"],
       external_id: details["transaction_id"],
       location: details["location"],

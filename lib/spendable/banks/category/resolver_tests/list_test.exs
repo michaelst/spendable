@@ -1,4 +1,4 @@
-defmodule Spendable.Banks.Account.Resolver.UpdateTest do
+defmodule Spendable.Banks.Member.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
 
   alias Spendable.Banks.Member
@@ -35,10 +35,16 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
       |> Repo.insert!()
 
     query = """
-      mutation {
-        updateBankAccount(id: #{account.id}, sync: true) {
+      query {
+        bankMembers {
           id
-          sync
+          name
+          status
+          bankAccounts {
+            id
+            name
+            sync
+          }
         }
       }
     """
@@ -51,13 +57,15 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
 
     assert %{
              "data" => %{
-               "updateBankAccount" => %{
-                 "id" => "#{account.id}",
-                 "sync" => true
-               }
+               "bankMembers" => [
+                 %{
+                   "bankAccounts" => [%{"id" => "#{account.id}", "name" => "Checking", "sync" => false}],
+                   "id" => "#{member.id}",
+                   "name" => "Capital One",
+                   "status" => nil
+                 }
+               ]
              }
            } == response
-
-    Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [member.id])
   end
 end

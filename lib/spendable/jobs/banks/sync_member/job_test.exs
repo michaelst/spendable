@@ -109,6 +109,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
              %{}
            ] = from(Spendable.Transaction, where: [user_id: ^user.id], preload: [:bank_transaction]) |> Repo.all()
 
-    assert "6.33" |> Decimal.new() |> Decimal.equal?(amount)
+    assert "-6.33" |> Decimal.new() |> Decimal.equal?(amount)
   end
 end
