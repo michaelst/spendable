@@ -36,8 +36,8 @@ defmodule Spendable.MixProject do
   defp deps do
     [
       {:absinthe_phoenix, "~> 1.4"},
-      {:absinthe_plug, "~> 1.5.0-alpha", override: true},
-      {:absinthe, "~> 1.5.0-beta", override: true},
+      {:absinthe_plug, "~> 1.5.0-rc.1", override: true},
+      {:absinthe, "~> 1.5.0-rc.2", override: true},
       {:bcrypt_elixir, "~> 2.0"},
       {:castore, "~> 0.1.0"},
       {:dataloader, "~> 1.0.0"},
