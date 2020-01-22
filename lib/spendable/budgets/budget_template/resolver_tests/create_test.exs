@@ -1,20 +1,11 @@
 defmodule Spendable.Budgets.BudgetTemplate.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
-
-  alias Spendable.Budgets.Budget
-  alias Spendable.Repo
+  import Spendable.Factory
 
   test "create budget template", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget =
-      %Budget{}
-      |> Budget.changeset(%{
-        user_id: user.id,
-        name: "test budget",
-        balance: 10.50
-      })
-      |> Repo.insert!()
+    budget = insert(:budget, user_id: user.id)
 
     query = """
       mutation {
@@ -54,7 +45,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.CreateTest do
                  "lines" => [
                    %{
                      "amount" => "5.00",
-                     "budget" => %{"id" => "#{budget.id}", "name" => "test budget"},
+                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"},
                      "priority" => 0
                    }
                  ]

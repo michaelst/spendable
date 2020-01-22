@@ -1,30 +1,12 @@
 defmodule Spendable.Budgets.Budget.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
-
-  alias Spendable.Budgets.Budget
-  alias Spendable.Repo
+  import Spendable.Factory
 
   test "update", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget =
-      %Budget{}
-      |> Budget.changeset(%{
-        user_id: user.id,
-        name: "test budget",
-        balance: 10.50
-      })
-      |> Repo.insert!()
-
-    goal =
-      %Budget{}
-      |> Budget.changeset(%{
-        user_id: user.id,
-        name: "test goal",
-        balance: 10.25,
-        goal: 10.25
-      })
-      |> Repo.insert!()
+    budget = insert(:budget, user_id: user.id)
+    goal = insert(:goal, user_id: user.id)
 
     query = """
       query {
@@ -47,16 +29,16 @@ defmodule Spendable.Budgets.Budget.Resolver.ListTest do
              "data" => %{
                "budgets" => [
                  %{
-                   "id" => "#{budget.id}",
-                   "name" => "test budget",
-                   "balance" => "10.50",
-                   "goal" => nil
+                   "id" => "#{goal.id}",
+                   "name" => "Vacation",
+                   "balance" => "#{goal.balance}",
+                   "goal" => "#{goal.goal}"
                  },
                  %{
-                   "id" => "#{goal.id}",
-                   "name" => "test goal",
-                   "balance" => "10.25",
-                   "goal" => "10.25"
+                   "id" => "#{budget.id}",
+                   "name" => "Food",
+                   "balance" => "#{budget.balance}",
+                   "goal" => nil
                  }
                ]
              }

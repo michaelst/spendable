@@ -5,9 +5,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver do
   alias Spendable.Repo
 
   def list(_parent, _args, %{context: %{current_user: user}}) do
-    {:ok,
-     from(BudgetTemplate, where: [user_id: ^user.id])
-     |> Repo.all()}
+    {:ok, from(BudgetTemplate, where: [user_id: ^user.id]) |> Repo.all()}
   end
 
   def create(params, %{context: %{current_user: user}}) do

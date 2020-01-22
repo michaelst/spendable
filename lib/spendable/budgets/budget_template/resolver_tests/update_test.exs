@@ -1,42 +1,13 @@
 defmodule Spendable.Budgets.BudgetTemplate.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
-
-  alias Spendable.Budgets.Budget
-  alias Spendable.Budgets.BudgetTemplate
-  alias Spendable.Repo
+  import Spendable.Factory
 
   test "update budget template", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget =
-      %Budget{}
-      |> Budget.changeset(%{
-        user_id: user.id,
-        name: "test",
-        balance: 10
-      })
-      |> Repo.insert!()
+    budget = insert(:budget, user_id: user.id)
 
-    %{lines: [line | _]} =
-      template =
-      %BudgetTemplate{}
-      |> BudgetTemplate.changeset(%{
-        user_id: user.id,
-        name: "template",
-        lines: [
-          %{
-            amount: 5,
-            budget_id: budget.id,
-            priority: 0
-          },
-          %{
-            amount: 7,
-            budget_id: budget.id,
-            priority: 2
-          }
-        ]
-      })
-      |> Repo.insert!()
+    %{lines: [line | _]} = template = insert(:budget_template, user_id: user.id)
 
     query = """
       mutation {
@@ -47,6 +18,8 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.UpdateTest do
             {
               id: "#{line.id}"
               amount: "10"
+              budget_id: "#{budget.id}"
+              priority: 0
             }
             {
               amount: "12"
@@ -83,12 +56,12 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.UpdateTest do
                  "lines" => [
                    %{
                      "amount" => "10.00",
-                     "budget" => %{"id" => "#{budget.id}", "name" => "test"},
+                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"},
                      "priority" => 0
                    },
                    %{
                      "amount" => "12.00",
-                     "budget" => %{"id" => "#{budget.id}", "name" => "test"},
+                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"},
                      "priority" => 1
                    }
                  ]

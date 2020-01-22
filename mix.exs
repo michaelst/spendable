@@ -27,7 +27,7 @@ defmodule Spendable.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -42,8 +42,10 @@ defmodule Spendable.MixProject do
       {:castore, "~> 0.1.0"},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
+      {:ex_machina, "~> 2.3", only: :test},
       {:excoveralls, "~> 0.12.0"},
       {:exq, "~> 0.13.3"},
+      {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
       {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},

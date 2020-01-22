@@ -23,4 +23,11 @@ defmodule Spendable.TestUtils do
            end),
            "couldn't find #{module} with args #{inspect(args)}"
   end
+
+  def random_decimal(range, precision \\ 2) do
+    Enum.random(range)
+    |> Decimal.cast()
+    |> Decimal.div(100)
+    |> Decimal.round(precision)
+  end
 end
