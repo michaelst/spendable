@@ -9,8 +9,8 @@ defmodule Spendable.Budgets.Budget.Resolver do
   end
 
   def create(params, %{context: %{current_user: user}}) do
-    struct(Budget)
-    |> Budget.changeset(Map.merge(params, %{user_id: user.id}))
+    %Budget{user_id: user.id}
+    |> Budget.changeset(params)
     |> Repo.insert()
   end
 

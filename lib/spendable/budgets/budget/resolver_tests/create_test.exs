@@ -28,7 +28,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
                "createBudget" => %{
                  "name" => "test budget",
                  "balance" => "10.51",
-                 "goal" => nil,
+                 "goal" => nil
                }
              }
            } == response
@@ -62,7 +62,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
                "createBudget" => %{
                  "name" => "test budget",
                  "balance" => "10.51",
-                 "goal" => "1000.25",
+                 "goal" => "1000.25"
                }
              }
            } == response
