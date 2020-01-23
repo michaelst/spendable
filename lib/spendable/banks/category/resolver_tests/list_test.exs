@@ -1,11 +1,11 @@
-defmodule Spendable.Banks.Member.Resolver.ListTest do
+defmodule Spendable.Banks.Category.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
 
   alias Spendable.Banks.Member
   alias Spendable.Banks.Account
   alias Spendable.Repo
 
-  test "update", %{conn: conn} do
+  test "list categories", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
     member =

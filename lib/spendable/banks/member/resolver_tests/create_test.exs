@@ -1,4 +1,4 @@
-defmodule Spendable.Member.Resolver.CreateTest do
+defmodule Spendable.Banks.Member.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
   import Tesla.Mock
 

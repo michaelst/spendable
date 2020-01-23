@@ -25,7 +25,9 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :exq,
-  namespace: "spendable-api",
+  max_retries: 3,
+  name: Exq,
+  namespace: "exq-#{Mix.env()}",
   start_on_application: false,
   queues: ["default"]
 

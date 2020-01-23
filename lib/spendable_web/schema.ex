@@ -6,12 +6,17 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.Banks.Category.Types)
   import_types(Spendable.Banks.Member.Types)
   import_types(Spendable.Banks.Transaction.Types)
+  import_types(Spendable.Budgets.Budget.Types)
+  import_types(Spendable.Budgets.BudgetTemplate.Types)
+  import_types(Spendable.Budgets.BudgetTemplateLine.Types)
   import_types(Spendable.Transaction.Types)
   import_types(Spendable.User.Types)
 
   query do
     field :health, :string, resolve: fn _, _ -> {:ok, "up"} end
     import_fields(:bank_member_queries)
+    import_fields(:budget_queries)
+    import_fields(:budget_template_queries)
     import_fields(:category_queries)
     import_fields(:transaction_queries)
   end
@@ -20,6 +25,8 @@ defmodule Spendable.Web.Schema do
     import_fields(:auth_mutations)
     import_fields(:bank_account_mutations)
     import_fields(:bank_member_mutations)
+    import_fields(:budget_mutations)
+    import_fields(:budget_template_mutations)
     import_fields(:user_mutations)
     import_fields(:transaction_mutations)
   end
