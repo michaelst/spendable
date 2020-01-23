@@ -12,7 +12,6 @@ defmodule Spendable.Web.Router do
   scope "/" do
     pipe_through :api
 
-    if Mix.env() == :dev, do: forward("/graphiql", Absinthe.Plug.GraphiQL, schema: Spendable.Web.Schema)
     forward "/graphql", Absinthe.Plug, schema: Spendable.Web.Schema
   end
 end

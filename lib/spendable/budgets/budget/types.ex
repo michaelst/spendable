@@ -11,6 +11,11 @@ defmodule Spendable.Budgets.Budget.Types do
     field :goal, :string
   end
 
+  input_object :budget_allocation do
+    field(:budget_id, non_null(:id))
+    field(:amount, non_null(:string))
+  end
+
   object :budget_queries do
     field :budgets, list_of(:budget) do
       middleware(Spendable.Middleware.CheckAuthentication)
@@ -35,6 +40,12 @@ defmodule Spendable.Budgets.Budget.Types do
       arg(:balance, :string)
       arg(:goal, :string)
       resolve(&Resolver.update/2)
+    end
+
+    field :allocate, :integer do
+      middleware(Spendable.Middleware.CheckAuthentication)
+      arg(:allocations, list_of(:budget_allocation))
+      resolve(&Resolver.allocate/2)
     end
   end
 end
