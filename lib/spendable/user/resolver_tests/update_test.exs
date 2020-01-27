@@ -8,7 +8,7 @@ defmodule Spendable.User.Resolver.UpdateTest do
       mutation {
         updateUser(
           firstName: "Michael"
-          last_name: "St Clair"
+          lastName: "St Clair"
         ) {
           firstName
           lastName
@@ -37,7 +37,7 @@ defmodule Spendable.User.Resolver.UpdateTest do
       mutation {
         updateUser(
           firstName: "Michael"
-          last_name: "St Clair"
+          lastName: "St Clair"
         ) {
           firstName
           lastName

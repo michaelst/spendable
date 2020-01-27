@@ -3,6 +3,10 @@ defmodule Spendable.User.Resolver do
   alias Spendable.Repo
   alias Spendable.Guardian
 
+  def current_user(_params, %{context: %{current_user: user}}) do
+    {:ok, user}
+  end
+
   def create(params, _context) do
     struct(User)
     |> User.changeset(params)

@@ -6,10 +6,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
 
     query = """
       mutation {
-        createBudget(
-          name: "test budget",
-          balance: "10.51"
-        ) {
+        createBudget( name: "test budget", balance: "10.51" ) {
           name
           balance
           goal

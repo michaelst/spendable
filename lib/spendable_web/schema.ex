@@ -19,6 +19,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:budget_template_queries)
     import_fields(:category_queries)
     import_fields(:transaction_queries)
+    import_fields(:user_queries)
   end
 
   mutation do
