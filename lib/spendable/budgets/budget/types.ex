@@ -42,6 +42,13 @@ defmodule Spendable.Budgets.Budget.Types do
       resolve(&Resolver.update/2)
     end
 
+    field :delete_budget, :budget do
+      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(Spendable.Middleware.LoadModel, module: Budget)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.delete/2)
+    end
+
     field :allocate, :integer do
       middleware(Spendable.Middleware.CheckAuthentication)
       arg(:allocations, list_of(:budget_allocation))

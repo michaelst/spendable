@@ -20,6 +20,10 @@ defmodule Spendable.Budgets.Budget.Resolver do
     |> Repo.update()
   end
 
+  def delete(_params, %{context: %{model: model}}) do
+    Repo.delete(model)
+  end
+
   def allocate(%{allocations: allocations}, %{context: %{current_user: user}}) do
     Repo.transaction(fn ->
       count =
