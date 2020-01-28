@@ -3,4 +3,6 @@ defmodule Spendable.Factory do
   use Spendable.Budgets.Budget.Factory
   use Spendable.Budgets.BudgetTemplate.Factory
   use Spendable.Budgets.BudgetTemplateLine.Factory
+  use Spendable.Budgets.BudgetTemplateLine.Factory
+  use Spendable.Transaction.Factory
 end

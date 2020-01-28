@@ -11,8 +11,10 @@ defmodule Spendable.Transaction.Types do
     field :date, :string
     field :name, :string
     field :note, :string
-    field :category, :category, resolve: dataloader(Spendable)
+
     field :bank_transaction, :bank_transaction, resolve: dataloader(Spendable)
+    field :budget, :budget, resolve: dataloader(Spendable)
+    field :category, :category, resolve: dataloader(Spendable)
   end
 
   object :transaction_queries do
@@ -29,6 +31,7 @@ defmodule Spendable.Transaction.Types do
       arg(:id, non_null(:id))
       arg(:name, :string)
       arg(:note, :string)
+      arg(:budget_id, :id)
       arg(:category_id, :id)
       resolve(&Resolver.update/2)
     end

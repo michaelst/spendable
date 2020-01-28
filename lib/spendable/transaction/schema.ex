@@ -8,9 +8,10 @@ defmodule Spendable.Transaction do
     field :name, :string
     field :note, :string
 
+    belongs_to :bank_transaction, Spendable.Banks.Transaction
+    belongs_to :budget, Spendable.Budgets.Budget
     belongs_to :category, Spendable.Banks.Category
     belongs_to :user, Spendable.User
-    belongs_to :bank_transaction, Spendable.Banks.Transaction
 
     timestamps()
   end

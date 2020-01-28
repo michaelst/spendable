@@ -1,5 +1,6 @@
 defmodule Spendable.Transaction.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
+  import Spendable.Factory
 
   alias Spendable.Transaction
   alias Spendable.Banks.Category
@@ -8,23 +9,17 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
   test "update", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
-
-    transaction =
-      %Transaction{}
-      |> Transaction.changeset(%{
-        user_id: user.id,
-        amount: 10,
-        name: "test",
-        note: "some notes",
-        date: Date.utc_today()
-      })
-      |> Repo.insert!()
+    budget = insert(:budget, user_id: user.id)
+    transaction = insert(:transaction, user_id: user.id)
 
     query = """
       mutation {
-        updateTransaction(id: #{transaction.id}, name: "new name", categoryId: "#{category_id}") {
+        updateTransaction(id: #{transaction.id}, name: "new name", categoryId: "#{category_id}", budgetId: "#{budget.id}") {
           id
           name
+          budget {
+            id
+          }
           category {
             id
           }
@@ -43,6 +38,9 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
                "updateTransaction" => %{
                  "id" => "#{transaction.id}",
                  "name" => "new name",
+                 "budget" => %{
+                   "id" => "#{budget.id}"
+                 },
                  "category" => %{
                    "id" => "#{category_id}"
                  }
