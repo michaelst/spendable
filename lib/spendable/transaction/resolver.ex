@@ -4,13 +4,15 @@ defmodule Spendable.Transaction.Resolver do
   alias Spendable.Transaction
   alias Spendable.Repo
 
-  def list(_parent, _args, %{context: %{current_user: user}}) do
+  def list(_args, %{context: %{current_user: user}}) do
     {:ok, from(Transaction, where: [user_id: ^user.id], order_by: [desc: :date], limit: 100) |> Repo.all()}
   end
 
-  def update(params, %{context: %{model: model}}) do
+  def get(_args, %{context: %{model: model}}), do: {:ok, model}
+
+  def update(args, %{context: %{model: model}}) do
     model
-    |> Transaction.changeset(params)
+    |> Transaction.changeset(args)
     |> Repo.update()
   end
 end

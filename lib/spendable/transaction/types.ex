@@ -20,7 +20,14 @@ defmodule Spendable.Transaction.Types do
   object :transaction_queries do
     field :transactions, list_of(:transaction) do
       middleware(Spendable.Middleware.CheckAuthentication)
-      resolve(&Resolver.list/3)
+      resolve(&Resolver.list/2)
+    end
+
+    field :transaction, :transaction do
+      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(Spendable.Middleware.LoadModel, module: Transaction)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.get/2)
     end
   end
 
@@ -29,10 +36,12 @@ defmodule Spendable.Transaction.Types do
       middleware(Spendable.Middleware.CheckAuthentication)
       middleware(Spendable.Middleware.LoadModel, module: Transaction)
       arg(:id, non_null(:id))
-      arg(:name, :string)
-      arg(:note, :string)
+      arg(:amount, :string)
       arg(:budget_id, :id)
       arg(:category_id, :id)
+      arg(:date, :string)
+      arg(:name, :string)
+      arg(:note, :string)
       resolve(&Resolver.update/2)
     end
   end

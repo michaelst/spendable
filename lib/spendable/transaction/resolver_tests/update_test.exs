@@ -5,7 +5,7 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
   alias Spendable.Banks.Category
   alias Spendable.Repo
 
-  test "update", %{conn: conn} do
+  test "update transaction", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
     budget = insert(:budget, user_id: user.id)

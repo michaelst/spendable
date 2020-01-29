@@ -1,11 +1,11 @@
-defmodule Spendable.Transaction.Resolver.ListTest do
+defmodule Spendable.Transaction.Resolver.GetTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
   alias Spendable.Banks.Category
   alias Spendable.Repo
 
-  test "list transactions", %{conn: conn} do
+  test "get transaction", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
 
@@ -13,7 +13,7 @@ defmodule Spendable.Transaction.Resolver.ListTest do
 
     query = """
       query {
-        transactions {
+        transaction(id: #{transaction.id}) {
           id
           name
           note
@@ -34,16 +34,14 @@ defmodule Spendable.Transaction.Resolver.ListTest do
 
     assert %{
              "data" => %{
-               "transactions" => [
-                 %{
-                   "amount" => "#{transaction.amount}",
-                   "category" => %{"id" => "#{category_id}"},
-                   "date" => "#{transaction.date}",
-                   "id" => "#{transaction.id}",
-                   "name" => "test",
-                   "note" => "some notes"
-                 }
-               ]
+               "transaction" => %{
+                 "amount" => "#{transaction.amount}",
+                 "category" => %{"id" => "#{category_id}"},
+                 "date" => "#{transaction.date}",
+                 "id" => "#{transaction.id}",
+                 "name" => "test",
+                 "note" => "some notes"
+               }
              }
            } == response
   end
