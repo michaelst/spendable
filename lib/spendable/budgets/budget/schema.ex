@@ -3,7 +3,7 @@ defmodule Spendable.Budgets.Budget do
   import Ecto.Changeset
 
   schema "budgets" do
-    field :balance, :decimal
+    field :allocated, :decimal, default: Decimal.new("0.00")
     field :goal, :decimal
     field :name, :string
 
@@ -15,6 +15,6 @@ defmodule Spendable.Budgets.Budget do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, __schema__(:fields) -- [:id])
-    |> validate_required([:user_id, :balance, :name])
+    |> validate_required([:user_id, :name])
   end
 end

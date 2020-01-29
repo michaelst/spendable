@@ -1,13 +1,13 @@
-defmodule Spendable.Budgets.BudgetTemplate do
+defmodule Spendable.Budgets.BudgetAllocationTemplate do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "budget_templates" do
+  schema "budget_allocation_templates" do
     field :name, :string
 
     belongs_to :user, Spendable.User
 
-    has_many :lines, Spendable.Budgets.BudgetTemplateLine, on_replace: :delete
+    has_many :lines, Spendable.Budgets.BudgetAllocationTemplateLine, on_replace: :delete
 
     timestamps()
   end

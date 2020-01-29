@@ -1,4 +1,4 @@
-defmodule Spendable.Budgets.BudgetTemplate.Resolver.ListTest do
+defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
@@ -10,7 +10,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.ListTest do
 
     query = """
       query {
-        budgetTemplates {
+        BudgetAllocationTemplates {
           name
           lines {
             amount
@@ -30,7 +30,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.ListTest do
 
     assert %{
              "data" => %{
-               "budgetTemplates" => [
+               "BudgetAllocationTemplates" => [
                  %{
                    "lines" => [
                      %{

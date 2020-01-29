@@ -1,4 +1,4 @@
-defmodule Spendable.Budgets.BudgetTemplate.Resolver.UpdateTest do
+defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
@@ -11,7 +11,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.UpdateTest do
 
     query = """
       mutation {
-        updateBudgetTemplate(
+        updateBudgetAllocationTemplate(
           id: #{template.id},
           name: "new name"
           lines: [
@@ -50,7 +50,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.UpdateTest do
 
     assert %{
              "data" => %{
-               "updateBudgetTemplate" => %{
+               "updateBudgetAllocationTemplate" => %{
                  "id" => "#{template.id}",
                  "name" => "new name",
                  "lines" => [

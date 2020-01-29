@@ -12,6 +12,10 @@ defmodule Spendable.Web.Router do
   scope "/" do
     pipe_through :api
 
-    forward "/graphql", Absinthe.Plug, schema: Spendable.Web.Schema
+    forward "/graphql", Absinthe.Plug,
+      schema: Spendable.Web.Schema,
+      analyze_complexity: true,
+      max_complexity: 50,
+      pipeline: {Spendable.Web.Schema, :pipeline}
   end
 end

@@ -1,4 +1,4 @@
-defmodule Spendable.Budgets.BudgetTemplate.Resolver.CreateTest do
+defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
@@ -9,12 +9,12 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.CreateTest do
 
     query = """
       mutation {
-        createBudgetTemplate(
+        createBudgetAllocationTemplate(
           name: "test budget template"
           lines: [
             {
               amount: "5"
-              budget_id: "#{budget.id}"
+              budgetId: "#{budget.id}"
               priority: 0
             }
           ]
@@ -40,7 +40,7 @@ defmodule Spendable.Budgets.BudgetTemplate.Resolver.CreateTest do
 
     assert %{
              "data" => %{
-               "createBudgetTemplate" => %{
+               "createBudgetAllocationTemplate" => %{
                  "name" => "test budget template",
                  "lines" => [
                    %{

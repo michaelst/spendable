@@ -5,8 +5,9 @@ defmodule Spendable.Budgets.Budget.Resolver.ListTest do
   test "update", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget = insert(:budget, user_id: user.id)
+    budget = insert(:budget, user_id: user.id, allocated: 100)
     goal = insert(:goal, user_id: user.id)
+    insert(:transaction, user_id: user.id, budget_id: budget.id, amount: -25.55)
 
     query = """
       query {
@@ -29,16 +30,16 @@ defmodule Spendable.Budgets.Budget.Resolver.ListTest do
              "data" => %{
                "budgets" => [
                  %{
-                   "id" => "#{goal.id}",
-                   "name" => "Vacation",
-                   "balance" => "#{goal.balance}",
-                   "goal" => "#{goal.goal}"
-                 },
-                 %{
                    "id" => "#{budget.id}",
                    "name" => "Food",
-                   "balance" => "#{budget.balance}",
+                   "balance" => "#{Decimal.new("74.45")}",
                    "goal" => nil
+                 },
+                 %{
+                   "id" => "#{goal.id}",
+                   "name" => "Vacation",
+                   "balance" => "#{goal.allocated}",
+                   "goal" => "#{goal.goal}"
                  }
                ]
              }

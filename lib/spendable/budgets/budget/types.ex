@@ -1,13 +1,29 @@
 defmodule Spendable.Budgets.Budget.Types do
   use Absinthe.Schema.Notation
+  import Ecto.Query, only: [from: 2]
 
   alias Spendable.Budgets.Budget.Resolver
   alias Spendable.Budgets.Budget
+  alias Spendable.Transaction
+  alias Spendable.Repo
 
   object :budget do
     field :id, :id
     field :name, :string
-    field :balance, :string
+
+    field :balance, :string do
+      complexity 5
+
+      resolve(fn budget, _, _ ->
+        from(Transaction, where: [budget_id: ^budget.id])
+        |> Repo.aggregate(:sum, :amount)
+        |> case do
+          nil -> {:ok, budget.allocated}
+          amount -> {:ok, Decimal.add(budget.allocated, amount)}
+        end
+      end)
+    end
+
     field :goal, :string
   end
 
@@ -27,7 +43,6 @@ defmodule Spendable.Budgets.Budget.Types do
     field :create_budget, :budget do
       middleware(Spendable.Middleware.CheckAuthentication)
       arg(:name, :string)
-      arg(:balance, :string)
       arg(:goal, :string)
       resolve(&Resolver.create/2)
     end
@@ -37,7 +52,6 @@ defmodule Spendable.Budgets.Budget.Types do
       middleware(Spendable.Middleware.LoadModel, module: Budget)
       arg(:id, non_null(:id))
       arg(:name, :string)
-      arg(:balance, :string)
       arg(:goal, :string)
       resolve(&Resolver.update/2)
     end

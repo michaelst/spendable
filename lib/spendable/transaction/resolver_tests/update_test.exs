@@ -2,7 +2,6 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  alias Spendable.Transaction
   alias Spendable.Banks.Category
   alias Spendable.Repo
 

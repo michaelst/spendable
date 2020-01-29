@@ -29,8 +29,8 @@ defmodule Spendable.Budgets.Budget.Resolver.AllocateTest do
              }
            } == response
 
-    assert Repo.get(Budget, budget1.id).balance == Decimal.add(budget1.balance, Decimal.new("10"))
-    assert Repo.get(Budget, budget2.id).balance == Decimal.add(budget2.balance, Decimal.new("10"))
+    assert Repo.get(Budget, budget1.id).allocated == Decimal.add(budget1.allocated, Decimal.new("10"))
+    assert Repo.get(Budget, budget2.id).allocated == Decimal.add(budget2.allocated, Decimal.new("10"))
   end
 
   test "can't allocate budget that doesn't exist", %{conn: conn} do
@@ -61,7 +61,7 @@ defmodule Spendable.Budgets.Budget.Resolver.AllocateTest do
              ]
            } == response
 
-    assert Repo.get(Budget, budget.id).balance == budget.balance
+    assert Repo.get(Budget, budget.id).allocated == budget.allocated
   end
 
   test "can't allocate budget user doesn't own", %{conn: conn} do
@@ -94,7 +94,7 @@ defmodule Spendable.Budgets.Budget.Resolver.AllocateTest do
              ]
            } == response
 
-    assert Repo.get(Budget, budget.id).balance == budget.balance
-    assert Repo.get(Budget, other_budget.id).balance == other_budget.balance
+    assert Repo.get(Budget, budget.id).allocated == budget.allocated
+    assert Repo.get(Budget, other_budget.id).allocated == other_budget.allocated
   end
 end

@@ -1,13 +1,13 @@
-defmodule Spendable.Budgets.BudgetTemplateLine do
+defmodule Spendable.Budgets.BudgetAllocationTemplateLine do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "budget_template_lines" do
+  schema "budget_allocation_template_lines" do
     field :amount, :decimal
     field :priority, :integer
 
     belongs_to :budget, Spendable.Budgets.Budget
-    belongs_to :budget_template, Spendable.Budgets.BudgetTemplate
+    belongs_to :budget_allocation_template, Spendable.Budgets.BudgetAllocationTemplate
 
     timestamps()
   end

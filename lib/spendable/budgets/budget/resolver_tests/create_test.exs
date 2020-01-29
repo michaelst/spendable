@@ -6,7 +6,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
 
     query = """
       mutation {
-        createBudget( name: "test budget", balance: "10.51" ) {
+        createBudget(name: "test budget") {
           name
           balance
           goal
@@ -24,7 +24,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
              "data" => %{
                "createBudget" => %{
                  "name" => "test budget",
-                 "balance" => "10.51",
+                 "balance" => "0.00",
                  "goal" => nil
                }
              }
@@ -36,11 +36,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
 
     query = """
       mutation {
-        createBudget(
-          name: "test budget",
-          balance: "10.51",
-          goal: "1000.25"
-        ) {
+        createBudget(name: "test budget", goal: "1000.25") {
           name
           balance
           goal
@@ -58,7 +54,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
              "data" => %{
                "createBudget" => %{
                  "name" => "test budget",
-                 "balance" => "10.51",
+                 "balance" => "0.00",
                  "goal" => "1000.25"
                }
              }
