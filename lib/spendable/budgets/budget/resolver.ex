@@ -5,7 +5,7 @@ defmodule Spendable.Budgets.Budget.Resolver do
   alias Spendable.Repo
 
   def list(_parent, _args, %{context: %{current_user: user}}) do
-    {:ok, from(Budget, where: [user_id: ^user.id]) |> Repo.all()}
+    {:ok, from(Budget, where: [user_id: ^user.id]) |> Repo.all() |> Enum.sort_by(& &1.name)}
   end
 
   def create(params, %{context: %{current_user: user}}) do
@@ -22,17 +22,5 @@ defmodule Spendable.Budgets.Budget.Resolver do
 
   def delete(_params, %{context: %{model: model}}) do
     Repo.delete(model)
-  end
-
-  def allocate(%{allocations: allocations}, %{context: %{current_user: user}}) do
-    Repo.transaction(fn ->
-      count =
-        Enum.reduce(allocations, 0, fn %{amount: amount, budget_id: id}, acc ->
-          {count, nil} = from(Budget, where: [id: ^id, user_id: ^user.id]) |> Repo.update_all(inc: [allocated: amount])
-          acc + count
-        end)
-
-      if count == length(allocations), do: count, else: Repo.rollback("update failed")
-    end)
   end
 end

@@ -5,7 +5,8 @@ defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
   test "update budget", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget = insert(:budget, user_id: user.id, allocated: 10)
+    budget = insert(:budget, user: user)
+    insert(:allocation, user: user, budget: budget, amount: 10)
 
     query = """
       mutation {

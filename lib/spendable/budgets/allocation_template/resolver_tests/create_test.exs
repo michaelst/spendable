@@ -1,15 +1,15 @@
-defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.CreateTest do
+defmodule Spendable.Budgets.AllocationTemplate.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
   test "create budget template", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget = insert(:budget, user_id: user.id)
+    budget = insert(:budget, user: user)
 
     query = """
       mutation {
-        createBudgetAllocationTemplate(
+        createAllocationTemplate(
           name: "test budget template"
           lines: [
             {
@@ -40,7 +40,7 @@ defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.CreateTest do
 
     assert %{
              "data" => %{
-               "createBudgetAllocationTemplate" => %{
+               "createAllocationTemplate" => %{
                  "name" => "test budget template",
                  "lines" => [
                    %{

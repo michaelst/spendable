@@ -1,16 +1,16 @@
-defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.ListTest do
+defmodule Spendable.Budgets.AllocationTemplate.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
   test "update", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    template1 = insert(:budget_template, user_id: user.id)
-    template2 = insert(:budget_template, user_id: user.id)
+    template1 = insert(:allocation_template, user: user)
+    template2 = insert(:allocation_template, user: user)
 
     query = """
       query {
-        BudgetAllocationTemplates {
+        allocationTemplates {
           name
           lines {
             amount
@@ -30,7 +30,7 @@ defmodule Spendable.Budgets.BudgetAllocationTemplate.Resolver.ListTest do
 
     assert %{
              "data" => %{
-               "BudgetAllocationTemplates" => [
+               "allocationTemplates" => [
                  %{
                    "lines" => [
                      %{

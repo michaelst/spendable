@@ -1,4 +1,4 @@
-defmodule Spendable.Budgets.BudgetAllocationTemplateLine do
+defmodule Spendable.Budgets.AllocationTemplateLine do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,7 +7,7 @@ defmodule Spendable.Budgets.BudgetAllocationTemplateLine do
     field :priority, :integer
 
     belongs_to :budget, Spendable.Budgets.Budget
-    belongs_to :budget_allocation_template, Spendable.Budgets.BudgetAllocationTemplate
+    belongs_to :allocation_template, Spendable.Budgets.AllocationTemplate, foreign_key: :budget_allocation_template_id
 
     timestamps()
   end

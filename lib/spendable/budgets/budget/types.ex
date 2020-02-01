@@ -4,32 +4,30 @@ defmodule Spendable.Budgets.Budget.Types do
 
   alias Spendable.Budgets.Budget.Resolver
   alias Spendable.Budgets.Budget
+  alias Spendable.Budgets.Allocation
   alias Spendable.Transaction
   alias Spendable.Repo
 
   object :budget do
     field :id, :id
     field :name, :string
+    field :goal, :string
 
     field :balance, :string do
-      complexity 5
+      complexity(5)
 
       resolve(fn budget, _, _ ->
-        from(Transaction, where: [budget_id: ^budget.id])
-        |> Repo.aggregate(:sum, :amount)
-        |> case do
-          nil -> {:ok, budget.allocated}
-          amount -> {:ok, Decimal.add(budget.allocated, amount)}
-        end
+        allocated =
+          from(Allocation, where: [budget_id: ^budget.id])
+          |> Repo.aggregate(:sum, :amount)
+
+        spent =
+          from(Transaction, where: [budget_id: ^budget.id])
+          |> Repo.aggregate(:sum, :amount)
+
+        {:ok, Decimal.add(allocated || Decimal.new("0"), spent || Decimal.new("0")) |> Decimal.round(2)}
       end)
     end
-
-    field :goal, :string
-  end
-
-  input_object :budget_allocation do
-    field(:budget_id, non_null(:id))
-    field(:amount, non_null(:string))
   end
 
   object :budget_queries do
@@ -61,12 +59,6 @@ defmodule Spendable.Budgets.Budget.Types do
       middleware(Spendable.Middleware.LoadModel, module: Budget)
       arg(:id, non_null(:id))
       resolve(&Resolver.delete/2)
-    end
-
-    field :allocate, :integer do
-      middleware(Spendable.Middleware.CheckAuthentication)
-      arg(:allocations, list_of(:budget_allocation))
-      resolve(&Resolver.allocate/2)
     end
   end
 end

@@ -1,4 +1,4 @@
-defmodule Spendable.Budgets.BudgetAllocationTemplate do
+defmodule Spendable.Budgets.AllocationTemplate do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,7 +7,9 @@ defmodule Spendable.Budgets.BudgetAllocationTemplate do
 
     belongs_to :user, Spendable.User
 
-    has_many :lines, Spendable.Budgets.BudgetAllocationTemplateLine, on_replace: :delete
+    has_many :lines, Spendable.Budgets.AllocationTemplateLine,
+      on_replace: :delete,
+      foreign_key: :budget_allocation_template_id
 
     timestamps()
   end

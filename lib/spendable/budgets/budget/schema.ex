@@ -3,7 +3,6 @@ defmodule Spendable.Budgets.Budget do
   import Ecto.Changeset
 
   schema "budgets" do
-    field :allocated, :decimal, default: Decimal.new("0.00")
     field :goal, :decimal
     field :name, :string
 

@@ -9,7 +9,7 @@ defmodule Spendable.Transaction.Resolver.GetTest do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
 
-    transaction = insert(:transaction, user_id: user.id, category_id: category_id)
+    transaction = insert(:transaction, user: user, category_id: category_id)
 
     query = """
       query {

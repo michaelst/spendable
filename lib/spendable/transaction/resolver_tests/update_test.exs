@@ -8,12 +8,23 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
   test "update transaction", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
-    budget = insert(:budget, user_id: user.id)
-    transaction = insert(:transaction, user_id: user.id)
+    budget = insert(:budget, user: user)
+    transaction = insert(:transaction, user: user)
 
     query = """
       mutation {
-        updateTransaction(id: #{transaction.id}, name: "new name", categoryId: "#{category_id}", budgetId: "#{budget.id}") {
+        updateTransaction(
+          id: #{transaction.id}
+          name: "new name"
+          categoryId: "#{category_id}"
+          budgetId: "#{budget.id}"
+          allocations: [
+            {
+              amount: "100"
+              budgetId: "#{budget.id}"
+            }
+          ]
+        ) {
           id
           name
           budget {
@@ -21,6 +32,12 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
           }
           category {
             id
+          }
+          allocations {
+            amount
+            budget {
+              id
+            }
           }
         }
       }
@@ -42,7 +59,15 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
                  },
                  "category" => %{
                    "id" => "#{category_id}"
-                 }
+                 },
+                 "allocations" => [
+                   %{
+                     "amount" => "100.00",
+                     "budget" => %{
+                       "id" => "#{budget.id}"
+                     }
+                   }
+                 ]
                }
              }
            } == response

@@ -5,7 +5,7 @@ defmodule Spendable.Budgets.Budget.Resolver.DeleteTest do
   test "delete budget", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
 
-    budget = insert(:budget, user_id: user.id)
+    budget = insert(:budget, user: user)
 
     query = """
       mutation {

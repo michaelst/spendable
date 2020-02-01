@@ -8,8 +8,20 @@ defmodule Spendable.Transaction.Resolver.ListTest do
   test "list transactions", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
+    budget = insert(:budget, user: user)
 
-    transaction = insert(:transaction, user_id: user.id, category_id: category_id)
+    expense = insert(:transaction, user: user, budget: budget, category_id: category_id, amount: -20.24)
+
+    deposit =
+      insert(:transaction,
+        user: user,
+        budget: nil,
+        category_id: category_id,
+        amount: 3314.89,
+        date: Date.utc_today()
+      )
+
+    insert(:allocation, user: user, budget: budget, transaction: deposit, amount: 1000)
 
     query = """
       query {
@@ -21,6 +33,15 @@ defmodule Spendable.Transaction.Resolver.ListTest do
           date
           category {
               id
+          }
+          budget {
+            id
+          }
+          allocations {
+            amount
+            budget {
+              id
+            }
           }
         }
       }
@@ -36,10 +57,27 @@ defmodule Spendable.Transaction.Resolver.ListTest do
              "data" => %{
                "transactions" => [
                  %{
-                   "amount" => "#{transaction.amount}",
+                   "allocations" => [
+                     %{
+                       "amount" => "#{Decimal.new("1000.00")}",
+                       "budget" => %{"id" => "#{budget.id}"}
+                     }
+                   ],
+                   "amount" => "#{deposit.amount}",
+                   "budget" => nil,
                    "category" => %{"id" => "#{category_id}"},
-                   "date" => "#{transaction.date}",
-                   "id" => "#{transaction.id}",
+                   "date" => "#{deposit.date}",
+                   "id" => "#{deposit.id}",
+                   "name" => "test",
+                   "note" => "some notes"
+                 },
+                 %{
+                   "allocations" => [],
+                   "amount" => "#{expense.amount}",
+                   "budget" => %{"id" => "#{budget.id}"},
+                   "category" => %{"id" => "#{category_id}"},
+                   "date" => "#{expense.date}",
+                   "id" => "#{expense.id}",
                    "name" => "test",
                    "note" => "some notes"
                  }
