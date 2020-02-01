@@ -5,7 +5,6 @@ defmodule Spendable.Budgets.Budget.Types do
   alias Spendable.Budgets.Budget.Resolver
   alias Spendable.Budgets.Budget
   alias Spendable.Budgets.Allocation
-  alias Spendable.Transaction
   alias Spendable.Repo
 
   object :budget do
@@ -21,11 +20,7 @@ defmodule Spendable.Budgets.Budget.Types do
           from(Allocation, where: [budget_id: ^budget.id])
           |> Repo.aggregate(:sum, :amount)
 
-        spent =
-          from(Transaction, where: [budget_id: ^budget.id])
-          |> Repo.aggregate(:sum, :amount)
-
-        {:ok, Decimal.add(allocated || Decimal.new("0"), spent || Decimal.new("0")) |> Decimal.round(2)}
+        {:ok, allocated || Decimal.new("0.00")}
       end)
     end
   end

@@ -7,9 +7,9 @@ defmodule Spendable.Budgets.Budget.Resolver.ListTest do
 
     budget = insert(:budget, user: user)
     insert(:allocation, user: user, budget: budget, amount: 100)
+    insert(:allocation, user: user, budget: budget, amount: -25.55)
     goal = insert(:goal, user: user)
     insert(:allocation, user: user, budget: goal, amount: 54.55)
-    insert(:transaction, user: user, budget: budget, amount: -25.55)
 
     query = """
       query {

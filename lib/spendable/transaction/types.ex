@@ -14,7 +14,6 @@ defmodule Spendable.Transaction.Types do
 
     field :allocations, list_of(:allocation), resolve: dataloader(Spendable)
     field :bank_transaction, :bank_transaction, resolve: dataloader(Spendable)
-    field :budget, :budget, resolve: dataloader(Spendable)
     field :category, :category, resolve: dataloader(Spendable)
   end
 
@@ -38,7 +37,6 @@ defmodule Spendable.Transaction.Types do
       middleware(Spendable.Middleware.LoadModel, module: Transaction)
       arg(:id, non_null(:id))
       arg(:amount, :string)
-      arg(:budget_id, :id)
       arg(:category_id, :id)
       arg(:date, :string)
       arg(:name, :string)

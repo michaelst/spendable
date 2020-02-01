@@ -10,18 +10,18 @@ defmodule Spendable.Transaction.Resolver.ListTest do
     category_id = Repo.get_by!(Category, external_id: "22006001").id
     budget = insert(:budget, user: user)
 
-    expense = insert(:transaction, user: user, budget: budget, category_id: category_id, amount: -20.24)
+    expense = insert(:transaction, user: user, category_id: category_id, amount: -20.24)
+    insert(:allocation, user: user, budget: budget, transaction: expense, amount: -20.24)
 
     deposit =
       insert(:transaction,
         user: user,
-        budget: nil,
         category_id: category_id,
         amount: 3314.89,
         date: Date.utc_today()
       )
 
-    insert(:allocation, user: user, budget: budget, transaction: deposit, amount: 1000)
+    insert(:allocation, user: user, budget: budget, transaction: deposit, amount: 3314.89)
 
     query = """
       query {
@@ -33,9 +33,6 @@ defmodule Spendable.Transaction.Resolver.ListTest do
           date
           category {
               id
-          }
-          budget {
-            id
           }
           allocations {
             amount
@@ -59,12 +56,11 @@ defmodule Spendable.Transaction.Resolver.ListTest do
                  %{
                    "allocations" => [
                      %{
-                       "amount" => "#{Decimal.new("1000.00")}",
+                       "amount" => "#{Decimal.new("3314.89")}",
                        "budget" => %{"id" => "#{budget.id}"}
                      }
                    ],
                    "amount" => "#{deposit.amount}",
-                   "budget" => nil,
                    "category" => %{"id" => "#{category_id}"},
                    "date" => "#{deposit.date}",
                    "id" => "#{deposit.id}",
@@ -72,9 +68,13 @@ defmodule Spendable.Transaction.Resolver.ListTest do
                    "note" => "some notes"
                  },
                  %{
-                   "allocations" => [],
+                   "allocations" => [
+                     %{
+                       "amount" => "#{Decimal.new("-20.24")}",
+                       "budget" => %{"id" => "#{budget.id}"}
+                     }
+                   ],
                    "amount" => "#{expense.amount}",
-                   "budget" => %{"id" => "#{budget.id}"},
                    "category" => %{"id" => "#{category_id}"},
                    "date" => "#{expense.date}",
                    "id" => "#{expense.id}",
