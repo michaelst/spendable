@@ -4,7 +4,6 @@ defmodule Spendable.Budgets.AllocationTemplateLine do
 
   schema "budget_allocation_template_lines" do
     field :amount, :decimal
-    field :priority, :integer
 
     belongs_to :budget, Spendable.Budgets.Budget
     belongs_to :allocation_template, Spendable.Budgets.AllocationTemplate, foreign_key: :budget_allocation_template_id
@@ -15,6 +14,6 @@ defmodule Spendable.Budgets.AllocationTemplateLine do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, __schema__(:fields) -- [:id])
-    |> validate_required([:budget_id, :amount, :priority])
+    |> validate_required([:budget_id, :amount])
   end
 end

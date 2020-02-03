@@ -19,11 +19,9 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.UpdateTest do
               id: "#{line.id}"
               amount: "10"
               budget_id: "#{budget.id}"
-              priority: 0
             }
             {
               amount: "12"
-              priority: 1
               budget_id: "#{budget.id}"
             }
           ]
@@ -32,7 +30,6 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.UpdateTest do
           name
           lines {
             amount
-            priority
             budget {
               id
               name
@@ -56,13 +53,11 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.UpdateTest do
                  "lines" => [
                    %{
                      "amount" => "10.00",
-                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"},
-                     "priority" => 0
+                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"}
                    },
                    %{
                      "amount" => "12.00",
-                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"},
-                     "priority" => 1
+                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"}
                    }
                  ]
                }

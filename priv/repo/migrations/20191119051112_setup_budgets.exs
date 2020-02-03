@@ -19,7 +19,6 @@ defmodule Spendable.Repo.Migrations.SetupBudgets do
       add(:budget_id, references(:budgets), null: false)
       add(:budget_allocation_template_id, references(:budget_allocation_templates), null: false)
       add(:amount, :decimal, precision: 17, scale: 2, null: false)
-      add(:priority, :smallint, null: false)
       timestamps()
     end
   end

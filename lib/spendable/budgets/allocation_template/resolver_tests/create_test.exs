@@ -15,14 +15,12 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.CreateTest do
             {
               amount: "5"
               budgetId: "#{budget.id}"
-              priority: 0
             }
           ]
         ) {
           name
           lines {
             amount
-            priority
             budget {
               id
               name
@@ -45,8 +43,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.CreateTest do
                  "lines" => [
                    %{
                      "amount" => "5.00",
-                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"},
-                     "priority" => 0
+                     "budget" => %{"id" => "#{budget.id}", "name" => "Food"}
                    }
                  ]
                }

@@ -10,6 +10,7 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
     category_id = Repo.get_by!(Category, external_id: "22006001").id
     budget = insert(:budget, user: user)
     transaction = insert(:transaction, user: user)
+    allocation = insert(:allocation, transaction: transaction, budget: budget, amount: 25.24)
 
     query = """
       mutation {
@@ -18,6 +19,11 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
           name: "new name"
           categoryId: "#{category_id}"
           allocations: [
+            {
+              id: #{allocation.id}
+              amount: "26.25"
+              budgetId: "#{budget.id}"
+            }
             {
               amount: "100"
               budgetId: "#{budget.id}"
@@ -54,6 +60,12 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
                    "id" => "#{category_id}"
                  },
                  "allocations" => [
+                   %{
+                     "amount" => "26.25",
+                     "budget" => %{
+                       "id" => "#{budget.id}"
+                     }
+                   },
                    %{
                      "amount" => "100.00",
                      "budget" => %{
