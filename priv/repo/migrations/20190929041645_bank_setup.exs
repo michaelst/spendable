@@ -4,7 +4,7 @@ defmodule Spendable.Repo.Migrations.BankSetup do
   def change do
     create table(:bank_members) do
       add(:external_id, :string, null: false)
-      add(:user_id, references(:users), null: false)
+      add(:user_id, references(:users, on_delete: :delete_all), null: false)
       add(:institution_id, :string)
       add(:logo, :text)
       add(:name, :string, null: false)
@@ -19,8 +19,8 @@ defmodule Spendable.Repo.Migrations.BankSetup do
 
     create table(:bank_accounts) do
       add(:external_id, :string, null: false)
-      add(:user_id, references(:users), null: false)
-      add(:bank_member_id, references(:bank_members), null: false)
+      add(:user_id, references(:users, on_delete: :delete_all), null: false)
+      add(:bank_member_id, references(:bank_members, on_delete: :delete_all), null: false)
       add(:available_balance, :decimal, precision: 17, scale: 2)
       add(:balance, :decimal, precision: 17, scale: 2)
       add(:name, :string, null: false)
@@ -45,8 +45,8 @@ defmodule Spendable.Repo.Migrations.BankSetup do
 
     create table(:bank_transactions) do
       add(:external_id, :string, null: false)
-      add(:user_id, references(:users), null: false)
-      add(:bank_account_id, references(:bank_accounts), null: false)
+      add(:user_id, references(:users, on_delete: :delete_all), null: false)
+      add(:bank_account_id, references(:bank_accounts, on_delete: :delete_all), null: false)
       add(:category_id, references(:categories))
       add(:amount, :decimal, precision: 17, scale: 2, null: false)
       add(:date, :date, null: false)
@@ -60,8 +60,8 @@ defmodule Spendable.Repo.Migrations.BankSetup do
     create unique_index(:bank_transactions, [:bank_account_id, :external_id])
 
     create table(:transactions) do
-      add(:user_id, references(:users), null: false)
-      add(:bank_transaction_id, references(:bank_transactions))
+      add(:user_id, references(:users, on_delete: :delete_all), null: false)
+      add(:bank_transaction_id, references(:bank_transactions, on_delete: :nilify_all))
       add(:category_id, references(:categories))
       add(:amount, :decimal, precision: 17, scale: 2, null: false)
       add(:date, :date, null: false)

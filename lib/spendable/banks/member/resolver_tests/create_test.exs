@@ -38,7 +38,11 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
   end
 
   test "create member from plaid public token", %{conn: conn} do
-    {_user, token} = Spendable.TestUtils.create_user()
+    {user, token} = Spendable.TestUtils.create_user()
+
+    user
+    |> Spendable.User.changeset(%{bank_limit: 1})
+    |> Spendable.Repo.update()
 
     query = """
       mutation {

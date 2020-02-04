@@ -20,4 +20,8 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver do
     |> AllocationTemplate.changeset(params)
     |> Repo.update()
   end
+
+  def delete(_params, %{context: %{model: model}}) do
+    Repo.delete(model)
+  end
 end

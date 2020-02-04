@@ -7,6 +7,7 @@ defmodule Spendable.Repo.Migrations.CreateUsersTable do
       add(:last_name, :string)
       add(:email, :citext, null: false)
       add(:password, :string, null: false)
+      add(:bank_limit, :smallint, null: false, default: 0)
 
       timestamps()
     end

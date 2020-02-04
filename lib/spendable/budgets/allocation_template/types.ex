@@ -34,5 +34,14 @@ defmodule Spendable.Budgets.AllocationTemplate.Types do
       arg(:lines, list_of(:allocation_template_line_input_object))
       resolve(&Resolver.update/2)
     end
+
+
+
+    field :delete_allocation_template, :allocation_template do
+      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(Spendable.Middleware.LoadModel, module: AllocationTemplate)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.delete/2)
+    end
   end
 end

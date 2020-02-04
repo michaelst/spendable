@@ -1,4 +1,5 @@
 defmodule Spendable.Banks.Member.Resolver do
+  require Logger
   import Ecto.Query, only: [from: 2]
 
   alias Spendable.Banks.Member
@@ -10,21 +11,27 @@ defmodule Spendable.Banks.Member.Resolver do
   end
 
   def create(%{public_token: token}, %{context: %{current_user: user}}) do
-    {:ok, %{body: %{"access_token" => token}}} = Plaid.exchange_public_token(token)
-    # TODO: handle when this next call times out as we need to not lose the token after we exchange it
-    {:ok, %{body: details}} = Plaid.member(token)
+    count = from(Member, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id) |> IO.inspect
 
-    %Member{plaid_token: token}
-    |> Member.changeset(Adapter.format(details, user.id, :member))
-    |> Repo.insert()
-    |> case do
-      {:ok, member} ->
-        {:ok, _} = Exq.enqueue(Exq, "default", Spendable.Jobs.Banks.SyncMember, [member.id])
+    if count < user.bank_limit do
+      {:ok, %{body: %{"access_token" => token}}} = Plaid.exchange_public_token(token)
+      Logger.info("New plaid member token: #{token}")
+      {:ok, %{body: details}} = Plaid.member(token)
 
-        {:ok, member}
+      %Member{plaid_token: token}
+      |> Member.changeset(Adapter.format(details, user.id, :member))
+      |> Repo.insert()
+      |> case do
+        {:ok, member} ->
+          {:ok, _} = Exq.enqueue(Exq, "default", Spendable.Jobs.Banks.SyncMember, [member.id])
 
-      result ->
-        result
+          {:ok, member}
+
+        result ->
+          result
+      end
+    else
+      {:error, "Bank limit reached"}
     end
   end
 end

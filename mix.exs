@@ -72,7 +72,7 @@ defmodule Spendable.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
-      "generate.schema": ["absinthe.schema.json --schema Spendable.Web.Schema"]
+      "gen.schema": ["absinthe.schema.json --schema Spendable.Web.Schema"]
     ]
   end
 end
