@@ -1,23 +1,30 @@
 jobs:
   include:
-    - stage: Build
-      name: Tests
-      language: elixir
-      elixir: '1.9.1'
-      otp_release: '22.0.7'
-      services:
-        - postgresql
-        - redis-server
-      cache:
-        directories:
-          - deps
-          - _build
-      env:
-        - MIX_ENV=test
-      before_script: mix ecto.reset
-      script: mix do compile --warnings-as-errors, coveralls.json
-      after_success: bash <(curl -s https://codecov.io/bash)
-
-    - name: Build
-      language: minimal
-      script: docker build --build-arg SECRET_KEY_BASE --build-arg GUARDIAN_SECRET --build-arg PLAID_CLIENT_ID --build-arg PLAID_SECRET_KEY --build-arg PLAID_PUBLIC_KEY -t us.gcr.io/cloud-57/spendable-api:latest .
+  - stage: Build
+    name: Tests
+    language: elixir
+    elixir: 1.9.1
+    otp_release: 22.0.7
+    services:
+    - postgresql
+    - redis-server
+    cache:
+      directories:
+      - deps
+      - _build
+    env:
+    - MIX_ENV=test
+    before_script: mix ecto.reset
+    script: mix do compile --warnings-as-errors, coveralls.json
+    after_success: bash <(curl -s https://codecov.io/bash)
+  - name: Build
+    language: minimal
+    before_script: cat gcloud.json | docker login -u _json_key --password-stdin https://us.gcr.io
+    script: docker build --build-arg SECRET_KEY_BASE --build-arg GUARDIAN_SECRET --build-arg
+      PLAID_CLIENT_ID --build-arg PLAID_SECRET_KEY --build-arg PLAID_PUBLIC_KEY -t
+      us.gcr.io/cloud-57/spendable-api:latest .
+    after_success: docker push us.gcr.io/cloud-57/spendable-api:latest
+before_install:
+- openssl aes-256-cbc -K $encrypted_b62a425c5f3b_key -iv $encrypted_b62a425c5f3b_iv
+  -in gcloud.json.enc -out gcloud.json
+  -d
