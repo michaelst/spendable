@@ -3,7 +3,7 @@ jobs:
   - stage: Build
     name: Tests
     language: elixir
-    elixir: 1.9.1
+    elixir: 1.10
     otp_release: 22.0.7
     services:
     - postgresql
