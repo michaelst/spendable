@@ -20,6 +20,8 @@ config :spendable, Spendable.Repo,
   hostname: "10.122.112.3",
   pool_size: 10
 
+config :exq, host: "10.128.0.9"
+
 # Do not print debug messages in production
 config :logger, level: :info
 

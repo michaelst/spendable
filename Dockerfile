@@ -15,6 +15,6 @@ RUN mix do local.hex --force, local.rebar --force, deps.get --only prod, compile
 
 FROM alpine:3.9
 WORKDIR /opt/app
-RUN apk update && apk add --no-cache openssl-dev
+RUN apk update && apk add --no-cache openssl-dev ncurses-libs
 COPY --from=builder /workspace/_build/prod/rel/spendable .
 CMD ./bin/spendable start
