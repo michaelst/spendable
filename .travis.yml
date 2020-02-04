@@ -23,8 +23,8 @@ jobs:
     language: minimal
     before_script:
       - if [ ! -d ${HOME}/google-cloud-sdk ]; then
-          curl https://sdk.cloud.google.com > install.sh
-          bash install.sh --disable-prompts
+          curl https://sdk.cloud.google.com > install.sh;
+          bash install.sh --disable-prompts;
         fi
       - cat gcloud-credentials.json | docker login -u _json_key --password-stdin https://us.gcr.io
       - docker pull us.gcr.io/cloud-57/spendable-api:latest
@@ -40,6 +40,7 @@ jobs:
         -t us.gcr.io/cloud-57/spendable-api:latest .
     after_success: docker push us.gcr.io/cloud-57/spendable-api:latest
   - stage: Deploy
+    if: branch = master
     name: Deploy
     before_script:
       - gcloud auth activate-service-account --key-file gcloud-credentials.json
