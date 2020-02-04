@@ -1,4 +1,4 @@
-FROM elixir:1.9.1-alpine AS builder
+FROM elixir:1.10-alpine AS builder
 
 WORKDIR /workspace
 COPY . /workspace
