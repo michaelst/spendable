@@ -12,6 +12,7 @@ jobs:
       directories:
       - deps
       - _build
+      - "$HOME/google-cloud-sdk/"
     env:
     - MIX_ENV=test
     before_script: mix ecto.reset
@@ -21,7 +22,7 @@ jobs:
     if: branch = master
     language: minimal
     before_script:
-      - export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash
+      - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
       - source $HOME/google-cloud-sdk/path.bash.inc
       - gcloud components install beta
       - cat gcloud-credentials.json | docker login -u _json_key --password-stdin https://us.gcr.io
@@ -46,7 +47,7 @@ jobs:
     script:
       - gcloud beta compute instance-groups managed rolling-action start-update spendable-api
         --version template=spendable-api
-        --region=us-central
+        --region=us-central1
         --max-unavailable 0
         --max-surge 2
 before_install:

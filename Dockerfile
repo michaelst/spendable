@@ -32,7 +32,4 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY --from=build /app/_build/prod/rel/spendable ./
-RUN chown -R nobody: /app
-USER nobody
-
 CMD ./bin/spendable start
