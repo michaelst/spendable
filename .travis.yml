@@ -26,6 +26,8 @@ jobs:
           curl https://sdk.cloud.google.com > install.sh;
           bash install.sh --disable-prompts;
         fi
+      - gcloud components install beta
+      - gcloud components update
       - cat gcloud-credentials.json | docker login -u _json_key --password-stdin https://us.gcr.io
       - docker pull us.gcr.io/cloud-57/spendable-api:latest
     script:
@@ -46,7 +48,7 @@ jobs:
       - gcloud auth activate-service-account --key-file gcloud-credentials.json
       - gcloud config set project cloud-57
     script:
-      - gcloud compute instance-groups managed rolling-action start-update spendable-api
+      - gcloud beta compute instance-groups managed rolling-action start-update spendable-api
         --version template=spendable-api
         --region=us-central
         --max-unavailable 0
