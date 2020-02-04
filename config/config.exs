@@ -10,6 +10,12 @@ use Mix.Config
 config :spendable,
   ecto_repos: [Spendable.Repo]
 
+config :spendable, Spendable.Repo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  pool_size: 10
+
 # Configures the endpoint
 config :spendable, Spendable.Web.Endpoint,
   secret_key_base: "NoM/w1aErkEg8aarboi9MDakr7zalCnOmhuuNqZtu2cB5PRdK6lXWD/BeMywMcWO",

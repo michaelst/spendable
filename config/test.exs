@@ -2,10 +2,8 @@ use Mix.Config
 
 # Configure your database
 config :spendable, Spendable.Repo,
-  username: "postgres",
   password: nil,
   database: "spendable_test",
-  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,

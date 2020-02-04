@@ -13,6 +13,13 @@ config :spendable, Spendable.Web.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
   server: true
 
+config :spendable, Spendable.Repo,
+  username: "postgres",
+  password: System.get_env("DB_PASSWORD"),
+  database: "spendable",
+  hostname: "10.122.112.3",
+  pool_size: 10
+
 # Do not print debug messages in production
 config :logger, level: :info
 
