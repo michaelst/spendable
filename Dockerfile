@@ -4,11 +4,12 @@ WORKDIR /workspace
 COPY . /workspace
 
 ENV MIX_ENV=prod
-ARG SECRET_KEY_BASE
+ARG DB_PASSWORD
 ARG GUARDIAN_SECRET
 ARG PLAID_CLIENT_ID
-ARG PLAID_SECRET_KEY
 ARG PLAID_PUBLIC_KEY
+ARG PLAID_SECRET_KEY
+ARG SECRET_KEY_BASE
 
 RUN apk update && apk upgrade --no-cache && apk add --no-cache build-base
 RUN mix do local.hex --force, local.rebar --force, deps.get --only prod, compile, release
