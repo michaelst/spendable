@@ -18,6 +18,7 @@ jobs:
     script: mix do compile --warnings-as-errors, coveralls.json
     after_success: bash <(curl -s https://codecov.io/bash)
   - name: Build
+    if: branch = master
     language: minimal
     before_script: cat gcloud.json | docker login -u _json_key --password-stdin https://us.gcr.io
     script: docker build --build-arg SECRET_KEY_BASE --build-arg GUARDIAN_SECRET --build-arg

@@ -1,13 +1,15 @@
 defmodule Spendable.Web.Router do
   use Spendable.Web, :router
 
-  pipeline :api do
+  pipeline(:api) do
     plug :accepts, ["json"]
     plug Guardian.Plug.Pipeline, module: Spendable.Guardian
     plug Guardian.Plug.VerifyHeader, realm: "Bearer"
     plug Guardian.Plug.LoadResource, allow_blank: true
     plug Spendable.Web.Context
   end
+
+  forward "/_health", HealthCheck
 
   scope "/" do
     pipe_through :api
