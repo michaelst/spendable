@@ -6,7 +6,7 @@ defmodule Plaid do
     ]
     
     middleware =
-      unless Mix.env == :test,
+      unless Application.get_env(:spendable, :env) == :test,
         do: [{Tesla.Middleware.Timeout, timeout: 30_000}] ++ middleware,
         else: middleware        
 
