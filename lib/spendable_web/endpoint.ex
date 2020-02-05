@@ -7,7 +7,7 @@ defmodule Spendable.Web.Endpoint do
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug(Plug.Static,
-    at: "/assets",
+    at: "/",
     from: :spendable,
     gzip: true,
     only: ~w(css fonts images js favicon.ico robots.txt)
