@@ -8,6 +8,7 @@
 use Mix.Config
 
 config :spendable,
+  env: Mix.env(),
   ecto_repos: [Spendable.Repo]
 
 config :spendable, Spendable.Repo,
