@@ -15,13 +15,27 @@ defmodule Spendable.Web.Router do
     plug Spendable.Web.HttpRedirect
   end
 
+    pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   forward "/_health", HealthCheck
 
   scope "/", Spendable.Web.Controllers do
     pipe_through :public
 
     get("/.well-known/apple-app-site-association", WellKnown, :apple_app_site_association)
+  end
+
+  scope "/", Spendable.Web.Controllers do
+    pipe_through :browser
+
     get("/privacy-policy", Site, :privacy_policy)
+    get("/contact-us", Site, :contact_us)
   end
 
   scope "/" do

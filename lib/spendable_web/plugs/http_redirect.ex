@@ -6,8 +6,6 @@ defmodule Spendable.Web.HttpRedirect do
   def init(opts), do: opts
 
   def call(conn, _) do
-    Logger.info(inspect(conn.req_headers))
-
     conn
     |> get_req_header("x-forwarded-proto")
     |> case do
