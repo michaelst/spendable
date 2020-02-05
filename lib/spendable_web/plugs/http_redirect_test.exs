@@ -4,7 +4,7 @@ defmodule Spendable.Web.HttpRedirectTest do
   test "http redirect", %{conn: conn} do
     redirected_to =
     conn
-    |> put_req_header("http-x-forwarded-proto", "http")
+    |> put_req_header("x-forwarded-proto", "http")
     |> get("/graphql")
     |> redirected_to(:moved_permanently)
 
