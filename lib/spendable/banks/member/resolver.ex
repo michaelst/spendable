@@ -11,7 +11,7 @@ defmodule Spendable.Banks.Member.Resolver do
   end
 
   def create(%{public_token: token}, %{context: %{current_user: user}}) do
-    count = from(Member, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id) |> IO.inspect
+    count = from(Member, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
     if count < user.bank_limit do
       {:ok, %{body: %{"access_token" => token}}} = Plaid.exchange_public_token(token)

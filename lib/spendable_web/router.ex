@@ -7,9 +7,21 @@ defmodule Spendable.Web.Router do
     plug Guardian.Plug.VerifyHeader, realm: "Bearer"
     plug Guardian.Plug.LoadResource, allow_blank: true
     plug Spendable.Web.Context
+    plug Spendable.Web.HttpRedirect
+  end
+
+  pipeline(:public) do
+    plug :accepts, ["json"]
+    plug Spendable.Web.HttpRedirect
   end
 
   forward "/_health", HealthCheck
+
+  scope "/", Spendable.Web.Controllers do
+    pipe_through :public
+
+    get("/.well-known/apple-app-site-association", WellKnown, :apple_app_site_association)
+  end
 
   scope "/" do
     pipe_through :api

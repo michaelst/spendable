@@ -18,9 +18,13 @@ config :spendable, Spendable.Repo,
   password: System.get_env("DB_PASSWORD"),
   database: "spendable",
   hostname: "10.122.112.3",
-  pool_size: 10
+  pool_size: 5
 
-config :exq, host: "10.128.0.9"
+config :exq,
+  host: "10.128.0.9",
+  concurrency: 1,
+  scheduler_enable: true,
+  max_retries: 3
 
 # Do not print debug messages in production
 config :logger, level: :info

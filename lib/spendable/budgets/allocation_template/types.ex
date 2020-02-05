@@ -35,8 +35,6 @@ defmodule Spendable.Budgets.AllocationTemplate.Types do
       resolve(&Resolver.update/2)
     end
 
-
-
     field :delete_allocation_template, :allocation_template do
       middleware(Spendable.Middleware.CheckAuthentication)
       middleware(Spendable.Middleware.LoadModel, module: AllocationTemplate)

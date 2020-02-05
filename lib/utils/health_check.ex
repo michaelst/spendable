@@ -13,7 +13,7 @@ defmodule HealthCheck do
 
   import Plug.Conn
 
-  @type options :: [resp_body: String.t]
+  @type options :: [resp_body: String.t()]
 
   @resp_body "ok"
 
@@ -22,7 +22,7 @@ defmodule HealthCheck do
     [resp_body: opts[:resp_body] || @resp_body]
   end
 
-  @spec call(Plug.Conn.t, options) :: Plug.Conn.t
+  @spec call(Plug.Conn.t(), options) :: Plug.Conn.t()
   def call(%Plug.Conn{} = conn, opts) do
     send_resp(conn, 200, opts[:resp_body])
   end

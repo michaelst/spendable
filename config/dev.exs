@@ -1,8 +1,7 @@
 use Mix.Config
 
 # Configure your database
-config :spendable, Spendable.Repo,
-  database: "spendable_dev"
+config :spendable, Spendable.Repo, database: "spendable_dev"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

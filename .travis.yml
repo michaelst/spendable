@@ -22,9 +22,8 @@ jobs:
     if: branch = master
     language: minimal
     before_script:
-      - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+      - if [ ! -d "$HOME/google-cloud-sdk" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
       - source $HOME/google-cloud-sdk/path.bash.inc
-      - gcloud components install beta
       - cat gcloud-credentials.json | docker login -u _json_key --password-stdin https://us.gcr.io
       - docker pull us.gcr.io/cloud-57/spendable-api:latest
     script:
@@ -45,11 +44,10 @@ jobs:
       - gcloud auth activate-service-account --key-file gcloud-credentials.json
       - gcloud config set project cloud-57
     script:
-      - gcloud beta compute instance-groups managed rolling-action start-update spendable-api
-        --version template=spendable-api
+      - gcloud compute instance-groups managed rolling-action replace spendable-api
         --region=us-central1
         --max-unavailable 0
-        --max-surge 2
+        --max-surge 3
 before_install:
 - openssl aes-256-cbc -K $encrypted_b62a425c5f3b_key -iv $encrypted_b62a425c5f3b_iv
   -in gcloud-credentials.json.enc -out gcloud-credentials.json
