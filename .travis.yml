@@ -23,6 +23,7 @@ jobs:
     language: minimal
     before_script:
       - if [ ! -d "$HOME/google-cloud-sdk" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+      - gcloud components update
       - source $HOME/google-cloud-sdk/path.bash.inc
       - cat gcloud-credentials.json | docker login -u _json_key --password-stdin https://us.gcr.io
       - docker pull us.gcr.io/cloud-57/spendable-api:latest
