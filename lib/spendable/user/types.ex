@@ -9,6 +9,7 @@ defmodule Spendable.User.Types do
 
   object :user do
     field :id, :id
+    field :bank_limit, :integer
     field :first_name, :string
     field :last_name, :string
     field :email, :string

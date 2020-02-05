@@ -21,8 +21,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
     query = """
       query {
         currentUser {
-          firstName
-          lastName
+          bankLimit
           spendable
         }
       }
@@ -37,8 +36,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
     assert %{
              "data" => %{
                "currentUser" => %{
-                 "firstName" => "Michael",
-                 "lastName" => "St Clair",
+                 "bankLimit" => 0,
                  "spendable" => "64.45"
                }
              }
