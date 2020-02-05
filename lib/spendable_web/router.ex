@@ -21,6 +21,7 @@ defmodule Spendable.Web.Router do
     pipe_through :public
 
     get("/.well-known/apple-app-site-association", WellKnown, :apple_app_site_association)
+    get("/privacy-policy", Site, :privacy_policy)
   end
 
   scope "/" do
