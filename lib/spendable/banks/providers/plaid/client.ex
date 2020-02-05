@@ -2,9 +2,13 @@ defmodule Plaid do
   def client() do
     middleware = [
       {Tesla.Middleware.BaseUrl, Application.get_env(:spendable, Plaid)[:base_url]},
-      {Tesla.Middleware.Timeout, timeout: 30_000},
       Tesla.Middleware.JSON
     ]
+    
+    middleware =
+      unless Mix.env == :test,
+        do: [{Tesla.Middleware.Timeout, timeout: 30_000}] ++ middleware,
+        else: middleware        
 
     Tesla.client(middleware)
   end
