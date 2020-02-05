@@ -42,6 +42,7 @@ jobs:
     if: branch = master
     name: Deploy
     before_script:
+      - source $HOME/google-cloud-sdk/path.bash.inc
       - gcloud auth activate-service-account --key-file gcloud-credentials.json
       - gcloud config set project cloud-57
     script:
