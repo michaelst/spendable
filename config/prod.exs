@@ -34,7 +34,7 @@ config :spendable, Spendable.Guardian,
   secret_key: System.get_env("GUARDIAN_SECRET")
 
 config :spendable, Plaid,
-  base_url: "https://production.plaid.com",
+  base_url: "https://development.plaid.com",
   client_id: System.get_env("PLAID_CLIENT_ID"),
   secret_key: System.get_env("PLAID_SECRET_KEY"),
   public_key: System.get_env("PLAID_PUBLIC_KEY")
