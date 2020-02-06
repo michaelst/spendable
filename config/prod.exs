@@ -5,8 +5,6 @@ config :spendable, Spendable.Web.Endpoint,
   debug_errors: false,
   http: [
     port: 80,
-    # need to set keepalive timeout for Google Load Balancer
-    timeout: 800_000,
     protocol_options: [max_keepalive: :infinity],
     compress: true
   ],

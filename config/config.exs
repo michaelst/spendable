@@ -42,7 +42,7 @@ config :spendable, Spendable.Guardian,
   issuer: "Spendable",
   secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"
 
-config :tesla, :adapter, Tesla.Adapter.Mint
+config :tesla, Tesla.Adapter.Mint, timeout: 30000
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
