@@ -1,121 +1,61 @@
-<!doctype html>
-<html class="no-js" lang="">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Spendable - Privacy policy</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
-  <link rel="shortcut icon" href="images/favicon.ico">
-
-  <!-- stylesheets -->
-  <link rel="stylesheet" type="text/css" href="css/theme.min.css" />
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-transparent" role="navigation">
-    <div class="container no-override">
-      <a class="navbar-brand" href="">
-        Spendable
-      </a>
-      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </nav>
-
-  <div class="agency-alt-hero">
-    <div class="container">
-      <h3 class="customFadeInUp">
-        Privacy policy.
-      </h3>
-    </div>
+<div class="agency-alt-hero">
+  <div class="container">
+    <h3 class="customFadeInUp">
+      Privacy policy.
+    </h3>
   </div>
+</div>
 
-  <div class="career-post-content">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <section>
-            <p>
-              Your privacy is very important to us. Accordingly, we have developed this Policy in order for you to understand how
-              we collect, use, communicate and disclose and make use of personal information. The following outlines our privacy
-              policy.
-            </p>
-          </section>
-          <section>
-            <ul>
-              <li>
-                Before or at the time of collecting personal information, we will identify the purposes for which information is
-                being collected.
-              </li>
-              <li>
-                We will collect and use of personal information solely with the objective of fulfilling those purposes specified
-                by us and for other compatible purposes, unless we obtain the consent of the individual concerned or as required
-                by law.
-              </li>
-              <li>
-                We will only retain personal information as long as necessary for the fulfillment of those purposes.
-              </li>
-              <li>
-                We will collect personal information by lawful and fair means and, where appropriate, with the knowledge or
-                consent of the individual concerned.
-              </li>
-              <li>
-                Personal data should be relevant to the purposes for which it is to be used, and, to the extent necessary for
-                those purposes, should be accurate, complete, and up-to-date.
-              </li>
-              <li>
-                We will protect personal information by reasonable security safeguards against loss or theft, as well as
-                unauthorized access, disclosure, copying, use or modification.
-              </li>
-              <li>
-                We will make readily available to customers information about our policies and practices relating to the
-                management of personal information.
-              </li>
-            </ul>
-          </section>
-          <section>
-            <p>
-              We are committed to conducting our business in accordance with these principles in order to ensure that the
-              confidentiality of personal information is protected and maintained.
-            </p>
-          </section>
-        </div>
+<div class="career-post-content">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <section>
+          <p>
+            Your privacy is very important to us. Accordingly, we have developed this Policy in order for you to understand how
+            we collect, use, communicate and disclose and make use of personal information. The following outlines our privacy
+            policy.
+          </p>
+        </section>
+        <section>
+          <ul>
+            <li>
+              Before or at the time of collecting personal information, we will identify the purposes for which information is
+              being collected.
+            </li>
+            <li>
+              We will collect and use of personal information solely with the objective of fulfilling those purposes specified
+              by us and for other compatible purposes, unless we obtain the consent of the individual concerned or as required
+              by law.
+            </li>
+            <li>
+              We will only retain personal information as long as necessary for the fulfillment of those purposes.
+            </li>
+            <li>
+              We will collect personal information by lawful and fair means and, where appropriate, with the knowledge or
+              consent of the individual concerned.
+            </li>
+            <li>
+              Personal data should be relevant to the purposes for which it is to be used, and, to the extent necessary for
+              those purposes, should be accurate, complete, and up-to-date.
+            </li>
+            <li>
+              We will protect personal information by reasonable security safeguards against loss or theft, as well as
+              unauthorized access, disclosure, copying, use or modification.
+            </li>
+            <li>
+              We will make readily available to customers information about our policies and practices relating to the
+              management of personal information.
+            </li>
+          </ul>
+        </section>
+        <section>
+          <p>
+            We are committed to conducting our business in accordance with these principles in order to ensure that the
+            confidentiality of personal information is protected and maintained.
+          </p>
+        </section>
       </div>
     </div>
   </div>
-
-  <div class="agency-footer mt-0">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <h4>About</h4>
-          <a href="/privacy-policy" class="legal">Privacy policy</a>
-        </div>
-        <div class="col-md-4">
-          <h4>Contact</h4>
-          <p>
-            (801) 981-9950‬ <br>
-            help@spendable.dev
-          </p>
-        </div>
-        <div class="col-md-4">
-          <h4>Social</h4>
-          <p>
-            <a href="https://github.com/michaelst/spendable-api" class="social">
-              <i class="fa fa-github"></i>
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+</div>

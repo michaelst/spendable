@@ -1,0 +1,59 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Spendable - Contact us</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- stylesheets -->
+  <link rel="stylesheet" type="text/css" href="css/theme.min.css" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-transparent" role="navigation">
+    <div class="container no-override">
+      <a class="navbar-brand" href="">
+        Spendable
+      </a>
+      <button class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <%= render(@view_module, @view_template, assigns) %>
+
+  <div class="agency-footer mt-0">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h4>About</h4>
+          <a href="/contact-us" class="legal">Contact us</a>
+          <a href="/privacy-policy" class="legal">Privacy policy</a>
+        </div>
+        <div class="col-md-4">
+          <h4>Contact</h4>
+          <p>
+            (801) 981-9950‬ <br>
+            help@spendable.dev
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h4>Social</h4>
+          <p>
+            <a href="https://github.com/michaelst/spendable-api" class="social">
+              <i class="fa fa-github"></i>
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

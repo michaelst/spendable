@@ -8,6 +8,7 @@ defmodule Spendable.Web.Router do
     plug Guardian.Plug.LoadResource, allow_blank: true
     plug Spendable.Web.Context
     plug Spendable.Web.HttpRedirect
+    plug :put_secure_browser_headers
   end
 
   pipeline(:public) do
@@ -15,7 +16,7 @@ defmodule Spendable.Web.Router do
     plug Spendable.Web.HttpRedirect
   end
 
-    pipeline :browser do
+  pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
@@ -34,6 +35,7 @@ defmodule Spendable.Web.Router do
   scope "/", Spendable.Web.Controllers do
     pipe_through :browser
 
+    get("/", Site, :index)
     get("/privacy-policy", Site, :privacy_policy)
     get("/contact-us", Site, :contact_us)
   end

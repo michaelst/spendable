@@ -1,0 +1,49 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Spendable - Coming soon</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- stylesheets -->
+  <link rel="stylesheet" type="text/css" href="css/theme.min.css" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+<body class="coming-background">
+  <div class="left-side">
+    <section style="width:40%">
+      <img src="images/logo.png" style="border-radius: 22.37%" height="100px" />
+      <p>
+        Budgeting made simple.
+      </p>
+    </section>
+  </div>
+
+  <div class="right-side">
+    <section>
+      <%= if @position do %>
+        <p>
+          You are position <%= @position %> on the waitlist!
+        </p>
+      <% else %>
+        <p>
+          Join our waitlist and stay updated!
+        </p>
+
+        <form  onsubmit="window.location = '?email=' + email.value; return false;">
+          <input type="text" id="email" placeholder="email" />
+          <input type="submit" value="Notify me" />
+        </form>
+      <% end %>
+    </section>
+  </div>
+
+  <img src="images/devices/iPhone 11 Pro.png" class="device" width="400px" />
+</body>
+</html>

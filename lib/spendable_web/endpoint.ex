@@ -10,7 +10,20 @@ defmodule Spendable.Web.Endpoint do
     at: "/",
     from: :spendable,
     gzip: true,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(
+      css
+      fonts
+      images
+      js
+      favicon.ico
+      favicon-16x16.png
+      favicon-32x32.png
+      android-chrome-192x192.png
+      android-chrome-512x512.png
+      apple-touch-icon.png
+      robots.txt
+      site.webmanifest
+    )
   )
 
   # Code reloading can be explicitly enabled under the
