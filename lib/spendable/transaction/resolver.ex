@@ -4,8 +4,15 @@ defmodule Spendable.Transaction.Resolver do
   alias Spendable.Transaction
   alias Spendable.Repo
 
-  def list(_args, %{context: %{current_user: user}}) do
-    {:ok, from(Transaction, where: [user_id: ^user.id], order_by: [desc: :date, desc: :id], limit: 100) |> Repo.all()}
+  def list(args, %{context: %{current_user: user}}) do
+    {:ok,
+     from(Transaction,
+       where: [user_id: ^user.id],
+       order_by: [desc: :date, desc: :id],
+       limit: 100,
+       offset: ^(args[:offset] || 0)
+     )
+     |> Repo.all()}
   end
 
   def get(_args, %{context: %{model: model}}), do: {:ok, model}
