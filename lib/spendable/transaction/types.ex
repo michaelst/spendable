@@ -20,7 +20,7 @@ defmodule Spendable.Transaction.Types do
   object :transaction_queries do
     field :transactions, list_of(:transaction) do
       middleware(Spendable.Middleware.CheckAuthentication)
-      arg(:offset, non_null(:integer))
+      arg(:offset, :integer)
       resolve(&Resolver.list/2)
     end
 
