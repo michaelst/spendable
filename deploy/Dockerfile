@@ -22,7 +22,7 @@ RUN mix deps.get
 RUN mix deps.compile
 
 COPY lib lib
-COPY priv/static priv/static
+COPY priv priv
 RUN mix compile
 RUN mix release
 
