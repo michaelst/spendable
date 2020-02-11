@@ -18,6 +18,16 @@ config :spendable, Spendable.Repo,
   hostname: "10.122.112.3",
   pool_size: 5
 
+config :sentry,
+  dsn: "https://299a9efbc76c4c3084085c9de461aeb9@sentry.io/2426632",
+  environment_name: :prod,
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  tags: %{
+    env: "production"
+  },
+  included_environments: [:prod]
+
 config :exq,
   host: "10.128.0.9",
   concurrency: 1,

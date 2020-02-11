@@ -58,6 +58,7 @@ defmodule Spendable.MixProject do
       {:phoenix, "~> 1.4.6"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
+      {:sentry, "~> 7.0"},
       {:tesla, "~> 1.3.0"}
     ]
   end
