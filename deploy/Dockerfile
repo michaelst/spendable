@@ -34,4 +34,5 @@ WORKDIR /app
 
 COPY --from=build /app/_build/prod/rel/spendable ./
 COPY deploy/entrypoint.sh .
+RUN chmod +x ./entrypoint.sh
 CMD ["./entrypoint.sh"]
