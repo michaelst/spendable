@@ -4,7 +4,7 @@ defmodule Spendable.Repo.Migrations.CleanupUnsuedFields do
   def change do
     alter table(:users) do
       remove(:first_name)
-      remove(:last_nae)
+      remove(:last_name)
     end
 
     alter table(:bank_transactions) do
@@ -12,7 +12,7 @@ defmodule Spendable.Repo.Migrations.CleanupUnsuedFields do
     end
 
     alter table(:budgets) do
-      add(:adjustment, :decimal, precision: 17, scale: 2, null: false)
+      add(:adjustment, :decimal, precision: 17, scale: 2, null: false, default: 0)
     end
   end
 end
