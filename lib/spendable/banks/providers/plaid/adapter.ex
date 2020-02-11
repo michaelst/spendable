@@ -46,7 +46,6 @@ defmodule Spendable.Banks.Providers.Plaid.Adapter do
       amount: details["amount"] * -1,
       date: details["date"],
       external_id: details["transaction_id"],
-      location: details["location"],
       name: details["name"],
       pending: details["pending"]
     }

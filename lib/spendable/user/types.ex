@@ -10,8 +10,6 @@ defmodule Spendable.User.Types do
   object :user do
     field :id, :id
     field :bank_limit, :integer
-    field :first_name, :string
-    field :last_name, :string
     field :email, :string
     field :token, :string
 
@@ -54,18 +52,14 @@ defmodule Spendable.User.Types do
 
   object :user_mutations do
     field :create_user, :user do
-      arg(:first_name, :string)
-      arg(:last_name, :string)
-      arg(:email, :string)
-      arg(:password, :string)
+      arg(:email, non_null(:string))
+      arg(:password, non_null(:string))
       resolve(&Resolver.create/2)
     end
 
     field :update_user, :user do
       middleware(Spendable.Middleware.CheckAuthentication)
-      arg(:first_name, :string)
-      arg(:last_name, :string)
-      arg(:email, :string)
+      arg(:email, non_null(:string))
       arg(:password, :string)
       resolve(&Resolver.update/2)
     end

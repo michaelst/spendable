@@ -281,16 +281,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
           category_id: "22006001",
           date: "2019-10-01",
           iso_currency_code: "USD",
-          location: %{
-            address: nil,
-            city: nil,
-            country: nil,
-            lat: nil,
-            lon: nil,
-            postal_code: nil,
-            region: nil,
-            store_number: nil
-          },
           name: "Uber 072515 SF**POOL**",
           payment_meta: %{
             by_order_of: nil,
@@ -320,16 +310,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
           category_id: "22006001",
           date: "2019-09-18",
           iso_currency_code: "USD",
-          location: %{
-            address: nil,
-            city: nil,
-            country: nil,
-            lat: nil,
-            lon: nil,
-            postal_code: nil,
-            region: nil,
-            store_number: nil
-          },
           name: "Uber 063015 SF**POOL**",
           payment_meta: %{
             by_order_of: nil,
@@ -358,16 +338,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
           category_id: "22001000",
           date: "2019-09-16",
           iso_currency_code: "USD",
-          location: %{
-            address: nil,
-            city: nil,
-            country: nil,
-            lat: nil,
-            lon: nil,
-            postal_code: nil,
-            region: nil,
-            store_number: nil
-          },
           name: "United Airlines",
           payment_meta: %{
             by_order_of: nil,
@@ -435,16 +405,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
           category_id: "13005043",
           date: "2019-09-15",
           iso_currency_code: "USD",
-          location: %{
-            address: nil,
-            city: nil,
-            country: nil,
-            lat: nil,
-            lon: nil,
-            postal_code: nil,
-            region: nil,
-            store_number: nil
-          },
           name: "Starbucks",
           payment_meta: %{
             by_order_of: nil,
@@ -473,16 +433,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
           category_id: "13005000",
           date: "2019-09-14",
           iso_currency_code: "USD",
-          location: %{
-            address: nil,
-            city: nil,
-            country: nil,
-            lat: nil,
-            lon: nil,
-            postal_code: nil,
-            region: nil,
-            store_number: nil
-          },
           name: "SparkFun",
           payment_meta: %{
             by_order_of: nil,
@@ -512,16 +462,6 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
           category_id: "22006001",
           date: "2019-09-01",
           iso_currency_code: "USD",
-          location: %{
-            address: nil,
-            city: nil,
-            country: nil,
-            lat: nil,
-            lon: nil,
-            postal_code: nil,
-            region: nil,
-            store_number: nil
-          },
           name: "Uber 072515 SF**POOL**",
           payment_meta: %{
             by_order_of: nil,

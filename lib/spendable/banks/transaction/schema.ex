@@ -6,7 +6,6 @@ defmodule Spendable.Banks.Transaction do
     field :amount, :decimal
     field :date, :date
     field :external_id, :string
-    field :location, :map
     field :name, :string
     field :pending, :boolean
 

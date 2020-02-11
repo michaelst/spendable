@@ -7,11 +7,9 @@ defmodule Spendable.User.Resolver.UpdateTest do
     query = """
       mutation {
         updateUser(
-          firstName: "Michael"
-          lastName: "St Clair"
+          email: "something@example.com"
         ) {
-          firstName
-          lastName
+          email
         }
       }
     """
@@ -25,8 +23,7 @@ defmodule Spendable.User.Resolver.UpdateTest do
     assert %{
              "data" => %{
                "updateUser" => %{
-                 "firstName" => "Michael",
-                 "lastName" => "St Clair"
+                 "email" => "something@example.com"
                }
              }
            } = response
@@ -36,11 +33,9 @@ defmodule Spendable.User.Resolver.UpdateTest do
     query = """
       mutation {
         updateUser(
-          firstName: "Michael"
-          lastName: "St Clair"
+          email: "something@example.com"
         ) {
-          firstName
-          lastName
+          email
         }
       }
     """

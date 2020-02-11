@@ -5,12 +5,12 @@ defmodule Spendable.User.Resolver.CreateTest do
     query = """
       mutation {
         createUser(
-          firstName: "Michael",
-          lastName: "St Clair",
           email: "michaelst57@gmail.com",
           password: "password"
         ) {
-          id, firstName, lastName, email, token
+          id
+          email
+          token
         }
       }
     """
@@ -24,9 +24,7 @@ defmodule Spendable.User.Resolver.CreateTest do
              "data" => %{
                "createUser" => %{
                  "email" => "michaelst57@gmail.com",
-                 "firstName" => "Michael",
                  "id" => _,
-                 "lastName" => "St Clair",
                  "token" => _
                }
              }
@@ -37,10 +35,12 @@ defmodule Spendable.User.Resolver.CreateTest do
     query = """
       mutation {
         createUser(
-          firstName: "Michael",
-          last_name: "St Clair",
+          email: null
+          password: null
         ) {
-          id, firstName, lastName, email, token
+          id
+          email
+          token
         }
       }
     """
@@ -53,17 +53,14 @@ defmodule Spendable.User.Resolver.CreateTest do
     assert response == %{
              "errors" => [
                %{
-                 "locations" => [%{"column" => 5, "line" => 2}],
-                 "message" => "email: can't be blank",
-                 "path" => ["createUser"]
+                 "locations" => [%{"column" => 7, "line" => 3}],
+                 "message" => "Argument \"email\" has invalid value null."
                },
                %{
-                 "locations" => [%{"column" => 5, "line" => 2}],
-                 "message" => "password: can't be blank",
-                 "path" => ["createUser"]
+                 "locations" => [%{"column" => 7, "line" => 4}],
+                 "message" => "Argument \"password\" has invalid value null."
                }
-             ],
-             "data" => %{"createUser" => nil}
+             ]
            }
   end
 
@@ -74,7 +71,9 @@ defmodule Spendable.User.Resolver.CreateTest do
           email: "michaelst57@gmail.com",
           password: "password"
         ) {
-          id, firstName, lastName, email, token
+          id
+          email
+          token
         }
       }
     """

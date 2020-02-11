@@ -4,8 +4,6 @@ defmodule Spendable.User do
 
   schema "users" do
     field :bank_limit, :integer
-    field :first_name, :string
-    field :last_name, :string
     field :email, :string
     field :password, :string
 
@@ -15,7 +13,7 @@ defmodule Spendable.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name, :email, :password, :bank_limit])
+    |> cast(attrs, [:email, :password, :bank_limit])
     |> validate_required([:email, :password])
     |> hash_password()
     |> unique_constraint(:email, name: :users_email_index)

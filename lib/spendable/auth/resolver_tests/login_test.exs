@@ -13,7 +13,9 @@ defmodule Spendable.User.Resolver.LoginTest do
           email: "#{email}",
           password: "password"
         ) {
-          id, firstName, lastName, email, token
+          id
+          email
+          token
         }
       }
     """
@@ -27,9 +29,7 @@ defmodule Spendable.User.Resolver.LoginTest do
              "data" => %{
                "login" => %{
                  "email" => ^email,
-                 "firstName" => nil,
                  "id" => _,
-                 "lastName" => nil,
                  "token" => _
                }
              }
@@ -47,7 +47,9 @@ defmodule Spendable.User.Resolver.LoginTest do
           email: "#{email}",
           password: "password1"
         ) {
-          id, firstName, lastName, email, token
+          id
+          email
+          token
         }
       }
     """

@@ -11,13 +11,6 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
     budget = insert(:budget, user: user)
     insert(:allocation, user: user, budget: budget, amount: 10)
 
-    user
-    |> Spendable.User.changeset(%{
-      first_name: "Michael",
-      last_name: "St Clair"
-    })
-    |> Spendable.Repo.update!()
-
     query = """
       query {
         currentUser {
