@@ -40,7 +40,7 @@ defmodule Spendable.MixProject do
       {:absinthe, "~> 1.5.0-rc.2", override: true},
       {:bcrypt_elixir, "~> 2.0"},
       {:castore, "~> 0.1.0"},
-      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.2.2", only: [:dev, :test], runtime: false},
       {:dataloader, "~> 1.0.0"},
       {:ecto_sql, "~> 3.0"},
       {:ex_machina, "~> 2.3", only: :test},
