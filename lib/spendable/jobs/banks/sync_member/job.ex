@@ -1,9 +1,9 @@
 defmodule Spendable.Jobs.Banks.SyncMember do
-  alias Spendable.Banks.Member
   alias Spendable.Banks.Account
-  alias Spendable.Repo
+  alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
   alias Spendable.Banks.Transaction, as: BankTransaction
+  alias Spendable.Repo
   alias Spendable.Transaction
 
   def perform(member_id) do

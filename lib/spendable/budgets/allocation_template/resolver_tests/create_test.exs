@@ -8,26 +8,26 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.CreateTest do
     budget = insert(:budget, user: user)
 
     query = """
-      mutation {
-        createAllocationTemplate(
-          name: "test budget template"
-          lines: [
-            {
-              amount: "5"
-              budgetId: "#{budget.id}"
-            }
-          ]
-        ) {
-          name
-          lines {
-            amount
-            budget {
-              id
-              name
-            }
+    mutation {
+      createAllocationTemplate(
+        name: "test budget template"
+        lines: [
+          {
+            amount: "5"
+            budgetId: "#{budget.id}"
+          }
+        ]
+      ) {
+        name
+        lines {
+          amount
+          budget {
+            id
+            name
           }
         }
       }
+    }
     """
 
     response =

@@ -8,11 +8,11 @@ defmodule Spendable.Budgets.Budget.Resolver.DeleteTest do
     budget = insert(:budget, user: user)
 
     query = """
-      mutation {
-        deleteBudget(id: #{budget.id}) {
-          id
-        }
+    mutation {
+      deleteBudget(id: #{budget.id}) {
+        id
       }
+    }
     """
 
     response =

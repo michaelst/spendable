@@ -1,7 +1,7 @@
 defmodule Spendable.User.Resolver do
-  alias Spendable.User
-  alias Spendable.Repo
   alias Spendable.Guardian
+  alias Spendable.Repo
+  alias Spendable.User
 
   def current_user(_params, %{context: %{current_user: user}}) do
     {:ok, user}

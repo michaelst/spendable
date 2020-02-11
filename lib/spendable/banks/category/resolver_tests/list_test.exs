@@ -1,8 +1,8 @@
 defmodule Spendable.Banks.Category.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
 
-  alias Spendable.Banks.Member
   alias Spendable.Banks.Account
+  alias Spendable.Banks.Member
   alias Spendable.Repo
 
   test "list categories", %{conn: conn} do

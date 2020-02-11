@@ -1,8 +1,8 @@
 defmodule Spendable.Middleware.LoadModelTest do
   use Spendable.Web.ConnCase, async: true
 
-  alias Spendable.Banks.Member
   alias Spendable.Banks.Account
+  alias Spendable.Banks.Member
   alias Spendable.Repo
 
   test "not found", %{conn: conn} do

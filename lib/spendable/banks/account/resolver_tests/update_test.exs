@@ -1,8 +1,8 @@
 defmodule Spendable.Banks.Account.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
 
-  alias Spendable.Banks.Member
   alias Spendable.Banks.Account
+  alias Spendable.Banks.Member
   alias Spendable.Repo
 
   test "update", %{conn: conn} do

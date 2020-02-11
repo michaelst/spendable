@@ -1,8 +1,8 @@
 defmodule Spendable.Transaction.Resolver do
   import Ecto.Query, only: [from: 2]
 
-  alias Spendable.Transaction
   alias Spendable.Repo
+  alias Spendable.Transaction
 
   def list(args, %{context: %{current_user: user}}) do
     {:ok,

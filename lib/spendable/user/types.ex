@@ -2,10 +2,11 @@ defmodule Spendable.User.Types do
   use Absinthe.Schema.Notation
   import Ecto.Query, only: [from: 2]
 
-  alias Spendable.User.Resolver
   alias Spendable.Banks.Account
   alias Spendable.Budgets.Allocation
+  alias Spendable.Middleware.CheckAuthentication
   alias Spendable.Repo
+  alias Spendable.User.Resolver
 
   object :user do
     field :id, :id
@@ -45,7 +46,7 @@ defmodule Spendable.User.Types do
 
   object :user_queries do
     field :current_user, :user do
-      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(CheckAuthentication)
       resolve(&Resolver.current_user/2)
     end
   end
@@ -58,7 +59,7 @@ defmodule Spendable.User.Types do
     end
 
     field :update_user, :user do
-      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(CheckAuthentication)
       arg(:email, non_null(:string))
       arg(:password, :string)
       resolve(&Resolver.update/2)

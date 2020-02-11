@@ -3,8 +3,9 @@ defmodule Spendable.Banks.Member.Resolver do
   import Ecto.Query, only: [from: 2]
 
   alias Spendable.Banks.Member
-  alias Spendable.Repo
   alias Spendable.Banks.Providers.Plaid.Adapter
+  alias Spendable.Jobs.Banks.SyncMember
+  alias Spendable.Repo
 
   def list(_parent, _args, %{context: %{current_user: user}}) do
     {:ok, from(Member, where: [user_id: ^user.id]) |> Repo.all()}
@@ -23,7 +24,7 @@ defmodule Spendable.Banks.Member.Resolver do
       |> Repo.insert()
       |> case do
         {:ok, member} ->
-          {:ok, _} = Exq.enqueue(Exq, "default", Spendable.Jobs.Banks.SyncMember, [member.id])
+          {:ok, _} = Exq.enqueue(Exq, "default", SyncMember, [member.id])
 
           {:ok, member}
 

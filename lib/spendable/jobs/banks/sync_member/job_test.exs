@@ -3,15 +3,14 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
   import Tesla.Mock
   import Ecto.Query
 
-  alias Spendable.{
-    Repo,
-    Jobs.Banks.SyncMemberTest.TestData,
-    Banks.Member,
-    Banks.Category,
-    Banks.Transaction,
-    Banks.Account,
-    Banks.Providers.Plaid.Adapter
-  }
+  alias Spendable.Banks.Account
+  alias Spendable.Banks.Category
+  alias Spendable.Banks.Member
+  alias Spendable.Banks.Providers.Plaid.Adapter
+  alias Spendable.Banks.Transaction
+  alias Spendable.Jobs.Banks.SyncMember
+  alias Spendable.Jobs.Banks.SyncMemberTest.TestData
+  alias Spendable.Repo
 
   setup do
     mock(fn
@@ -49,7 +48,7 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
       |> Member.changeset(Adapter.format(details, user.id, :member))
       |> Repo.insert!()
 
-    Spendable.Jobs.Banks.SyncMember.perform(member.id)
+    SyncMember.perform(member.id)
 
     assert [
              %{
@@ -81,7 +80,7 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
     |> Account.changeset(%{sync: true})
     |> Repo.update!()
 
-    Spendable.Jobs.Banks.SyncMember.perform(member.id)
+    SyncMember.perform(member.id)
 
     assert 7 == from(Transaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 

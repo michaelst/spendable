@@ -8,11 +8,11 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.DeleteTest do
     template = insert(:allocation_template, user: user)
 
     query = """
-      mutation {
-        deleteAllocationTemplate(id: #{template.id}) {
-          id
-        }
+    mutation {
+      deleteAllocationTemplate(id: #{template.id}) {
+        id
       }
+    }
     """
 
     response =

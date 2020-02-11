@@ -12,18 +12,18 @@ defmodule Spendable.Transaction.Resolver.GetTest do
     transaction = insert(:transaction, user: user, category_id: category_id)
 
     query = """
-      query {
-        transaction(id: #{transaction.id}) {
-          id
-          name
-          note
-          amount
-          date
-          category {
-              id
-          }
+    query {
+      transaction(id: #{transaction.id}) {
+        id
+        name
+        note
+        amount
+        date
+        category {
+            id
         }
       }
+    }
     """
 
     response =

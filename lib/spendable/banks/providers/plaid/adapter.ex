@@ -1,6 +1,6 @@
 defmodule Spendable.Banks.Providers.Plaid.Adapter do
-  alias Spendable.Repo
   alias Spendable.Banks.Category
+  alias Spendable.Repo
 
   def format(%{"item" => details}, user_id, :member) do
     {:ok,

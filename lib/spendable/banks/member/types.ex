@@ -2,6 +2,9 @@ defmodule Spendable.Banks.Member.Types do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
+  alias Spendable.Banks.Member.Resolver
+  alias Spendable.Middleware.CheckAuthentication
+
   object :bank_member do
     field :id, :id
     field :external_id, :string
@@ -15,16 +18,16 @@ defmodule Spendable.Banks.Member.Types do
 
   object :bank_member_queries do
     field :bank_members, list_of(:bank_member) do
-      middleware(Spendable.Middleware.CheckAuthentication)
-      resolve(&Spendable.Banks.Member.Resolver.list/3)
+      middleware(CheckAuthentication)
+      resolve(&Resolver.list/3)
     end
   end
 
   object :bank_member_mutations do
     field :create_bank_member, :bank_member do
-      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(CheckAuthentication)
       arg(:public_token, non_null(:string))
-      resolve(&Spendable.Banks.Member.Resolver.create/2)
+      resolve(&Resolver.create/2)
     end
   end
 end

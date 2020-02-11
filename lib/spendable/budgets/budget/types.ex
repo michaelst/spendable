@@ -2,9 +2,11 @@ defmodule Spendable.Budgets.Budget.Types do
   use Absinthe.Schema.Notation
   import Ecto.Query, only: [from: 2]
 
-  alias Spendable.Budgets.Budget.Resolver
-  alias Spendable.Budgets.Budget
   alias Spendable.Budgets.Allocation
+  alias Spendable.Budgets.Budget
+  alias Spendable.Budgets.Budget.Resolver
+  alias Spendable.Middleware.CheckAuthentication
+  alias Spendable.Middleware.LoadModel
   alias Spendable.Repo
 
   object :budget do
@@ -27,22 +29,22 @@ defmodule Spendable.Budgets.Budget.Types do
 
   object :budget_queries do
     field :budgets, list_of(:budget) do
-      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(CheckAuthentication)
       resolve(&Resolver.list/3)
     end
   end
 
   object :budget_mutations do
     field :create_budget, :budget do
-      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(CheckAuthentication)
       arg(:name, :string)
       arg(:goal, :string)
       resolve(&Resolver.create/2)
     end
 
     field :update_budget, :budget do
-      middleware(Spendable.Middleware.CheckAuthentication)
-      middleware(Spendable.Middleware.LoadModel, module: Budget)
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
       arg(:name, :string)
       arg(:goal, :string)
@@ -50,8 +52,8 @@ defmodule Spendable.Budgets.Budget.Types do
     end
 
     field :delete_budget, :budget do
-      middleware(Spendable.Middleware.CheckAuthentication)
-      middleware(Spendable.Middleware.LoadModel, module: Budget)
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
       resolve(&Resolver.delete/2)
     end

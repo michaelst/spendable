@@ -2,8 +2,10 @@ defmodule Spendable.Transaction.Types do
   use Absinthe.Schema.Notation
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias Spendable.Transaction.Resolver
+  alias Spendable.Middleware.CheckAuthentication
+  alias Spendable.Middleware.LoadModel
   alias Spendable.Transaction
+  alias Spendable.Transaction.Resolver
 
   object :transaction do
     field :id, :id
@@ -19,14 +21,14 @@ defmodule Spendable.Transaction.Types do
 
   object :transaction_queries do
     field :transactions, list_of(:transaction) do
-      middleware(Spendable.Middleware.CheckAuthentication)
+      middleware(CheckAuthentication)
       arg(:offset, :integer)
       resolve(&Resolver.list/2)
     end
 
     field :transaction, :transaction do
-      middleware(Spendable.Middleware.CheckAuthentication)
-      middleware(Spendable.Middleware.LoadModel, module: Transaction)
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Transaction)
       arg(:id, non_null(:id))
       resolve(&Resolver.get/2)
     end
@@ -34,8 +36,8 @@ defmodule Spendable.Transaction.Types do
 
   object :transaction_mutations do
     field :update_transaction, :transaction do
-      middleware(Spendable.Middleware.CheckAuthentication)
-      middleware(Spendable.Middleware.LoadModel, module: Transaction)
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Transaction)
       arg(:id, non_null(:id))
       arg(:amount, :string)
       arg(:category_id, :id)

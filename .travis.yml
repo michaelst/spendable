@@ -4,7 +4,7 @@ jobs:
     name: Tests
     language: elixir
     elixir: 1.10
-    otp_release: 22.0.7
+    otp_release: 22.2.6
     services:
     - postgresql
     - redis-server
@@ -20,13 +20,13 @@ jobs:
   - name: Credo
     language: elixir
     elixir: 1.10
-    otp_release: 22.0.7
+    otp_release: 22.2.6
     cache:
       directories:
       - deps
       - _build
-    before_script: kerl list installations
-    script: mix credo
+    before_script: mix compile
+    script: mix credo --strict
   - name: Build
     if: branch = master
     language: minimal
