@@ -12,6 +12,7 @@ defmodule Spendable.Banks.Transaction do
     belongs_to :category, Spendable.Banks.Category
     belongs_to :user, Spendable.User
     belongs_to :bank_account, Spendable.Banks.Account
+    has_one :transaction, Spendable.Transaction, foreign_key: :bank_transaction_id
 
     timestamps()
   end

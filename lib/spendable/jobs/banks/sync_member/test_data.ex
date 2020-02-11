@@ -321,8 +321,37 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
             reason: nil,
             reference_number: nil
           },
-          pending: false,
+          pending: true,
           pending_transaction_id: nil,
+          transaction_id: "8B4wpK4er1FV9XMAWGxEc81aP5MPzncwnWEzA",
+          transaction_type: "special",
+          unofficial_currency_code: nil
+        },
+        %{
+          account_id: "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP",
+          account_owner: nil,
+          amount: 5.4,
+          category: [
+            "Travel",
+            "Car Service",
+            "Ride Share"
+          ],
+          category_id: "22006001",
+          date: "2019-09-18",
+          iso_currency_code: "USD",
+          name: "Uber 063015 SF**POOL**",
+          payment_meta: %{
+            by_order_of: nil,
+            payee: nil,
+            payer: nil,
+            payment_method: nil,
+            payment_processor: nil,
+            ppd_id: nil,
+            reason: nil,
+            reference_number: nil
+          },
+          pending: false,
+          pending_transaction_id: "8B4wpK4er1FV9XMAWGxEc81aP5MPzncwnWEzA",
           transaction_id: "8B4wpK4er1FV9XMAWGxEc81aP5MPzncwnWEzB",
           transaction_type: "special",
           unofficial_currency_code: nil

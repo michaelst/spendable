@@ -1,4 +1,6 @@
 defmodule Spendable.Jobs.Banks.SyncMember do
+  import Ecto.Query, only: [from: 2]
+
   alias Spendable.Banks.Account
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
@@ -54,18 +56,39 @@ defmodule Spendable.Jobs.Banks.SyncMember do
 
   defp sync_transaction(details, account) do
     Repo.transaction(fn ->
-      struct(BankTransaction)
+      %BankTransaction{}
       |> BankTransaction.changeset(Adapter.format(details, account.id, account.user_id, :bank_transaction))
       |> Repo.insert()
       |> case do
         {:ok, bank_transaction} ->
-          struct(Transaction)
+          %Transaction{}
           |> Transaction.changeset(Adapter.format(bank_transaction, :transaction))
           |> Repo.insert!()
+          |> reassign_pending(details)
 
         {:error, error} ->
           Repo.rollback(error)
       end
     end)
   end
+
+  defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id}) when is_binary(pending_id) do
+    Repo.get_by(BankTransaction, external_id: pending_id, pending: true)
+    |> Repo.preload(:transaction)
+    |> case do
+      nil ->
+        transaction
+
+      pending_bank_transaction ->
+        from(Spendable.Budgets.Allocation, where: [transaction_id: ^pending_bank_transaction.transaction.id])
+        |> Repo.update_all(set: [transaction_id: transaction.id])
+
+        Repo.delete!(pending_bank_transaction.transaction)
+        Repo.delete!(pending_bank_transaction)
+
+        transaction
+    end
+  end
+
+  defp reassign_pending(transaction, _), do: transaction
 end
