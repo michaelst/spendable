@@ -4,6 +4,7 @@ defmodule Spendable.User.Types do
 
   alias Spendable.Banks.Account
   alias Spendable.Budgets.Allocation
+  alias Spendable.Budgets.Budget
   alias Spendable.Middleware.CheckAuthentication
   alias Spendable.Repo
   alias Spendable.User.Resolver
@@ -24,6 +25,15 @@ defmodule Spendable.User.Types do
             where: ba.user_id == ^user.id and ba.sync
           )
           |> Repo.one()
+          |> Kernel.||("0.00")
+
+        adjustments =
+          from(b in Budget,
+            select: sum(b.adjustment),
+            where: b.user_id == ^user.id
+          )
+          |> Repo.one()
+          |> Kernel.||("0.00")
 
         spendable =
           from(a in Allocation,
@@ -33,7 +43,7 @@ defmodule Spendable.User.Types do
             group_by: b.id
           )
           |> Repo.all()
-          |> Enum.reduce(balance || Decimal.new("0.00"), fn {_id, allocated}, acc ->
+          |> Enum.reduce(Decimal.sub(balance, adjustments), fn {_id, allocated}, acc ->
             # we subtract the absolute value because budgets that are negative are missing
             # allocated funds needed to be 0 so it needs to be subtracted from the balance
             # otherwise a negative budget could increase your spendable amount incorrectly

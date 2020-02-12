@@ -8,7 +8,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
     insert(:bank_account, user: user, balance: 100)
     budget = insert(:budget, user: user)
     insert(:allocation, user: user, budget: budget, amount: -25.55)
-    budget = insert(:budget, user: user)
+    budget = insert(:budget, user: user, adjustment: "0.01")
     insert(:allocation, user: user, budget: budget, amount: 10)
 
     query = """
@@ -30,7 +30,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
              "data" => %{
                "currentUser" => %{
                  "bankLimit" => 0,
-                 "spendable" => "64.45"
+                 "spendable" => "64.44"
                }
              }
            } == response
