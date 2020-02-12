@@ -8,9 +8,9 @@ defmodule Spendable.Budgets.Budget do
 
   schema "budgets" do
     field :adjustment, :decimal, default: Decimal.new("0.00")
+    field :balance, :decimal, virtual: true
     field :goal, :decimal
     field :name, :string
-    field :balance, :decimal, virtual: true
 
     belongs_to :user, Spendable.User
 

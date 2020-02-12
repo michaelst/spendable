@@ -20,9 +20,10 @@ defmodule Spendable.User.Types do
       resolve(fn user, _, _ ->
         balance =
           from(ba in Account,
+            select: ba.available_balance |> coalesce(ba.balance) |> sum(),
             where: ba.user_id == ^user.id and ba.sync
           )
-          |> Repo.aggregate(:sum, :balance)
+          |> Repo.one()
 
         spendable =
           from(a in Allocation,
