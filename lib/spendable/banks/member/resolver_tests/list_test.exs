@@ -1,17 +1,26 @@
 defmodule Spendable.Banks.Member.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
+  import Spendable.Factory
 
   test "list members", %{conn: conn} do
-    {_user, token} = Spendable.TestUtils.create_user()
+    {user, token} = Spendable.TestUtils.create_user()
+    member = insert(:bank_member, user: user)
+    account = insert(:bank_account, user: user, bank_member: member)
 
     query = """
-      query ListCategories{
-        categories {
+      query {
+        bankMembers {
+        id
+        name
+        status
+        bankAccounts {
           id
           name
-          parentName
+          sync
+          balance
         }
       }
+    }
     """
 
     response =
@@ -22,11 +31,17 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
 
     assert %{
              "data" => %{
-               "categories" =>
-                 [%{"id" => "589", "name" => "Accessories Store", "parentName" => "Outlet / Shops"} | _] = categories
+               "bankMembers" => [
+                 %{
+                   "bankAccounts" => [
+                     %{"balance" => "100.00", "id" => "#{account.id}", "name" => "Checking", "sync" => true}
+                   ],
+                   "id" => "#{member.id}",
+                   "name" => "Plaid",
+                   "status" => "Connected"
+                 }
+               ]
              }
-           } = response
-
-    assert 602 == length(categories)
+           } == response
   end
 end

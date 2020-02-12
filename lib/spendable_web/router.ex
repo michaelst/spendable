@@ -30,6 +30,7 @@ defmodule Spendable.Web.Router do
     pipe_through :public
 
     get("/.well-known/apple-app-site-association", WellKnown, :apple_app_site_association)
+    post("/plaid/webhook", Plaid, :webhook)
   end
 
   scope "/", Spendable.Web.Controllers do

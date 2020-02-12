@@ -59,7 +59,7 @@ defmodule Plaid do
       client_id: Application.get_env(:spendable, Plaid)[:client_id],
       secret: Application.get_env(:spendable, Plaid)[:secret_key],
       access_token: token,
-      start_date: "2018-01-01",
+      start_date: Date.utc_today() |> Date.add(-365),
       end_date: Date.utc_today(),
       options: %{
         account_ids: [account_id],
