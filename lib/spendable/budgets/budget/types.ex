@@ -30,6 +30,7 @@ defmodule Spendable.Budgets.Budget.Types do
   object :budget_mutations do
     field :create_budget, :budget do
       middleware(CheckAuthentication)
+      arg(:balance, :string)
       arg(:name, :string)
       arg(:goal, :string)
       resolve(&Resolver.create/2)

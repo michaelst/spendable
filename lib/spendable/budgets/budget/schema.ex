@@ -22,7 +22,10 @@ defmodule Spendable.Budgets.Budget do
     |> cast(params, [:adjustment, :goal, :name, :balance])
     |> validate_required([:user_id, :name])
     |> prepare_changes(fn
-      %{data: %{id: id}, changes: %{balance: %Decimal{} = balance}} = changeset when is_integer(id) ->
+      %{data: %{id: nil}, changes: %{balance: %Decimal{} = balance}} = changeset ->
+        put_change(changeset, :adjustment, balance)
+
+      %{data: %{id: id}, changes: %{balance: %Decimal{} = balance}} = changeset ->
         put_change(changeset, :adjustment, Decimal.sub(balance, allocated(id)))
 
       changeset ->
