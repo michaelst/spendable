@@ -28,6 +28,16 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :sentry,
+  dsn: "https://299a9efbc76c4c3084085c9de461aeb9@sentry.io/2426632",
+  environment_name: Mix.env(),
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  tags: %{
+    env: "production"
+  },
+  included_environments: [:prod]
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
