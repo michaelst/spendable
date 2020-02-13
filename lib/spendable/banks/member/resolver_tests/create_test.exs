@@ -41,7 +41,8 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
     {user, token} = Spendable.TestUtils.create_user()
 
     user
-    |> Spendable.User.changeset(%{bank_limit: 1})
+    |> Spendable.User.changeset(%{})
+    |> Ecto.Changeset.put_change(:bank_limit, 1)
     |> Spendable.Repo.update()
 
     query = """
