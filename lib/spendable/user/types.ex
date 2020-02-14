@@ -23,7 +23,7 @@ defmodule Spendable.User.Types do
           from(ba in Account,
             select:
               fragment(
-                "CASE WHEN ? = 'credit' THEN ? * -1 ELSE COALESCE(?, ?) END ",
+                "SUM(CASE WHEN ? = 'credit' THEN ? * -1 ELSE COALESCE(?, ?) END)",
                 ba.type,
                 ba.balance,
                 ba.available_balance,
