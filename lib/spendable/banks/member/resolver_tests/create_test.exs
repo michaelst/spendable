@@ -67,7 +67,7 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
                  "externalId" => "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
                  "name" => "Plaid Bank",
                  "logo" => "https://plaid.com",
-                 "status" => nil,
+                 "status" => "CONNECTED",
                  "id" => member_id
                }
              }

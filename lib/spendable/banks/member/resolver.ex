@@ -17,7 +17,7 @@ defmodule Spendable.Banks.Member.Resolver do
     if count < user.bank_limit do
       {:ok, %{body: %{"access_token" => token}}} = Plaid.exchange_public_token(token)
       Logger.info("New plaid member token: #{token}")
-      {:ok, %{body: details}} = Plaid.member(token)
+      {:ok, %{body: details}} = Plaid.item(token)
 
       %Member{plaid_token: token}
       |> Member.changeset(Adapter.format(details, user.id, :member))
@@ -33,6 +33,13 @@ defmodule Spendable.Banks.Member.Resolver do
       end
     else
       {:error, "Bank limit reached"}
+    end
+  end
+
+  def create_public_token(_params, %{context: %{model: model}}) do
+    case Plaid.create_public_token(model.plaid_token) do
+      {:ok, %{body: %{"public_token" => token}}} -> {:ok, token}
+      _ -> {:error, "couldn't create token"}
     end
   end
 end

@@ -32,9 +32,18 @@ defmodule Plaid do
     })
   end
 
-  def member(token) do
+  def item(token) do
     client()
     |> Tesla.post("/item/get", %{
+      client_id: Application.get_env(:spendable, Plaid)[:client_id],
+      secret: Application.get_env(:spendable, Plaid)[:secret_key],
+      access_token: token
+    })
+  end
+
+  def create_public_token(token) do
+    client()
+    |> Tesla.post("/item/public_token/create", %{
       client_id: Application.get_env(:spendable, Plaid)[:client_id],
       secret: Application.get_env(:spendable, Plaid)[:secret_key],
       access_token: token

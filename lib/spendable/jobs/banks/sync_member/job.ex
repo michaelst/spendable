@@ -17,7 +17,7 @@ defmodule Spendable.Jobs.Banks.SyncMember do
   end
 
   defp sync_member(member) do
-    {:ok, %{body: details}} = Plaid.member(member.plaid_token)
+    {:ok, %{body: details}} = Plaid.item(member.plaid_token)
 
     member
     |> Member.changeset(Adapter.format(details, member.user_id, :member))

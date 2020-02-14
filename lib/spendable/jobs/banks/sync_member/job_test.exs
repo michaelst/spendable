@@ -41,7 +41,7 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
   test "sync member" do
     {user, _} = Spendable.TestUtils.create_user()
     token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
-    {:ok, %{body: details}} = Plaid.member(token)
+    {:ok, %{body: details}} = Plaid.item(token)
 
     member =
       %Member{plaid_token: token}
