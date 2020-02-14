@@ -19,7 +19,7 @@ defmodule Spendable.Banks.Providers.Plaid.Adapter do
       logo: logo,
       name: name,
       provider: "Plaid",
-      status: details["status"],
+      status: details["error"]["error_code"] || "CONNECTED",
       user_id: user_id
     }
   end
