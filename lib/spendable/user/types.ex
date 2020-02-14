@@ -21,7 +21,14 @@ defmodule Spendable.User.Types do
       resolve(fn user, _, _ ->
         balance =
           from(ba in Account,
-            select: ba.available_balance |> coalesce(ba.balance) |> sum(),
+            select:
+              fragment(
+                "CASE WHEN ? = 'credit' THEN ? * -1 ELSE COALESCE(?, ?) END ",
+                ba.type,
+                ba.balance,
+                ba.available_balance,
+                ba.balance
+              ),
             where: ba.user_id == ^user.id and ba.sync
           )
           |> Repo.one()

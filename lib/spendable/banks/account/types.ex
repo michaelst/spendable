@@ -7,13 +7,26 @@ defmodule Spendable.Banks.Account.Types do
   object :bank_account do
     field :id, :id
     field :external_id, :string
-    field :available_balance, :string
-    field :balance, :string
     field :name, :string
     field :number, :string
     field :sub_type, :string
     field :sync, :boolean
     field :type, :string
+
+    field :balance, :string do
+      resolve(fn
+        %{type: "credit", balance: balance}, _, _ ->
+          {:ok, Decimal.mult(balance, "-1")}
+
+        %{available_balance: nil, balance: balance}, _, _ ->
+          {:ok, balance}
+
+        %{available_balance: available_balance, balance: balance}, _, _ ->
+          if Decimal.eq?(available_balance, "0"),
+            do: {:ok, balance},
+            else: {:ok, available_balance}
+      end)
+    end
   end
 
   object :bank_account_mutations do
