@@ -30,19 +30,10 @@ defmodule Spendable.Auth.Utils do
   end
 
   def apple_jwk(kid) do
-    [jwks: jwks] = :ets.lookup(:apple, :jwks)
-    jwks[kid]
-  rescue
-    _ ->
-      {:ok, %{body: %{"keys" => keys}}} = Apple.public_keys()
+    {:ok, %{body: %{"keys" => keys}}} = Apple.public_keys()
 
-      jwks =
-        JOSE.JWK.from(keys)
-        |> Enum.map(fn %{fields: %{"kid" => kid}} = jwk -> {kid, jwk} end)
-        |> Map.new()
-
-      :ets.new(:apple, [:named_table])
-      :ets.insert(:apple, {:jwks, jwks})
-      jwks[kid]
+    keys
+    |> Enum.find(&(&1["kid"] == kid))
+    |> JOSE.JWK.from()
   end
 end
