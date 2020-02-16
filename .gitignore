@@ -29,3 +29,4 @@ schema.json
 schema.graphql
 
 /deploy/secrets/
+/deploy/secrets.tar
