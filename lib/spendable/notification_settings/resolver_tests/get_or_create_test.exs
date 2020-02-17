@@ -22,7 +22,7 @@ defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
     assert %{
              "data" => %{
                "notificationSettings" => %{
-                 "enabled" => false
+                 "enabled" => true
                }
              }
            } == response
