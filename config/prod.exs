@@ -31,6 +31,13 @@ config :spendable, Spendable.Guardian,
   issuer: "spendable.dev",
   secret_key: System.get_env("GUARDIAN_SECRET")
 
+config :pigeon, :apns,
+  apns_default: %{
+    cert: {:spendable, "apns/cert.pem"},
+    key: {:spendable, "apns/key_unencrypted.pem"},
+    mode: :prod
+  }
+
 config :spendable, Plaid,
   base_url: "https://development.plaid.com",
   client_id: System.get_env("PLAID_CLIENT_ID"),

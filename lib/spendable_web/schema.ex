@@ -10,6 +10,7 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.Budgets.AllocationTemplate.Types)
   import_types(Spendable.Budgets.AllocationTemplateLine.Types)
   import_types(Spendable.Budgets.Budget.Types)
+  import_types(Spendable.Notifications.Settings.Types)
   import_types(Spendable.Transaction.Types)
   import_types(Spendable.User.Types)
 
@@ -19,6 +20,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:bank_member_queries)
     import_fields(:budget_queries)
     import_fields(:category_queries)
+    import_fields(:notification_settings_queries)
     import_fields(:transaction_queries)
     import_fields(:user_queries)
   end
@@ -29,8 +31,9 @@ defmodule Spendable.Web.Schema do
     import_fields(:bank_account_mutations)
     import_fields(:bank_member_mutations)
     import_fields(:budget_mutations)
-    import_fields(:user_mutations)
+    import_fields(:notification_settings_mutations)
     import_fields(:transaction_mutations)
+    import_fields(:user_mutations)
   end
 
   def context(context) do

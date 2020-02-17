@@ -50,16 +50,18 @@ defmodule Spendable.MixProject do
       {:gettext, "~> 0.11"},
       {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},
-      {:mint, "~> 0.5.0"},
+      {:kadabra, "~> 0.4.4"},
+      {:mint, "~> 1.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix, "~> 1.4.6"},
+      {:pigeon, "~> 1.5.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:sentry, "~> 7.0"},
-      {:tesla, "~> 1.3.0"}
+      {:tesla, "~> 1.3.2"}
     ]
   end
 

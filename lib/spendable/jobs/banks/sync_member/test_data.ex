@@ -279,7 +279,7 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
             "Ride Share"
           ],
           category_id: "22006001",
-          date: "2019-10-01",
+          date: "#{Date.utc_today()}",
           iso_currency_code: "USD",
           name: "Uber 072515 SF**POOL**",
           payment_meta: %{
