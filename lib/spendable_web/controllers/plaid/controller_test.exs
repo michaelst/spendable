@@ -16,5 +16,9 @@ defmodule Spendable.Web.Controllers.PlaidTest do
     |> response(:ok)
 
     Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [member.id])
+
+    conn
+    |> post("/plaid/webhook", %{})
+    |> response(:not_found)
   end
 end
