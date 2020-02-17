@@ -7,6 +7,7 @@ defmodule Spendable.Notifications.Settings.Types do
   alias Spendable.Notifications.Settings.Resolver
 
   object :notification_settings do
+    field :id, :id
     field :enabled, :boolean
   end
 
