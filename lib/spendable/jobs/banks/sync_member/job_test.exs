@@ -86,11 +86,19 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
 
     category_id = Repo.get_by!(Category, external_id: "22006001").id
 
+    today = Date.utc_today()
+
     assert [
+             %{},
+             %{},
+             %{},
+             %{},
+             %{},
+             %{},
              %{
                amount: amount,
                name: "Uber 072515 SF**POOL**",
-               date: ~D[2019-10-01],
+               date: ^today,
                category_id: ^category_id,
                bank_transaction: %{
                  external_id: "gjwAb9wKgytqA9dKR4Xmc3rwN8WN5nigoEkrB",
@@ -99,14 +107,10 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
                  name: "Uber 072515 SF**POOL**",
                  pending: false
                }
-             },
-             %{},
-             %{},
-             %{},
-             %{},
-             %{},
-             %{}
-           ] = from(Spendable.Transaction, where: [user_id: ^user.id], preload: [:bank_transaction]) |> Repo.all()
+             }
+           ] =
+             from(Spendable.Transaction, where: [user_id: ^user.id], order_by: :date, preload: [:bank_transaction])
+             |> Repo.all()
 
     assert "-6.33" |> Decimal.new() |> Decimal.equal?(amount)
   end

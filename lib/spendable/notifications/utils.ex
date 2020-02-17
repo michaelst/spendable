@@ -2,7 +2,7 @@ defmodule Spendable.Notifications.Utils do
   alias Pigeon.APNS
   alias Pigeon.APNS.Notification
 
-  def send(%{device_tokens: %Ecto.Association.NotLoaded{}}, _, _), do: raise("Device tokens must be preloaded")
+  def send(%{device_tokens: %Ecto.Association.NotLoaded{}}, _, _), do: raise("device_tokens must be preloaded")
 
   def send(user, title, body) do
     Enum.each(user.device_tokens, fn %{device_token: device_token} ->
@@ -12,7 +12,10 @@ defmodule Spendable.Notifications.Utils do
           "body" => body
         }
         |> Notification.new(device_token, "fiftysevenmedia.Spendable")
-        |> APNS.push()
+        |> push(Application.get_env(:spendable, :env))
     end)
   end
+
+  defp push(_notification, :test), do: %Pigeon.APNS.Notification{response: :success}
+  defp push(notification, _), do: APNS.push(notification)
 end

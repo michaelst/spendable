@@ -5,11 +5,13 @@ defmodule Spendable.Jobs.Banks.SyncMember do
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
   alias Spendable.Banks.Transaction, as: BankTransaction
+  alias Spendable.Notifications.Utils, as: NotificationUtils
   alias Spendable.Repo
   alias Spendable.Transaction
 
   def perform(member_id) do
     Repo.get!(Member, member_id)
+    |> Repo.preload(user: :device_tokens)
     |> sync_member()
     |> sync_accounts()
     |> Enum.filter(& &1.sync)
@@ -36,6 +38,7 @@ defmodule Spendable.Jobs.Banks.SyncMember do
       |> Account.changeset(Adapter.format(account_details, member.id, member.user_id, :account))
       |> Repo.insert_or_update!()
       |> Map.put(:bank_member, member)
+      |> Map.put(:user, member.user)
     end)
   end
 
@@ -64,7 +67,9 @@ defmodule Spendable.Jobs.Banks.SyncMember do
           %Transaction{}
           |> Transaction.changeset(Adapter.format(bank_transaction, :transaction))
           |> Repo.insert!()
+          |> Map.put(:user, account.user)
           |> reassign_pending(details)
+          |> send_notification()
 
         {:error, error} ->
           Repo.rollback(error)
@@ -91,4 +96,10 @@ defmodule Spendable.Jobs.Banks.SyncMember do
   end
 
   defp reassign_pending(transaction, _), do: transaction
+
+  def send_notification(transaction) do
+    unless Date.utc_today() |> Date.add(-1) |> Date.compare(transaction.date) == :gt do
+      NotificationUtils.send(transaction.user, transaction.name, "$#{transaction.amount}")
+    end
+  end
 end
