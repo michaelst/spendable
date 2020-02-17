@@ -5,7 +5,7 @@ defmodule Spendable.Jobs.Banks.SyncMember do
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
   alias Spendable.Banks.Transaction, as: BankTransaction
-  alias Spendable.Notifications.Utils, as: NotificationUtils
+  alias Spendable.Notifications.Settings.Utils, as: NotificationUtils
   alias Spendable.Repo
   alias Spendable.Transaction
 

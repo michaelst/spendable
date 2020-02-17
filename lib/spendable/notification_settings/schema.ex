@@ -1,8 +1,8 @@
-defmodule Spendable.Notifications.DeviceToken do
+defmodule Spendable.Notifications.Settings do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "notifications__device_tokens" do
+  schema "notification_settings" do
     field :device_token, :string
     field :enabled, :boolean, default: false
 
@@ -15,6 +15,6 @@ defmodule Spendable.Notifications.DeviceToken do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:device_token, :user_id, :enabled])
-    |> unique_constraint(:notifications__device_tokens, name: :notifications__device_tokens_user_id_device_token_index)
+    |> unique_constraint(:device_token, name: :notification_settings_user_id_device_token_index)
   end
 end

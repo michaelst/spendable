@@ -1,4 +1,4 @@
-defmodule Spendable.Notifications.Utils do
+defmodule Spendable.Notifications.Settings.Utils do
   alias Pigeon.APNS
   alias Pigeon.APNS.Notification
 

@@ -1,4 +1,4 @@
-defmodule Spendable.Notifications.DeviceToken.Resolver.GetOrCreateTest do
+defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
@@ -7,7 +7,7 @@ defmodule Spendable.Notifications.DeviceToken.Resolver.GetOrCreateTest do
 
     query = """
       query {
-        deviceToken(deviceToken: "test-device-token-new") {
+        notificationSettings(deviceToken: "test-device-token-new") {
           enabled
         }
       }
@@ -21,7 +21,7 @@ defmodule Spendable.Notifications.DeviceToken.Resolver.GetOrCreateTest do
 
     assert %{
              "data" => %{
-               "deviceToken" => %{
+               "notificationSettings" => %{
                  "enabled" => false
                }
              }
@@ -30,11 +30,11 @@ defmodule Spendable.Notifications.DeviceToken.Resolver.GetOrCreateTest do
 
   test "get existing APNS device token", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
-    insert(:device_token, user: user, device_token: "test-device-token", enabled: true)
+    insert(:notification_settings, user: user, device_token: "test-device-token", enabled: true)
 
     query = """
       query {
-        deviceToken(deviceToken: "test-device-token") {
+        notificationSettings(deviceToken: "test-device-token") {
           enabled
         }
       }
@@ -48,7 +48,7 @@ defmodule Spendable.Notifications.DeviceToken.Resolver.GetOrCreateTest do
 
     assert %{
              "data" => %{
-               "deviceToken" => %{
+               "notificationSettings" => %{
                  "enabled" => true
                }
              }
