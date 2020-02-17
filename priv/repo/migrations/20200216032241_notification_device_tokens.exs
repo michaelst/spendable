@@ -5,6 +5,7 @@ defmodule Spendable.Repo.Migrations.NotificationDeviceTokens do
     create table(:notifications__device_tokens) do
       add(:user_id, references(:users), null: false)
       add(:device_token, :text, null: false)
+      add(:enabled, :boolean, default: false)
       timestamps()
     end
 

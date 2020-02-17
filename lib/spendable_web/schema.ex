@@ -20,6 +20,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:bank_member_queries)
     import_fields(:budget_queries)
     import_fields(:category_queries)
+    import_fields(:device_token_queries)
     import_fields(:transaction_queries)
     import_fields(:user_queries)
   end
@@ -30,7 +31,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:bank_account_mutations)
     import_fields(:bank_member_mutations)
     import_fields(:budget_mutations)
-    import_fields(:device_token_mutatinos)
+    import_fields(:device_token_mutations)
     import_fields(:transaction_mutations)
     import_fields(:user_mutations)
   end
