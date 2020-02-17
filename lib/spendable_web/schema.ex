@@ -10,6 +10,7 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.Budgets.AllocationTemplate.Types)
   import_types(Spendable.Budgets.AllocationTemplateLine.Types)
   import_types(Spendable.Budgets.Budget.Types)
+  import_types(Spendable.Notificiations.DeviceToken.Types)
   import_types(Spendable.Transaction.Types)
   import_types(Spendable.User.Types)
 
@@ -29,8 +30,9 @@ defmodule Spendable.Web.Schema do
     import_fields(:bank_account_mutations)
     import_fields(:bank_member_mutations)
     import_fields(:budget_mutations)
-    import_fields(:user_mutations)
+    import_fields(:device_token_mutatinos)
     import_fields(:transaction_mutations)
+    import_fields(:user_mutations)
   end
 
   def context(context) do

@@ -30,3 +30,4 @@ schema.graphql
 
 /deploy/secrets/
 /deploy/secrets.tar
+/priv/apns/
