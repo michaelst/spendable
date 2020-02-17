@@ -42,7 +42,7 @@ defmodule Spendable.MixProject do
       {:castore, "~> 0.1.0"},
       {:credo, "~> 1.2.2", only: [:dev, :test], runtime: false},
       {:dataloader, "~> 1.0.0"},
-      {:ecto_sql, "~> 3.0"},
+      {:ecto_sql, "~> 3.3"},
       {:ex_machina, "~> 2.3", only: :test},
       {:excoveralls, "~> 0.12.0"},
       {:exq, "~> 0.13.3"},
