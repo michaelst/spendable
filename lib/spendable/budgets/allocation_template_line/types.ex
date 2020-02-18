@@ -6,6 +6,7 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Types do
     field :id, :id
     field :amount, :string
     field :budget, :budget, resolve: dataloader(Spendable)
+    field :allocation_template, :allocation_template, resolve: dataloader(Spendable)
   end
 
   input_object :allocation_template_line_input_object do

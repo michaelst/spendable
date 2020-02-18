@@ -27,10 +27,20 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
           recentAllocations {
             id
             amount
+            transaction {
+              amount
+              date
+              bankTransaction {
+                pending
+              }
+            }
           }
           allocationTemplateLines {
             id
             amount
+            allocationTemplate {
+              name
+            }
           }
         }
       }
@@ -52,17 +62,28 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
                  "allocationTemplateLines" => [
                    %{
                      "amount" => "#{line.amount}",
-                     "id" => "#{line.id}"
+                     "id" => "#{line.id}",
+                     "allocationTemplate" => %{"name" => "Payday"}
                    }
                  ],
                  "recentAllocations" => [
                    %{
                      "amount" => "100.00",
-                     "id" => "#{deposit.id}"
+                     "id" => "#{deposit.id}",
+                     "transaction" => %{
+                       "amount" => "10.25",
+                       "bankTransaction" => nil,
+                       "date" => "2020-02-18"
+                     }
                    },
                    %{
                      "amount" => "-25.55",
-                     "id" => "#{expense.id}"
+                     "id" => "#{expense.id}",
+                     "transaction" => %{
+                       "amount" => "10.25",
+                       "bankTransaction" => nil,
+                       "date" => "2020-02-18"
+                     }
                    }
                  ]
                }

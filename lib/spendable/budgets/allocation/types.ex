@@ -6,6 +6,7 @@ defmodule Spendable.Budgets.Allocation.Types do
     field :id, :id
     field :amount, :string
     field :budget, :budget, resolve: dataloader(Spendable)
+    field :transaction, :transaction, resolve: dataloader(Spendable)
   end
 
   input_object :allocation_input_object do
