@@ -29,4 +29,8 @@ defmodule Spendable.Transaction.Resolver do
     |> Transaction.changeset(args)
     |> Repo.update()
   end
+
+  def delete(args, %{context: %{model: model}}) do
+    Repo.delete(model)
+  end
 end

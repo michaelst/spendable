@@ -58,5 +58,12 @@ defmodule Spendable.Transaction.Types do
       arg(:allocations, list_of(:allocation_input_object))
       resolve(&Resolver.update/2)
     end
+
+    field :delete_transaction, :transaction do
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Transaction)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.delete/2)
+    end
   end
 end
