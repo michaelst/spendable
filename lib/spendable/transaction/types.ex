@@ -35,6 +35,17 @@ defmodule Spendable.Transaction.Types do
   end
 
   object :transaction_mutations do
+    field :create_transaction, :transaction do
+      middleware(CheckAuthentication)
+      arg(:amount, :string)
+      arg(:category_id, :id)
+      arg(:date, :string)
+      arg(:name, :string)
+      arg(:note, :string)
+      arg(:allocations, list_of(:allocation_input_object))
+      resolve(&Resolver.create/2)
+    end
+
     field :update_transaction, :transaction do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Transaction)

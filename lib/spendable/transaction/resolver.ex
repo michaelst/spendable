@@ -17,6 +17,12 @@ defmodule Spendable.Transaction.Resolver do
 
   def get(_args, %{context: %{model: model}}), do: {:ok, model}
 
+  def create(args, %{context: %{current_user: user}}) do
+    %Transaction{user_id: user.id}
+    |> Transaction.changeset(args)
+    |> Repo.insert()
+  end
+
   def update(args, %{context: %{model: model}}) do
     model
     |> Repo.preload(:allocations)
