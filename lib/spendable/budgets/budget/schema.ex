@@ -4,6 +4,7 @@ defmodule Spendable.Budgets.Budget do
   import Ecto.Query, only: [from: 2]
 
   alias Spendable.Budgets.Allocation
+  alias Spendable.Budgets.AllocationTemplateLine
   alias Spendable.Repo
 
   schema "budgets" do
@@ -13,6 +14,8 @@ defmodule Spendable.Budgets.Budget do
     field :name, :string
 
     belongs_to :user, Spendable.User
+    has_many :allocations, Allocation
+    has_many :allocation_template_lines, AllocationTemplateLine
 
     timestamps()
   end

@@ -1,5 +1,6 @@
 defmodule Spendable.Budgets.Budget.Types do
   use Absinthe.Schema.Notation
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1, dataloader: 3]
 
   alias Spendable.Budgets.Budget
   alias Spendable.Budgets.Budget.Resolver
@@ -18,12 +19,22 @@ defmodule Spendable.Budgets.Budget.Types do
         {:ok, Budget.balance(budget)}
       end)
     end
+
+    field :recent_allocations, list_of(:allocation), resolve: dataloader(Spendable, :allocations, args: %{recent: true})
+    field :allocation_template_lines, list_of(:allocation_template_line), resolve: dataloader(Spendable)
   end
 
   object :budget_queries do
+    field :budget, :budget do
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Budget)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.get/2)
+    end
+
     field :budgets, list_of(:budget) do
       middleware(CheckAuthentication)
-      resolve(&Resolver.list/3)
+      resolve(&Resolver.list/2)
     end
   end
 
