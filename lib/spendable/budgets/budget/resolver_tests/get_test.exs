@@ -28,7 +28,7 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
             id
             amount
             transaction {
-              amount
+              name
               date
               bankTransaction {
                 pending
@@ -71,7 +71,7 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
                      "amount" => "100.00",
                      "id" => "#{deposit.id}",
                      "transaction" => %{
-                       "amount" => "10.25",
+                       "name" => "test",
                        "bankTransaction" => nil,
                        "date" => "2020-02-18"
                      }
@@ -80,7 +80,7 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
                      "amount" => "-25.55",
                      "id" => "#{expense.id}",
                      "transaction" => %{
-                       "amount" => "10.25",
+                       "name" => "test",
                        "bankTransaction" => nil,
                        "date" => "2020-02-18"
                      }
