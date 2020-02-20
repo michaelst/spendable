@@ -11,7 +11,7 @@ defmodule Spendable.Jobs.Banks.SyncMember do
 
   def perform(member_id) do
     Repo.get!(Member, member_id)
-    |> Repo.preload(user: :device_tokens)
+    |> Repo.preload(user: :notification_settings)
     |> sync_member()
     |> sync_accounts()
     |> Enum.filter(& &1.sync)

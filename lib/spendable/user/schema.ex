@@ -8,7 +8,7 @@ defmodule Spendable.User do
     field :email, :string
     field :password, :string
 
-    has_many :device_tokens, Spendable.Notifications.Settings
+    has_many :notification_settings, Spendable.Notifications.Settings
 
     timestamps()
   end
