@@ -16,6 +16,8 @@ defmodule Spendable.Jobs.Banks.SyncMember do
     |> sync_accounts()
     |> Enum.filter(& &1.sync)
     |> Enum.each(&sync_transactions/1)
+  rescue
+    e -> Sentry.capture_exception(e, stacktrace: __STACKTRACE__)
   end
 
   defp sync_member(member) do
