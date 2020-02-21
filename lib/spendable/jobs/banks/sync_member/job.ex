@@ -101,7 +101,7 @@ defmodule Spendable.Jobs.Banks.SyncMember do
 
   def send_notification(transaction) do
     unless Date.utc_today() |> Date.add(-1) |> Date.compare(transaction.date) == :gt do
-      NotificationUtils.send(transaction.user, transaction.name, "$#{transaction.amount}")
+      NotificationUtils.send(transaction.user, transaction.name, "$#{Decimal.abs(transaction.amount)}")
     end
   end
 end

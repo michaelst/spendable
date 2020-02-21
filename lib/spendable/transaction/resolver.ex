@@ -30,7 +30,7 @@ defmodule Spendable.Transaction.Resolver do
     |> Repo.update()
   end
 
-  def delete(args, %{context: %{model: model}}) do
+  def delete(_args, %{context: %{model: model}}) do
     Repo.delete(model)
   end
 end
