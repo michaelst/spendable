@@ -1,6 +1,7 @@
 defmodule Spendable.Notifications.Settings.Utils do
   alias Pigeon.APNS
   alias Pigeon.APNS.Notification
+  alias Spendable.Repo
 
   def send(%{notification_settings: %Ecto.Association.NotLoaded{}}, _, _),
     do: raise("notification_settings must be preloaded")
