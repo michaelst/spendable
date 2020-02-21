@@ -73,7 +73,7 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
                      "transaction" => %{
                        "name" => "test",
                        "bankTransaction" => nil,
-                       "date" => "2020-02-18"
+                       "date" => "#{Date.utc_today}"
                      }
                    },
                    %{
@@ -82,7 +82,7 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
                      "transaction" => %{
                        "name" => "test",
                        "bankTransaction" => nil,
-                       "date" => "2020-02-18"
+                       "date" => "#{Date.utc_today}"
                      }
                    }
                  ]
