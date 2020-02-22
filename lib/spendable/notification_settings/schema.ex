@@ -5,6 +5,7 @@ defmodule Spendable.Notifications.Settings do
   schema "notification_settings" do
     field :device_token, :string
     field :enabled, :boolean, default: false
+    field :provider, NotificationProvider
 
     belongs_to :user, Spendable.User
 
