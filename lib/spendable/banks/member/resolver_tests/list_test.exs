@@ -5,7 +5,11 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
   test "list members", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
     member = insert(:bank_member, user: user)
-    account = insert(:bank_account, user: user, bank_member: member)
+    checking_account = insert(:bank_account, user: user, bank_member: member, available_balance: 100, balance: 120)
+    savings_account = insert(:bank_account, user: user, bank_member: member, available_balance: nil, balance: 500)
+
+    credit_account =
+      insert(:bank_account, user: user, bank_member: member, balance: 1025, type: "credit")
 
     query = """
       query {
@@ -34,7 +38,9 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
                "bankMembers" => [
                  %{
                    "bankAccounts" => [
-                     %{"balance" => "100.00", "id" => "#{account.id}", "name" => "Checking", "sync" => true}
+                     %{"balance" => "100.00", "id" => "#{checking_account.id}", "name" => "Checking", "sync" => true},
+                     %{"balance" => "500.00", "id" => "#{savings_account.id}", "name" => "Checking", "sync" => true},
+                     %{"balance" => "-1025.00", "id" => "#{credit_account.id}", "name" => "Checking", "sync" => true}
                    ],
                    "id" => "#{member.id}",
                    "name" => "Plaid",
