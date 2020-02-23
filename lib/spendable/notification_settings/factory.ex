@@ -3,7 +3,8 @@ defmodule Spendable.Notifications.Settings.Factory do
     quote do
       def notification_settings_factory do
         %Spendable.Notifications.Settings{
-          device_token: "test-device-token"
+          device_token: "test-device-token",
+          provider: :apns
         }
       end
     end
