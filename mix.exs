@@ -53,6 +53,7 @@ defmodule Spendable.MixProject do
       {:jason, "~> 1.0"},
       {:kadabra, "~> 0.4.4"},
       {:mint, "~> 1.0"},
+      {:mock, "~> 0.3", only: :test},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
