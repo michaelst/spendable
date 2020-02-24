@@ -9,6 +9,8 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
     {user, token} = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
     budget = insert(:budget, user: user)
+    tag_one = insert(:tag, user: user, name: "First tag")
+    tag_two = insert(:tag, user: user, name: "Second tag")
 
     query = """
       mutation {
@@ -27,6 +29,7 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
               budgetId: "#{budget.id}"
             }
           ]
+          tagIds: ["#{tag_one.id}", "#{tag_two.id}"]
         ) {
           name
           category {
@@ -37,6 +40,10 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
             budget {
               id
             }
+          }
+          tags {
+            id
+            name
           }
         }
       }
@@ -68,6 +75,10 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
                        "id" => "#{budget.id}"
                      }
                    }
+                 ],
+                 "tags" => [
+                   %{"id" => "#{tag_one.id}", "name" => "First tag"},
+                   %{"id" => "#{tag_two.id}", "name" => "Second tag"}
                  ]
                }
              }

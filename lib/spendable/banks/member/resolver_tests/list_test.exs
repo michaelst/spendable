@@ -8,8 +8,7 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
     checking_account = insert(:bank_account, user: user, bank_member: member, available_balance: 100, balance: 120)
     savings_account = insert(:bank_account, user: user, bank_member: member, available_balance: nil, balance: 500)
 
-    credit_account =
-      insert(:bank_account, user: user, bank_member: member, balance: 1025, type: "credit")
+    credit_account = insert(:bank_account, user: user, bank_member: member, balance: 1025, type: "credit")
 
     query = """
       query {
