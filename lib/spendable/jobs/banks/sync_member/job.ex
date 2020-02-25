@@ -72,11 +72,14 @@ defmodule Spendable.Jobs.Banks.SyncMember do
     end)
     |> case do
       {:ok, transaction} = response ->
-        {:ok, _} =
-          Exq.enqueue(Exq, "default", Spendable.Jobs.Notifications.Send, [
-            account.user_id,
-            %{title: transaction.name, body: "$#{Decimal.abs(transaction.amount)}"}
-          ])
+        # if pending transaction id is set that means we have already sent a notification for the pending transaction
+        if is_nil(details["pending_transaction_id"]) do
+          {:ok, _} =
+            Exq.enqueue(Exq, "default", Spendable.Jobs.Notifications.Send, [
+              account.user_id,
+              %{title: transaction.name, body: "$#{Decimal.abs(transaction.amount)}"}
+            ])
+        end
 
         response
 
