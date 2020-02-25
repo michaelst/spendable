@@ -13,10 +13,10 @@ defmodule Spendable.Jobs.Notifictions.SendTest do
     bad_settings = insert(:notification_settings, user: user, device_token: "bad-device-token-1", enabled: false)
     insert(:notification_settings, user: user, device_token: "test-device-token-1", enabled: true)
 
-    with_mock Notifications.Provider.APNS, [:passthrough],
+    with_mock Pigeon.APNS, [:passthrough],
       push: fn
-        %{device_token: "bad-device-token-1"} -> :invalid_token
-        _ -> :ok
+        %{device_token: "bad-device-token-1"} = notification -> %{notification | response: :bad_device_token}
+        notification -> %{notification | response: :success}
       end do
       assert :ok == Send.perform(user.id, "test")
 
