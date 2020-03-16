@@ -35,12 +35,12 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe_phoenix, "~> 1.4"},
-      {:absinthe_plug, "~> 1.5.0-rc.1", override: true},
-      {:absinthe, "~> 1.5.0-rc.2", override: true},
+      {:absinthe_phoenix, "~> 1.5.0-rc.0"},
+      {:absinthe_plug, "~> 1.5.0-rc.0"},
+      {:absinthe, "~> 1.5.0-rc.0"},
       {:bcrypt_elixir, "~> 2.0"},
       {:castore, "~> 0.1.0"},
-      {:credo, "~> 1.2.2", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dataloader, "~> 1.0.0"},
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.3"},
