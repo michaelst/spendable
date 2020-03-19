@@ -1,11 +1,11 @@
 defmodule Spendable.TestUtils do
   import ExUnit.Assertions
 
-  alias Spendable.User
   alias Spendable.Guardian
   alias Spendable.Repo
+  alias Spendable.User
 
-  def create_user() do
+  def create_user do
     email = "#{Ecto.UUID.generate()}@example.com"
     user = struct(User) |> User.changeset(%{email: email, password: "password"}) |> Repo.insert!()
     {:ok, token, _} = Guardian.encode_and_sign(user)
@@ -19,7 +19,7 @@ defmodule Spendable.TestUtils do
 
     assert Enum.any?(entries, fn
              %{class: ^module_str, args: ^args} -> true
-             _ -> false
+             _result -> false
            end),
            "couldn't find #{module} with args #{inspect(args)}"
   end

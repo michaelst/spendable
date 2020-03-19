@@ -15,5 +15,5 @@ defmodule Spendable.Web.Controllers.Plaid do
     end
   end
 
-  def webhook(conn, _), do: send_resp(conn, :not_found, "")
+  def webhook(conn, _params), do: send_resp(conn, :not_found, "")
 end

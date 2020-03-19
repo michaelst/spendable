@@ -15,6 +15,8 @@ defmodule Spendable.Web.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -27,10 +29,10 @@ defmodule Spendable.Web.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Spendable.Repo)
+    :ok = Sandbox.checkout(Spendable.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Spendable.Repo, {:shared, self()})
+      Sandbox.mode(Spendable.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

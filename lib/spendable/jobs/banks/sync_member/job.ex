@@ -106,5 +106,5 @@ defmodule Spendable.Jobs.Banks.SyncMember do
     end
   end
 
-  defp reassign_pending(transaction, _), do: transaction
+  defp reassign_pending(transaction, _details), do: transaction
 end

@@ -1,5 +1,5 @@
 defmodule Apple do
-  def client() do
+  def client do
     middleware = [
       {Tesla.Middleware.BaseUrl, "https://appleid.apple.com"},
       Tesla.Middleware.JSON
@@ -8,5 +8,5 @@ defmodule Apple do
     Tesla.client(middleware)
   end
 
-  def public_keys(), do: client() |> Tesla.get("/auth/keys")
+  def public_keys, do: client() |> Tesla.get("/auth/keys")
 end

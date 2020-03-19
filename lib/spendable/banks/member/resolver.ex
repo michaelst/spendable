@@ -39,7 +39,7 @@ defmodule Spendable.Banks.Member.Resolver do
   def create_public_token(_params, %{context: %{model: model}}) do
     case Plaid.create_public_token(model.plaid_token) do
       {:ok, %{body: %{"public_token" => token}}} -> {:ok, token}
-      _ -> {:error, "couldn't create token"}
+      _error -> {:error, "couldn't create token"}
     end
   end
 end

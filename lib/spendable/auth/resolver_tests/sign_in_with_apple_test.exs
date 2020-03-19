@@ -47,7 +47,7 @@ defmodule Spendable.User.Resolver.SignInWithAppleTest do
 
   setup_with_mocks([
     {JOSE.JWT, [:passthrough],
-     peek_protected: fn _ ->
+     peek_protected: fn _token ->
        %JOSE.JWS{
          alg: {:jose_jws_alg_rsa_pkcs1_v1_5, :RS256},
          b64: :undefined,
@@ -55,7 +55,7 @@ defmodule Spendable.User.Resolver.SignInWithAppleTest do
        }
      end},
     {JOSE.JWK, [:passthrough],
-     verify: fn _, _ ->
+     verify: fn _token, _jwk ->
        {true,
         "{\"iss\":\"https://appleid.apple.com\",\"aud\":\"fiftysevenmedia.SpendableDev\",\"exp\":1582434977,\"iat\":1582434377,\"sub\":\"000107.30cad47b3b7f4e498f6c8f075e4c259f.0422\",\"c_hash\":\"uJSa5ci_AjKT9rMzFKH17A\",\"auth_time\":1582434377,\"nonce_supported\":true}",
         %JOSE.JWS{

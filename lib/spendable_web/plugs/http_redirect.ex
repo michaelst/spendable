@@ -5,7 +5,7 @@ defmodule Spendable.Web.HttpRedirect do
 
   def init(opts), do: opts
 
-  def call(conn, _) do
+  def call(conn, _params) do
     conn
     |> get_req_header("x-forwarded-proto")
     |> case do
@@ -15,7 +15,7 @@ defmodule Spendable.Web.HttpRedirect do
         |> resp(:moved_permanently, "")
         |> halt()
 
-      _ ->
+      _result ->
         conn
     end
   end

@@ -15,7 +15,7 @@ defmodule Spendable.Web.Controllers.Site do
         )
         |> case do
           {1, [%{id: id}]} -> id
-          _ -> nil
+          _result -> nil
         end
       end
 
@@ -24,11 +24,11 @@ defmodule Spendable.Web.Controllers.Site do
     |> render("index.html", position: position)
   end
 
-  def privacy_policy(conn, _) do
+  def privacy_policy(conn, _params) do
     render(conn, "privacy-policy.html")
   end
 
-  def contact_us(conn, _) do
+  def contact_us(conn, _params) do
     render(conn, "contact_us.html")
   end
 end

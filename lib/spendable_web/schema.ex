@@ -15,7 +15,7 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.User.Types)
 
   query do
-    field :health, :string, resolve: fn _, _ -> {:ok, "up"} end
+    field :health, :string, resolve: fn _args, _resolution -> {:ok, "up"} end
     import_fields(:allocation_template_queries)
     import_fields(:bank_member_queries)
     import_fields(:budget_queries)
@@ -49,6 +49,8 @@ defmodule Spendable.Web.Schema do
   end
 
   def middleware(middleware, _field, %{identifier: :mutation}) do
+    # this middleware needs to append to the end
+    # credo:disable-for-next-line Credo.Check.Refactor.AppendSingleItem
     middleware ++ [Spendable.Middleware.ChangesetErrors]
   end
 

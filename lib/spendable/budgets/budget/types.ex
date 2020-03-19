@@ -15,7 +15,7 @@ defmodule Spendable.Budgets.Budget.Types do
     field :balance, :string do
       complexity(5)
 
-      resolve(fn budget, _, _ ->
+      resolve(fn budget, _args, _resolution ->
         {:ok, Budget.balance(budget)}
       end)
     end

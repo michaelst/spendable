@@ -4,11 +4,11 @@ defmodule Spendable do
   alias Spendable.Banks.Account
   alias Spendable.Budgets.Allocation
 
-  def data() do
+  def data do
     Dataloader.Ecto.new(Spendable.Repo, query: &query/2)
   end
 
-  def query(Account, _), do: from(Account, order_by: :name)
+  def query(Account, _args), do: from(Account, order_by: :name)
 
   def query(Allocation, %{recent: true}) do
     from(a in Allocation,
@@ -17,7 +17,7 @@ defmodule Spendable do
     )
   end
 
-  def query(queryable, _params) do
+  def query(queryable, _args) do
     queryable
   end
 end

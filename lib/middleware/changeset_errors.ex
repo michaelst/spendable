@@ -1,7 +1,7 @@
 defmodule Spendable.Middleware.ChangesetErrors do
   @behaviour Absinthe.Middleware
 
-  def call(resolution, _) do
+  def call(resolution, _config) do
     %{resolution | errors: Enum.flat_map(resolution.errors, &handle_error/1)}
   end
 

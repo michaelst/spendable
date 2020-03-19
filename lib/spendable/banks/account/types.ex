@@ -15,13 +15,13 @@ defmodule Spendable.Banks.Account.Types do
 
     field :balance, :string do
       resolve(fn
-        %{type: "credit", balance: balance}, _, _ ->
+        %{type: "credit", balance: balance}, _args, _resolution ->
           {:ok, Decimal.mult(balance, "-1")}
 
-        %{available_balance: nil, balance: balance}, _, _ ->
+        %{available_balance: nil, balance: balance}, _args, _resolution ->
           {:ok, balance}
 
-        %{available_balance: available_balance, balance: balance}, _, _ ->
+        %{available_balance: available_balance, balance: balance}, _args, _resolution ->
           if Decimal.eq?(available_balance, "0"),
             do: {:ok, balance},
             else: {:ok, available_balance}

@@ -16,16 +16,16 @@ defmodule Spendable.Auth.Utils do
           {:ok, user}
       end
     else
-      _ -> {:error, "Login failed"}
+      _match -> {:error, "Login failed"}
     end
   end
 
   def authenticate(params) do
-    with user when not is_nil(user) <- Spendable.Repo.get_by(Spendable.User, email: String.downcase(params.email)),
+    with user when is_struct(user) <- Spendable.Repo.get_by(Spendable.User, email: String.downcase(params.email)),
          true <- Bcrypt.verify_pass(params.password, user.password) do
       {:ok, user}
     else
-      _ -> {:error, "Incorrect login credentials"}
+      _match -> {:error, "Incorrect login credentials"}
     end
   end
 

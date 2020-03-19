@@ -3,13 +3,13 @@ defmodule Spendable.User.Resolver do
   alias Spendable.Repo
   alias Spendable.User
 
-  def current_user(_params, %{context: %{current_user: user}}) do
+  def current_user(_args, %{context: %{current_user: user}}) do
     {:ok, user}
   end
 
-  def create(params, _context) do
+  def create(args, _context) do
     struct(User)
-    |> User.changeset(params)
+    |> User.changeset(args)
     |> Repo.insert()
     |> case do
       {:ok, user} ->
@@ -21,9 +21,9 @@ defmodule Spendable.User.Resolver do
     end
   end
 
-  def update(params, %{context: %{current_user: user}}) do
+  def update(args, %{context: %{current_user: user}}) do
     user
-    |> User.changeset(params)
+    |> User.changeset(args)
     |> Repo.update()
   end
 end

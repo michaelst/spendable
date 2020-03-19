@@ -14,7 +14,9 @@ defmodule Spendable.User.Types do
     field :spendable, :string do
       complexity(50)
 
-      resolve(fn user, _, _ -> {:ok, Utils.calculate_spendable(user)} end)
+      resolve(fn user, _args, _resolution ->
+        {:ok, Utils.calculate_spendable(user)}
+      end)
     end
   end
 

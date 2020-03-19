@@ -2,7 +2,7 @@ defmodule Spendable.Banks.Category.Utils do
   alias Spendable.Banks.Category
   alias Spendable.Repo
 
-  def get_categories() do
+  def get_categories do
     {:ok, %{body: %{"categories" => categories}}} = Plaid.categories()
     categories
   end
@@ -49,7 +49,7 @@ defmodule Spendable.Banks.Category.Utils do
     |> Enum.map(fn category ->
       case parent_key do
         nil -> {category.name, category.id}
-        _ -> {category.name <> ":" <> parent_key, category.id}
+        _key -> {category.name <> ":" <> parent_key, category.id}
       end
     end)
     |> Map.new()
