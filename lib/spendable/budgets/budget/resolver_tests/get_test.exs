@@ -18,32 +18,32 @@ defmodule Spendable.Budgets.Budget.Resolver.GetTest do
       )
 
     query = """
-      query {
-        budget(id: "#{budget.id}") {
+    query {
+      budget(id: "#{budget.id}") {
+        id
+        name
+        balance
+        goal
+        recentAllocations {
           id
-          name
-          balance
-          goal
-          recentAllocations {
-            id
-            amount
-            transaction {
-              name
-              date
-              bankTransaction {
-                pending
-              }
-            }
-          }
-          allocationTemplateLines {
-            id
-            amount
-            allocationTemplate {
-              name
+          amount
+          transaction {
+            name
+            date
+            bankTransaction {
+              pending
             }
           }
         }
+        allocationTemplateLines {
+          id
+          amount
+          allocationTemplate {
+            name
+          }
+        }
       }
+    }
     """
 
     response =

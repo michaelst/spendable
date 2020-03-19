@@ -20,9 +20,9 @@ defmodule Spendable.Banks.Member.Resolver.CreatePublicTokenTest do
     member = insert(:bank_member, user: user)
 
     query = """
-      mutation {
-        createPublicToken(id: "#{member.id}")
-      }
+    mutation {
+      createPublicToken(id: "#{member.id}")
+    }
     """
 
     response =

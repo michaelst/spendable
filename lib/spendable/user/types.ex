@@ -1,13 +1,9 @@
 defmodule Spendable.User.Types do
   use Absinthe.Schema.Notation
-  import Ecto.Query, only: [from: 2]
 
-  alias Spendable.Banks.Account
-  alias Spendable.Budgets.Allocation
-  alias Spendable.Budgets.Budget
   alias Spendable.Middleware.CheckAuthentication
-  alias Spendable.Repo
   alias Spendable.User.Resolver
+  alias Spendable.User.Utils
 
   object :user do
     field :id, :id
@@ -18,47 +14,7 @@ defmodule Spendable.User.Types do
     field :spendable, :string do
       complexity(50)
 
-      resolve(fn user, _, _ ->
-        balance =
-          from(ba in Account,
-            select:
-              fragment(
-                "SUM(CASE WHEN ? = 'credit' THEN ? * -1 ELSE COALESCE(?, ?) END)",
-                ba.type,
-                ba.balance,
-                ba.available_balance,
-                ba.balance
-              ),
-            where: ba.user_id == ^user.id and ba.sync
-          )
-          |> Repo.one()
-          |> Kernel.||("0.00")
-
-        adjustments =
-          from(b in Budget,
-            select: sum(b.adjustment),
-            where: b.user_id == ^user.id
-          )
-          |> Repo.one()
-          |> Kernel.||("0.00")
-
-        spendable =
-          from(a in Allocation,
-            join: b in assoc(a, :budget),
-            where: b.user_id == ^user.id,
-            select: {b.id, sum(a.amount)},
-            group_by: b.id
-          )
-          |> Repo.all()
-          |> Enum.reduce(Decimal.sub(balance, adjustments), fn {_id, allocated}, acc ->
-            # we subtract the absolute value because budgets that are negative are missing
-            # allocated funds needed to be 0 so it needs to be subtracted from the balance
-            # otherwise a negative budget could increase your spendable amount incorrectly
-            Decimal.sub(acc, Decimal.abs(allocated))
-          end)
-
-        {:ok, spendable}
-      end)
+      resolve(fn user, _, _ -> {:ok, Utils.calculate_spendable(user)} end)
     end
   end
 
