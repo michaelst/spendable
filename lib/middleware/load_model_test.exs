@@ -54,12 +54,11 @@ defmodule Spendable.Middleware.LoadModelTest do
              "data" => %{"updateBankAccount" => nil},
              "errors" => [
                %{
-                 "locations" => [%{"column" => 5, "line" => 2}],
                  "message" => "not found",
                  "path" => ["updateBankAccount"]
                }
              ]
-           } == response
+           } = response
 
     # wrong user
     {_other_user, other_token} = Spendable.TestUtils.create_user()
@@ -83,12 +82,11 @@ defmodule Spendable.Middleware.LoadModelTest do
              "data" => %{"updateBankAccount" => nil},
              "errors" => [
                %{
-                 "locations" => [%{"column" => 5, "line" => 2}],
                  "message" => "not found",
                  "path" => ["updateBankAccount"]
                }
              ]
-           } == response
+           } = response
 
     # make sure it works when correct
     conn
