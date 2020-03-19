@@ -65,12 +65,12 @@ defmodule Spendable.Middleware.LoadModelTest do
     {_other_user, other_token} = Spendable.TestUtils.create_user()
 
     query = """
-      mutation {
-        updateBankAccount(id: #{account.id}, sync: true) {
-          id
-          sync
-        }
+    mutation {
+      updateBankAccount(id: #{account.id}, sync: true) {
+        id
+        sync
       }
+    }
     """
 
     response =

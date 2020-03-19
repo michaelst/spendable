@@ -5,7 +5,7 @@ defmodule Spendable.User.Resolver.LoginTest do
   test "login", %{conn: conn} do
     email = "#{Ecto.UUID.generate()}@example.com"
 
-    struct(User) |> User.changeset(%{email: email, password: "password"}) |> Spendable.Repo.insert!()
+    %User{} |> User.changeset(%{email: email, password: "password"}) |> Spendable.Repo.insert!()
 
     query = """
       mutation {
@@ -39,7 +39,7 @@ defmodule Spendable.User.Resolver.LoginTest do
   test "invalid login", %{conn: conn} do
     email = "#{Ecto.UUID.generate()}@example.com"
 
-    struct(User) |> User.changeset(%{email: email, password: "password"}) |> Spendable.Repo.insert!()
+    %User{} |> User.changeset(%{email: email, password: "password"}) |> Spendable.Repo.insert!()
 
     query = """
       mutation {

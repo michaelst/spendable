@@ -8,7 +8,7 @@ defmodule Spendable.Auth.Utils do
          {:ok, %{"sub" => apple_identifier}} <- Jason.decode(json_payload) do
       case Spendable.Repo.get_by(Spendable.User, apple_identifier: apple_identifier) do
         nil ->
-          struct(User)
+          %User{}
           |> User.changeset(%{apple_identifier: apple_identifier})
           |> Repo.insert()
 

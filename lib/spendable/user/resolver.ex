@@ -8,7 +8,7 @@ defmodule Spendable.User.Resolver do
   end
 
   def create(args, _context) do
-    struct(User)
+    %User{}
     |> User.changeset(args)
     |> Repo.insert()
     |> case do

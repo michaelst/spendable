@@ -7,7 +7,7 @@ defmodule Spendable.TestUtils do
 
   def create_user do
     email = "#{Ecto.UUID.generate()}@example.com"
-    user = struct(User) |> User.changeset(%{email: email, password: "password"}) |> Repo.insert!()
+    user = %User{} |> User.changeset(%{email: email, password: "password"}) |> Repo.insert!()
     {:ok, token, _} = Guardian.encode_and_sign(user)
 
     {user, token}

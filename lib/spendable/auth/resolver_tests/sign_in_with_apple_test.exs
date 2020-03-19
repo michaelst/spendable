@@ -96,7 +96,7 @@ defmodule Spendable.User.Resolver.SignInWithAppleTest do
   end
 
   test "signin", %{conn: conn} do
-    struct(User)
+    %User{}
     |> User.changeset(%{apple_identifier: "000107.30cad47b3b7f4e498f6c8f075e4c259f.0422"})
     |> Spendable.Repo.insert!()
 
