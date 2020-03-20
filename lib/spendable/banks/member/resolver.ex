@@ -4,7 +4,7 @@ defmodule Spendable.Banks.Member.Resolver do
 
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
-  alias Spendable.Jobs.Banks.SyncMember
+  alias Spendable.Publishers.SyncMemberRequest
   alias Spendable.Repo
 
   def list(_parent, _args, %{context: %{current_user: user}}) do
@@ -24,8 +24,7 @@ defmodule Spendable.Banks.Member.Resolver do
       |> Repo.insert()
       |> case do
         {:ok, member} ->
-          {:ok, _} = Exq.enqueue(Exq, "default", SyncMember, [member.id])
-
+          :ok = SyncMemberRequest.publish(member.id)
           {:ok, member}
 
         result ->

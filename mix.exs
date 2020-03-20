@@ -39,17 +39,22 @@ defmodule Spendable.MixProject do
       {:absinthe_plug, "~> 1.5.0-rc.0"},
       {:absinthe, "~> 1.5.0-rc.0"},
       {:bcrypt_elixir, "~> 2.0"},
+      {:broadway_cloud_pub_sub, "~> 0.6.0"},
+      {:broadway, "~> 0.6.0"},
       {:castore, "~> 0.1.0"},
+      {:certifi, "~> 2.5.2", override: true},
+      {:cowlib, "~> 2.8", override: true},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dataloader, "~> 1.0.0"},
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.3"},
       {:ex_machina, "~> 2.4", only: :test},
       {:excoveralls, "~> 0.12.0"},
-      {:exq, "~> 0.13.3"},
       {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
+      {:goth, "~> 1.0"},
       {:guardian, "~> 2.0"},
+      {:hackney, "~> 1.15.2", override: true},
       {:jason, "~> 1.0"},
       {:kadabra, "~> 0.4.4"},
       {:mint, "~> 1.0"},
@@ -62,8 +67,10 @@ defmodule Spendable.MixProject do
       {:pigeon, "~> 1.5.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
+      {:protobuf, "~> 0.7.1"},
       {:sentry, "~> 7.0"},
-      {:tesla, "~> 1.3.2"}
+      {:tesla, "~> 1.3.2"},
+      {:weddell, "~> 0.1"}
     ]
   end
 

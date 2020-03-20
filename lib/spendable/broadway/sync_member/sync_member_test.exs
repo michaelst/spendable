@@ -1,5 +1,6 @@
-defmodule Spendable.Jobs.Banks.SyncMemberTest do
-  use Spendable.DataCase, async: true
+defmodule Spendable.Broadway.SyncMemberTest do
+  use Spendable.DataCase, async: false
+  import Mock
   import Tesla.Mock
   import Ecto.Query
 
@@ -8,12 +9,13 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
   alias Spendable.Banks.Transaction
-  alias Spendable.Jobs.Banks.SyncMember
-  alias Spendable.Jobs.Banks.SyncMemberTest.TestData
+  alias Spendable.Broadway.SyncMember
+  alias Spendable.Broadway.SyncMemberTest.TestData
   alias Spendable.Repo
+  alias Spendable.TestUtils
 
   setup do
-    mock(fn
+    mock_global(fn
       %{method: :post, url: "https://sandbox.plaid.com/item/get"} ->
         json(TestData.item())
 
@@ -48,7 +50,10 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
       |> Member.changeset(Adapter.format(details, user.id, :member))
       |> Repo.insert!()
 
-    SyncMember.perform(member.id)
+    data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
+
+    ref = Broadway.test_messages(SyncMember, [data])
+    assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
 
     assert [
              %{
@@ -80,7 +85,19 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
     |> Account.changeset(%{sync: true})
     |> Repo.update!()
 
-    SyncMember.perform(member.id)
+    test_pid = self()
+
+    with_mock(
+      Weddell,
+      [],
+      publish: fn data, _topic ->
+        send(test_pid, data)
+        :ok
+      end
+    ) do
+      ref = Broadway.test_messages(SyncMember, [data])
+      assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
+    end
 
     assert 7 == from(Transaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
@@ -113,5 +130,27 @@ defmodule Spendable.Jobs.Banks.SyncMemberTest do
              |> Repo.all()
 
     assert "-6.33" |> Decimal.new() |> Decimal.equal?(amount)
+
+    TestUtils.assert_published([
+      %SendNotificationRequest{
+        body: "$6.33",
+        title: "Uber 072515 SF**POOL**",
+        user_id: user.id
+      },
+      %SendNotificationRequest{
+        body: "$5.4",
+        title: "Uber 063015 SF**POOL**",
+        user_id: user.id
+      },
+      %SendNotificationRequest{body: "$500", title: "United Airlines", user_id: user.id},
+      %SendNotificationRequest{body: "$12", title: "McDonald's", user_id: user.id},
+      %SendNotificationRequest{body: "$4.33", title: "Starbucks", user_id: user.id},
+      %SendNotificationRequest{body: "$89.4", title: "SparkFun", user_id: user.id},
+      %SendNotificationRequest{
+        body: "$6.33",
+        title: "Uber 072515 SF**POOL**",
+        user_id: user.id
+      }
+    ])
   end
 end

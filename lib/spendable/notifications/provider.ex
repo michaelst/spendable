@@ -3,7 +3,7 @@ defmodule Notifications.Provider do
               Pigeon.APNS.Notification | Pigeon.FCM.Notification
   @callback push(Pigeon.APNS.Notification | Pigeon.FCM.Notification) :: :ok | :invalid_token
 
-  alias Notifications.Provider.APNS
+  alias Notifications.Providers.APNS
   alias Spendable.Notifications.Settings
 
   def new!(message, %Settings{provider: :apns} = settings), do: APNS.new(message, settings)

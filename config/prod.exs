@@ -18,12 +18,6 @@ config :spendable, Spendable.Repo,
   hostname: "10.122.112.3",
   pool_size: 5
 
-config :exq,
-  host: "10.128.0.9",
-  concurrency: 1,
-  scheduler_enable: true,
-  max_retries: 3
-
 # Do not print debug messages in production
 config :logger, level: :info
 
@@ -43,3 +37,9 @@ config :spendable, Plaid,
   client_id: System.get_env("PLAID_CLIENT_ID"),
   secret_key: System.get_env("PLAID_SECRET_KEY"),
   public_key: System.get_env("PLAID_PUBLIC_KEY")
+
+config :weddell,
+  project: "cloud-57"
+
+config :goth,
+  json: File.read!("deploy/secrets/cloud-57-312049aba710.json")

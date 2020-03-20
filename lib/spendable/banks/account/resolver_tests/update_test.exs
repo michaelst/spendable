@@ -1,9 +1,24 @@
 defmodule Spendable.Banks.Account.Resolver.UpdateTest do
-  use Spendable.Web.ConnCase, async: true
+  use Spendable.Web.ConnCase, async: false
+  import Mock
 
   alias Spendable.Banks.Account
   alias Spendable.Banks.Member
   alias Spendable.Repo
+  alias Spendable.TestUtils
+
+  setup_with_mocks([
+    {
+      Weddell,
+      [],
+      publish: fn data, _topic ->
+        send(self(), data)
+        :ok
+      end
+    }
+  ]) do
+    :ok
+  end
 
   test "update", %{conn: conn} do
     {user, token} = Spendable.TestUtils.create_user()
@@ -58,6 +73,6 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
              }
            } == response
 
-    Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [member.id])
+    TestUtils.assert_published(%SyncMemberRequest{member_id: member.id})
   end
 end

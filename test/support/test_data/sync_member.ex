@@ -1,4 +1,4 @@
-defmodule Spendable.Jobs.Banks.SyncMemberTest.TestData do
+defmodule Spendable.Broadway.SyncMemberTest.TestData do
   def item do
     %{
       item: %{

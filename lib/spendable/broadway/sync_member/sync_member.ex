@@ -1,28 +1,67 @@
-defmodule Spendable.Jobs.Banks.SyncMember do
+defmodule Spendable.Broadway.SyncMember do
+  use Broadway
   import Ecto.Query, only: [from: 2]
 
+  alias Broadway.Message
   alias Spendable.Banks.Account
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
   alias Spendable.Banks.Transaction, as: BankTransaction
+  alias Spendable.Publishers.SendNotificationRequest
   alias Spendable.Repo
   alias Spendable.Transaction
 
-  def perform(member_id) do
-    Repo.get!(Member, member_id)
+  @producer if Application.get_env(:spendable, :env) == :test,
+              do: {Broadway.DummyProducer, []},
+              else:
+                {BroadwayCloudPubSub.Producer,
+                 subscription: "projects/cloud-57/subscriptions/spendable.sync-member-request"}
+
+  def start_link(_opts) do
+    Broadway.start_link(__MODULE__,
+      name: __MODULE__,
+      producer: [
+        module: @producer
+      ],
+      processors: [
+        default: []
+      ],
+      batchers: [
+        default: [
+          batch_size: 10,
+          batch_timeout: 2_000
+        ]
+      ]
+    )
+  end
+
+  def handle_message(_processor_name, message, _context) do
+    Message.update_data(message, &process_data/1)
+  end
+
+  def handle_batch(_batch_name, messages, _batch_info, _context) do
+    messages
+  end
+
+  defp process_data(data) do
+    %SyncMemberRequest{member_id: member_id} = SyncMemberRequest.decode(data)
+
+    Repo.get(Member, member_id)
     |> sync_member()
     |> sync_accounts()
     |> Enum.filter(& &1.sync)
     |> Enum.each(&sync_transactions/1)
   end
 
-  defp sync_member(member) do
+  defp sync_member(member) when is_struct(member) do
     {:ok, %{body: details}} = Plaid.item(member.plaid_token)
 
     member
     |> Member.changeset(Adapter.format(details, member.user_id, :member))
     |> Repo.update!()
   end
+
+  defp sync_member(nil), do: :ok
 
   defp sync_accounts(member) do
     {:ok, %{body: %{"accounts" => accounts_details}}} = Plaid.accounts(member.plaid_token)
@@ -74,11 +113,12 @@ defmodule Spendable.Jobs.Banks.SyncMember do
       {:ok, transaction} = response ->
         # if pending transaction id is set that means we have already sent a notification for the pending transaction
         if is_nil(details["pending_transaction_id"]) do
-          {:ok, _} =
-            Exq.enqueue(Exq, "default", Spendable.Jobs.Notifications.Send, [
+          :ok =
+            SendNotificationRequest.publish(
               account.user_id,
-              %{title: transaction.name, body: "$#{Decimal.abs(transaction.amount)}"}
-            ])
+              transaction.name,
+              "$#{Decimal.abs(transaction.amount)}"
+            )
         end
 
         response

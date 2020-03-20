@@ -1,6 +1,9 @@
 defmodule Spendable.Banks.Member.Resolver.CreateTest do
-  use Spendable.Web.ConnCase, async: true
+  use Spendable.Web.ConnCase, async: false
+  import Mock
   import Tesla.Mock
+
+  alias Spendable.TestUtils
 
   setup do
     mock(fn
@@ -34,6 +37,19 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
         })
     end)
 
+    :ok
+  end
+
+  setup_with_mocks([
+    {
+      Weddell,
+      [],
+      publish: fn data, _topic ->
+        send(self(), data)
+        :ok
+      end
+    }
+  ]) do
     :ok
   end
 
@@ -73,6 +89,6 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
              }
            } = response
 
-    Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [String.to_integer(member_id)])
+    TestUtils.assert_published(%SyncMemberRequest{member_id: String.to_integer(member_id)})
   end
 end

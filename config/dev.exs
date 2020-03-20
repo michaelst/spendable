@@ -7,13 +7,6 @@ config :spendable, Spendable.Repo, database: "spendable_dev"
 # debugging and code reloading.
 config :spendable, Spendable.Web.Endpoint,
   http: [port: 4000],
-  # https: [
-  #   port: 4040,
-  #   cipher_suite: :strong,
-  #   keyfile: "/etc/letsencrypt/live/spendable.dev/privkey.pem",
-  #   cacertfile: "/etc/letsencrypt/live/spendable.dev/chain.pem",
-  #   certfile: "/etc/letsencrypt/live/spendable.dev/cert.pem"
-  # ],
   debug_errors: true,
   code_reloader: true,
   check_origin: false
