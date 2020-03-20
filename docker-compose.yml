@@ -3,7 +3,6 @@ version: '3.7'
 services:
   db:
     image: postgres:11-alpine
-    restart: always
     environment:
       POSTGRES_PASSWORD:
     volumes:
@@ -12,16 +11,6 @@ services:
       - "5432:5432"
     logging:
       driver: none
-  redis:
-    image: redis:alpine
-    restart: always
-    volumes:
-      - redis-data:/var/lib/redis
-    ports:
-      - "6379:6379"
-    logging:
-      driver: none
 
 volumes:
   postgres-data:
-  redis-data:

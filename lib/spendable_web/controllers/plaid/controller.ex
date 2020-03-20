@@ -1,6 +1,7 @@
 defmodule Spendable.Web.Controllers.Plaid do
   use Spendable.Web, :controller
 
+  alias Spendable.Publishers.SyncMemberRequest
   alias Spendable.Repo
 
   def webhook(conn, %{"item_id" => item_id}) when is_binary(item_id) do
@@ -9,7 +10,7 @@ defmodule Spendable.Web.Controllers.Plaid do
         send_resp(conn, :not_found, "")
 
       member ->
-        {:ok, _} = Exq.enqueue(Exq, "default", Spendable.Jobs.Banks.SyncMember, [member.id])
+        :ok = SyncMemberRequest.publish(member.id)
 
         send_resp(conn, :ok, "")
     end

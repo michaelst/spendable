@@ -1,5 +1,6 @@
 defmodule Spendable.Banks.Account.Resolver do
   alias Spendable.Banks.Account
+  alias Spendable.Publishers.SyncMemberRequest
   alias Spendable.Repo
 
   def update(params, %{context: %{model: model}}) do
@@ -8,7 +9,7 @@ defmodule Spendable.Banks.Account.Resolver do
     |> Repo.update()
     |> case do
       {:ok, %{sync: true} = model} = response ->
-        {:ok, _} = Exq.enqueue(Exq, "default", Spendable.Jobs.Banks.SyncMember, [model.bank_member_id])
+        :ok = SyncMemberRequest.publish(model.bank_member_id)
         response
 
       response ->

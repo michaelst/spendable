@@ -22,8 +22,6 @@ config :pigeon, :apns,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :exq, queues: []
-
 config :bcrypt_elixir, :log_rounds, 1
 
 config :spendable, Plaid,

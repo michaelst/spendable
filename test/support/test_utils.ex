@@ -13,21 +13,19 @@ defmodule Spendable.TestUtils do
     {user, token}
   end
 
-  def assert_job(module, args, opts \\ [queue: :default]) do
-    {:ok, entries} = Exq.Api.jobs(Exq.Api, opts[:queue])
-    "Elixir." <> module_str = "#{module}"
-
-    assert Enum.any?(entries, fn
-             %{class: ^module_str, args: ^args} -> true
-             _result -> false
-           end),
-           "couldn't find #{module} with args #{inspect(args)}"
-  end
-
   def random_decimal(range, precision \\ 2) do
     Enum.random(range)
     |> Decimal.cast()
     |> Decimal.div(100)
     |> Decimal.round(precision)
+  end
+
+  def assert_published(data) when is_list(data) do
+    Enum.each(data, &assert_published/1)
+  end
+
+  def assert_published(%{__struct__: module} = data) do
+    encoded_data = module.encode(data)
+    assert_receive ^encoded_data, 1000
   end
 end

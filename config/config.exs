@@ -1,10 +1,5 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
-#
-# This configuration file is loaded before any dependency and
-# is restricted to this project.
-
-# General application configuration
+# Mix.env() can be used inside config files
+# credo:disable-for-this-file Credo.Check.Warning.MixEnv
 use Mix.Config
 
 config :spendable,
@@ -41,13 +36,6 @@ config :sentry,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :exq,
-  max_retries: 3,
-  name: Exq,
-  namespace: "exq-#{Mix.env()}",
-  start_on_application: false,
-  queues: ["default"]
-
 config :spendable, Spendable.Guardian,
   issuer: "Spendable",
   secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"
@@ -60,6 +48,9 @@ config :pigeon, :apns,
     key: {:spendable, "apns/key_unencrypted.pem"},
     mode: :dev
   }
+
+config :goth,
+  disabled: true
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

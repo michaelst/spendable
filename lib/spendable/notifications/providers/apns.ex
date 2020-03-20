@@ -1,4 +1,4 @@
-defmodule Notifications.Provider.APNS do
+defmodule Notifications.Providers.APNS do
   @behaviour Notifications.Provider
 
   alias Pigeon.APNS

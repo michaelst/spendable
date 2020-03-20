@@ -7,16 +7,12 @@ defmodule Spendable.Application do
   alias Spendable.Web.Endpoint
 
   def start(_type, _args) do
-    # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
       Spendable.Repo,
-      # Start the endpoint when the application starts
       Spendable.Web.Endpoint,
       %{id: Absinthe.Subscription, start: {Absinthe.Subscription, :start_link, [Spendable.Web.Endpoint]}},
-      # Starts a worker by calling: Spendable.Worker.start_link(arg)
-      # {Spendable.Worker, arg},
-      %{id: Exq, start: {Exq, :start_link, []}}
+      Spendable.Broadway.SendNotification,
+      Spendable.Broadway.SyncMember
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

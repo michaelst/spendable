@@ -1,6 +1,22 @@
 defmodule Spendable.Web.Controllers.PlaidTest do
-  use Spendable.Web.ConnCase, async: true
+  use Spendable.Web.ConnCase, async: false
   import Spendable.Factory
+  import Mock
+
+  alias Spendable.TestUtils
+
+  setup_with_mocks([
+    {
+      Weddell,
+      [],
+      publish: fn data, _topic ->
+        send(self(), data)
+        :ok
+      end
+    }
+  ]) do
+    :ok
+  end
 
   test "webhook", %{conn: conn} do
     {user, _token} = Spendable.TestUtils.create_user()
@@ -15,7 +31,7 @@ defmodule Spendable.Web.Controllers.PlaidTest do
     |> post("/plaid/webhook", %{"item_id" => "webhook_test"})
     |> response(:ok)
 
-    Spendable.TestUtils.assert_job(Spendable.Jobs.Banks.SyncMember, [member.id])
+    TestUtils.assert_published(%SyncMemberRequest{member_id: member.id})
 
     conn
     |> post("/plaid/webhook", %{})

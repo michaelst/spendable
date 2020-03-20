@@ -1,10 +1,10 @@
-defmodule Spendable.Jobs.Notifictions.SendTest do
-  use Spendable.DataCase, async: true
+defmodule Spendable.Broadway.SendNotificationTest do
+  use Spendable.DataCase, async: false
   import Spendable.Factory
   import Mock
   import Ecto.Query, only: [from: 2]
 
-  alias Spendable.Jobs.Notifications.Send
+  alias Spendable.Broadway.SendNotification
   alias Spendable.Notifications.Settings
   alias Spendable.Repo
 
@@ -18,7 +18,12 @@ defmodule Spendable.Jobs.Notifictions.SendTest do
         %{device_token: "bad-device-token-1"} = notification -> %{notification | response: :bad_device_token}
         notification -> %{notification | response: :success}
       end do
-      assert :ok == Send.perform(user.id, "test")
+      data =
+        %SendNotificationRequest{user_id: user.id, title: "Test", body: "Some message"}
+        |> SendNotificationRequest.encode()
+
+      ref = Broadway.test_messages(SendNotification, [data])
+      assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
 
       assert 2 = from(Spendable.Notifications.Settings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
@@ -26,7 +31,8 @@ defmodule Spendable.Jobs.Notifictions.SendTest do
       |> Settings.changeset(%{enabled: true})
       |> Repo.update!()
 
-      assert :ok == Send.perform(user.id, "test")
+      ref = Broadway.test_messages(SendNotification, [data])
+      assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
 
       assert 1 = from(Spendable.Notifications.Settings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
     end
