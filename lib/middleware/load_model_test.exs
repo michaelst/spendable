@@ -20,7 +20,7 @@ defmodule Spendable.Middleware.LoadModelTest do
         middleware(Spendable.Middleware.LoadModel, module: Account)
         arg(:id, non_null(:id))
         arg(:sync, :boolean)
-        resolve(fn _, %{context: %{model: model}} -> {:ok, model} end)
+        resolve(fn _args, %{context: %{model: model}} -> {:ok, model} end)
       end
     end
   end
