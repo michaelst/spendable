@@ -13,6 +13,7 @@ defmodule Spendable.Web.Router do
 
   pipeline(:public) do
     plug :accepts, ["json"]
+    plug :put_secure_browser_headers
     plug Spendable.Web.HttpRedirect
   end
 
@@ -22,6 +23,7 @@ defmodule Spendable.Web.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Spendable.Web.HttpRedirect
   end
 
   forward "/_health", HealthCheck
