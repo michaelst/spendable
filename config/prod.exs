@@ -40,6 +40,3 @@ config :spendable, Plaid,
 
 config :weddell,
   project: "cloud-57"
-
-config :goth,
-  json: {:system, "GCP_CREDENTIALS"}
