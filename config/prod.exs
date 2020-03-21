@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :spendable, Spendable.Web.Endpoint,
-  url: [host: "spendable.dev", port: 80],
+  url: [host: "spendable.money", port: 80],
   debug_errors: false,
   http: [
     port: 80,
@@ -22,7 +22,7 @@ config :spendable, Spendable.Repo,
 config :logger, level: :info
 
 config :spendable, Spendable.Guardian,
-  issuer: "spendable.dev",
+  issuer: "spendable.money",
   secret_key: System.get_env("GUARDIAN_SECRET")
 
 config :pigeon, :apns,

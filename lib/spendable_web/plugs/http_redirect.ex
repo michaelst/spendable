@@ -11,7 +11,7 @@ defmodule Spendable.Web.HttpRedirect do
     |> case do
       ["http"] ->
         conn
-        |> put_resp_header("location", "https://spendable.dev#{Phoenix.Controller.current_path(conn)}")
+        |> put_resp_header("location", "https://spendable.money#{Phoenix.Controller.current_path(conn)}")
         |> resp(:moved_permanently, "")
         |> halt()
 

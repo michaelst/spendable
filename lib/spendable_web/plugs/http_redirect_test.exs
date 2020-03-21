@@ -8,6 +8,6 @@ defmodule Spendable.Web.HttpRedirectTest do
       |> get("/graphql")
       |> redirected_to(:moved_permanently)
 
-    assert redirected_to == "https://spendable.dev/graphql"
+    assert redirected_to == "https://spendable.money/graphql"
   end
 end
