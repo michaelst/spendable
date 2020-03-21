@@ -62,4 +62,3 @@ before_install:
 - mkdir priv/apns
 - mv deploy/secrets/cert.pem priv/apns/cert.pem
 - mv deploy/secrets/key_unencrypted.pem priv/apns/key_unencrypted.pem
-- cp deploy/secrets/cloud-57-312049aba710.json priv/cloud-57-312049aba710.json

@@ -42,4 +42,4 @@ config :weddell,
   project: "cloud-57"
 
 config :goth,
-  json: File.read!("priv/cloud-57-312049aba710.json")
+  json: {:system, "GCP_CREDENTIALS"}
