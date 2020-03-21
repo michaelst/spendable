@@ -31,3 +31,6 @@ config :spendable, Plaid,
   public_key: "test"
 
 config :tesla, adapter: Tesla.Mock
+
+config :goth,
+  disabled: true

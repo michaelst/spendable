@@ -9,7 +9,7 @@ defmodule Spendable.Broadway.SendNotification do
               do: {Broadway.DummyProducer, []},
               else:
                 {BroadwayCloudPubSub.Producer,
-                 subscription: "projects/cloud-57/subscriptions/spendable.send-notification"}
+                 subscription: "projects/cloud-57/subscriptions/spendable.send-notification-request"}
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,

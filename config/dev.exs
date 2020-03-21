@@ -23,6 +23,9 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :spendable, Plaid, base_url: "https://sandbox.plaid.com"
 
+config :goth,
+  json: File.read!("deploy/secrets/cloud-57-312049aba710.json")
+
 if File.exists?("config/dev.secret.exs") do
   import_config "dev.secret.exs"
 end
