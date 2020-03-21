@@ -24,7 +24,7 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :sentry,
-  dsn: "https://299a9efbc76c4c3084085c9de461aeb9@sentry.io/2426632",
+  dsn: System.get_env("SENTRY_DSN"),
   environment_name: Mix.env(),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),
