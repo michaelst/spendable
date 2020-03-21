@@ -38,6 +38,7 @@ config :phoenix, :json_library, Jason
 
 config :spendable, Spendable.Guardian,
   issuer: "Spendable",
+  ttl: {365, :days},
   secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"
 
 config :tesla, Tesla.Adapter.Mint, timeout: 30000

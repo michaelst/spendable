@@ -42,7 +42,4 @@ config :weddell,
   project: "cloud-57"
 
 config :goth,
-  json:
-    :code.priv_dir(:spendable)
-    |> Path.join("cloud-57-312049aba710.json")
-    |> File.read!()
+  json: File.read!("priv/cloud-57-312049aba710.json")
