@@ -138,14 +138,14 @@ defmodule Spendable.Broadway.SyncMemberTest do
         user_id: user.id
       },
       %SendNotificationRequest{
-        body: "$5.4",
+        body: "$5.40",
         title: "Uber 063015 SF**POOL**",
         user_id: user.id
       },
-      %SendNotificationRequest{body: "$500", title: "United Airlines", user_id: user.id},
-      %SendNotificationRequest{body: "$12", title: "McDonald's", user_id: user.id},
+      %SendNotificationRequest{body: "$500.00", title: "United Airlines", user_id: user.id},
+      %SendNotificationRequest{body: "$12.00", title: "McDonald's", user_id: user.id},
       %SendNotificationRequest{body: "$4.33", title: "Starbucks", user_id: user.id},
-      %SendNotificationRequest{body: "$89.4", title: "SparkFun", user_id: user.id},
+      %SendNotificationRequest{body: "$89.40", title: "SparkFun", user_id: user.id},
       %SendNotificationRequest{
         body: "$6.33",
         title: "Uber 072515 SF**POOL**",
