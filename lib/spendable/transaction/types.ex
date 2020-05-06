@@ -17,6 +17,7 @@ defmodule Spendable.Transaction.Types do
     field :allocations, list_of(:allocation), resolve: dataloader(Spendable)
     field :bank_transaction, :bank_transaction, resolve: dataloader(Spendable)
     field :category, :category, resolve: dataloader(Spendable)
+    field :tags, list_of(:tag), resolve: dataloader(Spendable)
   end
 
   object :transaction_queries do
@@ -43,6 +44,7 @@ defmodule Spendable.Transaction.Types do
       arg(:name, :string)
       arg(:note, :string)
       arg(:allocations, list_of(:allocation_input_object))
+      arg(:tag_ids, list_of(:id))
       resolve(&Resolver.create/2)
     end
 
@@ -56,6 +58,7 @@ defmodule Spendable.Transaction.Types do
       arg(:name, :string)
       arg(:note, :string)
       arg(:allocations, list_of(:allocation_input_object))
+      arg(:tag_ids, list_of(:id))
       resolve(&Resolver.update/2)
     end
 

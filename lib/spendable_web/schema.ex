@@ -11,6 +11,7 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.Budgets.AllocationTemplateLine.Types)
   import_types(Spendable.Budgets.Budget.Types)
   import_types(Spendable.Notifications.Settings.Types)
+  import_types(Spendable.Tag.Types)
   import_types(Spendable.Transaction.Types)
   import_types(Spendable.User.Types)
 
@@ -21,6 +22,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:budget_queries)
     import_fields(:category_queries)
     import_fields(:notification_settings_queries)
+    import_fields(:tag_queries)
     import_fields(:transaction_queries)
     import_fields(:user_queries)
   end
@@ -32,6 +34,7 @@ defmodule Spendable.Web.Schema do
     import_fields(:bank_member_mutations)
     import_fields(:budget_mutations)
     import_fields(:notification_settings_mutations)
+    import_fields(:tag_mutations)
     import_fields(:transaction_mutations)
     import_fields(:user_mutations)
   end
@@ -60,9 +63,6 @@ defmodule Spendable.Web.Schema do
   def pipeline(config, pipeline_opts) do
     config.schema_mod
     |> Absinthe.Pipeline.for_document(pipeline_opts)
-    |> Absinthe.Pipeline.insert_after(
-      Absinthe.Phase.Document.Complexity.Analysis,
-      Spendable.Web.Utils.LogComplexity
-    )
+    |> Absinthe.Pipeline.insert_after(Absinthe.Phase.Document.Complexity.Analysis, Spendable.Web.Utils.LogComplexity)
   end
 end

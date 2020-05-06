@@ -1,32 +1,27 @@
-defmodule Spendable.Transaction.Resolver do
+defmodule Spendable.Tag.Resolver do
   import Ecto.Query, only: [from: 2]
 
   alias Spendable.Repo
-  alias Spendable.Transaction
+  alias Spendable.Tag
 
   def list(args, %{context: %{current_user: user}}) do
     {:ok,
-     from(Transaction,
+     from(Tag,
        where: [user_id: ^user.id],
-       order_by: [desc: :date, desc: :id],
-       limit: 100,
-       offset: ^(args[:offset] || 0)
+       order_by: :name
      )
      |> Repo.all()}
   end
 
-  def get(_args, %{context: %{model: model}}), do: {:ok, model}
-
   def create(args, %{context: %{current_user: user}}) do
-    %Transaction{user_id: user.id}
-    |> Transaction.changeset(args)
+    %Tag{user_id: user.id}
+    |> Tag.changeset(args)
     |> Repo.insert()
   end
 
   def update(args, %{context: %{model: model}}) do
     model
-    |> Repo.preload([:allocations, :tags])
-    |> Transaction.changeset(args)
+    |> Tag.changeset(args)
     |> Repo.update()
   end
 

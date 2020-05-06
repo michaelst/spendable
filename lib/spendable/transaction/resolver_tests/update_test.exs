@@ -77,4 +77,70 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
              }
            } == response
   end
+
+  test "update tags", %{conn: conn} do
+    {user, token} = Spendable.TestUtils.create_user()
+    transaction = insert(:transaction, user: user)
+    tag_one = insert(:tag, user: user, name: "First tag")
+    tag_two = insert(:tag, user: user, name: "Second tag")
+
+    query = """
+      mutation {
+        updateTransaction(
+          id: #{transaction.id}
+          tagIds: ["#{tag_one.id}", "#{tag_two.id}"]
+        ) {
+          tags {
+            id
+            name
+          }
+        }
+      }
+    """
+
+    response =
+      conn
+      |> put_req_header("authorization", "Bearer #{token}")
+      |> post("/graphql", %{query: query})
+      |> json_response(200)
+
+    assert %{
+             "data" => %{
+               "updateTransaction" => %{
+                 "tags" => [
+                   %{"id" => "#{tag_one.id}", "name" => "First tag"},
+                   %{"id" => "#{tag_two.id}", "name" => "Second tag"}
+                 ]
+               }
+             }
+           } == response
+
+    query = """
+      mutation {
+        updateTransaction(
+          id: #{transaction.id}
+          tagIds: []
+        ) {
+          tags {
+            id
+            name
+          }
+        }
+      }
+    """
+
+    response =
+      conn
+      |> put_req_header("authorization", "Bearer #{token}")
+      |> post("/graphql", %{query: query})
+      |> json_response(200)
+
+    assert %{
+             "data" => %{
+               "updateTransaction" => %{
+                 "tags" => []
+               }
+             }
+           } == response
+  end
 end

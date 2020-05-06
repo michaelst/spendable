@@ -3,7 +3,7 @@ defmodule Spendable.Repo.Migrations.NotificationSettings do
 
   def change do
     create table(:notification_settings) do
-      add(:user_id, references(:users), null: false)
+      add(:user_id, references(:users, on_delete: :delete_all), null: false)
       add(:device_token, :text, null: false)
       add(:enabled, :boolean, default: false)
       timestamps()
