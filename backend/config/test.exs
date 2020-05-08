@@ -12,13 +12,6 @@ config :spendable, Spendable.Web.Endpoint,
   http: [port: 4002],
   server: false
 
-config :pigeon, :apns,
-  apns_default: %{
-    cert: {:spendable, "apns/cert.pem"},
-    key: {:spendable, "apns/key_unencrypted.pem"},
-    mode: nil
-  }
-
 # Print only warnings and errors during test
 config :logger, level: :warn
 
