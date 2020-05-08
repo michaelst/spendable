@@ -2,7 +2,7 @@ use Mix.Config
 
 # Configure your database
 config :spendable, Spendable.Repo,
-  password: nil,
+  password: System.get_env("TEST_DB_PASSWORD"),
   database: "spendable_test",
   pool: Ecto.Adapters.SQL.Sandbox
 

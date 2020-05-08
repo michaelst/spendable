@@ -1,0 +1,54 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@master
+
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - run: gcloud auth configure-docker us.gcr.io
+
+      - name: Decode APNS Files
+        run: |        
+          mkdir priv/apns
+          echo ${{ secrets.APNS_CERT }} | base64 -d > priv/apns/cert.pem
+          echo ${{ secrets.APNS_KEY }} | base64 -d > priv/apns/key_unencrypted.pem
+
+      - name: Build
+        run: |        
+          docker build \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg GUARDIAN_SECRET=${{ secrets.GUARDIAN_SECRET }} \
+            --build-arg PLAID_CLIENT_ID=${{ secrets.PLAID_CLIENT_ID }} \
+            --build-arg PLAID_PUBLIC_KEY=${{ secrets.PLAID_PUBLIC_KEY }} \ 
+            --build-arg PLAID_SECRET_KEY=${{ secrets.PLAID_SECRET_KEY }} \ 
+            --build-arg SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} \
+            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            -f deploy/Dockerfile \
+            -t us.gcr.io/cloud-57/spendable-api:latest .
+
+      - name: Publish
+        run: docker push us.gcr.io/cloud-57/spendable-api:latest
+
+      - name: Start rolling update
+        run: |
+          gcloud compute instance-groups managed rolling-action replace spendable-api \
+            --region=us-central1 \
+            --max-unavailable 0 \
+            --max-surge 3

@@ -9,12 +9,14 @@ RUN mix local.hex --force && \
     mix local.rebar --force
 
 ENV MIX_ENV=prod
+
 ARG DB_PASSWORD
 ARG GUARDIAN_SECRET
 ARG PLAID_CLIENT_ID
 ARG PLAID_PUBLIC_KEY
 ARG PLAID_SECRET_KEY
 ARG SECRET_KEY_BASE
+ARG SENTRY_DSN
 
 COPY mix.exs mix.lock ./
 COPY config config
