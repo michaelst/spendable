@@ -35,5 +35,5 @@ defmodule Spendable.Transaction do
     put_assoc(changeset, :tags, Enum.map(tag_ids, &Repo.get!(Spendable.Tag, &1)))
   end
 
-  defp maybe_put_tags(changeset, _), do: changeset
+  defp maybe_put_tags(changeset, _params), do: changeset
 end
