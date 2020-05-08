@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-mix-
 
-      - run: mix do deps.get, compile --warnings-as-errors, ecto.create, ecto.migrate
+      - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
 
       - run: mix coveralls.json
 
