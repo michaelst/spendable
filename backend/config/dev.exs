@@ -23,6 +23,13 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :spendable, Plaid, base_url: "https://sandbox.plaid.com"
 
+config :pigeon, :apns,
+  apns_default: %{
+    cert: {:spendable, "apns/cert.pem"},
+    key: {:spendable, "apns/key_unencrypted.pem"},
+    mode: :dev
+  }
+
 if File.exists?("config/dev.secret.exs") do
   import_config "dev.secret.exs"
 end

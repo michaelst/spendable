@@ -43,13 +43,6 @@ config :spendable, Spendable.Guardian,
 
 config :tesla, Tesla.Adapter.Mint, timeout: 30000
 
-config :pigeon, :apns,
-  apns_default: %{
-    cert: {:spendable, "apns/cert.pem"},
-    key: {:spendable, "apns/key_unencrypted.pem"},
-    mode: :dev
-  }
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
