@@ -4,7 +4,7 @@ defmodule Spendable.Tag.Resolver do
   alias Spendable.Repo
   alias Spendable.Tag
 
-  def list(args, %{context: %{current_user: user}}) do
+  def list(_args, %{context: %{current_user: user}}) do
     {:ok,
      from(Tag,
        where: [user_id: ^user.id],
