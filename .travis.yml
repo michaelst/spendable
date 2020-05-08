@@ -30,14 +30,20 @@ jobs:
     if: branch = master
     language: minimal
     before_script:
-    - cat deploy/secrets/cloud-57-312049aba710.json | docker login -u _json_key --password-stdin
-      https://us.gcr.io
+    - cat deploy/secrets/cloud-57-312049aba710.json | docker login -u _json_key --password-stdin https://us.gcr.io
     - docker pull us.gcr.io/cloud-57/spendable-api:latest
     script:
-    - docker build --build-arg DB_PASSWORD --build-arg GUARDIAN_SECRET --build-arg
-      PLAID_CLIENT_ID --build-arg PLAID_PUBLIC_KEY --build-arg PLAID_SECRET_KEY --build-arg
-      SECRET_KEY_BASE --cache-from us.gcr.io/cloud-57/spendable-api:latest -f deploy/Dockerfile
-      -t us.gcr.io/cloud-57/spendable-api:latest .
+    - docker build 
+      --build-arg DB_PASSWORD 
+      --build-arg GUARDIAN_SECRET 
+      --build-arg PLAID_CLIENT_ID 
+      --build-arg PLAID_PUBLIC_KEY 
+      --build-arg PLAID_SECRET_KEY 
+      --build-arg SECRET_KEY_BASE 
+      --cache-from us.gcr.io/cloud-57/spendable-api:latest 
+      -f deploy/Dockerfile
+      -t us.gcr.io/cloud-57/spendable-api:latest 
+      .
     after_success: docker push us.gcr.io/cloud-57/spendable-api:latest
   - stage: Deploy
     if: branch = master
@@ -56,8 +62,7 @@ jobs:
     - gcloud compute instance-groups managed rolling-action replace spendable-api
       --region=us-central1 --max-unavailable 0 --max-surge 3
 before_install:
-- openssl aes-256-cbc -K $encrypted_b62a425c5f3b_key -iv $encrypted_b62a425c5f3b_iv
-  -in deploy/secrets.tar.enc -out deploy/secrets.tar -d
+- openssl aes-256-cbc -K $encrypted_b62a425c5f3b_key -iv $encrypted_b62a425c5f3b_iv -in deploy/secrets.tar.enc -out deploy/secrets.tar -d
 - (cd deploy && tar xvf secrets.tar)
 - mkdir priv/apns
 - mv deploy/secrets/cert.pem priv/apns/cert.pem
