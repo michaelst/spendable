@@ -8,11 +8,11 @@ defmodule Spendable.Budgets.Budget.Types do
   alias Spendable.Middleware.LoadModel
 
   object :budget do
-    field :id, :id
-    field :name, :string
-    field :goal, :string
+    field(:id, non_null(:id))
+    field(:name, non_null(:string))
+    field(:goal, :string)
 
-    field :balance, :string do
+    field :balance, non_null(:string) do
       complexity(5)
 
       resolve(fn budget, _args, _resolution ->
@@ -20,8 +20,13 @@ defmodule Spendable.Budgets.Budget.Types do
       end)
     end
 
-    field :recent_allocations, list_of(:allocation), resolve: dataloader(Spendable, :allocations, args: %{recent: true})
-    field :allocation_template_lines, list_of(:allocation_template_line), resolve: dataloader(Spendable)
+    field(:recent_allocations, list_of(:allocation),
+      resolve: dataloader(Spendable, :allocations, args: %{recent: true})
+    )
+
+    field(:allocation_template_lines, list_of(:allocation_template_line),
+      resolve: dataloader(Spendable)
+    )
   end
 
   object :budget_queries do
@@ -32,7 +37,7 @@ defmodule Spendable.Budgets.Budget.Types do
       resolve(&Resolver.get/2)
     end
 
-    field :budgets, list_of(:budget) do
+    field :budgets, :budget |> non_null |> list_of |> non_null do
       middleware(CheckAuthentication)
       resolve(&Resolver.list/2)
     end

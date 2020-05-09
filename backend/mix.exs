@@ -52,7 +52,7 @@ defmodule Spendable.MixProject do
       {:excoveralls, "~> 0.12.0"},
       {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
-      {:goth, "~> 1.0"},
+      {:goth, "~> 1.2"},
       {:guardian, "~> 2.0"},
       {:hackney, "~> 1.15.2", override: true},
       {:jason, "~> 1.0"},
