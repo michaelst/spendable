@@ -35,7 +35,6 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe_phoenix, "~> 1.5.0-rc.0"},
       {:absinthe_plug, "~> 1.5.0-rc.0"},
       {:absinthe, "~> 1.5.0-rc.0"},
       {:bcrypt_elixir, "~> 2.0"},
@@ -62,8 +61,7 @@ defmodule Spendable.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix, "~> 1.4"},
+      {:phoenix, "~> 1.5"},
       {:pigeon, "~> 1.5.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},

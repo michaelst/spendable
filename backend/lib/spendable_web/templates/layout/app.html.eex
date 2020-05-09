@@ -27,7 +27,7 @@
     </div>
   </nav>
 
-  <%= render(@view_module, @view_template, assigns) %>
+  <%= @inner_content %>
 
   <div class="agency-footer mt-0">
     <div class="container">

@@ -10,7 +10,6 @@ defmodule Spendable.Application do
     children = [
       Spendable.Repo,
       Spendable.Web.Endpoint,
-      %{id: Absinthe.Subscription, start: {Absinthe.Subscription, :start_link, [Spendable.Web.Endpoint]}},
       Spendable.Broadway.SendNotification,
       Spendable.Broadway.SyncMember
     ]
