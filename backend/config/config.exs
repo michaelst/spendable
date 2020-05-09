@@ -43,6 +43,8 @@ config :spendable, Spendable.Guardian,
 
 config :tesla, Tesla.Adapter.Mint, timeout: 30000
 
+config :goth, project_id: "cloud-57"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
