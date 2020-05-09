@@ -1,4 +1,4 @@
 # Spendable
 
-[![Build Status](https://travis-ci.org/michaelst/spendable-api.svg?branch=master)](https://travis-ci.org/michaelst/spendable-api) 
+![Tests](https://github.com/michaelst/spendable/workflows/Tests/badge.svg)
 [![codecov](https://codecov.io/gh/michaelst/spendable-api/branch/master/graph/badge.svg)](https://codecov.io/gh/michaelst/spendable-api)
