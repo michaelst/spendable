@@ -13,7 +13,6 @@ import { gql, useQuery } from '@apollo/client'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import BudgetRow from './BudgetRow'
 import { useTheme } from '@react-navigation/native'
-import { RootStackParamList } from 'components/budgets/Budgets'
 
 export const LIST_BUDGETS = gql`
   query ListBudgets {
@@ -26,15 +25,8 @@ export const LIST_BUDGETS = gql`
   }
 `
 
-type BudgetsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Budgets'>
-
-type Props = {
-  navigation: BudgetsScreenNavigationProp;
-}
-
-export default function BudgetsScreen({ navigation }: Props) {
+export default function BudgetsScreen() {
   const { colors }: any = useTheme()
-  console.log(colors)
 
   const { data, loading, refetch, networkStatus } = useQuery<ListBudgets>(LIST_BUDGETS, {
     notifyOnNetworkStatusChange: true
@@ -51,31 +43,26 @@ export default function BudgetsScreen({ navigation }: Props) {
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   return (
-      <SectionList
-        sections={listData}
-        renderItem={({ item }) => (
-          <BudgetRow
-            budget={item}
-            onPress={() => navigation.navigate('Budget', { budgetId: item.id })} 
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text
-            style={{
-              backgroundColor: colors.background,
-              color: colors.secondary,
-              padding: 20,
-              paddingBottom: 5
-            }}
-          >
-            {title}
-          </Text>
-        )}
-        stickySectionHeadersEnabled={false}
-        refreshControl={
-          <RefreshControl refreshing={networkStatus === 4} onRefresh={refetch} />
-        }
-      />
+    <SectionList
+      sections={listData}
+      renderItem={({ item }) => <BudgetRow budget={item} />}
+      renderSectionHeader={({ section: { title } }) => (
+        <Text
+          style={{
+            backgroundColor: colors.background,
+            color: colors.secondary,
+            padding: 20,
+            paddingBottom: 5
+          }}
+        >
+          {title}
+        </Text>
+      )}
+      stickySectionHeadersEnabled={false}
+      refreshControl={
+        <RefreshControl refreshing={networkStatus === 4} onRefresh={refetch} />
+      }
+    />
   )
 }
 

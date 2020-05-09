@@ -1,21 +1,50 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { useTheme } from '@react-navigation/native'
-import { RouteProp } from '@react-navigation/native'
+import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { gql, useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { StackNavigationProp } from '@react-navigation/stack'
+import { GetBudget } from './graphql/GetBudget'
 
-type BudgetScreenRouteProp = RouteProp<RootStackParamList, 'Budget'>
-type BudgetScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Budget'>
+export const GET_BUDGET = gql`
+  query GetBudget($id: ID!) {
+    budget(id: $id) {
+      id
+      name
+      balance
+      goal
+      recentAllocations {
+        id
+        amount
+        transaction {
+          name
+          date
+          bankTransaction {
+            pending
+          }
+        }
+      }
+      allocationTemplateLines {
+        id
+        amount
+        allocationTemplate {
+          name
+        }
+      }
+    }
+  }
+`
 
-type Props = {
-  navigation: BudgetScreenNavigationProp,
-  route: BudgetScreenRouteProp
-}
 
-export default function BudgetRow({ route, navigation }: Props) {
+export default function BudgetRow() {
+  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
   const { budgetId } = route.params
   const { colors }: any = useTheme()
+
+  const { data } = useQuery(GET_BUDGET, { variables: { id: budgetId } })
+
+  navigation.setOptions({ headerTitle: data?.budget?.name ?? '' })
 
   return (
     <View
