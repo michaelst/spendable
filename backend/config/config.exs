@@ -22,6 +22,8 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :cors_plug, max_age: 86400
+
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
   environment_name: Mix.env(),

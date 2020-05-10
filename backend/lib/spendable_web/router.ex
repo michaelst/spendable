@@ -2,19 +2,14 @@ defmodule Spendable.Web.Router do
   use Spendable.Web, :router
 
   pipeline(:api) do
-    plug :accepts, ["json"]
-    plug Guardian.Plug.Pipeline, module: Spendable.Guardian
-    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
-    plug Guardian.Plug.LoadResource, allow_blank: true
-    plug Spendable.Web.Context
-    plug Spendable.Web.HttpRedirect
+    plug :accepts, [:urlencoded, :multipart, :json]
+    plug Spendable.Plug.Auth
     plug :put_secure_browser_headers
   end
 
   pipeline(:public) do
     plug :accepts, ["json"]
     plug :put_secure_browser_headers
-    plug Spendable.Web.HttpRedirect
   end
 
   pipeline :browser do
@@ -23,7 +18,6 @@ defmodule Spendable.Web.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug Spendable.Web.HttpRedirect
   end
 
   forward "/_health", HealthCheck

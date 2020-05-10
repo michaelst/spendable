@@ -42,6 +42,7 @@ defmodule Spendable.MixProject do
       {:broadway, "~> 0.6.0"},
       {:castore, "~> 0.1.0"},
       {:certifi, "~> 2.5.2", override: true},
+      {:cors_plug, "~> 2.0"},
       {:cowlib, "~> 2.8", override: true},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dataloader, "~> 1.0.0"},

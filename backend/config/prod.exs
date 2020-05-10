@@ -18,8 +18,11 @@ config :spendable, Spendable.Repo,
   hostname: "10.122.112.3",
   pool_size: 5
 
-# Do not print debug messages in production
 config :logger, level: :info
+
+config :cors_plug,
+  origin: ["https://spendable.money"],
+  max_age: 86400
 
 config :spendable, Spendable.Guardian,
   issuer: "spendable.money",
