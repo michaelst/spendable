@@ -37,7 +37,7 @@ jobs:
       - name: Cache Backend Deps
         uses: actions/cache@master
         with:
-          path: deps
+          path: backend/deps
           key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-
@@ -45,14 +45,14 @@ jobs:
       - name: Cache Backend Build
         uses: actions/cache@master
         with:
-          path: _build
+          path: backend/_build
           key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-build-
 
-      - run: (cd _build && ls -al)
-      - run: (cd _build/dev && ls -al)
-      - run: (cd _build/test && ls -al)
+      #- run: (cd _build && ls -al)
+      #- run: (cd _build/dev && ls -al)
+      #- run: (cd _build/test && ls -al)
 
       - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
 
