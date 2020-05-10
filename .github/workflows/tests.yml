@@ -20,11 +20,6 @@ jobs:
         ports: ['5432:5432']
         env:
           POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - uses: actions/checkout@master
@@ -37,13 +32,20 @@ jobs:
       - name: Cache Backend Deps
         uses: actions/cache@master
         with:
-          path: deps
+          path: backend/deps
           key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-
 
-      - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
+      - name: Cache Backend Build
+        uses: actions/cache@master
+        with:
+          path: backend/_build
+          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
+      - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
       - run: mix coveralls.json
 
       - uses: codecov/codecov-action@master
@@ -56,6 +58,9 @@ jobs:
       run:
         working-directory: backend
 
+    env: 
+      MIX_ENV: test
+
     steps:
       - uses: actions/checkout@master
 
@@ -66,12 +71,19 @@ jobs:
 
       - name: Cache Backend Deps
         uses: actions/cache@master
-        id: deps-cache
         with:
-          path: deps
+          path: backend/deps
           key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-
+
+      - name: Cache Backend Build
+        uses: actions/cache@master
+        with:
+          path: backend/_build
+          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
       - run: mix do deps.get, compile --warnings-as-errors
       - run: mix credo
