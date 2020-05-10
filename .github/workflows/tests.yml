@@ -50,6 +50,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-
 
+      - run: cd _build ls -al
+      - run: cd _build/dev ls -al
+      - run: cd _build/test ls -al
+      
       - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
 
       - run: mix coveralls.json
