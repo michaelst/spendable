@@ -46,7 +46,6 @@ jobs:
             ${{ runner.os }}-build-
 
       - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
-
       - run: mix coveralls.json
 
       - uses: codecov/codecov-action@master
