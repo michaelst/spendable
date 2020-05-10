@@ -58,6 +58,9 @@ jobs:
       run:
         working-directory: backend
 
+    env: 
+      MIX_ENV: test
+
     steps:
       - uses: actions/checkout@master
 
