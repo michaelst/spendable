@@ -42,8 +42,8 @@ export interface GetBudget_budget {
   __typename: "Budget";
   id: string;
   name: string;
-  balance: string;
-  goal: string | null;
+  balance: Decimal;
+  goal: Decimal | null;
   recentAllocations: (GetBudget_budget_recentAllocations | null)[] | null;
   allocationTemplateLines: (GetBudget_budget_allocationTemplateLines | null)[] | null;
 }

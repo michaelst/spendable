@@ -2,15 +2,13 @@ import React from 'react'
 import {
   ActivityIndicator,
   RefreshControl,
-  SafeAreaView,
   SectionList,
   StyleSheet,
   Text
 } from 'react-native'
-import { StackNavigationProp } from '@react-navigation/stack'
 import Constants from 'expo-constants'
 import { gql, useQuery } from '@apollo/client'
-import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
+import { ListBudgets } from './graphql/ListBudgets'
 import BudgetRow from './BudgetRow'
 import { useTheme } from '@react-navigation/native'
 
@@ -32,8 +30,8 @@ export default function BudgetsScreen() {
     notifyOnNetworkStatusChange: true
   })
 
-  const budgets = data?.budgets.filter(budget => !budget.goal) ?? []
-  const goals = data?.budgets.filter(budget => budget.goal) ?? []
+  const budgets = data?.budgets.filter(budget => !budget.goal).sort((a ,b) => b.balance.comparedTo(a.balance)) ?? []
+  const goals = data?.budgets.filter(budget => budget.goal).sort((a ,b) => b.balance.comparedTo(a.balance)) ?? []
 
   const listData = [
     { title: "Budgets", data: budgets },
@@ -44,6 +42,9 @@ export default function BudgetsScreen() {
 
   return (
     <SectionList
+      contentContainerStyle={{
+        paddingBottom: 40
+      }}
       sections={listData}
       renderItem={({ item }) => <BudgetRow budget={item} />}
       renderSectionHeader={({ section: { title } }) => (

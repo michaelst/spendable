@@ -1,6 +1,8 @@
 defmodule Spendable.Web.Schema do
   use Absinthe.Schema
 
+  import_types(Absinthe.Type.Custom)
+
   import_types(Spendable.Auth.Types)
   import_types(Spendable.Banks.Account.Types)
   import_types(Spendable.Banks.Category.Types)

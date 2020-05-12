@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
 import getEnvVars from './getEnvVars'
+import Decimal from 'decimal.js-light'
 
 const createApolloClient = (token: string | null) => {
   const httpLink = new HttpLink({ uri: getEnvVars.apiUrl })
@@ -14,8 +15,28 @@ const createApolloClient = (token: string | null) => {
     return forward(operation)
   })
 
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Budget: {
+        fields: {
+          balance: {
+            read(balance) {
+              return new Decimal(balance)
+            }
+          },
+          goal: {
+            read(goal) {
+              if (goal)  return new Decimal(goal)
+              return null
+            }
+          },
+        },
+      },
+    },
+  })
+
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: cache,
     link: concat(authMiddleware, httpLink)
   })
 }

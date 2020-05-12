@@ -10,9 +10,9 @@ defmodule Spendable.Budgets.Budget.Types do
   object :budget do
     field(:id, non_null(:id))
     field(:name, non_null(:string))
-    field(:goal, :string)
+    field(:goal, :decimal)
 
-    field :balance, non_null(:string) do
+    field :balance, non_null(:decimal) do
       complexity(5)
 
       resolve(fn budget, _args, _resolution ->
@@ -46,9 +46,9 @@ defmodule Spendable.Budgets.Budget.Types do
   object :budget_mutations do
     field :create_budget, :budget do
       middleware(CheckAuthentication)
-      arg(:balance, :string)
+      arg(:balance, :decimal)
       arg(:name, :string)
-      arg(:goal, :string)
+      arg(:goal, :decimal)
       resolve(&Resolver.create/2)
     end
 
@@ -56,9 +56,9 @@ defmodule Spendable.Budgets.Budget.Types do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
-      arg(:balance, :string)
+      arg(:balance, :decimal)
       arg(:name, :string)
-      arg(:goal, :string)
+      arg(:goal, :decimal)
       resolve(&Resolver.update/2)
     end
 

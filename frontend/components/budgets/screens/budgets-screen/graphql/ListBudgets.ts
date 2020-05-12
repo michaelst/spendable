@@ -11,8 +11,8 @@ export interface ListBudgets_budgets {
   __typename: "Budget";
   id: string;
   name: string;
-  balance: string;
-  goal: string | null;
+  balance: Decimal;
+  goal: Decimal | null;
 }
 
 export interface ListBudgets {
