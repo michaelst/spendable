@@ -7,21 +7,11 @@ import {
   Text
 } from 'react-native'
 import Constants from 'expo-constants'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { ListBudgets } from './graphql/ListBudgets'
 import BudgetRow from './BudgetRow'
 import { useTheme } from '@react-navigation/native'
-
-export const LIST_BUDGETS = gql`
-  query ListBudgets {
-    budgets {
-      id
-      name
-      balance
-      goal
-    }
-  }
-`
+import { LIST_BUDGETS } from 'components/budgets/queries'
 
 export default function BudgetsScreen() {
   const { colors }: any = useTheme()

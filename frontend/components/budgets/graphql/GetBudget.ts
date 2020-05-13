@@ -9,33 +9,33 @@
 
 export interface GetBudget_budget_recentAllocations_transaction_bankTransaction {
   __typename: "BankTransaction";
-  pending: boolean | null;
+  pending: boolean;
 }
 
 export interface GetBudget_budget_recentAllocations_transaction {
   __typename: "Transaction";
   name: string | null;
-  date: string | null;
+  date: Date;
   bankTransaction: GetBudget_budget_recentAllocations_transaction_bankTransaction | null;
 }
 
 export interface GetBudget_budget_recentAllocations {
   __typename: "Allocation";
-  id: string | null;
-  amount: string | null;
-  transaction: GetBudget_budget_recentAllocations_transaction | null;
+  id: string;
+  amount: Decimal;
+  transaction: GetBudget_budget_recentAllocations_transaction;
 }
 
 export interface GetBudget_budget_allocationTemplateLines_allocationTemplate {
   __typename: "AllocationTemplate";
-  name: string | null;
+  name: string;
 }
 
 export interface GetBudget_budget_allocationTemplateLines {
   __typename: "AllocationTemplateLine";
-  id: string | null;
-  amount: string | null;
-  allocationTemplate: GetBudget_budget_allocationTemplateLines_allocationTemplate | null;
+  id: string;
+  amount: Decimal;
+  allocationTemplate: GetBudget_budget_allocationTemplateLines_allocationTemplate;
 }
 
 export interface GetBudget_budget {
@@ -44,12 +44,12 @@ export interface GetBudget_budget {
   name: string;
   balance: Decimal;
   goal: Decimal | null;
-  recentAllocations: (GetBudget_budget_recentAllocations | null)[] | null;
-  allocationTemplateLines: (GetBudget_budget_allocationTemplateLines | null)[] | null;
+  recentAllocations: GetBudget_budget_recentAllocations[];
+  allocationTemplateLines: GetBudget_budget_allocationTemplateLines[];
 }
 
 export interface GetBudget {
-  budget: GetBudget_budget | null;
+  budget: GetBudget_budget;
 }
 
 export interface GetBudgetVariables {

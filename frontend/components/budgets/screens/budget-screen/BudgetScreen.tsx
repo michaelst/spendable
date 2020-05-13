@@ -1,40 +1,16 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { View, StyleSheet, Text, SectionList, ActivityIndicator } from 'react-native'
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { GetBudget } from './graphql/GetBudget'
-
-export const GET_BUDGET = gql`
-  query GetBudget($id: ID!) {
-    budget(id: $id) {
-      id
-      name
-      balance
-      goal
-      recentAllocations {
-        id
-        amount
-        transaction {
-          name
-          date
-          bankTransaction {
-            pending
-          }
-        }
-      }
-      allocationTemplateLines {
-        id
-        amount
-        allocationTemplate {
-          name
-        }
-      }
-    }
-  }
-`
-
+import { GET_BUDGET } from 'components/budgets/queries'
+import formatCurrency from 'helpers/formatCurrency'
+import { 
+  GetBudget, 
+  GetBudget_budget_recentAllocations as Allocation,
+  GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
+} from 'components/budgets/graphql/GetBudget'
 
 export default function BudgetRow() {
   const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
@@ -42,26 +18,64 @@ export default function BudgetRow() {
   const { budgetId } = route.params
   const { colors }: any = useTheme()
 
-  const { data } = useQuery(GET_BUDGET, { variables: { id: budgetId } })
+  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
 
-  navigation.setOptions({ headerTitle: data?.budget?.name ?? '' })
+  if (data?.budget) {
+    const header = () => {
+      return (
+        <View style={{ alignItems: 'center' }}>
+          <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 18 }}>{formatCurrency(data.budget.balance)}</Text>
+          <Text style={{ color: colors.secondary, fontSize: 12 }}>{data.budget.name}</Text>
+        </View>
+      )
+    }
+
+    navigation.setOptions({ headerTitle: header })
+  } else {
+    navigation.setOptions({ headerTitle: '' })
+    return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
+  }
+
+  const sections = [
+    {
+      title: 'Templates',
+      data: data.budget.allocationTemplateLines,
+      renderItem: ({ item }: {item: AllocationTemplateLine}) => <Text style={{ color: 'white' }}>{item.allocationTemplate.name}</Text>
+    },
+    { 
+      title: 'Recent Transactions', 
+      data: data.budget.recentAllocations, 
+      renderItem: ({ item }: {item: Allocation}) => <Text style={{ color: 'white' }}>{item.transaction.name}</Text> 
+    },
+  ]
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        padding: 20,
-        alignItems: 'center',
-        backgroundColor: colors.card,
-        borderBottomColor: colors.border,
-        borderBottomWidth: StyleSheet.hairlineWidth
+    <SectionList
+      contentContainerStyle={{
+        paddingBottom: 40
       }}
-    >
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: colors.text, fontSize: 20 }}>
-          {budgetId}
+      sections={sections}
+      renderSectionHeader={({ section: { title } }) => (
+        <Text
+          style={{
+            backgroundColor: colors.background,
+            color: colors.secondary,
+            padding: 20,
+            paddingBottom: 5
+          }}
+        >
+          {title}
         </Text>
-      </View>
-    </View>
+      )}
+      stickySectionHeadersEnabled={false}
+    />
   )
 }
+
+const styles = StyleSheet.create({
+  activityIndicator: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+})

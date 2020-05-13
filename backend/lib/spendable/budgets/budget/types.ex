@@ -22,17 +22,17 @@ defmodule Spendable.Budgets.Budget.Types do
       end)
     end
 
-    field(:recent_allocations, list_of(:allocation),
+    field(:recent_allocations, :allocation |> non_null |> list_of |> non_null,
       resolve: dataloader(Spendable, :allocations, args: %{recent: true})
     )
 
-    field(:allocation_template_lines, list_of(:allocation_template_line),
+    field(:allocation_template_lines, :allocation_template_line |> non_null |> list_of |> non_null,
       resolve: dataloader(Spendable)
     )
   end
 
   object :budget_queries do
-    field :budget, :budget do
+    field :budget, non_null(:budget) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
@@ -46,7 +46,7 @@ defmodule Spendable.Budgets.Budget.Types do
   end
 
   object :budget_mutations do
-    field :create_budget, :budget do
+    field :create_budget, non_null(:budget) do
       middleware(CheckAuthentication)
       arg(:balance, :decimal)
       arg(:name, :string)
@@ -54,7 +54,7 @@ defmodule Spendable.Budgets.Budget.Types do
       resolve(&Resolver.create/2)
     end
 
-    field :update_budget, :budget do
+    field :update_budget, non_null(:budget) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
@@ -64,7 +64,7 @@ defmodule Spendable.Budgets.Budget.Types do
       resolve(&Resolver.update/2)
     end
 
-    field :delete_budget, :budget do
+    field :delete_budget, non_null(:budget) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))

@@ -3,10 +3,10 @@ defmodule Spendable.Budgets.Allocation.Types do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   object :allocation do
-    field :id, :id
-    field :amount, :string
-    field :budget, :budget, resolve: dataloader(Spendable)
-    field :transaction, :transaction, resolve: dataloader(Spendable)
+    field :id, non_null(:id)
+    field :amount, non_null(:decimal)
+    field :budget, non_null(:budget), resolve: dataloader(Spendable)
+    field :transaction, non_null(:transaction), resolve: dataloader(Spendable)
   end
 
   input_object :allocation_input_object do

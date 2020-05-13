@@ -9,7 +9,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Types do
 
   object :allocation_template do
     field :id, :id
-    field :name, :string
+    field :name, non_null(:string)
     field :lines, list_of(:allocation_template_line), resolve: dataloader(Spendable)
   end
 

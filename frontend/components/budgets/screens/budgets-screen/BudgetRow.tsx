@@ -8,26 +8,18 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
-import { gql, useMutation } from '@apollo/client'
+import {  useMutation } from '@apollo/client'
 import { ListBudgets, ListBudgets_budgets } from './graphql/ListBudgets'
-import { LIST_BUDGETS } from './BudgetsScreen'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import Decimal from 'decimal.js-light'
 import formatCurrency from 'helpers/formatCurrency'
+import { LIST_BUDGETS, DELETE_BUDGET } from 'components/budgets/queries'
 
 
 type Props = {
   budget: ListBudgets_budgets,
 }
-
-export const DELETE_BUDGET = gql`
-mutation DeleteBudget($id: ID!) {
-  deleteBudget(id: $id) {
-    id
-  }
-}
-`
 
 export default function BudgetRow({ budget }: Props) {
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
@@ -44,8 +36,6 @@ export default function BudgetRow({ budget }: Props) {
 
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-
-  const balance = new Decimal(budget.balance)
 
   const navigateToBudget = () => navigation.navigate('Budget', { budgetId: budget.id })
 
@@ -74,12 +64,12 @@ export default function BudgetRow({ budget }: Props) {
           <View style={{ flexDirection: "row" }}>
             <Text
               style={{
-                color: balance.isNegative() ? 'red' : colors.secondary,
+                color: budget.balance.isNegative() ? 'red' : colors.secondary,
                 fontSize: 18,
                 paddingRight: 8
               }}
             >
-              {formatCurrency(balance)}
+              {formatCurrency(budget.balance)}
             </Text>
             <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
           </View>
