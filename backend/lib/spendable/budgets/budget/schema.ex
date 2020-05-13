@@ -36,18 +36,26 @@ defmodule Spendable.Budgets.Budget do
     end)
   end
 
-  def allocated(budget_id) do
-    from(Allocation, where: [budget_id: ^budget_id])
-    |> Repo.aggregate(:sum, :amount)
-    |> case do
-      nil -> Decimal.new("0.00")
-      allocated -> allocated
-    end
+  def balance_by_budget(_, budgets) do
+    allocated = budgets |> Enum.map(& &1.id) |> allocated()
+
+    budgets
+    |> Enum.map(fn budget ->
+      balance = allocated |> Map.get(budget.id, Decimal.new("0")) |> Decimal.add(budget.adjustment)
+      {budget.id, balance}
+    end)
+    |> Map.new()
   end
 
-  def balance(budget) do
-    budget.id
-    |> allocated()
-    |> Decimal.add(budget.adjustment)
+  def allocated(budget_ids) when is_list(budget_ids) do
+    from(a in Allocation,
+      select: {a.budget_id, sum(a.amount)},
+      group_by: a.budget_id,
+      where: a.budget_id in ^budget_ids
+    )
+    |> Repo.all()
+    |> Map.new()
   end
+
+  def allocated(budget_id), do: allocated([budget_id])[budget_id]
 end

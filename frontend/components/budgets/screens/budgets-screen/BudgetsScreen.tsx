@@ -26,8 +26,7 @@ export const LIST_BUDGETS = gql`
 export default function BudgetsScreen() {
   const { colors }: any = useTheme()
 
-  const { data, loading, refetch, networkStatus } = useQuery<ListBudgets>(LIST_BUDGETS, {
-    notifyOnNetworkStatusChange: true
+  const { data, loading, refetch } = useQuery<ListBudgets>(LIST_BUDGETS, {
   })
 
   const budgets = data?.budgets.filter(budget => !budget.goal).sort((a ,b) => b.balance.comparedTo(a.balance)) ?? []
@@ -61,7 +60,7 @@ export default function BudgetsScreen() {
       )}
       stickySectionHeadersEnabled={false}
       refreshControl={
-        <RefreshControl refreshing={networkStatus === 4} onRefresh={refetch} />
+        <RefreshControl refreshing={loading} onRefresh={refetch} />
       }
     />
   )

@@ -1,6 +1,6 @@
 defmodule Spendable.Budgets.Budget.Types do
   use Absinthe.Schema.Notation
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1, dataloader: 3]
+  import Absinthe.Resolution.Helpers
 
   alias Spendable.Budgets.Budget
   alias Spendable.Budgets.Budget.Resolver
@@ -16,7 +16,9 @@ defmodule Spendable.Budgets.Budget.Types do
       complexity(5)
 
       resolve(fn budget, _args, _resolution ->
-        {:ok, Budget.balance(budget)}
+        batch({Budget, :balance_by_budget}, budget, fn batch_results ->
+          {:ok, Map.get(batch_results, budget.id)}
+        end)
       end)
     end
 
