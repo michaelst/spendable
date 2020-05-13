@@ -1,27 +1,55 @@
 import React from 'react'
-import { View, StyleSheet, Text, SectionList, ActivityIndicator } from 'react-native'
+import {
+  ActivityIndicator,
+  SectionList,
+  Text,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { StackNavigationProp } from '@react-navigation/stack'
+import { Ionicons } from '@expo/vector-icons'
 import { GET_BUDGET } from 'components/budgets/queries'
 import formatCurrency from 'helpers/formatCurrency'
-import { 
-  GetBudget, 
+import {
+  GetBudget,
   GetBudget_budget_recentAllocations as Allocation,
   GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
 } from 'components/budgets/graphql/GetBudget'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 export default function BudgetRow() {
   const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
   const { budgetId } = route.params
   const { colors }: any = useTheme()
-
+  const navigateToBudgets = () => navigation.navigate('Budgets')
+  const navigateToEdit = () => navigation.navigate('Edit Budget', { budgetId: budgetId })
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
 
+  const headerLeft = () => {
+    return (
+      <TouchableWithoutFeedback onPress={navigateToBudgets}>
+        <View style={{ paddingLeft: 10, flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name='ios-arrow-back' size={24} color={colors.primary} />
+          <Text style={{ color: colors.primary, fontSize: 20, paddingLeft: 4 }}>Budgets</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    )
+  }
+
+  const headerRight = () => {
+    return (
+      <TouchableWithoutFeedback onPress={navigateToEdit}>
+        <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Edit</Text>
+      </TouchableWithoutFeedback>
+    )
+  }
+
   if (data?.budget) {
-    const header = () => {
+    const headerTitle = () => {
       return (
         <View style={{ alignItems: 'center' }}>
           <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 18 }}>{formatCurrency(data.budget.balance)}</Text>
@@ -30,9 +58,9 @@ export default function BudgetRow() {
       )
     }
 
-    navigation.setOptions({ headerTitle: header })
+    navigation.setOptions({ headerLeft: headerLeft, headerTitle: headerTitle, headerRight: headerRight })
   } else {
-    navigation.setOptions({ headerTitle: '' })
+    navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight })
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 
@@ -40,12 +68,12 @@ export default function BudgetRow() {
     {
       title: 'Templates',
       data: data.budget.allocationTemplateLines,
-      renderItem: ({ item }: {item: AllocationTemplateLine}) => <Text style={{ color: 'white' }}>{item.allocationTemplate.name}</Text>
+      renderItem: ({ item }: { item: AllocationTemplateLine }) => <Text style={{ color: 'white' }}>{item.allocationTemplate.name}</Text>
     },
-    { 
-      title: 'Recent Transactions', 
-      data: data.budget.recentAllocations, 
-      renderItem: ({ item }: {item: Allocation}) => <Text style={{ color: 'white' }}>{item.transaction.name}</Text> 
+    {
+      title: 'Recent Transactions',
+      data: data.budget.recentAllocations,
+      renderItem: ({ item }: { item: Allocation }) => <Text style={{ color: 'white' }}>{item.transaction.name}</Text>
     },
   ]
 

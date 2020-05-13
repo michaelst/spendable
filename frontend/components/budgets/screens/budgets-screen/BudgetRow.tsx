@@ -12,7 +12,6 @@ import {  useMutation } from '@apollo/client'
 import { ListBudgets, ListBudgets_budgets } from './graphql/ListBudgets'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
-import Decimal from 'decimal.js-light'
 import formatCurrency from 'helpers/formatCurrency'
 import { LIST_BUDGETS, DELETE_BUDGET } from 'components/budgets/queries'
 
