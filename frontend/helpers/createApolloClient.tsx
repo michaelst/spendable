@@ -32,6 +32,15 @@ const createApolloClient = (token: string | null) => {
           },
         },
       },
+      User: {
+        fields: {
+          spendable: {
+            read(spendable) {
+              return new Decimal(spendable)
+            }
+          }
+        }
+      }
     },
   })
 

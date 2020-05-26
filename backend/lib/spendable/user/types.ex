@@ -7,11 +7,10 @@ defmodule Spendable.User.Types do
 
   object :user do
     field :id, :id
-    field :bank_limit, :integer
-    field :email, :string
+    field :bank_limit, non_null(:integer)
     field :token, :string
 
-    field :spendable, :string do
+    field :spendable, non_null(:decimal) do
       complexity(50)
 
       resolve(fn user, _args, _resolution ->
@@ -21,20 +20,20 @@ defmodule Spendable.User.Types do
   end
 
   object :user_queries do
-    field :current_user, :user do
+    field :current_user, non_null(:user) do
       middleware(CheckAuthentication)
       resolve(&Resolver.current_user/2)
     end
   end
 
   object :user_mutations do
-    field :create_user, :user do
+    field :create_user, non_null(:user) do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
       resolve(&Resolver.create/2)
     end
 
-    field :update_user, :user do
+    field :update_user, non_null(:user) do
       middleware(CheckAuthentication)
       arg(:email, non_null(:string))
       arg(:password, :string)

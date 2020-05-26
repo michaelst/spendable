@@ -8,7 +8,7 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
-import {  useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { ListBudgets, ListBudgets_budgets } from './graphql/ListBudgets'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
