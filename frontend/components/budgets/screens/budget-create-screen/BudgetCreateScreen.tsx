@@ -7,12 +7,11 @@ import {
   View,
   KeyboardType
 } from 'react-native'
-import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
-import { useQuery, useMutation } from '@apollo/client'
+import { useTheme, useNavigation } from '@react-navigation/native'
+import { useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { GET_BUDGET, UPDATE_BUDGET, CREATE_BUDGET, LIST_BUDGETS } from 'components/budgets/queries'
-import { GetBudget } from 'components/budgets/graphql/GetBudget'
+import { CREATE_BUDGET, LIST_BUDGETS } from 'components/budgets/queries'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 

@@ -8,7 +8,8 @@ import SpendableHeader from 'components/headers/spendable-header/SpendableHeader
 
 export type RootStackParamList = {
   Budgets: undefined,
-  Budget: { budgetId: string }
+  Budget: { budgetId: string },
+  'Create Budget': undefined,
   'Edit Budget': { budgetId: string }
 }
 
