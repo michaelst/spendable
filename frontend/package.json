@@ -8,7 +8,7 @@
     "codegen": "apollo client:codegen --target typescript --endpoint http://localhost:4000/graphql graphql"
   },
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.44",
+    "@apollo/client": "^3.0.0-beta.50",
     "@react-native-community/masked-view": "0.1.6",
     "@react-navigation/bottom-tabs": "^5.4.1",
     "@react-navigation/native": "^5.2.6",
