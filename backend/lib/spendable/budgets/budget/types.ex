@@ -48,9 +48,9 @@ defmodule Spendable.Budgets.Budget.Types do
   object :budget_mutations do
     field :create_budget, non_null(:budget) do
       middleware(CheckAuthentication)
-      arg(:balance, :decimal)
+      arg(:balance, :string)
       arg(:name, :string)
-      arg(:goal, :decimal)
+      arg(:goal, :string)
       resolve(&Resolver.create/2)
     end
 
@@ -58,9 +58,9 @@ defmodule Spendable.Budgets.Budget.Types do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
-      arg(:balance, :decimal)
+      arg(:balance, :string)
       arg(:name, :string)
-      arg(:goal, :decimal)
+      arg(:goal, :string)
       resolve(&Resolver.update/2)
     end
 
