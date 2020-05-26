@@ -11,42 +11,45 @@ import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/
 import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { GET_BUDGET, UPDATE_BUDGET } from 'components/budgets/queries'
+import { GET_BUDGET, UPDATE_BUDGET, CREATE_BUDGET, LIST_BUDGETS } from 'components/budgets/queries'
 import { GetBudget } from 'components/budgets/graphql/GetBudget'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 
-export default function BudgetEditScreen() {
+export default function BudgetCreateScreen() {
   const { colors }: any = useTheme()
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
-  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
-  const { budgetId } = route.params
 
-  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
+  const [name, setName] = useState('')
+  const [balance, setBalance] = useState('0.00')
+  const [goal, setGoal] = useState('')
 
-  const [name, setName] = useState(data?.budget.name || '')
-  const [balance, setBalance] = useState(data?.budget.balance.toDecimalPlaces(2).toFixed(2) || '')
-  const [goal, setGoal] = useState(data?.budget.goal?.toDecimalPlaces(2).toFixed(2) || '')
-
-  const [updateBudget] = useMutation(UPDATE_BUDGET, {
+  const [createBudget] = useMutation(CREATE_BUDGET, {
     variables: {
-      id: budgetId,
       name: name,
       balance: balance,
       goal: goal === '' ? null : goal
+    },
+    update(cache, { data: { createBudget } }) {
+      const data = cache.readQuery<ListBudgets | null>({ query: LIST_BUDGETS })
+
+      cache.writeQuery({
+        query: LIST_BUDGETS,
+        data: { budgets: data?.budgets.concat([createBudget]) }
+      })
     }
   })
 
-
-  const navigateToBudget = () => navigation.navigate('Budget', { budgetId: budgetId })
-  const updateAndGoBack = () => {
-    updateBudget()
-    navigateToBudget()
+  const navigateToBudgets = () => navigation.navigate('Budgets')
+  const createAndGoBack = () => {
+    createBudget()
+    navigateToBudgets()
   }
 
   const headerLeft = () => {
     return (
-      <TouchableWithoutFeedback onPress={navigateToBudget}>
+      <TouchableWithoutFeedback onPress={navigateToBudgets}>
         <Text style={{ color: colors.primary, fontSize: 20, paddingLeft: 20 }}>Cancel</Text>
       </TouchableWithoutFeedback>
     )
@@ -54,7 +57,7 @@ export default function BudgetEditScreen() {
 
   const headerRight = () => {
     return (
-      <TouchableWithoutFeedback onPress={updateAndGoBack}>
+      <TouchableWithoutFeedback onPress={createAndGoBack}>
         <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Save</Text>
       </TouchableWithoutFeedback>
     )

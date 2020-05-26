@@ -21,12 +21,15 @@ import {
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 export default function BudgetRow() {
-  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
-  const { budgetId } = route.params
   const { colors }: any = useTheme()
+
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
+  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
+  const { budgetId } = route.params
+
   const navigateToBudgets = () => navigation.navigate('Budgets')
   const navigateToEdit = () => navigation.navigate('Edit Budget', { budgetId: budgetId })
+  
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
 
   const headerLeft = () => {
