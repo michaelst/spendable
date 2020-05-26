@@ -35,4 +35,32 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
              }
            } == response
   end
+
+  test "new current user", %{conn: conn} do
+    {_user, token} = Spendable.TestUtils.create_user()
+
+    query = """
+      query {
+        currentUser {
+          bankLimit
+          spendable
+        }
+      }
+    """
+
+    response =
+      conn
+      |> put_req_header("authorization", "Bearer #{token}")
+      |> post("/graphql", %{query: query})
+      |> json_response(200)
+
+    assert %{
+             "data" => %{
+               "currentUser" => %{
+                 "bankLimit" => 0,
+                 "spendable" => "0.00"
+               }
+             }
+           } == response
+  end
 end

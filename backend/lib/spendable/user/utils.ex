@@ -40,6 +40,7 @@ defmodule Spendable.User.Utils do
         select: fragment("SUM(ABS(? + ?))", a.allocated, b.adjustment)
       )
       |> Repo.one()
+      |> Kernel.||("0.00")
 
     Decimal.sub(balance, allocated)
   end
