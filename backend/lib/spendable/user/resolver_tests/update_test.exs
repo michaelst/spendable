@@ -46,7 +46,7 @@ defmodule Spendable.User.Resolver.UpdateTest do
       |> json_response(200)
 
     assert %{
-             "data" => %{"updateUser" => nil},
+             "data" => nil,
              "errors" => [
                %{
                  "locations" => [%{"column" => 5, "line" => 2}],

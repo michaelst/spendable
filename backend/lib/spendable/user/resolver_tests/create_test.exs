@@ -95,7 +95,7 @@ defmodule Spendable.User.Resolver.CreateTest do
                  "path" => ["createUser"]
                }
              ],
-             "data" => %{"createUser" => nil}
+             "data" => nil
            }
   end
 end

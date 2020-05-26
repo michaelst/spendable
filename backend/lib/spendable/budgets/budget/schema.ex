@@ -36,7 +36,7 @@ defmodule Spendable.Budgets.Budget do
     end)
   end
 
-  def balance_by_budget(_, budgets) do
+  def balance_by_budget(_module, budgets) do
     allocated = budgets |> Enum.map(& &1.id) |> allocated()
 
     budgets

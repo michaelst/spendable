@@ -37,9 +37,9 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
                "bankMembers" => [
                  %{
                    "bankAccounts" => [
-                     %{"balance" => "100.00", "id" => "#{checking_account.id}", "name" => "Checking", "sync" => true},
+                     %{"balance" => "-1025.00", "id" => "#{credit_account.id}", "name" => "Checking", "sync" => true},
                      %{"balance" => "500.00", "id" => "#{savings_account.id}", "name" => "Checking", "sync" => true},
-                     %{"balance" => "-1025.00", "id" => "#{credit_account.id}", "name" => "Checking", "sync" => true}
+                     %{"balance" => "100.00", "id" => "#{checking_account.id}", "name" => "Checking", "sync" => true}
                    ],
                    "id" => "#{member.id}",
                    "name" => "Plaid",
