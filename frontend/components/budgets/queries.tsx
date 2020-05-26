@@ -40,10 +40,21 @@ export const GET_BUDGET = gql`
   }
 `
 
-export const DELETE_BUDGET = gql`
-mutation DeleteBudget($id: ID!) {
-  deleteBudget(id: $id) {
-    id
+export const UPDATE_BUDGET = gql`
+  mutation UpdateBudget($id: ID!, $name: String!, $balance: Decimal!, $goal: Decimal) {
+    updateBudget(id: $id, name: $name, balance: $balance, goal: $goal) {
+      id
+      name
+      balance
+      goal
+    }
   }
-}
+`
+
+export const DELETE_BUDGET = gql`
+  mutation DeleteBudget($id: ID!) {
+    deleteBudget(id: $id) {
+      id
+    }
+  }
 `

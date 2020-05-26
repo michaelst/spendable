@@ -1,34 +1,48 @@
-import React, { useState } from 'react'
+import React, { useState, Dispatch, SetStateAction } from 'react'
 import {
   FlatList,
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
+  KeyboardType
 } from 'react-native'
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { StackNavigationProp } from '@react-navigation/stack'
-import { GET_BUDGET } from 'components/budgets/queries'
-import {
-  GetBudget,
-  GetBudget_budget_recentAllocations as Allocation,
-  GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
-} from 'components/budgets/graphql/GetBudget'
+import { GET_BUDGET, UPDATE_BUDGET } from 'components/budgets/queries'
+import { GetBudget } from 'components/budgets/graphql/GetBudget'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 export default function BudgetRow() {
-  const [name, setName] = useState('')
-  const [balance, setBalance] = useState('')
-  const [goal, setGoal] = useState('')
-
-  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
-  const { budgetId } = route.params
   const { colors }: any = useTheme()
+
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
+  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
+  const { budgetId } = route.params
+
+  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
+
+  const [name, setName] = useState(data?.budget.name || '')
+  const [balance, setBalance] = useState(data?.budget.balance.toDecimalPlaces(2).toFixed(2) || '')
+  const [goal, setGoal] = useState(data?.budget.goal?.toDecimalPlaces(2).toFixed(2) || '')
+
+  const [updateBudget] = useMutation(UPDATE_BUDGET, {
+    variables: {
+      id: budgetId,
+      name: name,
+      balance: balance,
+      goal: goal === '' ? null : goal
+    }
+  })
+
+
   const navigateToBudget = () => navigation.navigate('Budget', { budgetId: budgetId })
-  const navigateToEdit = () => navigation.navigate('Edit Budget', { budgetId: budgetId })
+  const updateAndGoBack = () => {
+    updateBudget()
+    navigateToBudget()
+  }
 
   const headerLeft = () => {
     return (
@@ -40,7 +54,7 @@ export default function BudgetRow() {
 
   const headerRight = () => {
     return (
-      <TouchableWithoutFeedback onPress={navigateToEdit}>
+      <TouchableWithoutFeedback onPress={updateAndGoBack}>
         <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Save</Text>
       </TouchableWithoutFeedback>
     )
@@ -48,33 +62,39 @@ export default function BudgetRow() {
 
   navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight })
 
-  const data = [
-    {
-      key: 'name',
-      placeholder: 'Name',
-      value: name,
-      setValue: setName,
-      keyboardType: 'default'
-    },
-    {
-      key: 'balance',
-      placeholder: 'Balance',
-      value: balance,
-      setValue: setBalance,
-      keyboardType: 'decimal-pad'
-    },
-    {
-      key: 'goal',
-      placeholder: 'Goal',
-      value: goal,
-      setValue: setGoal,
-      keyboardType: 'decimal-pad'
-    }
-  ]
+  const fields: {
+    key: string,
+    placeholder: string,
+    value: string,
+    setValue: Dispatch<SetStateAction<string>>,
+    keyboardType: KeyboardType
+  }[] = [
+      {
+        key: 'name',
+        placeholder: 'Name',
+        value: name,
+        setValue: setName,
+        keyboardType: 'default'
+      },
+      {
+        key: 'balance',
+        placeholder: 'Balance',
+        value: balance,
+        setValue: setBalance,
+        keyboardType: 'decimal-pad'
+      },
+      {
+        key: 'goal',
+        placeholder: 'Goal',
+        value: goal,
+        setValue: setGoal,
+        keyboardType: 'decimal-pad'
+      }
+    ]
 
   return (
     <FlatList
-      data={data}
+      data={fields}
       renderItem={
         ({ item }) => (
           <View
