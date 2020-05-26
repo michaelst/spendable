@@ -4,17 +4,18 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: ListBudgets
+// GraphQL mutation operation: DeleteBudget
 // ====================================================
 
-export interface ListBudgets_budgets {
+export interface DeleteBudget_deleteBudget {
   __typename: "Budget";
   id: string;
-  name: string;
-  balance: string;
-  goal: string | null;
 }
 
-export interface ListBudgets {
-  budgets: ListBudgets_budgets[];
+export interface DeleteBudget {
+  deleteBudget: DeleteBudget_deleteBudget;
+}
+
+export interface DeleteBudgetVariables {
+  id: string;
 }

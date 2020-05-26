@@ -1,6 +1,6 @@
 defmodule Spendable.Budgets.Budget.Types do
   use Absinthe.Schema.Notation
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1, dataloader: 3]
+  import Absinthe.Resolution.Helpers
 
   alias Spendable.Budgets.Budget
   alias Spendable.Budgets.Budget.Resolver
@@ -10,27 +10,29 @@ defmodule Spendable.Budgets.Budget.Types do
   object :budget do
     field(:id, non_null(:id))
     field(:name, non_null(:string))
-    field(:goal, :string)
+    field(:goal, :decimal)
 
-    field :balance, non_null(:string) do
+    field :balance, non_null(:decimal) do
       complexity(5)
 
       resolve(fn budget, _args, _resolution ->
-        {:ok, Budget.balance(budget)}
+        batch({Budget, :balance_by_budget}, budget, fn batch_results ->
+          {:ok, Map.get(batch_results, budget.id)}
+        end)
       end)
     end
 
-    field(:recent_allocations, list_of(:allocation),
+    field(:recent_allocations, :allocation |> non_null |> list_of |> non_null,
       resolve: dataloader(Spendable, :allocations, args: %{recent: true})
     )
 
-    field(:allocation_template_lines, list_of(:allocation_template_line),
+    field(:allocation_template_lines, :allocation_template_line |> non_null |> list_of |> non_null,
       resolve: dataloader(Spendable)
     )
   end
 
   object :budget_queries do
-    field :budget, :budget do
+    field :budget, non_null(:budget) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
@@ -44,25 +46,25 @@ defmodule Spendable.Budgets.Budget.Types do
   end
 
   object :budget_mutations do
-    field :create_budget, :budget do
+    field :create_budget, non_null(:budget) do
       middleware(CheckAuthentication)
-      arg(:balance, :string)
+      arg(:balance, :decimal)
       arg(:name, :string)
-      arg(:goal, :string)
+      arg(:goal, :decimal)
       resolve(&Resolver.create/2)
     end
 
-    field :update_budget, :budget do
+    field :update_budget, non_null(:budget) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))
-      arg(:balance, :string)
+      arg(:balance, :decimal)
       arg(:name, :string)
-      arg(:goal, :string)
+      arg(:goal, :decimal)
       resolve(&Resolver.update/2)
     end
 
-    field :delete_budget, :budget do
+    field :delete_budget, non_null(:budget) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Budget)
       arg(:id, non_null(:id))

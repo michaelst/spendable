@@ -5,16 +5,16 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "codegen": "apollo client:codegen --target typescript --endpoint http://localhost:4000/graphql graphql"
+    "codegen": "apollo client:codegen --target typescript --endpoint http://localhost:4000/graphql graphql --passthroughCustomScalars"
   },
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.44",
+    "@apollo/client": "^3.0.0-beta.50",
     "@react-native-community/masked-view": "0.1.6",
-    "@react-navigation/bottom-tabs": "^5.4.1",
-    "@react-navigation/native": "^5.2.6",
-    "@react-navigation/stack": "^5.3.1",
+    "@react-navigation/bottom-tabs": "^5.5.0",
+    "@react-navigation/native": "^5.4.3",
+    "@react-navigation/stack": "^5.4.0",
     "decimal.js-light": "^2.5.0",
-    "expo": "~37.0.3",
+    "expo": "^37.0.12",
     "expo-apple-authentication": "~2.1.0",
     "expo-constants": "~9.0.0",
     "expo-secure-store": "~8.1.0",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
-    "@types/react": "~16.9.23",
+    "@types/react": "^16.9.35",
     "@types/react-native": "~0.61.17",
     "babel-preset-expo": "~8.1.0",
     "typescript": "~3.8.3"

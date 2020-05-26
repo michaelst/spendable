@@ -56,6 +56,13 @@ defmodule Spendable.Broadway.SyncMemberTest do
     assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
 
     assert [
+             %{sync: false},
+             %{sync: false},
+             %{sync: false},
+             %{sync: false},
+             %{sync: false},
+             %{sync: false},
+             %{sync: false},
              %{
                id: account_id,
                external_id: "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP",
@@ -66,14 +73,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
                sub_type: "checking",
                sync: false,
                type: "depository"
-             } = account,
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false}
+             } = account
            ] = from(Account, where: [bank_member_id: ^member.id]) |> Repo.all()
 
     assert "110" |> Decimal.new() |> Decimal.equal?(balance)

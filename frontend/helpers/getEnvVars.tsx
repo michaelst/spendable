@@ -2,7 +2,7 @@ import Constants from 'expo-constants'
 
 const ENV = {
   dev: {
-    apiUrl: 'https://9732747d.ngrok.io/graphql'
+    apiUrl: 'https://74f0ebec.ngrok.io/graphql'
   },
   prod: {
     apiUrl: 'https://api.spendable.money/graphql'

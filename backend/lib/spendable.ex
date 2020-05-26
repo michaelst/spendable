@@ -17,7 +17,5 @@ defmodule Spendable do
     )
   end
 
-  def query(queryable, _args) do
-    queryable
-  end
+  def query(queryable, _args), do: queryable
 end

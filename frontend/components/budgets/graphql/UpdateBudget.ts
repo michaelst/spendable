@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: ListBudgets
+// GraphQL mutation operation: UpdateBudget
 // ====================================================
 
-export interface ListBudgets_budgets {
+export interface UpdateBudget_updateBudget {
   __typename: "Budget";
   id: string;
   name: string;
@@ -15,6 +15,13 @@ export interface ListBudgets_budgets {
   goal: Decimal | null;
 }
 
-export interface ListBudgets {
-  budgets: ListBudgets_budgets[];
+export interface UpdateBudget {
+  updateBudget: UpdateBudget_updateBudget;
+}
+
+export interface UpdateBudgetVariables {
+  id: string;
+  name: string;
+  balance: Decimal;
+  goal?: Decimal | null;
 }

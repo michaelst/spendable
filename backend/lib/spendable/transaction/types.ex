@@ -8,16 +8,16 @@ defmodule Spendable.Transaction.Types do
   alias Spendable.Transaction.Resolver
 
   object :transaction do
-    field :id, :id
-    field :amount, :string
-    field :date, :string
+    field :id, non_null(:id)
+    field :amount, non_null(:decimal)
+    field :date, non_null(:date)
     field :name, :string
     field :note, :string
 
-    field :allocations, list_of(:allocation), resolve: dataloader(Spendable)
+    field :allocations, :allocation |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
     field :bank_transaction, :bank_transaction, resolve: dataloader(Spendable)
     field :category, :category, resolve: dataloader(Spendable)
-    field :tags, list_of(:tag), resolve: dataloader(Spendable)
+    field :tags, :tag |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
   end
 
   object :transaction_queries do

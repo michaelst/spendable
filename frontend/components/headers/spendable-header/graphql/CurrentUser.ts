@@ -4,17 +4,14 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: ListBudgets
+// GraphQL query operation: CurrentUser
 // ====================================================
 
-export interface ListBudgets_budgets {
-  __typename: "Budget";
-  id: string;
-  name: string;
-  balance: Decimal;
-  goal: Decimal | null;
+export interface CurrentUser_currentUser {
+  __typename: "User";
+  spendable: Decimal;
 }
 
-export interface ListBudgets {
-  budgets: ListBudgets_budgets[];
+export interface CurrentUser {
+  currentUser: CurrentUser_currentUser;
 }

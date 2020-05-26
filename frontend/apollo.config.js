@@ -1,5 +1,5 @@
 module.exports = {
   client: {
-    includes: ['./**/*.tsx'], 
+    includes: ['./**/*.tsx'],
   },
-}
+};
