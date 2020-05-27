@@ -57,5 +57,5 @@ defmodule Spendable.Budgets.Budget do
     |> Map.new()
   end
 
-  def allocated(budget_id), do: allocated([budget_id])[budget_id]
+  def allocated(budget_id), do: allocated([budget_id])[budget_id] || "0.00"
 end

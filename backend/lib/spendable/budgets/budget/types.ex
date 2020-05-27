@@ -17,7 +17,7 @@ defmodule Spendable.Budgets.Budget.Types do
 
       resolve(fn budget, _args, _resolution ->
         batch({Budget, :balance_by_budget}, budget, fn batch_results ->
-          {:ok, Map.get(batch_results, budget.id)}
+          {:ok, Map.get(batch_results, budget.id, "0.00")}
         end)
       end)
     end

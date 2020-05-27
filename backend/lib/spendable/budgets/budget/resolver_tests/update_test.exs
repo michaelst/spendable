@@ -83,4 +83,31 @@ defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
 
     assert Repo.get(Spendable.Budgets.Budget, budget.id).adjustment |> Decimal.eq?("-10.00")
   end
+
+  test "update budget balance with no allocations" do
+    {user, _token} = Spendable.TestUtils.create_user()
+
+    budget = insert(:budget, user: user)
+
+    doc = """
+      mutation {
+        updateBudget(id: #{budget.id}, balance: "10.00") {
+          id
+          balance
+        }
+      }
+    """
+
+    assert {:ok,
+            %{
+              data: %{
+                "updateBudget" => %{
+                  "id" => "#{budget.id}",
+                  "balance" => "10.00",
+                }
+              }
+            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{current_user: user})
+
+    assert Repo.get(Spendable.Budgets.Budget, budget.id).adjustment |> Decimal.eq?("10.00")
+  end
 end
