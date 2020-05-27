@@ -3,9 +3,9 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { FontAwesome5, Ionicons } from '@expo/vector-icons'
 import { useColorScheme } from 'react-native-appearance'
-import BudgetsScreen from './budgets/Budgets'
+import Budgets from './budgets/Budgets'
 import TransactionsScreen from './transactions/TransactionsScreen'
-import SettingsScreen from './settings/SettingsScreen'
+import Settings from './settings/Settings'
 
 const Tab = createBottomTabNavigator()
 
@@ -37,9 +37,9 @@ export default function Main() {
           },
         })}
       >
-        <Tab.Screen name="Budgets" component={BudgetsScreen} />
+        <Tab.Screen name="Budgets" component={Budgets} />
         <Tab.Screen name="Transactions" component={TransactionsScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
     </NavigationContainer>
   )

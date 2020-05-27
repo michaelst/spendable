@@ -1,9 +1,9 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import BudgetsScreen from './screens/budgets-screen/BudgetsScreen'
-import BudgetScreen from './screens/budget-screen/BudgetScreen'
-import BudgetCreateScreen from './screens/budget-create-screen/BudgetCreateScreen'
-import BudgetEditScreen from './screens/budget-edit-screen/BudgetEditScreen'
+import BudgetsScreen from './screens/BudgetsScreen'
+import BudgetScreen from './screens/BudgetScreen'
+import BudgetCreateScreen from './screens/BudgetCreateScreen'
+import BudgetEditScreen from './screens/BudgetEditScreen'
 import SpendableHeader from 'components/headers/spendable-header/SpendableHeader'
 
 export type RootStackParamList = {
