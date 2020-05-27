@@ -25,7 +25,7 @@ const bankRow = () => {
       <View
         style={{
           flexDirection: 'row',
-          padding: 20,
+          padding: 18,
           alignItems: 'center',
           backgroundColor: colors.card,
           borderBottomColor: colors.border,
@@ -33,7 +33,7 @@ const bankRow = () => {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 20 }}>
+          <Text style={{ color: colors.text, fontSize: 18 }}>
             Banks
         </Text>
         </View>
@@ -56,7 +56,7 @@ const templatesRow = () => {
       <View
         style={{
           flexDirection: 'row',
-          padding: 20,
+          padding: 18,
           alignItems: 'center',
           backgroundColor: colors.card,
           borderBottomColor: colors.border,
@@ -64,7 +64,7 @@ const templatesRow = () => {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 20 }}>
+          <Text style={{ color: colors.text, fontSize: 18 }}>
             Budget Templates
         </Text>
         </View>
@@ -79,32 +79,27 @@ const templatesRow = () => {
 
 const notificationsRow = () => {
   const { colors }: any = useTheme()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Settings'>>()
-  const navigateToTemplates = () => navigation.navigate('Templates')
 
   return (
-    <TouchableHighlight onPress={navigateToTemplates}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 20,
-          alignItems: 'center',
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 20 }}>
-            Notifications
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.card,
+        borderBottomColor: colors.border,
+        borderBottomWidth: StyleSheet.hairlineWidth
+      }}
+    >
+      <View style={{ flex: 1 }}>
+        <Text style={{ color: colors.text, fontSize: 18, padding: 18 }}>
+          Notifications
         </Text>
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
-          <Switch />
-        </View>
       </View>
-    </TouchableHighlight>
+
+      <View style={{ flexDirection: "row", paddingRight: 18 }}>
+        <Switch />
+      </View>
+    </View>
   )
 }
 
@@ -123,7 +118,7 @@ const logoutRow = () => {
           <View
             style={{
               flexDirection: 'row',
-              padding: 20,
+              padding: 18,
               alignItems: 'center',
               backgroundColor: colors.card,
               borderBottomColor: colors.border,
@@ -131,7 +126,7 @@ const logoutRow = () => {
             }}
           >
             <View style={{ flex: 1 }}>
-              <Text style={{ color: colors.primary, fontSize: 20 }}>
+              <Text style={{ color: colors.primary, fontSize: 18 }}>
                 Logout
               </Text>
             </View>
@@ -164,11 +159,11 @@ export default function BudgetsScreen() {
 
   return (
     <SectionList
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 36 }}
       sections={listData}
       renderItem={({ item }) => item.view}
       stickySectionHeadersEnabled={false}
-      renderSectionHeader={({ section }) => <View style={{paddingBottom: 25}} />}
+      renderSectionHeader={({ section }) => <View style={{ paddingBottom: 36 }} />}
     />
   )
 }
