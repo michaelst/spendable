@@ -18,7 +18,7 @@ import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 export default function BudgetCreateScreen() {
   const { colors }: any = useTheme()
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
+  const navigation = useNavigation()
 
   const [name, setName] = useState('')
   const [balance, setBalance] = useState('0.00')
@@ -40,7 +40,7 @@ export default function BudgetCreateScreen() {
     }
   })
 
-  const navigateToBudgets = () => navigation.navigate('Budgets')
+  const navigateToBudgets = () => navigation.navigate('Expenses')
   const createAndGoBack = () => {
     createBudget()
     navigateToBudgets()

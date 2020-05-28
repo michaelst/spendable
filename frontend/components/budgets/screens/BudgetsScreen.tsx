@@ -12,14 +12,11 @@ import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import BudgetRow from './BudgetRow'
 import { useTheme, useNavigation } from '@react-navigation/native'
 import { LIST_BUDGETS } from 'components/budgets/queries'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RootStackParamList } from 'components/budgets/Budgets'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 export default function BudgetsScreen() {
+  const navigation = useNavigation()
   const { colors }: any = useTheme()
-
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budgets'>>()
 
   const styles = StyleSheet.create({
     container: {
@@ -44,7 +41,7 @@ export default function BudgetsScreen() {
 
   const headerRight = () => {
     return (
-      <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Budget')}>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Expense')}>
         <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Add</Text>
       </TouchableWithoutFeedback>
     )

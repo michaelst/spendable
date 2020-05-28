@@ -20,6 +20,11 @@ type Props = {
 }
 
 export default function BudgetRow({ budget }: Props) {
+  const navigation = useNavigation()
+  const { colors }: any = useTheme()
+
+  const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budget.id })
+
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
     variables: { id: budget.id },
     update(cache, { data: { deleteBudget } }) {
@@ -32,10 +37,6 @@ export default function BudgetRow({ budget }: Props) {
     }
   })
 
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-
-  const navigateToBudget = () => navigation.navigate('Budget', { budgetId: budget.id })
 
   return (
     <TouchableHighlight onPress={navigateToBudget}>

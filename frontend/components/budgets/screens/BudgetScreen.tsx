@@ -9,7 +9,6 @@ import {
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
-import { StackNavigationProp } from '@react-navigation/stack'
 import { Ionicons } from '@expo/vector-icons'
 import { GET_BUDGET } from 'components/budgets/queries'
 import formatCurrency from 'helpers/formatCurrency'
@@ -23,12 +22,12 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 export default function BudgetRow() {
   const { colors }: any = useTheme()
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
-  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
+  const navigation = useNavigation()
+  const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
   const { budgetId } = route.params
 
-  const navigateToBudgets = () => navigation.navigate('Budgets')
-  const navigateToEdit = () => navigation.navigate('Edit Budget', { budgetId: budgetId })
+  const navigateToBudgets = () => navigation.navigate('Expenses')
+  const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
   
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
 

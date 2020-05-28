@@ -7,10 +7,10 @@ import BudgetEditScreen from './screens/BudgetEditScreen'
 import SpendableHeader from 'components/headers/spendable-header/SpendableHeader'
 
 export type RootStackParamList = {
-  Budgets: undefined,
-  Budget: { budgetId: string },
-  'Create Budget': undefined,
-  'Edit Budget': { budgetId: string }
+  Expenses: undefined,
+  Expense: { budgetId: string },
+  'Create Expense': undefined,
+  'Edit Expense': { budgetId: string }
 }
 
 const Stack = createStackNavigator()

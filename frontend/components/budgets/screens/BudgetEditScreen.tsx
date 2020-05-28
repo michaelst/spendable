@@ -10,7 +10,6 @@ import {
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
-import { StackNavigationProp } from '@react-navigation/stack'
 import { GET_BUDGET, UPDATE_BUDGET } from 'components/budgets/queries'
 import { GetBudget } from 'components/budgets/graphql/GetBudget'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
@@ -18,8 +17,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 export default function BudgetEditScreen() {
   const { colors }: any = useTheme()
 
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Budget'>>()
-  const route = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
+  const navigation = useNavigation()
+  const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
   const { budgetId } = route.params
 
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
@@ -38,7 +37,7 @@ export default function BudgetEditScreen() {
   })
 
 
-  const navigateToBudget = () => navigation.navigate('Budget', { budgetId: budgetId })
+  const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budgetId })
   const updateAndGoBack = () => {
     updateBudget()
     navigateToBudget()
