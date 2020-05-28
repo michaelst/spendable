@@ -37,7 +37,7 @@
     "jest": "~25.2.6",
     "react-test-renderer": "~16.9.0",
     "@types/react": "^16.9.35",
-    "@types/react-native": "^0.61.17",
+    "@types/react-native": "^0.62.12",
     "babel-preset-expo": "^8.2.1",
     "typescript": "^3.9.3"
   },
