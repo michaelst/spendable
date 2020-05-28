@@ -57,7 +57,7 @@ export default function BudgetsScreen() {
   const goals = data?.budgets.filter(budget => budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
 
   const listData = [
-    { title: "Budgets", data: budgets },
+    { title: "Expenses", data: budgets },
     { title: "Goals", data: goals }
   ]
 

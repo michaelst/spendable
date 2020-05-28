@@ -18,10 +18,10 @@ const Stack = createStackNavigator()
 export default function Budgets() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Budgets" component={BudgetsScreen} options={{ headerTitle: () => <SpendableHeader /> }} />
-      <Stack.Screen name="Budget" component={BudgetScreen} />
-      <Stack.Screen name="Create Budget" component={BudgetCreateScreen} />
-      <Stack.Screen name="Edit Budget" component={BudgetEditScreen} />
+      <Stack.Screen name="Expenses" component={BudgetsScreen} options={{ headerTitle: () => <SpendableHeader /> }} />
+      <Stack.Screen name="Expense" component={BudgetScreen} />
+      <Stack.Screen name="Create Expense" component={BudgetCreateScreen} />
+      <Stack.Screen name="Edit Expense" component={BudgetEditScreen} />
     </Stack.Navigator>
   )
 }

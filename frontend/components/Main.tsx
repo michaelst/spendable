@@ -27,7 +27,7 @@ export default function Main() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
-            if (route.name === 'Budgets') {
+            if (route.name === 'Expenses') {
               return <FontAwesome5 name='money-check-alt' size={size} color={color} />
             } else if (route.name === 'Transactions') {
               return <FontAwesome5 name='dollar-sign' size={size} color={color} />
@@ -37,7 +37,7 @@ export default function Main() {
           },
         })}
       >
-        <Tab.Screen name="Budgets" component={Budgets} />
+        <Tab.Screen name="Expenses" component={Budgets} />
         <Tab.Screen name="Transactions" component={TransactionsScreen} />
         <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
