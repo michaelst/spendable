@@ -15,7 +15,6 @@ import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'helpers/formatCurrency'
 import { LIST_BUDGETS, DELETE_BUDGET } from 'components/budgets/queries'
 
-
 type Props = {
   budget: ListBudgets_budgets,
 }

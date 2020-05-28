@@ -7,8 +7,12 @@ defmodule Spendable.Banks.Member.Resolver do
   alias Spendable.Publishers.SyncMemberRequest
   alias Spendable.Repo
 
-  def list(_parent, _args, %{context: %{current_user: user}}) do
+  def list(_args, %{context: %{current_user: user}}) do
     {:ok, from(Member, where: [user_id: ^user.id]) |> Repo.all()}
+  end
+
+  def get(_args, %{context: %{model: model}}) do
+    {:ok, model}
   end
 
   def create(%{public_token: token}, %{context: %{current_user: user}}) do

@@ -65,7 +65,7 @@ const templatesRow = () => {
       >
         <View style={{ flex: 1 }}>
           <Text style={{ color: colors.text, fontSize: 18 }}>
-            Budget Templates
+            Transaction Templates
         </Text>
         </View>
 

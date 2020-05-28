@@ -40,6 +40,15 @@ const createApolloClient = (token: string | null) => {
             }
           }
         }
+      },
+      BankAccount: {
+        fields: {
+          balance: {
+            read(balance) {
+              return new Decimal(balance)
+            }
+          }
+        }
       }
     },
   })

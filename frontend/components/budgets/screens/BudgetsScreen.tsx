@@ -42,7 +42,6 @@ export default function BudgetsScreen() {
   const { data, loading, refetch } = useQuery<ListBudgets>(LIST_BUDGETS)
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
-
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Budget')}>
