@@ -2,7 +2,7 @@ import React from 'react'
 import { Platform, StyleSheet, View, Text } from 'react-native'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { gql, useMutation } from '@apollo/client'
-import { TokenContext } from '../TokenContext'
+import { TokenContext } from 'components/auth/TokenContext'
 import { SignInWithApple } from './graphql/SignInWithApple'
 
 export const SIGN_IN_WITH_APPLE = gql`
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
 })
 
 export default function AuthScreen() {
-
   return (
     <TokenContext.Consumer>
       {({ setToken }) => (

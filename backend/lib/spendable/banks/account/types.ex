@@ -5,15 +5,15 @@ defmodule Spendable.Banks.Account.Types do
   alias Spendable.Banks.Account.Resolver
 
   object :bank_account do
-    field :id, :id
-    field :external_id, :string
-    field :name, :string
+    field :id, non_null(:id)
+    field :external_id, non_null(:string)
+    field :name, non_null(:string)
     field :number, :string
-    field :sub_type, :string
-    field :sync, :boolean
-    field :type, :string
+    field :sub_type, non_null(:string)
+    field :sync, non_null(:boolean)
+    field :type, non_null(:string)
 
-    field :balance, :string do
+    field :balance, non_null(:decimal) do
       resolve(fn
         %{type: "credit", balance: balance}, _args, _resolution ->
           {:ok, Decimal.mult(balance, "-1")}
@@ -30,7 +30,7 @@ defmodule Spendable.Banks.Account.Types do
   end
 
   object :bank_account_mutations do
-    field :update_bank_account, :bank_account do
+    field :update_bank_account, non_null(:bank_account) do
       middleware(Spendable.Middleware.CheckAuthentication)
       middleware(Spendable.Middleware.LoadModel, module: Account)
       arg(:id, non_null(:id))

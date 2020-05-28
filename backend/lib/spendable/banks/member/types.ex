@@ -8,31 +8,38 @@ defmodule Spendable.Banks.Member.Types do
   alias Spendable.Middleware.LoadModel
 
   object :bank_member do
-    field :id, :id
-    field :external_id, :string
+    field :id, non_null(:id)
+    field :external_id, non_null(:string)
     field :institution_id, :string
     field :logo, :string
-    field :name, :string
-    field :provider, :string
+    field :name, non_null(:string)
+    field :provider, non_null(:string)
     field :status, :string
-    field :bank_accounts, list_of(:bank_account), resolve: dataloader(Spendable)
+    field :bank_accounts, :bank_account  |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
   end
 
   object :bank_member_queries do
-    field :bank_members, list_of(:bank_member) do
+    field :bank_members, :bank_member |> non_null |> list_of |> non_null do
       middleware(CheckAuthentication)
-      resolve(&Resolver.list/3)
+      resolve(&Resolver.list/2)
+    end
+
+    field :bank_member, non_null(:bank_member) do
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: Member)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.get/2)
     end
   end
 
   object :bank_member_mutations do
-    field :create_bank_member, :bank_member do
+    field :create_bank_member, non_null(:bank_member) do
       middleware(CheckAuthentication)
       arg(:public_token, non_null(:string))
       resolve(&Resolver.create/2)
     end
 
-    field :create_public_token, :string do
+    field :create_public_token, non_null(:string) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Member)
       arg(:id, non_null(:id))

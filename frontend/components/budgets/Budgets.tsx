@@ -1,16 +1,16 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import BudgetsScreen from './screens/budgets-screen/BudgetsScreen'
-import BudgetScreen from './screens/budget-screen/BudgetScreen'
-import BudgetCreateScreen from './screens/budget-create-screen/BudgetCreateScreen'
-import BudgetEditScreen from './screens/budget-edit-screen/BudgetEditScreen'
+import BudgetsScreen from './screens/BudgetsScreen'
+import BudgetScreen from './screens/BudgetScreen'
+import BudgetCreateScreen from './screens/BudgetCreateScreen'
+import BudgetEditScreen from './screens/BudgetEditScreen'
 import SpendableHeader from 'components/headers/spendable-header/SpendableHeader'
 
 export type RootStackParamList = {
-  Budgets: undefined,
-  Budget: { budgetId: string },
-  'Create Budget': undefined,
-  'Edit Budget': { budgetId: string }
+  Expenses: undefined,
+  Expense: { budgetId: string },
+  'Create Expense': undefined,
+  'Edit Expense': { budgetId: string }
 }
 
 const Stack = createStackNavigator()
@@ -18,10 +18,10 @@ const Stack = createStackNavigator()
 export default function Budgets() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Budgets" component={BudgetsScreen} options={{ headerTitle: () => <SpendableHeader /> }} />
-      <Stack.Screen name="Budget" component={BudgetScreen} />
-      <Stack.Screen name="Create Budget" component={BudgetCreateScreen} />
-      <Stack.Screen name="Edit Budget" component={BudgetEditScreen} />
+      <Stack.Screen name="Expenses" component={BudgetsScreen} options={{ headerTitle: () => <SpendableHeader /> }} />
+      <Stack.Screen name="Expense" component={BudgetScreen} />
+      <Stack.Screen name="Create Expense" component={BudgetCreateScreen} />
+      <Stack.Screen name="Edit Expense" component={BudgetEditScreen} />
     </Stack.Navigator>
   )
 }
