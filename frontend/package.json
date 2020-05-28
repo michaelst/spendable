@@ -29,7 +29,7 @@
     "expo-secure-store": "~8.1.0",
     "graphql": "^15.0.0",
     "react-native-appearance": "^0.3.3",
-    "react-native-safe-area-context": "0.7.3"
+    "react-native-safe-area-context": "2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.10.1",
