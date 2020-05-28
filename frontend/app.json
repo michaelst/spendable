@@ -24,7 +24,12 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "usesAppleSignIn": true
-    }
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "fiftysevenmedia.Spendable"
+    },
+    "android": {
+      "package": "fiftysevenmedia.Spendable"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }

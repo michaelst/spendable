@@ -1,9 +1,8 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
-import getEnvVars from './getEnvVars'
 import Decimal from 'decimal.js-light'
 
 const createApolloClient = (token: string | null) => {
-  const httpLink = new HttpLink({ uri: getEnvVars.apiUrl })
+  const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
 
   const authMiddleware = new ApolloLink((operation, forward) => {
     operation.setContext({
