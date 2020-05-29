@@ -8,7 +8,6 @@ export type RootStackParamList = {
   Settings: undefined,
   Banks: undefined,
   Bank: { bankMemberId: string },
-  'Create Bank': undefined,
   Templates: undefined,
 }
 

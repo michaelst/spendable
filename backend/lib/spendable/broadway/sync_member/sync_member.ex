@@ -63,7 +63,7 @@ defmodule Spendable.Broadway.SyncMember do
 
   defp sync_member(nil), do: :ok
 
-  defp sync_accounts(member) do
+  def sync_accounts(member) do
     {:ok, %{body: %{"accounts" => accounts_details}}} = Plaid.accounts(member.plaid_token)
 
     Enum.map(accounts_details, fn account_details ->

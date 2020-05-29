@@ -9,8 +9,6 @@ import {
 } from 'react-native'
 import { useTheme, useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
-import { RootStackParamList } from 'components/budgets/Budgets'
-import { StackNavigationProp } from '@react-navigation/stack'
 import { CREATE_BUDGET, LIST_BUDGETS } from 'components/budgets/queries'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'

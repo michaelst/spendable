@@ -103,7 +103,7 @@ defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
               data: %{
                 "updateBudget" => %{
                   "id" => "#{budget.id}",
-                  "balance" => "10.00",
+                  "balance" => "10.00"
                 }
               }
             }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{current_user: user})

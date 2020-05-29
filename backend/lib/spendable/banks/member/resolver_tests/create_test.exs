@@ -25,6 +25,61 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
           request_id: "m8MDnv9okwxFNBV"
         })
 
+      %{method: :post, url: "https://sandbox.plaid.com/accounts/get"} ->
+        json(%{
+          "accounts" => [
+            %{
+              "account_id" => "5voA7reA6GsVgexwgKAphW6EzRlQPWuxBEboR",
+              "balances" => %{
+                "available" => 100,
+                "current" => 110,
+                "iso_currency_code" => "USD",
+                "limit" => nil,
+                "unofficial_currency_code" => nil
+              },
+              "mask" => "0000",
+              "name" => "Plaid Checking",
+              "official_name" => "Plaid Gold Standard 0% Interest Checking",
+              "subtype" => "checking",
+              "type" => "depository"
+            },
+            %{
+              "account_id" => "JMEjk8lj9Ru6BnXdBQlqSqlezdbL7qHb7G1Em",
+              "balances" => %{
+                "available" => 200,
+                "current" => 210,
+                "iso_currency_code" => "USD",
+                "limit" => nil,
+                "unofficial_currency_code" => nil
+              },
+              "mask" => "1111",
+              "name" => "Plaid Saving",
+              "official_name" => "Plaid Silver Standard 0.1% Interest Saving",
+              "subtype" => "savings",
+              "type" => "depository"
+            }
+          ],
+          "item" => %{
+            "available_products" => [
+              "assets",
+              "auth",
+              "balance",
+              "credit_details",
+              "identity",
+              "income",
+              "investments",
+              "liabilities"
+            ],
+            "billed_products" => ["transactions"],
+            "consent_expiration_time" => nil,
+            "error" => nil,
+            "institution_id" => "ins_3",
+            "item_id" => "NoRZqGzZgbFB6XAe6mzZcyeBKko3EpTW6j1pq",
+            "webhook" => ""
+          },
+          "request_id" => "qohhGRqmjw7RiUX"
+        })
+
       %{method: :post, url: "https://sandbox.plaid.com/institutions/get_by_id"} ->
         json(%{
           institution: %{
