@@ -1,18 +1,18 @@
 import React from 'react'
 import {
   StyleSheet,
-  Text,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  Text
 } from 'react-native'
 import Constants from 'expo-constants'
 import { useTheme, useNavigation } from '@react-navigation/native'
-import { TouchableWithoutFeedback, FlatList } from 'react-native-gesture-handler'
-import { LIST_BANK_MEMBERS } from '../queries'
+import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { LIST_BANK_MEMBERS, CREATE_BANK_MEMBER } from '../queries'
 import { ListBankMembers } from '../graphql/ListBankMembers'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import BankMemberRow from './BankMemberRow'
-
+import PlaidLink from 'react-native-plaid-link-sdk'
 
 export default function BanksScreen() {
   const navigation = useNavigation()
@@ -34,15 +34,39 @@ export default function BanksScreen() {
   const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
+  const [createBankMember] = useMutation(CREATE_BANK_MEMBER, {
+    update(cache, { data: { createBankMember } }) {
+      const data = cache.readQuery<ListBankMembers | null>({ query: LIST_BANK_MEMBERS })
+
+      cache.writeQuery({
+        query: LIST_BANK_MEMBERS,
+        data: { bankMembers: data?.bankMembers.concat([createBankMember]) }
+      })
+    }
+  })
+
   const headerRight = () => {
     return (
-      <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Bank')}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Add</Text>
-      </TouchableWithoutFeedback>
+      <PlaidLink
+        clientName="Spendable"
+        publicKey="37cc44ed343b19bae3920edf047df1"
+        env="sandbox"
+        component={(plaid: any) => {
+          return (
+            <TouchableWithoutFeedback onPress={plaid.onPress}>
+              <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Add</Text>
+            </TouchableWithoutFeedback>
+          )
+        }}
+        onSuccess={({ public_token: publicToken }: { public_token: String }) => createBankMember({ variables: { publicToken: publicToken } })}
+        product={["transactions"]}
+        language="en"
+        countryCodes={["US"]}
+      />
     )
   }
 
-  navigation.setOptions({headerRight: headerRight})
+  navigation.setOptions({ headerRight: headerRight })
 
   return (
     <FlatList

@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apol
 import Decimal from 'decimal.js-light'
 
 const createApolloClient = (token: string | null) => {
-  const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://cff89144e3ca.ngrok.io/graphql' })
 
   const authMiddleware = new ApolloLink((operation, forward) => {
     operation.setContext({

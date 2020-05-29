@@ -4,6 +4,7 @@ defmodule Spendable.Banks.Member.Resolver do
 
   alias Spendable.Banks.Member
   alias Spendable.Banks.Providers.Plaid.Adapter
+  alias Spendable.Broadway.SyncMember
   alias Spendable.Publishers.SyncMemberRequest
   alias Spendable.Repo
 
@@ -28,6 +29,7 @@ defmodule Spendable.Banks.Member.Resolver do
       |> Repo.insert()
       |> case do
         {:ok, member} ->
+          SyncMember.sync_accounts(member)
           :ok = SyncMemberRequest.publish(member.id)
           {:ok, member}
 

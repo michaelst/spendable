@@ -15,7 +15,7 @@ defmodule Spendable.Banks.Member.Types do
     field :name, non_null(:string)
     field :provider, non_null(:string)
     field :status, :string
-    field :bank_accounts, :bank_account  |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
+    field :bank_accounts, :bank_account |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
   end
 
   object :bank_member_queries do

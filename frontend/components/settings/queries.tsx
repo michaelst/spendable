@@ -35,12 +35,6 @@ mutation CreateBankMember($publicToken: String!) {
     name
     status
     logo
-    bankAccounts {
-      id
-      name
-      sync
-      balance
-    }
   }
 }
 `
