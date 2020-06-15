@@ -52,7 +52,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
 
     data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
 
-    ref = Broadway.test_messages(SyncMember, [data])
+    ref = Broadway.test_message(SyncMember, data)
     assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
 
     assert [
@@ -95,7 +95,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
         :ok
       end
     ) do
-      ref = Broadway.test_messages(SyncMember, [data])
+      ref = Broadway.test_message(SyncMember, data)
       assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
     end
 
