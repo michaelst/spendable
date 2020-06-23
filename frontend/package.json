@@ -16,7 +16,7 @@
     "expo": "^37.0.12",
     "expo-apple-authentication": "^2.1.0",
     "expo-constants": "^9.0.0",
-    "expo-secure-store": "^8.1.0",
+    "expo-secure-store": "^9.0.1",
     "expo-splash-screen": "^0.2.3",
     "expo-updates": "^0.2.0",
     "graphql": "^15.0.0",
