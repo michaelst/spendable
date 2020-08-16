@@ -35,5 +35,6 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY --from=build /app/_build/prod/rel/spendable ./
-COPY deploy/entrypoint.sh .
+COPY .devops/entrypoint.sh .
 CMD ["./entrypoint.sh"]
+

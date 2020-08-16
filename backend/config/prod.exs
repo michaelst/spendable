@@ -4,7 +4,7 @@ config :spendable, Spendable.Web.Endpoint,
   url: [host: "spendable.money", port: 80],
   debug_errors: false,
   http: [
-    port: 80,
+    port: 4000,
     protocol_options: [max_keepalive: :infinity],
     compress: true
   ],

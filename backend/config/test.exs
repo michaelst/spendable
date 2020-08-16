@@ -4,6 +4,8 @@ use Mix.Config
 config :spendable, Spendable.Repo,
   password: System.get_env("TEST_DB_PASSWORD"),
   database: "spendable_test",
+  port: "5432",
+  pool_size: "10",
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
