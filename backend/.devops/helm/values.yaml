@@ -1,0 +1,43 @@
+nameOverride: spendable
+
+service:
+  port: 80
+  targetPort: 4000
+  type: ClusterIP
+  # the health check must fail 3 times before we will recreate it
+  livenessProbe:
+    httpGet:
+      path: /_health
+      port: http
+    failureThreshold: 3
+    periodSeconds: 10
+  # give the pod 5 minutes to run migrations on startup
+  startupProbe:
+    httpGet:
+      path: /_health
+      port: http
+    failureThreshold: 30
+    periodSeconds: 10
+  # check every second to see if we should send traffic to a pod
+  readinessProbe:
+    httpGet:
+      path: /_health
+      port: http
+    periodSeconds: 1
+
+ingressroute:
+  domain: spendable.money
+  path: "/"
+  certSecretName: spendable-wildcard-cert
+
+# autoscaling:
+#   enabled: true
+#   minReplicas: 3
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 800Mi
+
+envVars:
+

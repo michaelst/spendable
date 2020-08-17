@@ -8,7 +8,8 @@ WORKDIR /app
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-ENV MIX_ENV=prod
+ENV MIX_ENV=prod \
+    LANG=C.UTF-8
 
 ARG DB_PASSWORD
 ARG GUARDIAN_SECRET
@@ -19,7 +20,7 @@ ARG SECRET_KEY_BASE
 ARG SENTRY_DSN
 
 COPY mix.exs mix.lock ./
-COPY config config
+COPY config/config.exs config/prod.exs ./config/
 RUN mix deps.get
 RUN mix deps.compile
 
@@ -29,11 +30,15 @@ RUN mix compile
 RUN mix release
 
 FROM alpine:3.9
+
+ENV LANG=C.UTF-8
+
 RUN apk add --update bash openssl ncurses-libs
 
 RUN mkdir /app
 WORKDIR /app
 
 COPY --from=build /app/_build/prod/rel/spendable ./
-COPY deploy/entrypoint.sh .
+COPY .devops/entrypoint.sh .
 CMD ["./entrypoint.sh"]
+
