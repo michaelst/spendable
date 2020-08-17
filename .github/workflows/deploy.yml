@@ -47,7 +47,7 @@ jobs:
             --build-arg PLAID_SECRET_KEY=${{ secrets.PLAID_SECRET_KEY }} \
             --build-arg SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} \
             --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-            --cache-from us.gcr.io/cloud-57/spendable-api:latest 
+            --cache-from us.gcr.io/cloud-57/spendable-api:latest \
             -f .devops/Dockerfile \
             -t us.gcr.io/cloud-57/spendable-api:${GITHUB_SHA} \
             -t us.gcr.io/cloud-57/spendable-api:latest \
