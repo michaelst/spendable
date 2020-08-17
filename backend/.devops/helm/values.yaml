@@ -24,8 +24,6 @@ service:
       path: /_health
       port: http
     periodSeconds: 1
-  headless:
-    enabled: true
 
 ingressroute:
   domain: spendable.money
