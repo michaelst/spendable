@@ -22,7 +22,7 @@
     "graphql": "^15.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-native": "^0.62.2",
+    "react-native": "^0.63.2",
     "react-native-appearance": "^0.3.3",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-plaid-link-sdk": "^3.3.2",
