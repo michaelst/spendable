@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - deploy
+      - master
 
 jobs:
   backend:
@@ -64,6 +64,7 @@ jobs:
         run: |
           helm upgrade --install spendable cloud-57/cloud-57 \
           -f .devops/helm/values.yaml \
+          --version v1.0.1 \
           --set image.repository=us.gcr.io/cloud-57/spendable-api \
           --set image.tag=${GITHUB_SHA} \
           -n backend
