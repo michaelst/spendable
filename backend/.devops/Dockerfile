@@ -29,7 +29,7 @@ COPY priv priv
 RUN mix compile
 RUN mix release
 
-FROM alpine:3.9
+FROM alpine:3.12
 
 ENV LANG=C.UTF-8
 
@@ -41,4 +41,3 @@ WORKDIR /app
 COPY --from=build /app/_build/prod/rel/spendable ./
 COPY .devops/entrypoint.sh .
 CMD ["./entrypoint.sh"]
-

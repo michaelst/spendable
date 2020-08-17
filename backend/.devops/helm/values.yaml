@@ -28,7 +28,6 @@ service:
 ingressroute:
   domain: spendable.money
   path: "/"
-  certSecretName: spendable-wildcard-cert
 
 # autoscaling:
 #   enabled: true
@@ -36,8 +35,8 @@ ingressroute:
 
 resources:
   requests:
-    cpu: 50m
-    memory: 800Mi
+    cpu: 10m
+    memory: 400Mi
 
 envVars:
 
