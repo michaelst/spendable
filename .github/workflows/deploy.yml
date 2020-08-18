@@ -27,31 +27,21 @@ jobs:
           gcloud auth configure-docker us.gcr.io
           gcloud container clusters get-credentials default-cluster --zone us-central1-a
 
-      - name: Decode APNS Files
-        env:
-          APNS_CERT: ${{ secrets.APNS_CERT }}
-          APNS_KEY: ${{ secrets.APNS_KEY }}
-        run: |        
-          mkdir priv/apns
-          echo "$APNS_CERT" | base64 -d > priv/apns/cert.pem
-          echo "$APNS_KEY" | base64 -d > priv/apns/key_unencrypted.pem
-
       - name: Build
         run: |    
-          docker pull us.gcr.io/cloud-57/spendable-api:latest    
+          docker pull us.gcr.io/cloud-57/spendable-api:build || true
+          docker pull us.gcr.io/cloud-57/spendable-api:latest || true
           docker build \
-            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            --build-arg GUARDIAN_SECRET=${{ secrets.GUARDIAN_SECRET }} \
-            --build-arg PLAID_CLIENT_ID=${{ secrets.PLAID_CLIENT_ID }} \
-            --build-arg PLAID_PUBLIC_KEY=${{ secrets.PLAID_PUBLIC_KEY }} \
-            --build-arg PLAID_SECRET_KEY=${{ secrets.PLAID_SECRET_KEY }} \
-            --build-arg SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} \
-            --build-arg SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --target build \
+            --cache-from us.gcr.io/cloud-57/spendable-api:build \
+            -t us.gcr.io/cloud-57/spendable-api:build \
+            -f .devops/Dockerfile .
+          docker build \
+            --cache-from us.gcr.io/cloud-57/spendable-api:build \
             --cache-from us.gcr.io/cloud-57/spendable-api:latest \
-            -f .devops/Dockerfile \
             -t us.gcr.io/cloud-57/spendable-api:${GITHUB_SHA} \
             -t us.gcr.io/cloud-57/spendable-api:latest \
-            .
+            -f .devops/Dockerfile .
           docker push us.gcr.io/cloud-57/spendable-api
 
       - name: Setup Helm
@@ -64,7 +54,7 @@ jobs:
         run: |
           helm upgrade --install spendable cloud-57/cloud-57 \
           -f .devops/helm/values.yaml \
-          --version v1.0.1 \
+          --version v1.0.2 \
           --set image.repository=us.gcr.io/cloud-57/spendable-api \
           --set image.tag=${GITHUB_SHA} \
           -n backend
