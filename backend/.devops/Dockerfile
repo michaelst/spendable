@@ -1,6 +1,6 @@
 FROM elixir:1.10-alpine AS build
 
-RUN apk add --update build-base
+RUN apk add --update --no-cache build-base
 
 RUN mkdir /app
 WORKDIR /app
@@ -13,8 +13,7 @@ ENV MIX_ENV=prod \
 
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs ./config/
-RUN mix deps.get
-RUN mix deps.compile
+RUN mix do deps.get, deps.compile
 
 COPY lib lib
 COPY priv priv
@@ -27,11 +26,11 @@ FROM alpine:3.12
 
 ENV LANG=C.UTF-8
 
-RUN apk add --update openssl ncurses-libs
+RUN apk add --update --no-cache openssl ncurses-libs
 RUN addgroup -S app && adduser -S app -G app 
 USER app
 WORKDIR /home/app
 
 COPY --from=build --chown=app:app /app/_build/prod/rel/spendable ./
-COPY .devops/entrypoint.sh .
+COPY --chown=app:app .devops/entrypoint.sh .
 CMD ["./entrypoint.sh"]
