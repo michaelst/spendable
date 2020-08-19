@@ -511,7 +511,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
+  DoubleConversion: cde416483dac037923206447da6e1454df403714
   EXAppleAuthentication: 6cb27bf3d48e69da0ca7a3a135c4838a9e34fdd7
   EXConstants: 9f18e9ef229706394f41735d9c7f309d479b36c0
   EXErrorRecovery: 88541714d9bbf8a823f4ee0b7078a92d3e0e42d2
@@ -530,7 +530,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 4aab18c93cd9546e4bfed752b4084585eca8b245
   FBReactNativeSpec: 5465d51ccfeecb7faa12f9ae0024f2044ce4044e
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
-  glog: 1f3da668190260b06b429bb211bfbee5cd790c28
+  glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   Plaid: 7bd3372b6e0f5dd13000ef77129658fba54f8ecd
   RCTRequired: cec6a34b3ac8a9915c37e7e4ad3aa74726ce4035
   RCTTypeSafety: 93006131180074cffa227a1075802c89a49dd4ce
