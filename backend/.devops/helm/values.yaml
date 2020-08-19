@@ -38,7 +38,6 @@ resources:
     cpu: 5m
     memory: 90M
   limits:
-    cpu: 250m
     memory: 300M
 
 envVars:
