@@ -25,6 +25,3 @@ config :cors_plug,
 config :spendable, Spendable.Guardian, issuer: "spendable.money"
 
 config :spendable, Plaid, base_url: "https://development.plaid.com"
-
-config :weddell,
-  project: "cloud-57"

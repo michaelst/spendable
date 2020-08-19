@@ -5,7 +5,7 @@ defmodule Spendable.Broadway.SendNotification do
   alias Broadway.Message
   alias Spendable.Repo
 
-  @producer if Application.get_env(:spendable, :env) == :test,
+  @producer unless Application.get_env(:spendable, :env) == :prod,
               do: {Broadway.DummyProducer, []},
               else:
                 {BroadwayCloudPubSub.Producer,

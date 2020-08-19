@@ -54,7 +54,7 @@ defmodule Spendable.MixProject do
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},
       {:guardian, "~> 2.0"},
-      {:hackney, "~> 1.16", override: true},
+      {:hackney, "~> 1.16"},
       {:jason, "~> 1.0"},
       {:kadabra, "~> 0.4.4"},
       {:mint, "~> 1.0"},

@@ -26,7 +26,7 @@ config :spendable, Plaid, base_url: "https://sandbox.plaid.com"
 config :pigeon, :apns,
   apns_default: %{
     cert: {:spendable, "apns/cert.pem"},
-    key: {:spendable, "apns/key_unencrypted.pem"},
+    key: {:spendable, "apns/key.pem"},
     mode: :dev
   }
 
