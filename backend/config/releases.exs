@@ -2,7 +2,10 @@ import Config
 
 config :spendable, Spendable.Web.Endpoint, secret_key_base: File.read!("/etc/secrets/SECRET_KEY_BASE")
 
-config :spendable, Spendable.Repo, password: File.read!("/etc/secrets/DB_PASSWORD")
+config :spendable, Spendable.Repo,
+  hostname: System.fetch_env!("DB_HOSTNAME"),
+  username: System.fetch_env!("DB_USERNAME"),
+  password: File.read!("/etc/secrets/DB_PASSWORD")
 
 config :spendable, Spendable.Guardian, secret_key: File.read!("/etc/secrets/GUARDIAN_SECRET")
 
@@ -19,7 +22,7 @@ config :spendable, Plaid,
   public_key: File.read!("/etc/secrets/PLAID_PUBLIC_KEY")
 
 config :sentry,
-  dsn: System.get_env("SENTRY_DSN")
+  dsn: File.read!("/etc/secrets/SENTRY_DSN")
 
 config :goth,
   json: File.read!("/etc/secrets/GCP_SA_KEY")

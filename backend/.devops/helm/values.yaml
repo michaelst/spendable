@@ -1,4 +1,5 @@
 nameOverride: spendable
+replicaCount: 3
 
 service:
   port: 80
@@ -29,16 +30,15 @@ ingressroute:
   domain: spendable.money
   path: "/"
 
-# autoscaling:
-#   enabled: true
-#   minReplicas: 3
+imagePullSecrets:
+  - name: "gcr-json-key"
 
 resources:
   requests:
-    cpu: 5m
-    memory: 90M
-  limits:
-    memory: 300M
+    cpu: 250m
+    memory: 500M
 
 envVars:
+  DB_HOSTNAME: postgres-postgresql.postgres.svc.cluster.local
+  DB_USERNAME: postgres
 

@@ -11,9 +11,7 @@ config :spendable, Spendable.Web.Endpoint,
   server: true
 
 config :spendable, Spendable.Repo,
-  username: "postgres",
   database: "spendable",
-  hostname: "10.122.112.3",
   pool_size: 5
 
 config :logger, level: :info
