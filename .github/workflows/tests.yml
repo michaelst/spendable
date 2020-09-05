@@ -8,6 +8,7 @@ jobs:
     env:
       DOCKER_HOST: ssh://build@192.168.5.181
       WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
 
 
     steps:
@@ -16,9 +17,9 @@ jobs:
           echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
           wg-quick up wg0
           mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 192.168.5.181 >> ~/.ssh/known_hosts
-          ssh-agent -a /tmp/ssh_agent.sock > /dev/null
-          ssh-add - <<< "${{ secrets.SSH_KEY }}"
           docker info
           wg-quick down wg0
 
