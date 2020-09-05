@@ -2,6 +2,23 @@ name: Tests
 on: push
 
 jobs:
+  wireguard:
+    runs-on: ubuntu-20.04
+
+    env:
+      DOCKER_HOST: ssh://build@192.168.5.181
+      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
+
+
+    steps:
+      - run: 'echo "$WIREGUARD_CONF" > wg0.conf'
+
+      - run: |
+          apt install wireguard
+          wg-quick up wg0.conf
+          docker info
+          wg-quick down wg0.conf
+
   backend:
     name: Backend
     runs-on: ubuntu-latest

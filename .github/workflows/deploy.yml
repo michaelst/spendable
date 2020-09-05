@@ -25,7 +25,6 @@ jobs:
       - name: GCP Authentication
         run: |
           gcloud auth configure-docker us.gcr.io
-          gcloud container clusters get-credentials default-cluster --zone us-central1-a
 
       - name: Build
         run: |    
