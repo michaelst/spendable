@@ -14,7 +14,7 @@ jobs:
       - run: 'echo "$WIREGUARD_CONF" > wg0.conf'
 
       - run: |
-          apt install wireguard
+          sudo apt install wireguard
           wg-quick up wg0.conf
           docker info
           wg-quick down wg0.conf
