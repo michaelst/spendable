@@ -5,11 +5,11 @@ defmodule Spendable.Broadway.SendNotification do
   alias Broadway.Message
   alias Spendable.Repo
 
-  @producer unless Application.get_env(:spendable, :env) == :prod,
-              do: {Broadway.DummyProducer, []},
-              else:
+  @producer if Application.get_env(:spendable, :env) == :prod,
+              do:
                 {BroadwayCloudPubSub.Producer,
-                 subscription: "projects/cloud-57/subscriptions/spendable.send-notification-request"}
+                 subscription: "projects/cloud-57/subscriptions/spendable.send-notification-request"},
+              else: {Broadway.DummyProducer, []}
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
