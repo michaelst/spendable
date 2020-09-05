@@ -22,14 +22,20 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
+      - name: Setup Files
+        run: |
+          mkdir $HOME/.ssh
+          echo "$SSH_KEY" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          mkdir $HOME/.kube
+          echo "$KUBE_CONFIG" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
       - name: Connect to Private Network
         run: |
           sudo apt-get -y install wireguard resolvconf
           echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
           wg-quick up wg0
-          mkdir $HOME/.ssh
-          echo "$SSH_KEY" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan -H 192.168.5.181 >> $HOME/.ssh/known_hosts
           
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -67,7 +73,6 @@ jobs:
 
       - name: Rollout Deploy
         run: |
-          echo "$KUBE_CONFIG" > $HOME/.kube/config
           helm upgrade --install spendable cloud-57/cloud-57 \
           -f .devops/helm/values.yaml \
           --version v1.0.2 \
