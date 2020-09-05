@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - run: |
-          sudo apt-get -y install wireguard
+          sudo apt-get -y install wireguard openresolv
           echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
           wg-quick up wg0
           docker info
