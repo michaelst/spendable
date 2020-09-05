@@ -15,7 +15,7 @@ jobs:
 
     env:
       DOCKER_HOST: ssh://build@192.168.5.181
-      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
       WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
 
@@ -67,6 +67,7 @@ jobs:
 
       - name: Rollout Deploy
         run: |
+          echo "$KUBE_CONFIG" > ~/.kube/config
           helm upgrade --install spendable cloud-57/cloud-57 \
           -f .devops/helm/values.yaml \
           --version v1.0.2 \
