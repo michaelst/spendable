@@ -15,8 +15,9 @@ jobs:
 
     env:
       DOCKER_HOST: ssh://build@192.168.5.181
-      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
+      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
 
     steps:
       - uses: actions/checkout@main
