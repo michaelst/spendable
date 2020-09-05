@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - none
+      - master
 
 jobs:
   backend:
@@ -13,9 +13,31 @@ jobs:
       run:
         working-directory: backend
 
+    env:
+      DOCKER_HOST: ssh://build@192.168.5.181
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
+
     steps:
       - uses: actions/checkout@main
 
+      - name: Setup Files
+        run: |
+          mkdir $HOME/.ssh
+          echo "$SSH_KEY" > $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          mkdir $HOME/.kube
+          echo "$KUBE_CONFIG" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Connect to Private Network
+        run: |
+          sudo apt-get -y install wireguard resolvconf
+          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
+          wg-quick up wg0
+          ssh-keyscan -H 192.168.5.181 >> $HOME/.ssh/known_hosts
+          
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           project_id: cloud-57
@@ -25,18 +47,17 @@ jobs:
       - name: GCP Authentication
         run: |
           gcloud auth configure-docker us.gcr.io
-          gcloud container clusters get-credentials default-cluster --zone us-central1-a
 
       - name: Build
         run: |    
           docker pull us.gcr.io/cloud-57/spendable-api:build || true
           docker pull us.gcr.io/cloud-57/spendable-api:latest || true
-          docker build \
+          docker buildx build \
             --target build \
             --cache-from us.gcr.io/cloud-57/spendable-api:build \
             -t us.gcr.io/cloud-57/spendable-api:build \
             -f .devops/Dockerfile .
-          docker build \
+          docker buildx build \
             --cache-from us.gcr.io/cloud-57/spendable-api:build \
             --cache-from us.gcr.io/cloud-57/spendable-api:latest \
             -t us.gcr.io/cloud-57/spendable-api:${GITHUB_SHA} \
