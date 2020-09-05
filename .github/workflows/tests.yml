@@ -11,13 +11,13 @@ jobs:
 
 
     steps:
-      - run: 'echo "$WIREGUARD_CONF" > wg0.conf'
+      - run: 'sudo echo "$WIREGUARD_CONF" > /etc/wireguard/wg0.conf'
 
       - run: |
           sudo apt install wireguard
-          wg-quick up wg0.conf
+          wg-quick up wg0
           docker info
-          wg-quick down wg0.conf
+          wg-quick down wg0
 
   backend:
     name: Backend
