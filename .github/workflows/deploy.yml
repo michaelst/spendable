@@ -21,6 +21,16 @@ jobs:
     steps:
       - uses: actions/checkout@main
 
+      - name: Connect to Private Network
+        run: |
+          sudo apt-get -y install wireguard openresolv
+          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
+          wg-quick up wg0
+          mkdir ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 192.168.5.181 >> ~/.ssh/known_hosts
+          
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           project_id: cloud-57
@@ -30,16 +40,6 @@ jobs:
       - name: GCP Authentication
         run: |
           gcloud auth configure-docker us.gcr.io
-
-      - name: Connect to Private Network
-        run: |
-          sudo apt-get -y install wireguard openresolv
-          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
-          wg-quick up wg0
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan 192.168.5.181 >> ~/.ssh/known_hosts
 
       - name: Build
         run: |    
