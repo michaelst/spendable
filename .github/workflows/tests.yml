@@ -12,8 +12,8 @@ jobs:
 
     steps:
       - run: |
-          sudo apt install wireguard
-          sudo echo "$WIREGUARD_CONF" > /etc/wireguard/wg0.conf
+          sudo apt-get -y install wireguard
+          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
           wg-quick up wg0
           docker info
           wg-quick down wg0
