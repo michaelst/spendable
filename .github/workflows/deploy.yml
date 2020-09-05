@@ -2,7 +2,7 @@ name: Deploy
 on:
   push:
     branches:
-      - none
+      - wireguard
 
 jobs:
   backend:
@@ -12,6 +12,11 @@ jobs:
     defaults:
       run:
         working-directory: backend
+
+    env:
+      DOCKER_HOST: ssh://build@192.168.5.181
+      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
 
     steps:
       - uses: actions/checkout@main
@@ -26,16 +31,26 @@ jobs:
         run: |
           gcloud auth configure-docker us.gcr.io
 
+      - name: Connect to Private Network
+        run: |
+          sudo apt-get -y install wireguard openresolv
+          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
+          wg-quick up wg0
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan 192.168.5.181 >> ~/.ssh/known_hosts
+
       - name: Build
         run: |    
           docker pull us.gcr.io/cloud-57/spendable-api:build || true
           docker pull us.gcr.io/cloud-57/spendable-api:latest || true
-          docker build \
+          docker buildx build \
             --target build \
             --cache-from us.gcr.io/cloud-57/spendable-api:build \
             -t us.gcr.io/cloud-57/spendable-api:build \
             -f .devops/Dockerfile .
-          docker build \
+          docker buildx build \
             --cache-from us.gcr.io/cloud-57/spendable-api:build \
             --cache-from us.gcr.io/cloud-57/spendable-api:latest \
             -t us.gcr.io/cloud-57/spendable-api:${GITHUB_SHA} \

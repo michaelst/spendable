@@ -2,27 +2,6 @@ name: Tests
 on: push
 
 jobs:
-  wireguard:
-    runs-on: ubuntu-20.04
-
-    env:
-      DOCKER_HOST: ssh://build@192.168.5.181
-      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
-      SSH_KEY: ${{ secrets.SSH_KEY }}
-
-
-    steps:
-      - run: |
-          sudo apt-get -y install wireguard openresolv
-          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
-          wg-quick up wg0
-          mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan 192.168.5.181 >> ~/.ssh/known_hosts
-          docker info
-          wg-quick down wg0
-
   backend:
     name: Backend
     runs-on: ubuntu-latest
