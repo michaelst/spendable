@@ -15,6 +15,10 @@ jobs:
           sudo apt-get -y install wireguard openresolv
           echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
           wg-quick up wg0
+          mkdir -p ~/.ssh
+          ssh-keyscan 192.168.5.181 >> ~/.ssh/known_hosts
+          ssh-agent -a /tmp/ssh_agent.sock > /dev/null
+          ssh-add - <<< "${{ secrets.SSH_KEY }}"
           docker info
           wg-quick down wg0
 
