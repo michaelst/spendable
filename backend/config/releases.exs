@@ -26,3 +26,10 @@ config :sentry,
 
 config :goth,
   json: File.read!("/etc/secrets/GCP_SA_KEY")
+
+config :logger,
+  backends: [{LoggerLogstashBackend, :logstash}]
+
+config :logger, :logstash,
+  host: System.fetch_env!("LOGSTASH_HOST"),
+  port: System.fetch_env!("LOGSTASH_PORT")
