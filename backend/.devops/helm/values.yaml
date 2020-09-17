@@ -41,6 +41,4 @@ resources:
 envVars:
   DB_HOSTNAME: postgres-postgresql.postgres.svc.cluster.local
   DB_USERNAME: postgres
-  LOGSTASH_HOST: logstash-logstash-headless.elastic.svc.cluster.local
-  LOGSTASH_PORT: 9600
 

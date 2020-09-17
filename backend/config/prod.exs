@@ -14,7 +14,9 @@ config :spendable, Spendable.Repo,
   database: "spendable",
   pool_size: 5
 
-config :logger, level: :info
+config :logger,
+  backends: [LoggerJSON],
+  level: :info
 
 config :cors_plug,
   origin: ["https://spendable.money"],

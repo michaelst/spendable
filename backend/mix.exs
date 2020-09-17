@@ -22,7 +22,7 @@ defmodule Spendable.MixProject do
   def application do
     [
       mod: {Spendable.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:jason, :logger_json, :logger, :runtime_tools]
     ]
   end
 
@@ -57,6 +57,7 @@ defmodule Spendable.MixProject do
       {:hackney, "~> 1.16"},
       {:jason, "~> 1.0"},
       {:kadabra, "~> 0.4.4"},
+      {:logger_json, "~> 4.0"},
       {:mint, "~> 1.0"},
       {:mock, "~> 0.3", only: :test},
       {:phoenix_ecto, "~> 4.0"},

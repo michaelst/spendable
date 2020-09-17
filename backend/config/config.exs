@@ -22,6 +22,8 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :logger_json, :backend, metadata: :all
+
 config :cors_plug, max_age: 86400
 
 config :sentry,
