@@ -22,7 +22,7 @@ defmodule Spendable.MixProject do
   def application do
     [
       mod: {Spendable.Application, []},
-      extra_applications: [:jason, :logger_json, :logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
