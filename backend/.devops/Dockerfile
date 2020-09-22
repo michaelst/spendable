@@ -1,4 +1,4 @@
-FROM elixir:1.10-alpine AS build
+FROM us.gcr.io/cloud-57/elixir:1.10.4-otp-23-alpine AS build
 
 ENV MIX_ENV=prod \
     LANG=C.UTF-8
