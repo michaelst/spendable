@@ -43,7 +43,7 @@ defmodule Spendable.Banks.Providers.Plaid.Adapter do
       bank_account_id: account_id,
       user_id: user_id,
       category_id: Repo.get_by!(Category, external_id: details["category_id"]).id,
-      amount: details["amount"] |> to_string() |> Decimal.new() |> Decimal.minus() |> Decimal.round(2),
+      amount: details["amount"] |> to_string() |> Decimal.new() |> Decimal.negate() |> Decimal.round(2),
       date: details["date"],
       external_id: details["transaction_id"],
       name: details["name"],
