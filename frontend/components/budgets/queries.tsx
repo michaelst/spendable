@@ -33,6 +33,7 @@ export const GET_BUDGET = gql`
         id
         amount
         allocationTemplate {
+          id
           name
         }
       }

@@ -7,6 +7,12 @@
 // START Enums and Input Objects
 //==============================================================
 
+export interface AllocationTemplateLineInputObject {
+  amount?: string | null;
+  budgetId?: string | null;
+  id?: string | null;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

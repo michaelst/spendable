@@ -29,27 +29,96 @@ export const GET_BANK_MEMBER = gql`
 `
 
 export const CREATE_BANK_MEMBER = gql`
-mutation CreateBankMember($publicToken: String!) {
-  createBankMember(publicToken: $publicToken) {
-    id
-    name
-    status
-    logo
+  mutation CreateBankMember($publicToken: String!) {
+    createBankMember(publicToken: $publicToken) {
+      id
+      name
+      status
+      logo
+    }
   }
-}
 `
 
 export const CREATE_PUBLIC_TOKEN = gql`
-mutation CreatePublicToken($id: ID!) {
-  createPublicToken(id: $id)
-}
+  mutation CreatePublicToken($id: ID!) {
+    createPublicToken(id: $id)
+  }
 `
 
 export const UPDATE_BANK_ACCOUNT = gql`
-mutation UpdateBankAccount($id: ID!, $sync: Boolean!) {
-  updateBankAccount(id: $id, sync: $sync) {
-    id
-    sync
+  mutation UpdateBankAccount($id: ID!, $sync: Boolean!) {
+    updateBankAccount(id: $id, sync: $sync) {
+      id
+      sync
+    }
   }
-}
+`
+
+export const LIST_TEMPLATES = gql`
+  query ListAllocationTemplates{
+    allocationTemplates {
+      id
+      name
+      lines {
+        amount
+      }
+    }
+  }
+`
+
+export const GET_TEMPLATE = gql`
+  query GetAllocationTemplate($id: ID!) {
+    allocationTemplate(id: $id) {
+      id
+      name
+      lines {
+        id
+        amount
+        budget {
+          id
+          name
+        }
+      }
+    }
+  }
+`
+
+export const CREATE_TEMPLATE = gql`
+  mutation CreateAllocationTemplate($name: String!, $lines: [AllocationTemplateLineInputObject]) {
+    createAllocationTemplate(name: $name, lines: $lines) {
+        id
+        name
+        lines {
+            id
+            amount
+            budget {
+                id
+            }
+        }
+    }
+  }
+`
+
+export const UPDATE_TEMPLATE = gql`
+  mutation UpdateAllocationTemplate($id: ID!, $name: String!, $lines: [AllocationTemplateLineInputObject]) {
+    updateAllocationTemplate(id: $id, name: $name, lines: $lines) {
+        id
+        name
+        lines {
+            id
+            amount
+            budget {
+              id
+            }
+        }
+    }
+  }
+`
+
+export const DELETE_TEMPLATE = gql`
+  mutation DeleteAllocationTemplate($id: ID!) {
+    deleteAllocationTemplate(id: $id) {
+      id
+    }
+  }
 `

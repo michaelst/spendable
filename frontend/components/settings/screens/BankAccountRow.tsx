@@ -45,7 +45,7 @@ export default function BankAccountRow({ bankAccount }: Props) {
         </Text>
       </View>
 
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", marginLeft: 18 }}>
         <Switch
           value={bankAccount.sync}
           onValueChange={value => updateBankAccount({ variables: { sync: value } })}

@@ -18,6 +18,7 @@ import {
   GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
 } from 'components/budgets/graphql/GetBudget'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import TemplateRow from './TemplateRow'
 
 export default function BudgetRow() {
   const { colors }: any = useTheme()
@@ -26,26 +27,14 @@ export default function BudgetRow() {
   const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
   const { budgetId } = route.params
 
-  const navigateToBudgets = () => navigation.navigate('Expenses')
   const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
   
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
 
-  const headerLeft = () => {
-    return (
-      <TouchableWithoutFeedback onPress={navigateToBudgets}>
-        <View style={{ paddingLeft: 10, flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-          <Ionicons name='ios-arrow-back' size={24} color={colors.primary} />
-          <Text style={{ color: colors.primary, fontSize: 20, paddingLeft: 4 }}>Budgets</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    )
-  }
-
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={navigateToEdit}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Edit</Text>
+        <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Edit</Text>
       </TouchableWithoutFeedback>
     )
   }
@@ -60,9 +49,9 @@ export default function BudgetRow() {
       )
     }
 
-    useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: headerTitle, headerRight: headerRight }))
+    useLayoutEffect(() => navigation.setOptions({ headerTitle: headerTitle, headerRight: headerRight }))
   } else {
-    useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
+    useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 
@@ -70,7 +59,7 @@ export default function BudgetRow() {
     {
       title: 'Templates',
       data: data.budget.allocationTemplateLines,
-      renderItem: ({ item }: { item: AllocationTemplateLine }) => <Text style={{ color: 'white' }}>{item.allocationTemplate.name}</Text>
+      renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateRow templateLine={item} />
     },
     {
       title: 'Recent Transactions',
@@ -82,7 +71,7 @@ export default function BudgetRow() {
   return (
     <SectionList
       contentContainerStyle={{
-        paddingBottom: 40
+        paddingBottom: 36
       }}
       sections={sections}
       renderSectionHeader={({ section: { title } }) => (
@@ -90,7 +79,7 @@ export default function BudgetRow() {
           style={{
             backgroundColor: colors.background,
             color: colors.secondary,
-            padding: 20,
+            padding: 18,
             paddingBottom: 5
           }}
         >
