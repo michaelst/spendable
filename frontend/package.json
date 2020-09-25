@@ -19,7 +19,7 @@
     "expo-secure-store": "^8.1.0",
     "expo-splash-screen": "^0.2.3",
     "expo-updates": "^0.2.0",
-    "graphql": "^15.0.0",
+    "graphql": "^15.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "^0.63.2",
