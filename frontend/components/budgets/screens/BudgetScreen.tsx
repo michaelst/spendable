@@ -9,7 +9,6 @@ import {
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
-import { Ionicons } from '@expo/vector-icons'
 import { GET_BUDGET } from 'components/budgets/queries'
 import formatCurrency from 'helpers/formatCurrency'
 import {

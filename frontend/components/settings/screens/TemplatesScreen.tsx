@@ -12,7 +12,7 @@ import { useQuery } from '@apollo/client'
 import TemplateRow from './TemplateRow'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 
-export default function BanksScreen() {
+export default function TemplatesScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
 
