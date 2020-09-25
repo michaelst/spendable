@@ -14,7 +14,7 @@
     "@react-navigation/stack": "^5.4.1",
     "decimal.js-light": "^2.5.0",
     "expo": "^37.0.12",
-    "expo-apple-authentication": "^2.1.0",
+    "expo-apple-authentication": "^2.2.1",
     "expo-constants": "^9.0.0",
     "expo-secure-store": "^8.1.0",
     "expo-splash-screen": "^0.2.3",
