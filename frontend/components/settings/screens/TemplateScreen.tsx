@@ -10,12 +10,12 @@ import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/
 import { useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/settings/Settings'
 import { GET_TEMPLATE } from 'components/settings/queries'
-import formatCurrency from 'helpers/formatCurrency'
 import { 
   GetAllocationTemplate,
   GetAllocationTemplate_allocationTemplate_lines as AllocationTemplateLine
 } from 'components/settings/graphql/GetAllocationTemplate'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import TemplateLineRow from './TemplateLineRow'
 
 export default function TemplateScreen() {
   const { colors }: any = useTheme()
@@ -25,8 +25,9 @@ export default function TemplateScreen() {
   const { templateId } = route.params
 
   const navigateToEdit = () => navigation.navigate('Edit Template', { templateId: templateId })
+  const navigateToCreate = () => navigation.navigate('Create Template Line', { templateId: templateId })
   
-  const { data, error } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
+  const { data } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
 
   const headerRight = () => {
     return (
@@ -51,11 +52,13 @@ export default function TemplateScreen() {
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 
+  const lines = [...data.allocationTemplate.lines].sort((a, b) => b.amount.comparedTo(a.amount))
+
   const sections = [
     {
       title: 'Expenses/Goals',
-      data: data.allocationTemplate.lines,
-      renderItem: ({ item }: { item: AllocationTemplateLine }) => <Text>{item.budget.name}</Text>
+      data: lines,
+      renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} />
     },
   ]
 
@@ -71,11 +74,25 @@ export default function TemplateScreen() {
             backgroundColor: colors.background,
             color: colors.secondary,
             padding: 18,
-            paddingBottom: 5
+            paddingBottom: 10
           }}
         >
           {title}
         </Text>
+      )}
+      renderSectionFooter={() => (
+        <TouchableHighlight onPress={navigateToCreate}>
+          <Text
+            style={{
+              backgroundColor: colors.background,
+              color: colors.primary,
+              padding: 18,
+              paddingTop: 10
+            }}
+          >
+            Add Expense/Goal
+          </Text>
+        </TouchableHighlight>
       )}
       stickySectionHeadersEnabled={false}
     />

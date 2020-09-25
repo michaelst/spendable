@@ -9,17 +9,17 @@ import { useNavigation } from '@react-navigation/native'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'helpers/formatCurrency'
-import { GetBudget_budget_allocationTemplateLines } from '../graphql/GetBudget'
+import { GetAllocationTemplate_allocationTemplate_lines } from '../graphql/GetAllocationTemplate'
 
 type Props = {
-  templateLine: GetBudget_budget_allocationTemplateLines,
+  line: GetAllocationTemplate_allocationTemplate_lines,
 }
 
-export default function TemplateRow({ templateLine }: Props) {
+export default function TemplateRow({ line }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateLine.allocationTemplate.id })
+  const navigateToTemplate = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
   return (
     <TouchableHighlight onPress={navigateToTemplate}>
@@ -35,13 +35,13 @@ export default function TemplateRow({ templateLine }: Props) {
       >
         <View style={{ flex: 1 }}>
           <Text style={{ color: colors.text, fontSize: 18 }}>
-            {templateLine.allocationTemplate.name}
+            {line.budget.name}
           </Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={{ color: colors.secondary, fontSize: 18, paddingRight: 8 }} >
-            {formatCurrency(templateLine.amount)}
+            {formatCurrency(line.amount)}
           </Text>
           <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
         </View>
