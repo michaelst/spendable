@@ -10,7 +10,7 @@ service:
     httpGet:
       path: /_health
       port: http
-    failureThreshold: 3
+    failureThreshold: 6
     periodSeconds: 10
   # give the pod 5 minutes to run migrations on startup
   startupProbe:
@@ -24,7 +24,7 @@ service:
     httpGet:
       path: /_health
       port: http
-    periodSeconds: 1
+    periodSeconds: 5
 
 ingressroute:
   domain: spendable.money
