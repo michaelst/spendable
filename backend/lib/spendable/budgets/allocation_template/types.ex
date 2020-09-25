@@ -8,15 +8,22 @@ defmodule Spendable.Budgets.AllocationTemplate.Types do
   alias Spendable.Middleware.LoadModel
 
   object :allocation_template do
-    field :id, :id
+    field :id, non_null(:id)
     field :name, non_null(:string)
-    field :lines, list_of(:allocation_template_line), resolve: dataloader(Spendable)
+    field :lines, :allocation_template_line |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
   end
 
   object :allocation_template_queries do
-    field :allocation_templates, list_of(:allocation_template) do
+    field :allocation_template, non_null(:allocation_template) do
       middleware(CheckAuthentication)
-      resolve(&Resolver.list/3)
+      middleware(LoadModel, module: AllocationTemplate)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.get/2)
+    end
+
+    field :allocation_templates, :allocation_template |> non_null |> list_of |> non_null do
+      middleware(CheckAuthentication)
+      resolve(&Resolver.list/2                                                       )
     end
   end
 

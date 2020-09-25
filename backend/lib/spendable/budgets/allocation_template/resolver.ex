@@ -4,9 +4,11 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver do
   alias Spendable.Budgets.AllocationTemplate
   alias Spendable.Repo
 
-  def list(_parent, _args, %{context: %{current_user: user}}) do
+  def list(_args, %{context: %{current_user: user}}) do
     {:ok, from(AllocationTemplate, where: [user_id: ^user.id]) |> Repo.all()}
   end
+
+  def get(_args, %{context: %{model: model}}), do: {:ok, model}
 
   def create(params, %{context: %{current_user: user}}) do
     %AllocationTemplate{user_id: user.id}
