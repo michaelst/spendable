@@ -23,9 +23,9 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Types do
   object :allocation_template_line_mutations do
     field :create_allocation_template_line, :allocation_template_line do
       middleware(CheckAuthentication)
+      arg(:amount, non_null(:decimal))
       arg(:budget_allocation_template_id, non_null(:id))
-      arg(:amount, :decimal)
-      arg(:budget_id, :id)
+      arg(:budget_id, non_null(:id))
       resolve(&Resolver.create/2)
     end
 
@@ -34,6 +34,7 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Types do
       middleware(LoadModel, module: AllocationTemplateLine)
       arg(:id, non_null(:id))
       arg(:amount, :decimal)
+      arg(:budget_allocation_template_id, :id)
       arg(:budget_id, :id)
       resolve(&Resolver.update/2)
     end

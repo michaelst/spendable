@@ -8,7 +8,7 @@
 //==============================================================
 
 export interface AllocationTemplateLineInputObject {
-  amount?: string | null;
+  amount?: Decimal | null;
   budgetId?: string | null;
   id?: string | null;
 }

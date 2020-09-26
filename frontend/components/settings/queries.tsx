@@ -86,15 +86,15 @@ export const GET_TEMPLATE = gql`
 export const CREATE_TEMPLATE = gql`
   mutation CreateAllocationTemplate($name: String!, $lines: [AllocationTemplateLineInputObject]) {
     createAllocationTemplate(name: $name, lines: $lines) {
-        id
-        name
-        lines {
-            id
-            amount
-            budget {
-                id
-            }
-        }
+      id
+      name
+      lines {
+          id
+          amount
+          budget {
+              id
+          }
+      }
     }
   }
 `
@@ -102,15 +102,15 @@ export const CREATE_TEMPLATE = gql`
 export const UPDATE_TEMPLATE = gql`
   mutation UpdateAllocationTemplate($id: ID!, $name: String!, $lines: [AllocationTemplateLineInputObject]) {
     updateAllocationTemplate(id: $id, name: $name, lines: $lines) {
-        id
-        name
-        lines {
+      id
+      name
+      lines {
+          id
+          amount
+          budget {
             id
-            amount
-            budget {
-              id
-            }
-        }
+          }
+      }
     }
   }
 `
@@ -118,6 +118,44 @@ export const UPDATE_TEMPLATE = gql`
 export const DELETE_TEMPLATE = gql`
   mutation DeleteAllocationTemplate($id: ID!) {
     deleteAllocationTemplate(id: $id) {
+      id
+    }
+  }
+`
+
+export const CREATE_TEMPLATE_LINE = gql`
+  mutation CreateAllocationTemplateLine($budgetAllocationTemplateId: ID!, $amount: Decimal!, $budgetId: ID!) {
+    createAllocationTemplateLine(budgetAllocationTemplateId: $budgetAllocationTemplateId, amount: $amount, budgetId: $budgetId) {
+      id
+      amount
+      budget {
+        id
+      }
+      allocationTemplate {
+        id
+      }
+    }
+  }
+`
+
+export const UPDATE_TEMPLATE_LINE = gql`
+  mutation UpdateAllocationTemplateLine($id: ID!, $budgetAllocationTemplateId: ID, $amount: Decimal, $budgetId: ID) {
+    updateAllocationTemplateLine(id: $id, budgetAllocationTemplateId: $budgetAllocationTemplateId, amount: $amount, budgetId: $budgetId) {
+      id
+      amount
+      budget {
+        id
+      }
+      allocationTemplate {
+        id
+      }
+    }
+  }
+`
+
+export const DELETE_TEMPLATE_LINE = gql`
+  mutation DeleteAllocationTemplateLine($id: ID!) {
+    deleteAllocationTemplateLine(id: $id) {
       id
     }
   }
