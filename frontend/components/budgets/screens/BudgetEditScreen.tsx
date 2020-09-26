@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from 'react'
+import React, { useState, Dispatch, SetStateAction, useLayoutEffect } from 'react'
 import {
   FlatList,
   StyleSheet,
@@ -59,7 +59,7 @@ export default function BudgetEditScreen() {
     )
   }
 
-  navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight })
+  useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
 
   const fields: {
     key: string,

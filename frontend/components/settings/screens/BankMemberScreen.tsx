@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'
 import { GET_BANK_MEMBER } from '../queries'
 import { GetBankMember } from '../graphql/GetBankMember'
@@ -15,7 +15,9 @@ export default function BankMemberScreen() {
 
   const { data, loading, refetch } = useQuery<GetBankMember>(GET_BANK_MEMBER, { variables: { id: bankMemberId } })
 
-  if (data?.bankMember) navigation.setOptions({ headerTitle: data.bankMember.name })
+  useLayoutEffect(() => {
+    if (data?.bankMember) navigation.setOptions({ headerTitle: data.bankMember.name })
+  })
 
   return (
     <FlatList

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {
   ActivityIndicator,
   RefreshControl,
@@ -37,7 +37,6 @@ export default function BudgetsScreen() {
   })
 
   const { data, loading, refetch } = useQuery<ListBudgets>(LIST_BUDGETS)
-  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const headerRight = () => {
     return (
@@ -47,7 +46,7 @@ export default function BudgetsScreen() {
     )
   }
 
-  navigation.setOptions({headerRight: headerRight})
+  useLayoutEffect(() => navigation.setOptions({headerRight: headerRight}))
 
   const budgets = data?.budgets.filter(budget => !budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
   const goals = data?.budgets.filter(budget => budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
@@ -56,6 +55,8 @@ export default function BudgetsScreen() {
     { title: "Expenses", data: budgets },
     { title: "Goals", data: goals }
   ]
+
+  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   return (
     <SectionList

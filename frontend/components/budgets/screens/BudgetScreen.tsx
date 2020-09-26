@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {
   ActivityIndicator,
   SectionList,
@@ -60,9 +60,9 @@ export default function BudgetRow() {
       )
     }
 
-    navigation.setOptions({ headerLeft: headerLeft, headerTitle: headerTitle, headerRight: headerRight })
+    useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: headerTitle, headerRight: headerRight }))
   } else {
-    navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight })
+    useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {
   StyleSheet,
   ActivityIndicator,
@@ -14,7 +14,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import BankMemberRow from './BankMemberRow'
 import PlaidLink from 'react-native-plaid-link-sdk'
 
-export default function BanksScreen() {
+export default function BankMembersScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
 
@@ -44,7 +44,6 @@ export default function BanksScreen() {
     }
   })
 
-  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const headerRight = () => {
     return (
@@ -67,7 +66,9 @@ export default function BanksScreen() {
     )
   }
 
-  navigation.setOptions({ headerRight: headerRight })
+  useLayoutEffect(() => navigation.setOptions({ headerRight: headerRight }))
+
+  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   return (
     <FlatList
