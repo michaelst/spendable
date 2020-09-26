@@ -35,8 +35,8 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe_plug, "~> 1.5.0-rc.0"},
-      {:absinthe, "~> 1.5.0-rc.0"},
+      {:absinthe_plug, "~> 1.5.0"},
+      {:absinthe, "~> 1.5.0"},
       {:bcrypt_elixir, "~> 2.0"},
       {:broadway_cloud_pub_sub, "~> 0.6.0"},
       {:broadway, "~> 0.6.0"},

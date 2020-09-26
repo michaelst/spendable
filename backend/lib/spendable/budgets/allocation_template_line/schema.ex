@@ -5,8 +5,9 @@ defmodule Spendable.Budgets.AllocationTemplateLine do
   schema "budget_allocation_template_lines" do
     field :amount, :decimal
 
-    belongs_to :budget, Spendable.Budgets.Budget
     belongs_to :allocation_template, Spendable.Budgets.AllocationTemplate, foreign_key: :budget_allocation_template_id
+    belongs_to :budget, Spendable.Budgets.Budget
+    belongs_to :user, Spendable.User
 
     timestamps()
   end

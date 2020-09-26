@@ -23,7 +23,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Types do
 
     field :allocation_templates, :allocation_template |> non_null |> list_of |> non_null do
       middleware(CheckAuthentication)
-      resolve(&Resolver.list/2                                                       )
+      resolve(&Resolver.list/2)
     end
   end
 

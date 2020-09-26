@@ -31,6 +31,7 @@ defmodule Spendable.Web.Schema do
 
   mutation do
     import_fields(:allocation_template_mutations)
+    import_fields(:allocation_template_line_mutations)
     import_fields(:auth_mutations)
     import_fields(:bank_account_mutations)
     import_fields(:bank_member_mutations)
