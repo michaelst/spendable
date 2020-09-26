@@ -10,7 +10,7 @@ target 'Spendable' do
   use_react_native!(:path => config["reactNativePath"])
 
   # Other native modules
-  pod 'Plaid', '~> 1.1.32'
+  pod 'Plaid', '~> 1.1.37'
 
   # Automatically detect installed unimodules
   use_unimodules!

@@ -32,7 +32,6 @@ export default function BanksScreen() {
 
 
   const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
-  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const [createBankMember] = useMutation(CREATE_BANK_MEMBER, {
     update(cache, { data: { createBankMember } }) {
@@ -44,6 +43,8 @@ export default function BanksScreen() {
       })
     }
   })
+
+  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const headerRight = () => {
     return (
