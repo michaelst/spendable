@@ -20,6 +20,15 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Types do
     field :budget_id, :id
   end
 
+  object :allocation_template_line_queries do
+    field :allocation_template_line, non_null(:allocation_template_line) do
+      middleware(CheckAuthentication)
+      middleware(LoadModel, module: AllocationTemplateLine)
+      arg(:id, non_null(:id))
+      resolve(&Resolver.get/2)
+    end
+  end
+
   object :allocation_template_line_mutations do
     field :create_allocation_template_line, :allocation_template_line do
       middleware(CheckAuthentication)

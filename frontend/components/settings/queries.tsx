@@ -123,6 +123,21 @@ export const DELETE_TEMPLATE = gql`
   }
 `
 
+export const GET_TEMPLATE_LINE = gql`
+  query AllocationTemplateLine($id: ID!) {
+    allocationTemplateLine(id: $id) {
+      id
+      amount
+      budget {
+        id
+      }
+      allocationTemplate {
+        id
+      }
+    }
+  }
+`
+
 export const CREATE_TEMPLATE_LINE = gql`
   mutation CreateAllocationTemplateLine($budgetAllocationTemplateId: ID!, $amount: Decimal!, $budgetId: ID!) {
     createAllocationTemplateLine(budgetAllocationTemplateId: $budgetAllocationTemplateId, amount: $amount, budgetId: $budgetId) {
