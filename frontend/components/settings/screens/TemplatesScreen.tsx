@@ -26,10 +26,11 @@ export default function TemplatesScreen() {
   })
 
   const { data, loading, refetch } = useQuery<ListAllocationTemplates>(LIST_TEMPLATES)
+  const navigateToCreateTemplate = () => navigation.navigate('Create Template')
 
   const headerRight = () => {
     return (
-      <TouchableWithoutFeedback onPress={() => console.log('test')}>
+      <TouchableWithoutFeedback onPress={navigateToCreateTemplate}>
         <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Add</Text>
       </TouchableWithoutFeedback>
     )

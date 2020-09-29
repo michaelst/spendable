@@ -23,7 +23,7 @@ export default function TemplateEditScreen() {
   })
 
   const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateId })
-  const updateAndGoBack = () => {
+  const saveAndGoBack = () => {
     updateTemplate()
     navigateToTemplate()
   }
@@ -38,5 +38,5 @@ export default function TemplateEditScreen() {
     }
   ]
 
-  return <FormScreen updateAndGoBack={updateAndGoBack} fields={fields} />
+  return <FormScreen saveAndGoBack={saveAndGoBack} fields={fields} />
 }

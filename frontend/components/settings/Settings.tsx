@@ -5,6 +5,7 @@ import BankMembersScreen from './screens/BankMembersScreen'
 import BankMemberScreen from './screens/BankMemberScreen'
 import TemplatesScreen from './screens/TemplatesScreen'
 import TemplateScreen from './screens/TemplateScreen'
+import TemplateCreateScreen from './screens/TemplateCreateScreen'
 import TemplateEditScreen from './screens/TemplateEditScreen'
 import TemplateLineEditScreen from './screens/TemplateLineEditScreen'
 
@@ -30,7 +31,7 @@ export default function Budgets() {
       <Stack.Screen name="Bank" component={BankMemberScreen} options={options} />
       <Stack.Screen name="Templates" component={TemplatesScreen} options={options} />
       <Stack.Screen name="Template" component={TemplateScreen} options={options} />
-      <Stack.Screen name="Create Template" component={TemplateScreen} options={options} />
+      <Stack.Screen name="Create Template" component={TemplateCreateScreen} options={options} />
       <Stack.Screen name="Edit Template" component={TemplateEditScreen} options={options} />
       <Stack.Screen name="Create Template Line" component={TemplateScreen} options={options} />
       <Stack.Screen name="Edit Template Line" component={TemplateLineEditScreen} options={options} />

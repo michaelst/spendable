@@ -11,7 +11,7 @@ import { useTheme, useNavigation } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 type Props = {
-  updateAndGoBack: () => void,
+  saveAndGoBack: () => void,
   fields: FormFields
 }
 
@@ -23,13 +23,13 @@ export type FormFields = {
   keyboardType: KeyboardType
 }[]
 
-export default function FormScreen({ updateAndGoBack, fields }: Props) {
+export default function FormScreen({ saveAndGoBack, fields }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
 
   const headerRight = () => {
     return (
-      <TouchableWithoutFeedback onPress={updateAndGoBack}>
+      <TouchableWithoutFeedback onPress={saveAndGoBack}>
         <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Save</Text>
       </TouchableWithoutFeedback>
     )
