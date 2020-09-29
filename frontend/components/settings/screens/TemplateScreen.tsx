@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {
   ActivityIndicator,
   SectionList,
@@ -46,9 +46,9 @@ export default function TemplateScreen() {
       )
     }
 
-    navigation.setOptions({ headerTitle: headerTitle, headerRight: headerRight })
+    useLayoutEffect(() => navigation.setOptions({ headerTitle: headerTitle, headerRight: headerRight }))
   } else {
-    navigation.setOptions({ headerTitle: '', headerRight: headerRight })
+    useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 

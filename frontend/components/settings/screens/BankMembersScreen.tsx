@@ -70,8 +70,6 @@ export default function BankMembersScreen() {
 
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
-  if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
-
   return (
     <FlatList
       contentContainerStyle={{ paddingTop: 36, paddingBottom: 36 }}

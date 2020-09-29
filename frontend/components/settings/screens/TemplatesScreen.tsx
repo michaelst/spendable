@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect } from 'react'
 import {
   StyleSheet,
   ActivityIndicator,
@@ -11,6 +11,7 @@ import { LIST_TEMPLATES } from '../queries'
 import { useQuery } from '@apollo/client'
 import TemplateRow from './TemplateRow'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
+import Decimal from 'decimal.js-light'
 
 export default function TemplatesScreen() {
   const navigation = useNavigation()
@@ -34,14 +35,21 @@ export default function TemplatesScreen() {
     )
   }
 
-  navigation.setOptions({ headerRight: headerRight })
+  useLayoutEffect(() => navigation.setOptions({ headerRight: headerRight }))
 
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
+
+  const templates = [...data?.allocationTemplates ?? []].sort((a, b) => {
+    const aAllocated = a.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
+    const bAllocated = b.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
+    
+    return bAllocated.comparedTo(aAllocated)
+  })
 
   return (
     <FlatList
       contentContainerStyle={{ paddingTop: 36, paddingBottom: 36 }}
-      data={data?.allocationTemplates ?? []}
+      data={templates}
       renderItem={({ item }) => <TemplateRow template={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     />
