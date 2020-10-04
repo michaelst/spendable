@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'components/settings/queries'
-import FormScreen, { FormFields } from 'components/shared/screen/FormScreen'
+import FormScreen, { FormFields } from 'components/shared/screen/form/FormScreen'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 
 export default function TemplateEditScreen() {
@@ -23,8 +23,6 @@ export default function TemplateEditScreen() {
       })
     }
   })
-
-  console.log(error)
 
   const navigateToTemplates = () => navigation.navigate('Templates')
   const saveAndGoBack = () => {
