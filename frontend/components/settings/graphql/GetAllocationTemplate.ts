@@ -11,6 +11,7 @@ export interface GetAllocationTemplate_allocationTemplate_lines_budget {
   __typename: "Budget";
   id: string;
   name: string;
+  goal: Decimal | null;
 }
 
 export interface GetAllocationTemplate_allocationTemplate_lines {

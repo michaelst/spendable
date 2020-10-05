@@ -2,42 +2,43 @@ import React, { useState } from 'react'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/settings/Settings'
-import { GET_TEMPLATE_LINE, UPDATE_TEMPLATE_LINE } from 'components/settings/queries'
-import { AllocationTemplateLine } from 'components/settings/graphql/AllocationTemplateLine'
+import { CREATE_TEMPLATE_LINE, GET_TEMPLATE } from 'components/settings/queries'
 import FormScreen, { FormField, FormFieldType } from 'components/shared/screen/form/FormScreen'
 import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
+import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
 
-export default function TemplateLineEditScreen() {
+export default function TemplateLineCreateScreen() {
   const navigation = useNavigation()
-  const route = useRoute<RouteProp<RootStackParamList, 'Edit Template Line'>>()
-  const { lineId } = route.params
+  const route = useRoute<RouteProp<RootStackParamList, 'Create Template Line'>>()
+  const { templateId } = route.params
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
 
-  const { data } = useQuery<AllocationTemplateLine>(GET_TEMPLATE_LINE, { 
-    variables: { id: lineId },
-    onCompleted: data => {
-      setAmount(data.allocationTemplateLine.amount.toDecimalPlaces(2).toFixed(2))
-      setBudgetId(data.allocationTemplateLine.budget.id)
-    }
-  })
-
   const budgetQuery = useQuery<ListBudgets>(LIST_BUDGETS)
   const budgetName = budgetQuery.data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [updateTemplateLine] = useMutation(UPDATE_TEMPLATE_LINE, {
+  const [createTemplateLine] = useMutation(CREATE_TEMPLATE_LINE, {
     variables: {
-      id: lineId,
+      budgetAllocationTemplateId: templateId,
       amount: amount,
       budgetId: budgetId
+    },
+    update(cache, { data: { createAllocationTemplateLine } }) {
+      const data = cache.readQuery<GetAllocationTemplate | null>({ query: GET_TEMPLATE, variables: { id: templateId } })
+      const lines = data?.allocationTemplate.lines.concat([createAllocationTemplateLine])
+
+      cache.writeQuery({
+        query: GET_TEMPLATE,
+        data: { allocationTemplate: {...data?.allocationTemplate, ...{lines: lines}} }
+      })
     }
   })
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: data?.allocationTemplateLine.allocationTemplate.id })
+  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateId })
   const saveAndGoBack = () => {
-    updateTemplateLine()
+    createTemplateLine()
     navigateToTemplate()
   }
 

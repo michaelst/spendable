@@ -61,7 +61,7 @@ export default function TemplateScreen() {
       renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} />
     },
   ]
-
+  
   return (
     <SectionList
       contentContainerStyle={{

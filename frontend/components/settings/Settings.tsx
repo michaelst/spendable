@@ -7,6 +7,7 @@ import TemplatesScreen from './screens/TemplatesScreen'
 import TemplateScreen from './screens/TemplateScreen'
 import TemplateCreateScreen from './screens/TemplateCreateScreen'
 import TemplateEditScreen from './screens/TemplateEditScreen'
+import TemplateLineCreateScreen from './screens/TemplateLineCreateScreen'
 import TemplateLineEditScreen from './screens/TemplateLineEditScreen'
 
 export type RootStackParamList = {
@@ -33,7 +34,7 @@ export default function Budgets() {
       <Stack.Screen name="Template" component={TemplateScreen} options={options} />
       <Stack.Screen name="Create Template" component={TemplateCreateScreen} options={options} />
       <Stack.Screen name="Edit Template" component={TemplateEditScreen} options={options} />
-      <Stack.Screen name="Create Template Line" component={TemplateScreen} options={options} />
+      <Stack.Screen name="Create Template Line" component={TemplateLineCreateScreen} options={options} />
       <Stack.Screen name="Edit Template Line" component={TemplateLineEditScreen} options={options} />
     </Stack.Navigator>
   )

@@ -77,6 +77,7 @@ export const GET_TEMPLATE = gql`
         budget {
           id
           name
+          goal
         }
       }
     }
