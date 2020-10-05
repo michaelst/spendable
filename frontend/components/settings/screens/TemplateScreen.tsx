@@ -58,7 +58,7 @@ export default function TemplateScreen() {
     {
       title: 'Expenses/Goals',
       data: lines,
-      renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} />
+      renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} templateId={templateId} />
     },
   ]
   
