@@ -8,8 +8,6 @@ import {
   Platform
 } from 'react-native'
 import { useTheme, useNavigation } from '@react-navigation/native'
-import { StackNavigationProp } from '@react-navigation/stack'
-import { RootStackParamList } from 'components/settings/Settings'
 import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { TokenContext } from 'components/auth/TokenContext'
@@ -17,7 +15,7 @@ import * as SecureStore from 'expo-secure-store'
 
 const bankRow = () => {
   const { colors }: any = useTheme()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Settings'>>()
+  const navigation = useNavigation()
   const navigateToBanks = () => navigation.navigate('Banks')
 
   return (
@@ -48,7 +46,7 @@ const bankRow = () => {
 
 const templatesRow = () => {
   const { colors }: any = useTheme()
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Settings'>>()
+  const navigation = useNavigation()
   const navigateToTemplates = () => navigation.navigate('Templates')
 
   return (

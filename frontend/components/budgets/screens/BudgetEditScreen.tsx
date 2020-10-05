@@ -43,23 +43,15 @@ export default function BudgetEditScreen() {
     navigateToBudget()
   }
 
-  const headerLeft = () => {
-    return (
-      <TouchableWithoutFeedback onPress={navigateToBudget}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingLeft: 20 }}>Cancel</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
-
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={updateAndGoBack}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Save</Text>
+        <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Save</Text>
       </TouchableWithoutFeedback>
     )
   }
 
-  useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
 
   const fields: {
     key: string,

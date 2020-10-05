@@ -28,6 +28,7 @@ export interface GetBudget_budget_recentAllocations {
 
 export interface GetBudget_budget_allocationTemplateLines_allocationTemplate {
   __typename: "AllocationTemplate";
+  id: string;
   name: string;
 }
 
