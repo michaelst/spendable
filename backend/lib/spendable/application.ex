@@ -11,7 +11,8 @@ defmodule Spendable.Application do
       Spendable.Repo,
       Spendable.Web.Endpoint,
       Spendable.Broadway.SendNotification,
-      Spendable.Broadway.SyncMember
+      Spendable.Broadway.SyncMember,
+      Spendable.Services.HealthCheck
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

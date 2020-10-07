@@ -71,7 +71,7 @@ defmodule Spendable.MixProject do
       {:protobuf, "~> 0.7.1"},
       {:sentry, "~> 8.0"},
       {:tesla, "~> 1.3.2"},
-      {:weddell, "~> 0.1"}
+      {:weddell, github: "michaelst/weddell"}
     ]
   end
 

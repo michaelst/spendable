@@ -3,7 +3,7 @@ FROM us.gcr.io/cloud-57/elixir:1.10.4-otp-23-alpine AS build
 ENV MIX_ENV=prod \
     LANG=C.UTF-8
 
-RUN apk add --update --no-cache build-base
+RUN apk add --update --no-cache build-base git
 
 RUN mkdir /app
 WORKDIR /app

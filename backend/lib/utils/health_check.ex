@@ -24,6 +24,9 @@ defmodule HealthCheck do
 
   @spec call(Plug.Conn.t(), options) :: Plug.Conn.t()
   def call(%Plug.Conn{} = conn, opts) do
-    send_resp(conn, 200, opts[:resp_body])
+    case GenServer.call(Spendable.Services.HealthCheck, :status, 2000) do
+      :healthy -> send_resp(conn, 200, opts[:resp_body])
+      :unhealthy -> send_resp(conn, 503, "not ready")
+    end
   end
 end
