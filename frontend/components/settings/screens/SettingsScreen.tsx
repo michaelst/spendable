@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import {
   SectionList,
   StyleSheet,
@@ -12,6 +12,11 @@ import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { TokenContext } from 'components/auth/TokenContext'
 import * as SecureStore from 'expo-secure-store'
+import PushNotificationIOS from '@react-native-community/push-notification-ios'
+import { useMutation, useQuery } from '@apollo/client'
+import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from '../queries'
+import { GetNotificationSettings } from '../graphql/GetNotificationSettings'
+import { UpdateNotificationSettings } from '../graphql/UpdateNotificationSettings'
 
 const bankRow = () => {
   const { colors }: any = useTheme()
@@ -77,6 +82,26 @@ const templatesRow = () => {
 
 const notificationsRow = () => {
   const { colors }: any = useTheme()
+  const [id, setId] = useState<string | null>(null)
+  const [enabled, setEnabled] = useState(false)
+  const  { deviceToken } = useContext(TokenContext)
+
+  PushNotificationIOS.requestPermissions()
+  
+  useQuery<GetNotificationSettings>(GET_NOTIFICATION_SETTINGS, { 
+    variables: { deviceToken: deviceToken },
+    onCompleted: data => {
+      setId(data.notificationSettings.id)
+      setEnabled(data.notificationSettings.enabled)
+    }
+  })
+
+  const [ updateNotificationSettings ] = useMutation<UpdateNotificationSettings>(UPDATE_NOTIFICATION_SETTINGS)
+
+  const toggleSwitch = () => {
+    updateNotificationSettings({ variables: { id: id, enabled: !enabled}})
+    setEnabled(!enabled)
+  }
 
   return (
     <View
@@ -95,7 +120,10 @@ const notificationsRow = () => {
       </View>
 
       <View style={{ flexDirection: "row", paddingRight: 18 }}>
-        <Switch />
+        <Switch
+          onValueChange={(toggleSwitch)}
+          value={enabled} 
+        />
       </View>
     </View>
   )
@@ -150,7 +178,7 @@ export default function BudgetsScreen() {
   ]
 
   const listData = [
-    { title: "test", data: firstSection },
+    { data: firstSection },
     { data: secondSection },
     { data: thirdSection },
   ]

@@ -7,12 +7,12 @@ defmodule Spendable.Notifications.Settings.Types do
   alias Spendable.Notifications.Settings.Resolver
 
   object :notification_settings do
-    field :id, :id
-    field :enabled, :boolean
+    field :id, non_null(:id)
+    field :enabled, non_null(:boolean)
   end
 
   object :notification_settings_queries do
-    field :notification_settings, :notification_settings do
+    field :notification_settings, non_null(:notification_settings) do
       middleware(CheckAuthentication)
       arg(:device_token, non_null(:string))
       resolve(&Resolver.get_or_create/2)
@@ -20,7 +20,7 @@ defmodule Spendable.Notifications.Settings.Types do
   end
 
   object :notification_settings_mutations do
-    field :update_notification_settings, :notification_settings do
+    field :update_notification_settings, non_null(:notification_settings) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Settings)
       arg(:id, non_null(:id))

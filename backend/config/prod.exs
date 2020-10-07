@@ -15,7 +15,7 @@ config :spendable, Spendable.Repo,
   pool_size: 5
 
 config :logger,
-  backends: [LoggerJSON],
+  backends: [LoggerJSON, Sentry.LoggerBackend],
   level: :info
 
 config :cors_plug,

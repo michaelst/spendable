@@ -1,5 +1,23 @@
 import { gql } from "@apollo/client";
 
+export const GET_NOTIFICATION_SETTINGS = gql`
+query GetNotificationSettings($deviceToken: String!) {
+  notificationSettings(deviceToken: $deviceToken) {
+    id
+    enabled
+  }
+}
+`
+
+export const UPDATE_NOTIFICATION_SETTINGS = gql`
+mutation UpdateNotificationSettings($id: ID!, $enabled: Boolean!) {
+  updateNotificationSettings(id: $id, enabled: $enabled) {
+    id
+    enabled
+  }
+}
+`
+
 export const LIST_BANK_MEMBERS = gql`
   query ListBankMembers{
     bankMembers {

@@ -7,10 +7,12 @@ import AuthScreen from './components/auth/auth-screen/AuthScreen'
 import createApolloClient from 'helpers/createApolloClient'
 import * as SecureStore from 'expo-secure-store'
 import { AppearanceProvider } from 'react-native-appearance'
+import PushNotificationIOS from '@react-native-community/push-notification-ios'
 
 export default function App() {
   const [token, setToken] = useState<string | null>(null)
-  const context = { token: token, setToken: setToken }
+  const [deviceToken, setDeviceToken] = useState<string | null>(null)
+  const context = { token: token, setToken: setToken, deviceToken: deviceToken }
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -29,6 +31,8 @@ export default function App() {
       }
     }
   }, [token])
+
+  PushNotificationIOS.addEventListener('register', deviceToken => setDeviceToken(deviceToken))
 
   return (
     <AppearanceProvider>
