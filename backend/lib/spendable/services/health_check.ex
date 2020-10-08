@@ -40,8 +40,10 @@ defmodule Spendable.Services.HealthCheck do
     try do
       {:ok, _} = Weddell.topics([], 1000)
       :healthy
+    rescue
+      _ -> :unhealthy
     catch
-      _ ->
+      _, _ ->
         %{channel: channel} = Weddell.client()
 
         channel.adapter_payload.conn_pid
