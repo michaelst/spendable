@@ -37,17 +37,19 @@ defmodule Spendable.Services.HealthCheck do
   end
 
   defp weddell_status() do
-    {:ok, _} = Weddell.topics([], 1000)
-    :healthy
-  rescue
-    _ ->
-      %{channel: channel} = Weddell.client()
+    try do
+      {:ok, _} = Weddell.topics([], 1000)
+      :healthy
+    catch
+      _ ->
+        %{channel: channel} = Weddell.client()
 
-      channel.adapter_payload.conn_pid
-      |> :sys.get_state()
-      |> inspect()
-      |> Logger.error()
+        channel.adapter_payload.conn_pid
+        |> :sys.get_state()
+        |> inspect()
+        |> Logger.error()
 
-      :unhealthy
+        :unhealthy
+    end
   end
 end
