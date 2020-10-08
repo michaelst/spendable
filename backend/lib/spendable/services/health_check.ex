@@ -1,6 +1,5 @@
 defmodule Spendable.Services.HealthCheck do
   use GenServer
-  require Logger
 
   def start_link(default) when is_list(default) do
     GenServer.start_link(__MODULE__, default, name: __MODULE__)
@@ -38,20 +37,12 @@ defmodule Spendable.Services.HealthCheck do
 
   defp weddell_status() do
     try do
-      {:ok, _} = Weddell.topics([], 1)
+      {:ok, _} = Weddell.topics([], 1000)
       :healthy
     rescue
       _ -> :unhealthy
     catch
-      _, _ ->
-        %{channel: channel} = Weddell.client()
-
-        channel.adapter_payload.conn_pid
-        |> :sys.get_state()
-        |> inspect()
-        |> Logger.error()
-
-        :unhealthy
+      _, _ -> :unhealthy
     end
   end
 end
