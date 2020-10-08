@@ -8,7 +8,7 @@ defmodule Spendable.Services.HealthCheck do
 
   @impl true
   def init(_state) do
-    Process.send_after(self(), :weddell, 10 * 1000)
+    Process.send_after(self(), :weddell, 5 * 1000)
 
     {:ok,
      %{
@@ -38,7 +38,7 @@ defmodule Spendable.Services.HealthCheck do
 
   defp weddell_status() do
     try do
-      {:ok, _} = Weddell.topics([], 1000)
+      {:ok, _} = Weddell.topics([], 1)
       :healthy
     rescue
       _ -> :unhealthy
