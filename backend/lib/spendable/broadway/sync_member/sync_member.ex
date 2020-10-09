@@ -113,7 +113,7 @@ defmodule Spendable.Broadway.SyncMember do
       {:ok, transaction} = response ->
         # if pending transaction id is set that means we have already sent a notification for the pending transaction
         if is_nil(details["pending_transaction_id"]) do
-          :ok =
+          {:ok, %{status: 200}} =
             SendNotificationRequest.publish(
               account.user_id,
               transaction.name,

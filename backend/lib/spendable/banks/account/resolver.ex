@@ -9,7 +9,7 @@ defmodule Spendable.Banks.Account.Resolver do
     |> Repo.update()
     |> case do
       {:ok, %{sync: true} = model} = response ->
-        :ok = SyncMemberRequest.publish(model.bank_member_id)
+        {:ok, %{status: 200}} = SyncMemberRequest.publish(model.bank_member_id)
         response
 
       response ->

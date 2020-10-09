@@ -14,7 +14,7 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
       [],
       publish: fn data, _topic ->
         send(self(), data)
-        :ok
+        {:ok, %{status: 200}}
       end
     }
   ]) do

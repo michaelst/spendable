@@ -99,7 +99,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
       [],
       publish: fn data, _topic ->
         send(test_pid, data)
-        :ok
+        {:ok, %{status: 200}}
       end
     ) do
       ref = Broadway.test_message(SyncMember, data)

@@ -10,7 +10,7 @@ defmodule Spendable.Web.Controllers.Plaid do
         send_resp(conn, :not_found, "")
 
       member ->
-        :ok = SyncMemberRequest.publish(member.id)
+        {:ok, %{status: 200}} = SyncMemberRequest.publish(member.id)
 
         send_resp(conn, :ok, "")
     end

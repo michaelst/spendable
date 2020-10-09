@@ -30,7 +30,7 @@ defmodule Spendable.Banks.Member.Resolver do
       |> case do
         {:ok, member} ->
           SyncMember.sync_accounts(member)
-          :ok = SyncMemberRequest.publish(member.id)
+          {:ok, %{status: 200}} = SyncMemberRequest.publish(member.id)
           {:ok, member}
 
         result ->
