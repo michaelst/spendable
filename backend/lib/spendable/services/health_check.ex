@@ -7,42 +7,13 @@ defmodule Spendable.Services.HealthCheck do
 
   @impl true
   def init(_state) do
-    Process.send_after(self(), :weddell, 5 * 1000)
-
-    {:ok,
-     %{
-       weddell: :unhealthy
-     }}
+    {:ok, %{}}
   end
 
   @impl true
-  def handle_info(:weddell, state) do
-    case weddell_status() do
-      :healthy ->
-        Process.send_after(self(), :weddell, 60 * 1000)
-        {:noreply, Map.put(state, :weddell, :healthy)}
-
-      :unhealthy ->
-        Process.send_after(self(), :weddell, 5 * 1000)
-        {:noreply, Map.put(state, :weddell, :unhealthy)}
-    end
-  end
-
-  @impl true
-  def handle_call(:status, _, state) do
-    if Enum.all?(state, fn {_k, v} -> v == :healthy end),
-      do: {:reply, :healthy, state},
-      else: {:reply, :unhealthy, state}
-  end
-
-  defp weddell_status() do
-    try do
-      {:ok, _} = Weddell.topics([], 1000)
-      :healthy
-    rescue
-      _ -> :unhealthy
-    catch
-      _, _ -> :unhealthy
-    end
+  def handle_call(:status, _from, state) do
+    if Enum.any?(state, fn {_k, v} -> v == :unhealthy end),
+      do: {:reply, :unhealthy, state},
+      else: {:reply, :healthy, state}
   end
 end

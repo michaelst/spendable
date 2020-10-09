@@ -53,7 +53,6 @@ defmodule Spendable.MixProject do
       {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},
-      {:grpc, github: "elixir-grpc/grpc", override: true},
       {:guardian, "~> 2.0"},
       {:hackney, "~> 1.16"},
       {:jason, "~> 1.0"},
@@ -70,8 +69,7 @@ defmodule Spendable.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:protobuf, "~> 0.7.1"},
       {:sentry, "~> 8.0"},
-      {:tesla, "~> 1.3.2"},
-      {:weddell, github: "michaelst/weddell"}
+      {:tesla, "~> 1.3.2"}
     ]
   end
 

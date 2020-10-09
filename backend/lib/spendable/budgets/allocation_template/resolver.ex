@@ -5,7 +5,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver do
   alias Spendable.Repo
 
   def list(_args, %{context: %{current_user: user}}) do
-    {:ok, from(AllocationTemplate, where: [user_id: ^user.id]) |> Repo.all()}
+    {:ok, from(AllocationTemplate, where: [user_id: ^user.id], order_by: :id) |> Repo.all()}
   end
 
   def get(_args, %{context: %{model: model}}), do: {:ok, model}

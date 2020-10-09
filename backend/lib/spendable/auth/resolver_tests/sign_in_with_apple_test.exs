@@ -96,9 +96,10 @@ defmodule Spendable.User.Resolver.SignInWithAppleTest do
   end
 
   test "signin", %{conn: conn} do
-    %User{}
-    |> User.changeset(%{apple_identifier: "000107.30cad47b3b7f4e498f6c8f075e4c259f.0422"})
-    |> Spendable.Repo.insert!()
+    user =
+      %User{}
+      |> User.changeset(%{apple_identifier: "000107.30cad47b3b7f4e498f6c8f075e4c259f.0422"})
+      |> Spendable.Repo.insert!()
 
     query = """
       mutation {
@@ -114,10 +115,12 @@ defmodule Spendable.User.Resolver.SignInWithAppleTest do
       |> post("/graphql", %{query: query})
       |> json_response(200)
 
+    user_id = "#{user.id}"
+
     assert %{
              "data" => %{
                "signInWithApple" => %{
-                 "id" => id,
+                 "id" => ^user_id,
                  "token" => _
                }
              }

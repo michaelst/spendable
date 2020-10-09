@@ -2,6 +2,7 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: false
   import Mock
 
+  alias Google.PubSub
   alias Spendable.Banks.Account
   alias Spendable.Banks.Member
   alias Spendable.Repo
@@ -9,7 +10,7 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
 
   setup_with_mocks([
     {
-      Weddell,
+      PubSub,
       [],
       publish: fn data, _topic ->
         send(self(), data)

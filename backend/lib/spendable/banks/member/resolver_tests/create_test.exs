@@ -3,6 +3,7 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
   import Mock
   import Tesla.Mock
 
+  alias Google.PubSub
   alias Spendable.TestUtils
 
   setup do
@@ -97,7 +98,7 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
 
   setup_with_mocks([
     {
-      Weddell,
+      PubSub,
       [],
       publish: fn data, _topic ->
         send(self(), data)

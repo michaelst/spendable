@@ -4,6 +4,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
   import Tesla.Mock
   import Ecto.Query
 
+  alias Google.PubSub
   alias Spendable.Banks.Account
   alias Spendable.Banks.Category
   alias Spendable.Banks.Member
@@ -53,7 +54,9 @@ defmodule Spendable.Broadway.SyncMemberTest do
     data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
 
     ref = Broadway.test_message(SyncMember, data)
-    assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
+    assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
+
+    bank_accounts = from(Account, where: [bank_member_id: ^member.id], order_by: :id) |> Repo.all()
 
     assert [
              %{sync: false},
@@ -63,18 +66,22 @@ defmodule Spendable.Broadway.SyncMemberTest do
              %{sync: false},
              %{sync: false},
              %{sync: false},
-             %{
-               id: account_id,
-               external_id: "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP",
-               balance: balance,
-               available_balance: available_balance,
-               name: "Plaid Gold Standard 0% Interest Checking",
-               number: "0000",
-               sub_type: "checking",
-               sync: false,
-               type: "depository"
-             } = account
-           ] = from(Account, where: [bank_member_id: ^member.id]) |> Repo.all()
+             %{sync: false}
+           ] = bank_accounts
+
+    account = Enum.find(bank_accounts, &(&1.external_id == "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
+
+    assert %{
+             id: account_id,
+             external_id: "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP",
+             balance: balance,
+             available_balance: available_balance,
+             name: "Plaid Gold Standard 0% Interest Checking",
+             number: "0000",
+             sub_type: "checking",
+             sync: false,
+             type: "depository"
+           } = account
 
     assert "110" |> Decimal.new() |> Decimal.equal?(balance)
     assert "100" |> Decimal.new() |> Decimal.equal?(available_balance)
@@ -88,7 +95,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
     test_pid = self()
 
     with_mock(
-      Weddell,
+      PubSub,
       [],
       publish: fn data, _topic ->
         send(test_pid, data)
@@ -96,7 +103,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
       end
     ) do
       ref = Broadway.test_message(SyncMember, data)
-      assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
+      assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
     end
 
     assert 7 == from(Transaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)

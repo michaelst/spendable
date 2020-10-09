@@ -23,7 +23,7 @@ defmodule Spendable.Broadway.SendNotificationTest do
         |> SendNotificationRequest.encode()
 
       ref = Broadway.test_message(SendNotification, data)
-      assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
+      assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
 
       assert 2 = from(Spendable.Notifications.Settings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
@@ -32,7 +32,7 @@ defmodule Spendable.Broadway.SendNotificationTest do
       |> Repo.update!()
 
       ref = Broadway.test_message(SendNotification, data)
-      assert_receive {:ack, ^ref, [_] = _successful, failed}, 1000
+      assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
 
       assert 1 = from(Spendable.Notifications.Settings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
     end

@@ -34,11 +34,11 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.ListTest do
                  %{
                    "lines" => [
                      %{
-                       "amount" => "#{template2.lines |> List.first() |> Map.get(:amount)}",
+                       "amount" => "#{template1.lines |> List.first() |> Map.get(:amount)}",
                        "budget" => %{"name" => "Food"}
                      },
                      %{
-                       "amount" => "#{template2.lines |> List.last() |> Map.get(:amount)}",
+                       "amount" => "#{template1.lines |> List.last() |> Map.get(:amount)}",
                        "budget" => %{"name" => "Food"}
                      }
                    ],
@@ -47,11 +47,11 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.ListTest do
                  %{
                    "lines" => [
                      %{
-                       "amount" => "#{template1.lines |> List.first() |> Map.get(:amount)}",
+                       "amount" => "#{template2.lines |> List.first() |> Map.get(:amount)}",
                        "budget" => %{"name" => "Food"}
                      },
                      %{
-                       "amount" => "#{template1.lines |> List.last() |> Map.get(:amount)}",
+                       "amount" => "#{template2.lines |> List.last() |> Map.get(:amount)}",
                        "budget" => %{"name" => "Food"}
                      }
                    ],

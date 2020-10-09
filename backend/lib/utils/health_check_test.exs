@@ -4,6 +4,6 @@ defmodule HealthCheckTest do
   test "health check", %{conn: conn} do
     conn
     |> get("/_health")
-    |> response(503)
+    |> response(200)
   end
 end

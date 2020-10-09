@@ -3,11 +3,12 @@ defmodule Spendable.Web.Controllers.PlaidTest do
   import Spendable.Factory
   import Mock
 
+  alias Google.PubSub
   alias Spendable.TestUtils
 
   setup_with_mocks([
     {
-      Weddell,
+      PubSub,
       [],
       publish: fn data, _topic ->
         send(self(), data)
