@@ -40,7 +40,7 @@
     "@types/react-native": "^0.63.25",
     "babel-jest": "^26.5.0",
     "babel-preset-expo": "^8.3.0",
-    "jest": "^26.5.0",
+    "jest": "^26.5.3",
     "react-test-renderer": "^16.13.1",
     "typescript": "^4.0.3"
   },
