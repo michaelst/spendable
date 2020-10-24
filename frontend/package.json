@@ -38,7 +38,7 @@
     "@babel/core": "^7.11.6",
     "@types/react": "^16.9.51",
     "@types/react-native": "^0.63.25",
-    "babel-jest": "^26.5.0",
+    "babel-jest": "^26.6.1",
     "babel-preset-expo": "^8.3.0",
     "jest": "^26.5.0",
     "react-test-renderer": "^16.13.1",
