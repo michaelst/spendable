@@ -1,4 +1,4 @@
-import React, { createRef, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Dimensions,
   SectionList,
@@ -31,7 +31,7 @@ export enum FormFieldType {
 export default function BudgetSelect({ info }: Props) {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
-  const { styles } = AppStyles()
+  const { styles, fontSize } = AppStyles()
 
   const localStyles = StyleSheet.create({
     modal: {
@@ -62,39 +62,18 @@ export default function BudgetSelect({ info }: Props) {
 
   return (
     <TouchableHighlight onPress={() => setModalVisible(true)}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 20,
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
+      <View style={styles.row}>
         <View style={{ flex: 1 }}>
-          <Text
-            style={{
-              color: colors.text,
-              fontSize: 20
-            }}
-          >
+          <Text style={styles.text}>
             {info.placeholder}
           </Text>
         </View>
 
         <View style={{ flex: 1, flexDirection: "row" }}>
-          <Text
-            style={{
-              textAlign: 'right',
-              width: '100%',
-              fontSize: 18,
-              paddingRight: 8,
-              color: colors.secondary
-            }}
-          >
+          <Text style={[styles.formInputText, { paddingRight: 8 }]}>
             {info.value}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
         <Modal
           isVisible={modalVisible}
@@ -104,7 +83,7 @@ export default function BudgetSelect({ info }: Props) {
               <Ionicons name='ios-close' size={32} color={colors.text} />
             </TouchableHighlight>
             <SectionList
-              contentContainerStyle={{ paddingBottom: 40 }}
+              contentContainerStyle={styles.sectionlistContentContainerStyle}
               sections={listData}
               renderItem={({ item }) => {
                 return (
