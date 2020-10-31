@@ -1,40 +1,24 @@
 import React, { useLayoutEffect } from 'react'
-import {
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  Text
-} from 'react-native'
+import { ActivityIndicator, RefreshControl, } from 'react-native'
 import { useTheme, useNavigation } from '@react-navigation/native'
-import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { FlatList } from 'react-native-gesture-handler'
 import { LIST_TEMPLATES } from '../queries'
 import { useQuery } from '@apollo/client'
 import TemplateRow from './TemplateRow'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 import Decimal from 'decimal.js-light'
+import AppStyles from 'constants/AppStyles'
+import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function TemplatesScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
+  const styles = AppStyles()
 
-  const styles = StyleSheet.create({
-    activityIndicator: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    }
-  })
+  const navigateToCreateTemplate = () => navigation.navigate('Create Template')
+  const headerRight = () => <HeaderButton text="Add" onPress={navigateToCreateTemplate} />
 
   const { data, loading, refetch } = useQuery<ListAllocationTemplates>(LIST_TEMPLATES)
-  const navigateToCreateTemplate = () => navigation.navigate('Create Template')
-
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={navigateToCreateTemplate}>
-        <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Add</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
 
   useLayoutEffect(() => navigation.setOptions({ headerRight: headerRight }))
 

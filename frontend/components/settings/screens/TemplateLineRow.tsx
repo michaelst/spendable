@@ -14,6 +14,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
 import { DELETE_TEMPLATE_LINE, GET_TEMPLATE } from '../queries'
 import { useMutation } from '@apollo/client'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   line: GetAllocationTemplate_allocationTemplate_lines,
@@ -23,6 +24,7 @@ type Props = {
 export default function TemplateRow({ line, templateId }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
+  const styles = AppStyles()
 
   const navigateToEdit = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
@@ -38,6 +40,14 @@ export default function TemplateRow({ line, templateId }: Props) {
       })
     }
   })
+
+  const renderRightActions = () => {
+    return (
+      <RectButton style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </RectButton>
+    )
+  }
 
   return (
     <TouchableHighlight onPress={navigateToEdit}>
@@ -70,29 +80,5 @@ export default function TemplateRow({ line, templateId }: Props) {
         </View>
       </Swipeable>
     </TouchableHighlight>
-  )
-}
-
-const styles = StyleSheet.create({
-  deleteText: {
-    color: 'white',
-    fontSize: 16,
-    padding: 10,
-    fontWeight: 'bold'
-  },
-  rightAction: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#dd2c00',
-    justifyContent: 'flex-end'
-  },
-})
-
-const renderRightActions = () => {
-  return (
-    <RectButton style={[styles.rightAction, { backgroundColor: '#dd2c00' }]} >
-      <Text style={styles.deleteText}> Delete </Text>
-    </RectButton>
   )
 }

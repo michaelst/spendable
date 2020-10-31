@@ -16,27 +16,22 @@ import {
   GetBudget_budget_recentAllocations as Allocation,
   GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
 } from 'components/budgets/graphql/GetBudget'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import TemplateRow from './TemplateRow'
+import AppStyles from 'constants/AppStyles'
+import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function BudgetRow() {
   const { colors }: any = useTheme()
+  const styles = AppStyles()
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
   const { budgetId } = route.params
 
   const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
+  const headerRight = () => <HeaderButton text="Edit" onPress={navigateToEdit} />
   
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
-
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={navigateToEdit}>
-        <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Edit</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
 
   if (data?.budget) {
     const headerTitle = () => {
@@ -89,11 +84,3 @@ export default function BudgetRow() {
     />
   )
 }
-
-const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-})
