@@ -9,11 +9,11 @@ type Props = {
 }
 
 export default function HeaderButton({ text, onPress }: Props) {
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <Text style={styles.headerButton}>{text}</Text>
+      <Text style={styles.headerButtonText}>{text}</Text>
     </TouchableWithoutFeedback>
   )
 } 

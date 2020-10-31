@@ -20,7 +20,7 @@ import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function TemplateScreen() {
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Template'>>()
@@ -36,7 +36,7 @@ export default function TemplateScreen() {
     const headerTitle = () => {
       return (
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 18 }}>{data.allocationTemplate.name}</Text>
+          <Text style={styles.headerTitleText}>{data.allocationTemplate.name}</Text>
         </View>
       )
     }
@@ -59,34 +59,12 @@ export default function TemplateScreen() {
   
   return (
     <SectionList
-      contentContainerStyle={{
-        paddingBottom: 36
-      }}
+      contentContainerStyle={{ paddingBottom: 36 }}
       sections={sections}
-      renderSectionHeader={({ section: { title } }) => (
-        <Text
-          style={{
-            backgroundColor: colors.background,
-            color: colors.secondary,
-            padding: 18,
-            paddingBottom: 10
-          }}
-        >
-          {title}
-        </Text>
-      )}
+      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       renderSectionFooter={() => (
         <TouchableHighlight onPress={navigateToCreate}>
-          <Text
-            style={{
-              backgroundColor: colors.background,
-              color: colors.primary,
-              padding: 18,
-              paddingTop: 10
-            }}
-          >
-            Add Expense/Goal
-          </Text>
+          <Text style={[styles.sectionFooterText, {color: colors.primary}]}>Add Expense/Goal</Text>
         </TouchableHighlight>
       )}
       stickySectionHeadersEnabled={false}

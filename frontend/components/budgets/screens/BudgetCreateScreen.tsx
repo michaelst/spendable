@@ -1,20 +1,20 @@
 import React, { useState, Dispatch, SetStateAction, useLayoutEffect } from 'react'
 import {
   FlatList,
-  StyleSheet,
   Text,
   TextInput,
   View,
   KeyboardType
 } from 'react-native'
-import { useTheme, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
 import { CREATE_BUDGET, LIST_BUDGETS } from 'components/budgets/queries'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
+import AppStyles from 'constants/AppStyles'
+import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function BudgetCreateScreen() {
-  const { colors }: any = useTheme()
+  const { styles } = AppStyles()
 
   const navigation = useNavigation()
 
@@ -44,21 +44,8 @@ export default function BudgetCreateScreen() {
     navigateToBudgets()
   }
 
-  const headerLeft = () => {
-    return (
-      <TouchableWithoutFeedback onPress={navigateToBudgets}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingLeft: 20 }}>Cancel</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
-
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={createAndGoBack}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Save</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
+  const headerLeft = () => <HeaderButton text="Cancel" onPress={navigateToBudgets} />
+  const headerRight = () => <HeaderButton text="Save" onPress={createAndGoBack} />
 
   useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
 
@@ -97,36 +84,16 @@ export default function BudgetCreateScreen() {
       data={fields}
       renderItem={
         ({ item }) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              padding: 20,
-              backgroundColor: colors.card,
-              borderBottomColor: colors.border,
-              borderBottomWidth: StyleSheet.hairlineWidth
-            }}
-          >
+          <View style={styles.row}>
             <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  color: colors.text,
-                  fontSize: 20
-                }}
-              >
-                {item.placeholder}
-              </Text>
+              <Text style={styles.text}>{item.placeholder}</Text>
             </View>
 
             <View style={{ flex: 1 }}>
               <TextInput
                 keyboardType={item.keyboardType}
                 selectTextOnFocus={true}
-                style={{
-                  textAlign: 'right',
-                  width: '100%',
-                  fontSize: 18,
-                  color: colors.secondary
-                }}
+                style={styles.formInputText}
                 onChangeText={text => item.setValue(text)}
                 value={item.value}
               />

@@ -24,7 +24,7 @@ type Props = {
 export default function TemplateRow({ template }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles, fontSize } = AppStyles()
 
   const navigateToTemplate = () => navigation.navigate('Template', { templateId: template.id })
 
@@ -56,27 +56,18 @@ export default function TemplateRow({ template }: Props) {
         renderRightActions={renderRightActions}
         onSwipeableOpen={deleteAllocationTemplate}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 18,
-            alignItems: 'center',
-            backgroundColor: colors.card,
-            borderBottomColor: colors.border,
-            borderBottomWidth: StyleSheet.hairlineWidth
-          }}
-        >
+        <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, fontSize: 18 }}>
+            <Text style={styles.text}>
               {template.name}
             </Text>
           </View>
 
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ color: colors.secondary, fontSize: 18, paddingRight: 8 }} >
+            <Text style={styles.rightText} >
               {formatCurrency(allocated)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

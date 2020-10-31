@@ -22,7 +22,7 @@ type Props = {
 export default function BudgetRow({ budget }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles, fontSize } = AppStyles()
 
   const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budget.id })
 
@@ -54,7 +54,7 @@ export default function BudgetRow({ budget }: Props) {
       >
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, fontSize: 20 }}>
+            <Text style={styles.text}>
               {budget.name}
             </Text>
           </View>
@@ -63,13 +63,13 @@ export default function BudgetRow({ budget }: Props) {
             <Text
               style={{
                 color: budget.balance.isNegative() ? 'red' : colors.secondary,
-                fontSize: 18,
+                fontSize: fontSize,
                 paddingRight: 8
               }}
             >
               {formatCurrency(budget.balance)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

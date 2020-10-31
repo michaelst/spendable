@@ -13,7 +13,7 @@ import HeaderButton from 'components/shared/components/HeaderButton'
 export default function TemplatesScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   const navigateToCreateTemplate = () => navigation.navigate('Create Template')
   const headerRight = () => <HeaderButton text="Add" onPress={navigateToCreateTemplate} />

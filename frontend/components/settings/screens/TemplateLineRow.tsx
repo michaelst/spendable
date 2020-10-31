@@ -24,7 +24,7 @@ type Props = {
 export default function TemplateRow({ line, templateId }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   const navigateToEdit = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
@@ -72,7 +72,7 @@ export default function TemplateRow({ line, templateId }: Props) {
           </View>
 
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ color: colors.secondary, fontSize: 18, paddingRight: 8 }} >
+            <Text style={styles.rightText} >
               {formatCurrency(line.amount)}
             </Text>
             <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />

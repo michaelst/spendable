@@ -22,7 +22,7 @@ import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function BudgetRow() {
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
@@ -37,7 +37,7 @@ export default function BudgetRow() {
     const headerTitle = () => {
       return (
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 18 }}>{formatCurrency(data.budget.balance)}</Text>
+          <Text style={styles.headerTitleText}>{formatCurrency(data.budget.balance)}</Text>
           <Text style={{ color: colors.secondary, fontSize: 12 }}>{data.budget.name}</Text>
         </View>
       )
@@ -64,22 +64,9 @@ export default function BudgetRow() {
 
   return (
     <SectionList
-      contentContainerStyle={{
-        paddingBottom: 36
-      }}
+      contentContainerStyle={styles.contentContainerStyle}
       sections={sections}
-      renderSectionHeader={({ section: { title } }) => (
-        <Text
-          style={{
-            backgroundColor: colors.background,
-            color: colors.secondary,
-            padding: 18,
-            paddingBottom: 5
-          }}
-        >
-          {title}
-        </Text>
-      )}
+      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       stickySectionHeadersEnabled={false}
     />
   )

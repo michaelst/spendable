@@ -18,10 +18,18 @@ const Stack = createStackNavigator()
 export default function Budgets() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Expenses" component={BudgetsScreen} options={{ headerTitle: () => <SpendableHeader /> }} />
-      <Stack.Screen name="Expense" component={BudgetScreen} />
-      <Stack.Screen name="Create Expense" component={BudgetCreateScreen} />
-      <Stack.Screen name="Edit Expense" component={BudgetEditScreen} />
+      <Stack.Screen name="Expenses" component={BudgetsScreen} options={{...options, ...{headerTitle: () => <SpendableHeader /> }}} />
+      <Stack.Screen name="Expense" component={BudgetScreen} options={options} />
+      <Stack.Screen name="Create Expense" component={BudgetCreateScreen} options={options} />
+      <Stack.Screen name="Edit Expense" component={BudgetEditScreen} options={options} />
     </Stack.Navigator>
   )
+}
+
+const options = {
+  headerTitleStyle: { fontSize: 18 },
+  headerBackAllowFontScaling: true,
+  headerBackTitleStyle: {
+    fontSize: 18
+  }
 }

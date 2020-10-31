@@ -16,7 +16,7 @@ import AppStyles from 'constants/AppStyles'
 export default function BudgetsScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   const { data, loading, refetch } = useQuery<ListBudgets>(LIST_BUDGETS)
 
@@ -42,10 +42,10 @@ export default function BudgetsScreen() {
 
   return (
     <SectionList
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={styles.contentContainerStyle}
       sections={listData}
       renderItem={({ item }) => <BudgetRow budget={item} />}
-      renderSectionHeader={({ section: { title } }) => <Text style={styles.headerText}>{title}</Text>}
+      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       stickySectionHeadersEnabled={false}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     />

@@ -16,6 +16,7 @@ import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { useQuery } from '@apollo/client'
 import BudgetRow from './BudgetRow'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   info: FormField
@@ -30,8 +31,9 @@ export enum FormFieldType {
 export default function BudgetSelect({ info }: Props) {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
+  const { styles } = AppStyles()
 
-  const styles = StyleSheet.create({
+  const localStyles = StyleSheet.create({
     modal: {
       justifyContent: 'flex-end',
       margin: 0,
@@ -40,20 +42,10 @@ export default function BudgetSelect({ info }: Props) {
       height: height,
       backgroundColor: colors.background,
     },
-    scrollableModalText: {
-      fontSize: 20,
-      color: 'white',
-    },
     close: {
       alignItems: 'flex-end',
       padding: 16
     },
-    headerText: {
-      backgroundColor: colors.background,
-      color: colors.secondary,
-      padding: 20,
-      paddingBottom: 5
-    }
   })
 
   const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
@@ -106,9 +98,9 @@ export default function BudgetSelect({ info }: Props) {
         </View>
         <Modal
           isVisible={modalVisible}
-          style={styles.modal}>
-          <SafeAreaView style={styles.scrollableModal}>
-            <TouchableHighlight onPress={() => setModalVisible(false)} style={styles.close}>
+          style={localStyles.modal}>
+          <SafeAreaView style={localStyles.scrollableModal}>
+            <TouchableHighlight onPress={() => setModalVisible(false)} style={localStyles.close}>
               <Ionicons name='ios-close' size={32} color={colors.text} />
             </TouchableHighlight>
             <SectionList
@@ -125,7 +117,7 @@ export default function BudgetSelect({ info }: Props) {
                   />
                 )
               }}
-              renderSectionHeader={({ section: { title } }) => <Text style={styles.headerText}>{title}</Text>}
+              renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
               stickySectionHeadersEnabled={false}
             />
           </SafeAreaView>

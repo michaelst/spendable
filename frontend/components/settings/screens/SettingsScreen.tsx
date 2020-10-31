@@ -17,6 +17,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from '../queries'
 import { GetNotificationSettings } from '../graphql/GetNotificationSettings'
 import { UpdateNotificationSettings } from '../graphql/UpdateNotificationSettings'
+import AppStyles from 'constants/AppStyles'
 
 const bankRow = () => {
   const { colors }: any = useTheme()
@@ -51,25 +52,17 @@ const bankRow = () => {
 
 const templatesRow = () => {
   const { colors }: any = useTheme()
+  const { styles } = AppStyles()
   const navigation = useNavigation()
   const navigateToTemplates = () => navigation.navigate('Templates')
 
   return (
     <TouchableHighlight onPress={navigateToTemplates}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 18,
-          alignItems: 'center',
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
+      <View style={styles.row}>
         <View style={{ flex: 1 }}>
           <Text style={{ color: colors.text, fontSize: 18 }}>
             Transaction Templates
-        </Text>
+          </Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>

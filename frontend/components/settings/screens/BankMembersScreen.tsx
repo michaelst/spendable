@@ -13,7 +13,7 @@ import HeaderButton from 'components/shared/components/HeaderButton'
 export default function BankMembersScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const styles = AppStyles()
+  const { styles } = AppStyles()
 
   const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
 
