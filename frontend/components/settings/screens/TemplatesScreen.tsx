@@ -33,7 +33,7 @@ export default function TemplatesScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={{ paddingTop: 36, paddingBottom: 36 }}
+      contentContainerStyle={styles.flatlistContentContainerStyle}
       data={templates}
       renderItem={({ item }) => <TemplateRow template={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}

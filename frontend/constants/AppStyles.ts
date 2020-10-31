@@ -4,6 +4,7 @@ import { useTheme } from '@react-navigation/native'
 export default function AppStyles() {
   const { colors }: any = useTheme()
   const fontSize = 18
+  const secondaryFontSize = 14
   const padding = 20
   
   const styles = StyleSheet.create({
@@ -15,6 +16,10 @@ export default function AppStyles() {
     text: {
       color: colors.text,
       fontSize: fontSize
+    },
+    secondaryText: {
+      color: colors.secondary,
+      fontSize: secondaryFontSize
     },
     rightText: {
       color: colors.secondary,
@@ -71,13 +76,18 @@ export default function AppStyles() {
       fontSize: fontSize,
       color: colors.secondary
     },
-    contentContainerStyle: {
+    sectionlistContentContainerStyle: {
+      paddingBottom: 36
+    },
+    flatlistContentContainerStyle: {
+      paddingTop: 36,
       paddingBottom: 36
     }
   })
 
   return {
     styles: styles,
-    fontSize: fontSize
+    fontSize: fontSize,
+    padding: padding
   }
 } 

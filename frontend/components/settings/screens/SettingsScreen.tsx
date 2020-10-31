@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import {
   SectionList,
-  StyleSheet,
   Switch,
   Text,
   View,
@@ -21,29 +20,21 @@ import AppStyles from 'constants/AppStyles'
 
 const bankRow = () => {
   const { colors }: any = useTheme()
+  const { styles, fontSize } = AppStyles()
   const navigation = useNavigation()
   const navigateToBanks = () => navigation.navigate('Banks')
 
   return (
     <TouchableHighlight onPress={navigateToBanks}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 18,
-          alignItems: 'center',
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
+      <View style={styles.row}>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 18 }}>
+          <Text style={styles.text}>
             Banks
         </Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>
@@ -52,7 +43,7 @@ const bankRow = () => {
 
 const templatesRow = () => {
   const { colors }: any = useTheme()
-  const { styles } = AppStyles()
+  const { styles, fontSize } = AppStyles()
   const navigation = useNavigation()
   const navigateToTemplates = () => navigation.navigate('Templates')
 
@@ -60,13 +51,13 @@ const templatesRow = () => {
     <TouchableHighlight onPress={navigateToTemplates}>
       <View style={styles.row}>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 18 }}>
+          <Text style={styles.text}>
             Transaction Templates
           </Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>
@@ -75,6 +66,7 @@ const templatesRow = () => {
 
 const notificationsRow = () => {
   const { colors }: any = useTheme()
+  const { styles, padding } = AppStyles()
   const [id, setId] = useState<string | null>(null)
   const [enabled, setEnabled] = useState(false)
   const  { deviceToken } = useContext(TokenContext)
@@ -97,22 +89,14 @@ const notificationsRow = () => {
   }
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: colors.card,
-        borderBottomColor: colors.border,
-        borderBottomWidth: StyleSheet.hairlineWidth
-      }}
-    >
+    <View style={[styles.row, { padding: 0 }]}>
       <View style={{ flex: 1 }}>
-        <Text style={{ color: colors.text, fontSize: 18, padding: 18 }}>
+        <Text style={[styles.text, { padding: padding }]}>
           Notifications
         </Text>
       </View>
 
-      <View style={{ flexDirection: "row", paddingRight: 18 }}>
+      <View style={{ flexDirection: "row", paddingRight: padding }}>
         <Switch
           onValueChange={(toggleSwitch)}
           value={enabled} 
@@ -123,7 +107,7 @@ const notificationsRow = () => {
 }
 
 const logoutRow = () => {
-  const { colors }: any = useTheme()
+  const { styles } = AppStyles()
 
   return (
     <TokenContext.Consumer>
@@ -134,18 +118,9 @@ const logoutRow = () => {
             setToken(null)
           }}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              padding: 18,
-              alignItems: 'center',
-              backgroundColor: colors.card,
-              borderBottomColor: colors.border,
-              borderBottomWidth: StyleSheet.hairlineWidth
-            }}
-          >
+          <View style={styles.row}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: colors.primary, fontSize: 18 }}>
+              <Text style={styles.text}>
                 Logout
               </Text>
             </View>
@@ -156,7 +131,9 @@ const logoutRow = () => {
   )
 }
 
-export default function BudgetsScreen() {
+export default function SettingsScreen() {
+  const { styles } = AppStyles()
+  
   const firstSection = [
     { key: 'banks', view: bankRow() },
     { key: 'templates', view: templatesRow() },
@@ -178,7 +155,7 @@ export default function BudgetsScreen() {
 
   return (
     <SectionList
-      contentContainerStyle={{ paddingBottom: 36 }}
+      contentContainerStyle={styles.sectionlistContentContainerStyle}
       sections={listData}
       renderItem={({ item }) => item.view}
       stickySectionHeadersEnabled={false}

@@ -7,8 +7,10 @@ import { FlatList } from 'react-native-gesture-handler'
 import BankAccountRow from './BankAccountRow'
 import { RootStackParamList } from '../Settings'
 import { RefreshControl } from 'react-native'
+import AppStyles from 'constants/AppStyles'
 
 export default function BankMemberScreen() {
+  const { styles } = AppStyles()
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Bank'>>()
   const { bankMemberId } = route.params
@@ -21,7 +23,7 @@ export default function BankMemberScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={{ paddingTop: 36, paddingBottom: 36 }}
+      contentContainerStyle={styles.flatlistContentContainerStyle}
       data={data?.bankMember.bankAccounts ?? []}
       renderItem={({ item }) => <BankAccountRow bankAccount={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}

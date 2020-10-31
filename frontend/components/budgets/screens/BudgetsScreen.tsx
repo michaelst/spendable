@@ -42,7 +42,7 @@ export default function BudgetsScreen() {
 
   return (
     <SectionList
-      contentContainerStyle={styles.contentContainerStyle}
+      contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={listData}
       renderItem={({ item }) => <BudgetRow budget={item} />}
       renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}

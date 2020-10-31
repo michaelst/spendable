@@ -49,7 +49,7 @@ export default function BankMembersScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={{ paddingTop: 36, paddingBottom: 36 }}
+      contentContainerStyle={styles.flatlistContentContainerStyle}
       data={data?.bankMembers ?? []}
       renderItem={({ item }) => <BankMemberRow bankMember={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}

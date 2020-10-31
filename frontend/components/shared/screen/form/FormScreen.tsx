@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useLayoutEffect } from 'react'
 import { FlatList, Text, } from 'react-native'
-import { useTheme, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import FormInput from './FormInput'
 import BudgetSelect from './BudgetSelect'
@@ -27,7 +27,6 @@ export type FormField = {
 
 export default function FormScreen({ saveAndGoBack, fields }: Props) {
   const navigation = useNavigation()
-  const { colors }: any = useTheme()
   const { styles } = AppStyles()
 
   const headerRight = () => {

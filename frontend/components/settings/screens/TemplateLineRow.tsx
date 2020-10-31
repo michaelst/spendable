@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -24,7 +23,7 @@ type Props = {
 export default function TemplateRow({ line, templateId }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles } = AppStyles()
+  const { styles, fontSize } = AppStyles()
 
   const navigateToEdit = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
@@ -55,18 +54,9 @@ export default function TemplateRow({ line, templateId }: Props) {
         renderRightActions={renderRightActions}
         onSwipeableOpen={deleteAllocationTemplateLine}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 18,
-            alignItems: 'center',
-            backgroundColor: colors.card,
-            borderBottomColor: colors.border,
-            borderBottomWidth: StyleSheet.hairlineWidth
-          }}
-        >
+        <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, fontSize: 18 }}>
+            <Text style={styles.text}>
               {line.budget.name}
             </Text>
           </View>
@@ -75,7 +65,7 @@ export default function TemplateRow({ line, templateId }: Props) {
             <Text style={styles.rightText} >
               {formatCurrency(line.amount)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

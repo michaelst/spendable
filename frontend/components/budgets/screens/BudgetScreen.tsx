@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   SectionList,
   Text,
-  StyleSheet,
   View,
 } from 'react-native'
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
@@ -38,7 +37,7 @@ export default function BudgetRow() {
       return (
         <View style={{ alignItems: 'center' }}>
           <Text style={styles.headerTitleText}>{formatCurrency(data.budget.balance)}</Text>
-          <Text style={{ color: colors.secondary, fontSize: 12 }}>{data.budget.name}</Text>
+          <Text style={styles.secondaryText}>{data.budget.name}</Text>
         </View>
       )
     }
@@ -64,7 +63,7 @@ export default function BudgetRow() {
 
   return (
     <SectionList
-      contentContainerStyle={styles.contentContainerStyle}
+      contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={sections}
       renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       stickySectionHeadersEnabled={false}
