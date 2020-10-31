@@ -9,6 +9,7 @@ import TemplateCreateScreen from './screens/TemplateCreateScreen'
 import TemplateEditScreen from './screens/TemplateEditScreen'
 import TemplateLineCreateScreen from './screens/TemplateLineCreateScreen'
 import TemplateLineEditScreen from './screens/TemplateLineEditScreen'
+import AppStyles from 'constants/AppStyles'
 
 export type RootStackParamList = {
   Settings: undefined,
@@ -25,6 +26,16 @@ export type RootStackParamList = {
 const Stack = createStackNavigator()
 
 export default function Budgets() {
+  const { fontSize } = AppStyles()
+
+  const options = {
+    headerTitleStyle: { fontSize: fontSize },
+    headerBackAllowFontScaling: true,
+    headerBackTitleStyle: {
+      fontSize: fontSize
+    }
+  }
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="Settings" component={SettingsScreen} options={options} />
@@ -38,12 +49,4 @@ export default function Budgets() {
       <Stack.Screen name="Edit Template Line" component={TemplateLineEditScreen} options={options} />
     </Stack.Navigator>
   )
-}
-
-const options = {
-  headerTitleStyle: { fontSize: 18 },
-  headerBackAllowFontScaling: true,
-  headerBackTitleStyle: {
-    fontSize: 18
-  }
 }
