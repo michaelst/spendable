@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   SectionList,
   Text,
-  StyleSheet,
   View,
 } from 'react-native'
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
@@ -16,34 +15,29 @@ import {
   GetBudget_budget_recentAllocations as Allocation,
   GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
 } from 'components/budgets/graphql/GetBudget'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import TemplateRow from './TemplateRow'
+import AppStyles from 'constants/AppStyles'
+import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function BudgetRow() {
   const { colors }: any = useTheme()
+  const { styles } = AppStyles()
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
   const { budgetId } = route.params
 
   const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
+  const headerRight = () => <HeaderButton text="Edit" onPress={navigateToEdit} />
   
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
-
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={navigateToEdit}>
-        <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Edit</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
 
   if (data?.budget) {
     const headerTitle = () => {
       return (
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ color: colors.text, fontWeight: 'bold', fontSize: 18 }}>{formatCurrency(data.budget.balance)}</Text>
-          <Text style={{ color: colors.secondary, fontSize: 12 }}>{data.budget.name}</Text>
+          <Text style={styles.headerTitleText}>{formatCurrency(data.budget.balance)}</Text>
+          <Text style={styles.secondaryText}>{data.budget.name}</Text>
         </View>
       )
     }
@@ -69,31 +63,10 @@ export default function BudgetRow() {
 
   return (
     <SectionList
-      contentContainerStyle={{
-        paddingBottom: 36
-      }}
+      contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={sections}
-      renderSectionHeader={({ section: { title } }) => (
-        <Text
-          style={{
-            backgroundColor: colors.background,
-            color: colors.secondary,
-            padding: 18,
-            paddingBottom: 5
-          }}
-        >
-          {title}
-        </Text>
-      )}
+      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       stickySectionHeadersEnabled={false}
     />
   )
 }
-
-const styles = StyleSheet.create({
-  activityIndicator: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-})

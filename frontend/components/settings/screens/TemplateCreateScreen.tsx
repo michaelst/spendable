@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'components/settings/queries'
-import FormScreen, { FormFields } from 'components/shared/screen/form/FormScreen'
+import FormScreen, { FormField, FormFieldType } from 'components/shared/screen/form/FormScreen'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 
 export default function TemplateEditScreen() {
@@ -10,7 +10,7 @@ export default function TemplateEditScreen() {
 
   const [name, setName] = useState('')
 
-  const [createTemplate, { error }] = useMutation(CREATE_TEMPLATE, {
+  const [createTemplate] = useMutation(CREATE_TEMPLATE, {
     variables: {
       name: name
     },
@@ -30,13 +30,13 @@ export default function TemplateEditScreen() {
     navigateToTemplates()
   }
 
-  const fields: FormFields = [
+  const fields: FormField[] = [
     {
       key: 'name',
       placeholder: 'Name',
       value: name,
       setValue: setName,
-      keyboardType: 'default'
+      type: FormFieldType.StringInput
     }
   ]
 

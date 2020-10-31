@@ -1,9 +1,10 @@
 import React, { Dispatch, SetStateAction, useLayoutEffect } from 'react'
 import { FlatList, Text, } from 'react-native'
-import { useTheme, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import FormInput from './FormInput'
 import BudgetSelect from './BudgetSelect'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   saveAndGoBack: () => void,
@@ -26,12 +27,12 @@ export type FormField = {
 
 export default function FormScreen({ saveAndGoBack, fields }: Props) {
   const navigation = useNavigation()
-  const { colors }: any = useTheme()
+  const { styles } = AppStyles()
 
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={saveAndGoBack}>
-        <Text style={{ color: colors.primary, fontSize: 18, paddingRight: 18 }}>Save</Text>
+        <Text style={styles.headerButtonText}>Save</Text>
       </TouchableWithoutFeedback>
     )
   }

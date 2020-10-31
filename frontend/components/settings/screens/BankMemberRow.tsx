@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   Image,
-  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -10,6 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { ListBankMembers_bankMembers } from '../graphql/ListBankMembers'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   bankMember: ListBankMembers_bankMembers,
@@ -18,22 +18,13 @@ type Props = {
 export default function BankRow({ bankMember }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
+  const { styles, fontSize } = AppStyles()
 
   const navigateToBank = () => navigation.navigate('Bank', { bankMemberId: bankMember.id })
 
   return (
     <TouchableHighlight onPress={navigateToBank}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 18,
-          alignItems: 'center',
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
-
+      <View style={styles.row}>
         {bankMember.logo && (
           <Image
             source={{ uri: `data:image/png;base64,${bankMember.logo}` }}
@@ -45,13 +36,13 @@ export default function BankRow({ bankMember }: Props) {
           />
         )}
         <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 18 }}>
+          <Text style={styles.text}>
             {bankMember.name}
           </Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>

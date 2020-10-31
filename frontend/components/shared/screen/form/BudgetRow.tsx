@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import {
-  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -9,6 +8,7 @@ import { ListBudgets_budgets } from 'components/budgets/graphql/ListBudgets'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'helpers/formatCurrency'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   budget: ListBudgets_budgets,
@@ -17,21 +17,13 @@ type Props = {
 
 export default function BudgetRow({ budget, setBudgetId }: Props) {
   const { colors }: any = useTheme()
+  const { styles, fontSize } = AppStyles()
 
   return (
     <TouchableHighlight onPress={() => setBudgetId(budget.id)}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 20,
-          alignItems: 'center',
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
+      <View style={styles.row}>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: colors.text, fontSize: 20 }}>
+          <Text style={styles.text}>
             {budget.name}
           </Text>
         </View>
@@ -40,13 +32,13 @@ export default function BudgetRow({ budget, setBudgetId }: Props) {
           <Text
             style={{
               color: budget.balance.isNegative() ? 'red' : colors.secondary,
-              fontSize: 18,
+              fontSize: fontSize,
               paddingRight: 8
             }}
           >
             {formatCurrency(budget.balance)}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>

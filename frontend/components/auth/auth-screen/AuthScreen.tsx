@@ -1,5 +1,5 @@
 import React from 'react'
-import { Platform, StyleSheet, View, Text } from 'react-native'
+import { Platform, View, Text } from 'react-native'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { gql, useMutation } from '@apollo/client'
 import { TokenContext } from 'components/auth/TokenContext'
@@ -13,22 +13,18 @@ export const SIGN_IN_WITH_APPLE = gql`
   }
 `
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgb(50, 120, 200)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    width: '100%'
-  },
-})
-
 export default function AuthScreen() {
   return (
     <TokenContext.Consumer>
       {({ setToken }) => (
-        <View style={styles.container}>
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgb(50, 120, 200)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: '100%'
+        }}>
           <Text>Spendable</Text>
           {Platform.OS === 'ios' && <SignInWithAppleButton setToken={setToken} />}
         </View>

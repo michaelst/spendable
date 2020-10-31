@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -14,6 +13,7 @@ import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'helpers/formatCurrency'
 import { LIST_BUDGETS, DELETE_BUDGET } from 'components/budgets/queries'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   budget: ListBudgets_budgets,
@@ -22,6 +22,7 @@ type Props = {
 export default function BudgetRow({ budget }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
+  const { styles, fontSize } = AppStyles()
 
   const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budget.id })
 
@@ -37,6 +38,13 @@ export default function BudgetRow({ budget }: Props) {
     }
   })
 
+  const renderRightActions = () => {
+    return (
+      <RectButton style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </RectButton>
+    )
+  }
 
   return (
     <TouchableHighlight onPress={navigateToBudget}>
@@ -44,18 +52,9 @@ export default function BudgetRow({ budget }: Props) {
         renderRightActions={renderRightActions}
         onSwipeableOpen={deleteBudget}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 20,
-            alignItems: 'center',
-            backgroundColor: colors.card,
-            borderBottomColor: colors.border,
-            borderBottomWidth: StyleSheet.hairlineWidth
-          }}
-        >
+        <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, fontSize: 20 }}>
+            <Text style={styles.text}>
               {budget.name}
             </Text>
           </View>
@@ -64,40 +63,16 @@ export default function BudgetRow({ budget }: Props) {
             <Text
               style={{
                 color: budget.balance.isNegative() ? 'red' : colors.secondary,
-                fontSize: 18,
+                fontSize: fontSize,
                 paddingRight: 8
               }}
             >
               {formatCurrency(budget.balance)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>
     </TouchableHighlight>
-  )
-}
-
-const styles = StyleSheet.create({
-  deleteText: {
-    color: 'white',
-    fontSize: 16,
-    padding: 10,
-    fontWeight: 'bold'
-  },
-  rightAction: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#dd2c00',
-    justifyContent: 'flex-end'
-  },
-})
-
-const renderRightActions = () => {
-  return (
-    <RectButton style={[styles.rightAction, { backgroundColor: '#dd2c00' }]} >
-      <Text style={styles.deleteText}> Delete </Text>
-    </RectButton>
   )
 }

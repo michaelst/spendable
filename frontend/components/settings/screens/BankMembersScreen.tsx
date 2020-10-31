@@ -1,35 +1,19 @@
 import React, { useLayoutEffect } from 'react'
-import {
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  Text
-} from 'react-native'
-import Constants from 'expo-constants'
+import { ActivityIndicator, RefreshControl, } from 'react-native'
 import { useTheme, useNavigation } from '@react-navigation/native'
-import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { FlatList } from 'react-native-gesture-handler'
 import { LIST_BANK_MEMBERS, CREATE_BANK_MEMBER } from '../queries'
 import { ListBankMembers } from '../graphql/ListBankMembers'
 import { useQuery, useMutation } from '@apollo/client'
 import BankMemberRow from './BankMemberRow'
 import PlaidLink from 'react-native-plaid-link-sdk'
+import AppStyles from 'constants/AppStyles'
+import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function BankMembersScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      marginTop: Constants.statusBarHeight,
-    },
-    activityIndicator: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    }
-  })
-
+  const { styles } = AppStyles()
 
   const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
 
@@ -44,20 +28,13 @@ export default function BankMembersScreen() {
     }
   })
 
-
   const headerRight = () => {
     return (
       <PlaidLink
         clientName="Spendable"
         publicKey="37cc44ed343b19bae3920edf047df1"
         env="sandbox"
-        component={(plaid: any) => {
-          return (
-            <TouchableWithoutFeedback onPress={plaid.onPress}>
-              <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Add</Text>
-            </TouchableWithoutFeedback>
-          )
-        }}
+        component={(plaid: any) => <HeaderButton text="Add" onPress={plaid.onPress} />}
         onSuccess={({ public_token: publicToken }: { public_token: String }) => createBankMember({ variables: { publicToken: publicToken } })}
         product={["transactions"]}
         language="en"
@@ -72,7 +49,7 @@ export default function BankMembersScreen() {
 
   return (
     <FlatList
-      contentContainerStyle={{ paddingTop: 36, paddingBottom: 36 }}
+      contentContainerStyle={styles.flatlistContentContainerStyle}
       data={data?.bankMembers ?? []}
       renderItem={({ item }) => <BankMemberRow bankMember={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}

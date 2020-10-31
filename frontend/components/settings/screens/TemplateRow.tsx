@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -15,6 +14,7 @@ import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { DELETE_TEMPLATE, LIST_TEMPLATES } from '../queries'
 import { useMutation } from '@apollo/client'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   template: ListAllocationTemplates_allocationTemplates,
@@ -23,6 +23,7 @@ type Props = {
 export default function TemplateRow({ template }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
+  const { styles, fontSize } = AppStyles()
 
   const navigateToTemplate = () => navigation.navigate('Template', { templateId: template.id })
 
@@ -40,60 +41,35 @@ export default function TemplateRow({ template }: Props) {
 
   const allocated = template.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
 
+  const renderRightActions = () => {
+    return (
+      <RectButton style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </RectButton>
+    )
+  }
+
   return (
     <TouchableHighlight onPress={navigateToTemplate}>
       <Swipeable
         renderRightActions={renderRightActions}
         onSwipeableOpen={deleteAllocationTemplate}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            padding: 18,
-            alignItems: 'center',
-            backgroundColor: colors.card,
-            borderBottomColor: colors.border,
-            borderBottomWidth: StyleSheet.hairlineWidth
-          }}
-        >
+        <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, fontSize: 18 }}>
+            <Text style={styles.text}>
               {template.name}
             </Text>
           </View>
 
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ color: colors.secondary, fontSize: 18, paddingRight: 8 }} >
+            <Text style={styles.rightText} >
               {formatCurrency(allocated)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>
     </TouchableHighlight>
-  )
-}
-
-const styles = StyleSheet.create({
-  deleteText: {
-    color: 'white',
-    fontSize: 16,
-    padding: 10,
-    fontWeight: 'bold'
-  },
-  rightAction: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#dd2c00',
-    justifyContent: 'flex-end'
-  },
-})
-
-const renderRightActions = () => {
-  return (
-    <RectButton style={[styles.rightAction, { backgroundColor: '#dd2c00' }]} >
-      <Text style={styles.deleteText}> Delete </Text>
-    </RectButton>
   )
 }

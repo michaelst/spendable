@@ -1,13 +1,12 @@
 import React from 'react'
 import {
-  StyleSheet,
   Text,
   TextInput,
   View,
   KeyboardType
 } from 'react-native'
-import { useTheme } from '@react-navigation/native'
 import { FormField } from './FormScreen'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   info: FormField
@@ -20,7 +19,7 @@ export enum FormFieldType {
 }
 
 export default function FormInput({ info }: Props) {
-  const { colors }: any = useTheme()
+  const { styles } = AppStyles()
 
   const keyboardType: KeyboardType = (() => {
     switch(info.type) {
@@ -32,22 +31,9 @@ export default function FormInput({ info }: Props) {
   })()
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        padding: 20,
-        backgroundColor: colors.card,
-        borderBottomColor: colors.border,
-        borderBottomWidth: StyleSheet.hairlineWidth
-      }}
-    >
+    <View style={styles.row}>
       <View style={{ flex: 1 }}>
-        <Text
-          style={{
-            color: colors.text,
-            fontSize: 20
-          }}
-        >
+        <Text style={styles.text}>
           {info.placeholder}
         </Text>
       </View>
@@ -56,12 +42,7 @@ export default function FormInput({ info }: Props) {
         <TextInput
           keyboardType={keyboardType}
           selectTextOnFocus={true}
-          style={{
-            textAlign: 'right',
-            width: '100%',
-            fontSize: 18,
-            color: colors.secondary
-          }}
+          style={styles.formInputText}
           onChangeText={text => info.setValue(text)}
           value={info.value}
         />

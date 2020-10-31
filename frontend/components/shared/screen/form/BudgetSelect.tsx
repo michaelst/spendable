@@ -1,4 +1,4 @@
-import React, { createRef, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Dimensions,
   SectionList,
@@ -16,6 +16,7 @@ import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { useQuery } from '@apollo/client'
 import BudgetRow from './BudgetRow'
+import AppStyles from 'constants/AppStyles'
 
 type Props = {
   info: FormField
@@ -30,8 +31,9 @@ export enum FormFieldType {
 export default function BudgetSelect({ info }: Props) {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
+  const { styles, fontSize } = AppStyles()
 
-  const styles = StyleSheet.create({
+  const localStyles = StyleSheet.create({
     modal: {
       justifyContent: 'flex-end',
       margin: 0,
@@ -40,20 +42,10 @@ export default function BudgetSelect({ info }: Props) {
       height: height,
       backgroundColor: colors.background,
     },
-    scrollableModalText: {
-      fontSize: 20,
-      color: 'white',
-    },
     close: {
       alignItems: 'flex-end',
       padding: 16
     },
-    headerText: {
-      backgroundColor: colors.background,
-      color: colors.secondary,
-      padding: 20,
-      paddingBottom: 5
-    }
   })
 
   const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
@@ -70,49 +62,28 @@ export default function BudgetSelect({ info }: Props) {
 
   return (
     <TouchableHighlight onPress={() => setModalVisible(true)}>
-      <View
-        style={{
-          flexDirection: 'row',
-          padding: 20,
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: StyleSheet.hairlineWidth
-        }}
-      >
+      <View style={styles.row}>
         <View style={{ flex: 1 }}>
-          <Text
-            style={{
-              color: colors.text,
-              fontSize: 20
-            }}
-          >
+          <Text style={styles.text}>
             {info.placeholder}
           </Text>
         </View>
 
         <View style={{ flex: 1, flexDirection: "row" }}>
-          <Text
-            style={{
-              textAlign: 'right',
-              width: '100%',
-              fontSize: 18,
-              paddingRight: 8,
-              color: colors.secondary
-            }}
-          >
+          <Text style={[styles.formInputText, { paddingRight: 8 }]}>
             {info.value}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
         <Modal
           isVisible={modalVisible}
-          style={styles.modal}>
-          <SafeAreaView style={styles.scrollableModal}>
-            <TouchableHighlight onPress={() => setModalVisible(false)} style={styles.close}>
+          style={localStyles.modal}>
+          <SafeAreaView style={localStyles.scrollableModal}>
+            <TouchableHighlight onPress={() => setModalVisible(false)} style={localStyles.close}>
               <Ionicons name='ios-close' size={32} color={colors.text} />
             </TouchableHighlight>
             <SectionList
-              contentContainerStyle={{ paddingBottom: 40 }}
+              contentContainerStyle={styles.sectionlistContentContainerStyle}
               sections={listData}
               renderItem={({ item }) => {
                 return (
@@ -125,7 +96,7 @@ export default function BudgetSelect({ info }: Props) {
                   />
                 )
               }}
-              renderSectionHeader={({ section: { title } }) => <Text style={styles.headerText}>{title}</Text>}
+              renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
               stickySectionHeadersEnabled={false}
             />
           </SafeAreaView>

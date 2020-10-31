@@ -5,19 +5,21 @@ import { CurrentUser } from './graphql/CurrentUser'
 import { GET_SPENDABLE } from './queries'
 import { useQuery } from '@apollo/client'
 import formatCurrency from 'helpers/formatCurrency'
+import AppStyles from 'constants/AppStyles'
 
 export default function SpendableHeader() {
   const { data } = useQuery<CurrentUser>(GET_SPENDABLE)
   const { colors }: any = useTheme()
+  const { styles } = AppStyles()
 
   const spendableColor = data?.currentUser.spendable.isNegative() ? 'red' : colors.text
 
   return (
     <View style={{ alignItems: 'center' }}>
-      <Text style={{ color: spendableColor, fontWeight: 'bold', fontSize: 18 }}>
+      <Text style={[styles.headerTitleText, { color: spendableColor }]}>
         {data && formatCurrency(data.currentUser.spendable)}
       </Text>
-      <Text style={{ color: colors.secondary, fontSize: 12 }}>Spendable</Text>
+      <Text style={styles.secondaryText}>Spendable</Text>
     </View>
   )
 }
