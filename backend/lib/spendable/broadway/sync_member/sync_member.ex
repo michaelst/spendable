@@ -11,7 +11,7 @@ defmodule Spendable.Broadway.SyncMember do
   alias Spendable.Repo
   alias Spendable.Transaction
 
-  @producer if Application.get_env(:spendable, :env) == :prod,
+  @producer if Application.compile_env(:spendable, :env) == :prod,
               do:
                 {BroadwayCloudPubSub.Producer,
                  subscription: "projects/cloud-57/subscriptions/spendable.sync-member-request"},
