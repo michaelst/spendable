@@ -20,7 +20,11 @@ export default function TemplateRow({ templateLine }: Props) {
   const { colors }: any = useTheme()
   const { styles, fontSize} = AppStyles()
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateLine.allocationTemplate.id })
+  const navigateToTemplate = () => navigation.navigate('Settings', { 
+    screen: 'Template', 
+    initial: false,
+    params: { templateId: templateLine.allocationTemplate.id } 
+  })
 
   return (
     <TouchableHighlight onPress={navigateToTemplate}>
@@ -35,7 +39,7 @@ export default function TemplateRow({ templateLine }: Props) {
           <Text style={styles.rightText} >
             {formatCurrency(templateLine.amount)}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={18} color={colors.secondary} />
+          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>
