@@ -1,5 +1,5 @@
 defmodule Spendable.Publishers.SendNotificationRequest do
-  @topic if Application.get_env(:spendable, :env) == :prod,
+  @topic if Application.compile_env(:spendable, :env) == :prod,
            do: "spendable.send-notification-request",
            else: "spendable-dev.send-notification-request"
 

@@ -1,5 +1,5 @@
 defmodule Spendable.Publishers.SyncMemberRequest do
-  @topic if Application.get_env(:spendable, :env) == :prod,
+  @topic if Application.compile_env(:spendable, :env) == :prod,
            do: "spendable.sync-member-request",
            else: "spendable-dev.sync-member-request"
 

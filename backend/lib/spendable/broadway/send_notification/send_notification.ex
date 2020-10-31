@@ -5,7 +5,7 @@ defmodule Spendable.Broadway.SendNotification do
   alias Broadway.Message
   alias Spendable.Repo
 
-  @producer if Application.get_env(:spendable, :env) == :prod,
+  @producer if Application.compile_env(:spendable, :env) == :prod,
               do:
                 {BroadwayCloudPubSub.Producer,
                  subscription: "projects/cloud-57/subscriptions/spendable.send-notification-request"},

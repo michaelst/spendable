@@ -17,5 +17,5 @@ defmodule Spendable do
     )
   end
 
-  def query(queryable, _args), do: queryable
+  def query(module, _args), do: from(module, order_by: :id)
 end
