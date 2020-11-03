@@ -12,7 +12,7 @@
     "@react-native-community/push-notification-ios": "^1.7.1",
     "@react-navigation/bottom-tabs": "^5.10.2",
     "@react-navigation/native": "^5.8.2",
-    "@react-navigation/stack": "^5.11.1",
+    "@react-navigation/stack": "^5.12.1",
     "decimal.js-light": "^2.5.1",
     "expo": "^39.0.3",
     "expo-apple-authentication": "^2.2.1",
