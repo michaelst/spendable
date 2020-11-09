@@ -1,5 +1,7 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
+import { offsetLimitPagination } from '@apollo/client/utilities'
 import Decimal from 'decimal.js-light'
+import { DateTime } from "luxon"
 
 const createApolloClient = (token: string | null) => {
   const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
@@ -16,6 +18,11 @@ const createApolloClient = (token: string | null) => {
 
   const cache = new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          transactions: offsetLimitPagination()
+        }
+      },
       Budget: {
         fields: {
           balance: {
@@ -54,6 +61,20 @@ const createApolloClient = (token: string | null) => {
           amount: {
             read(amount) {
               return new Decimal(amount)
+            }
+          }
+        }
+      },
+      Transaction: {
+        fields: {
+          amount: {
+            read(amount) {
+              return new Decimal(amount)
+            }
+          },
+          date: {
+            read(date) {
+              return DateTime.fromISO(date)
             }
           }
         }

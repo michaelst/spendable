@@ -21,13 +21,13 @@ defmodule Spendable.Transaction.Types do
   end
 
   object :transaction_queries do
-    field :transactions, list_of(:transaction) do
+    field :transactions, :transaction |> non_null |> list_of |> non_null do
       middleware(CheckAuthentication)
-      arg(:offset, :integer)
+      arg(:offset, non_null(:integer))
       resolve(&Resolver.list/2)
     end
 
-    field :transaction, :transaction do
+    field :transaction, non_null(:transaction) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Transaction)
       arg(:id, non_null(:id))
@@ -36,19 +36,19 @@ defmodule Spendable.Transaction.Types do
   end
 
   object :transaction_mutations do
-    field :create_transaction, :transaction do
+    field :create_transaction, non_null(:transaction) do
       middleware(CheckAuthentication)
       arg(:amount, :string)
       arg(:category_id, :id)
       arg(:date, :string)
       arg(:name, :string)
       arg(:note, :string)
-      arg(:allocations, list_of(:allocation_input_object))
+      arg(:allocations, :allocation_input_object |> non_null |> list_of |> non_null)
       arg(:tag_ids, list_of(:id))
       resolve(&Resolver.create/2)
     end
 
-    field :update_transaction, :transaction do
+    field :update_transaction, non_null(:transaction) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Transaction)
       arg(:id, non_null(:id))
@@ -57,12 +57,12 @@ defmodule Spendable.Transaction.Types do
       arg(:date, :string)
       arg(:name, :string)
       arg(:note, :string)
-      arg(:allocations, list_of(:allocation_input_object))
+      arg(:allocations, :allocation_input_object |> non_null |> list_of |> non_null)
       arg(:tag_ids, list_of(:id))
       resolve(&Resolver.update/2)
     end
 
-    field :delete_transaction, :transaction do
+    field :delete_transaction, non_null(:transaction) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Transaction)
       arg(:id, non_null(:id))

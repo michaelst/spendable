@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { FontAwesome5, Ionicons } from '@expo/vector-icons'
 import { useColorScheme } from 'react-native-appearance'
 import Budgets from './budgets/Budgets'
-import TransactionsScreen from './transactions/TransactionsScreen'
+import Transactions from './transactions/Transactions'
 import Settings from './settings/Settings'
 
 const Tab = createBottomTabNavigator()
@@ -38,7 +38,7 @@ export default function Main() {
         })}
       >
         <Tab.Screen name="Expenses" component={Budgets} />
-        <Tab.Screen name="Transactions" component={TransactionsScreen} />
+        <Tab.Screen name="Transactions" component={Transactions} />
         <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
     </NavigationContainer>
