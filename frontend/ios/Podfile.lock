@@ -22,7 +22,7 @@ PODS:
     - UMCore
   - EXLinearGradient (8.3.1):
     - UMCore
-  - EXLocation (9.0.0):
+  - EXLocation (9.0.1):
     - UMCore
     - UMPermissionsInterface
     - UMTaskManagerInterface
@@ -294,19 +294,19 @@ PODS:
     - React-jsi (= 0.63.3)
   - RNCMaskedView (0.1.10):
     - React
-  - RNCPushNotificationIOS (1.5.0):
-    - React
+  - RNCPushNotificationIOS (1.7.3):
+    - React-Core
   - RNGestureHandler (1.8.0):
     - React
   - RNReanimated (1.13.1):
     - React
-  - RNScreens (2.11.0):
-    - React
+  - RNScreens (2.13.0):
+    - React-Core
   - UMAppLoader (1.3.0)
   - UMBarCodeScannerInterface (5.3.0)
   - UMCameraInterface (5.3.0)
   - UMConstantsInterface (5.3.0)
-  - UMCore (5.5.0)
+  - UMCore (5.5.1)
   - UMFaceDetectorInterface (5.3.0)
   - UMFileSystemInterface (5.3.0)
   - UMFontInterface (5.3.0)
@@ -376,7 +376,7 @@ DEPENDENCIES:
   - UMBarCodeScannerInterface (from `../node_modules/unimodules-barcode-scanner-interface/ios`)
   - UMCameraInterface (from `../node_modules/unimodules-camera-interface/ios`)
   - UMConstantsInterface (from `../node_modules/unimodules-constants-interface/ios`)
-  - "UMCore (from `../node_modules/@unimodules/core/ios`)"
+  - "UMCore (from `../node_modules/expo/node_modules/@unimodules/core/ios`)"
   - UMFaceDetectorInterface (from `../node_modules/unimodules-face-detector-interface/ios`)
   - UMFileSystemInterface (from `../node_modules/unimodules-file-system-interface/ios`)
   - UMFontInterface (from `../node_modules/unimodules-font-interface/ios`)
@@ -496,7 +496,7 @@ EXTERNAL SOURCES:
   UMConstantsInterface:
     :path: "../node_modules/unimodules-constants-interface/ios"
   UMCore:
-    :path: "../node_modules/@unimodules/core/ios"
+    :path: "../node_modules/expo/node_modules/@unimodules/core/ios"
   UMFaceDetectorInterface:
     :path: "../node_modules/unimodules-face-detector-interface/ios"
   UMFileSystemInterface:
@@ -527,7 +527,7 @@ SPEC CHECKSUMS:
   EXImageLoader: 0b33400e65955c5510a09afc2f9bb369a81e1c6e
   EXKeepAwake: 4502a0ed7b7c5135587004e6d118acf8cea055fc
   EXLinearGradient: 54bec9b1b4940407fc498cab6a0c49c617c8cf54
-  EXLocation: 2d7aceb4d537d418a7d80df179b451c2cff8e99d
+  EXLocation: 210d39a6e5d793f9721117a11c0b27dc523a3183
   EXPermissions: 5797c6c72efb411b2bbf502cd5acd841e3ffeefa
   EXSecureStore: a14319939c62681ec183834e3e6cf47d496f334c
   EXSplashScreen: accde6b1aaa87f395d6c5e0542e23d5c09a549ab
@@ -562,15 +562,15 @@ SPEC CHECKSUMS:
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
-  RNCPushNotificationIOS: 8025ff0b610d7b28d29ddc1b619cd55814362e4c
+  RNCPushNotificationIOS: 6c5b8b5d2b36ee1f38af031b3d735a5b675e1b03
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
-  RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
+  RNScreens: 13f23e5498fb4aa749d19a5eda7f8792fbb9d01f
   UMAppLoader: 939854a42e69527ee11dd17b39ebafcbfbefd05c
   UMBarCodeScannerInterface: 198ced513a0cf8143d822620f1620bce467d02be
   UMCameraInterface: dbcaade8d0364ba5518ae4519c63c59bf010aa89
   UMConstantsInterface: 2ad180a29afdf28607d11d6e23c90793d294ea0e
-  UMCore: db635e8fcaf743f418484e9f9b9245bb2495f07a
+  UMCore: 9b6c0ae27349356ed39c9e78b99b7830bb093856
   UMFaceDetectorInterface: 24faf81d90fb00d477c674fd00b9cb005176f4a0
   UMFileSystemInterface: 5216dca58177014de7f1157d69c70a1ec5c620bb
   UMFontInterface: 4d0f13001fc59436125d7424cdfa7c897b699724
