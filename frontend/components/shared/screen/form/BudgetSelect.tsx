@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native'
 import { useTheme } from '@react-navigation/native'
-import { FormField } from './FormScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
@@ -17,15 +16,10 @@ import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { useQuery } from '@apollo/client'
 import BudgetRow from './BudgetRow'
 import AppStyles from 'constants/AppStyles'
+import { FormField } from './FormInput'
 
 type Props = {
   info: FormField
-}
-
-export enum FormFieldType {
-  DecimalInput,
-  StringInput,
-  BudgetSelect
 }
 
 export default function BudgetSelect({ info }: Props) {

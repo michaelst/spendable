@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/settings/Settings'
 import { GET_TEMPLATE_LINE, UPDATE_TEMPLATE_LINE } from 'components/settings/queries'
 import { AllocationTemplateLine } from 'components/settings/graphql/AllocationTemplateLine'
-import FormScreen, { FormField, FormFieldType } from 'components/shared/screen/form/FormScreen'
+import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
 import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 

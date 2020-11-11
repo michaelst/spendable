@@ -65,7 +65,7 @@ export const CREATE_TRANSACTION = gql`
   }
 `
 
-export const UPDATE_BUDGET = gql`
+export const UPDATE_TRANSACTION = gql`
   mutation UpdateTransaction($id: ID!, $amount: String!, $name: String, $date: String, $note: String, $categoryId: ID, $allocations: [AllocationInputObject!]!) {
     updateTransaction(
       id: $id

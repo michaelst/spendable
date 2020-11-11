@@ -59,7 +59,7 @@ export default function TransactionRow({ transaction }: Props) {
               {transaction.name}
             </Text>
             <Text style={styles.secondaryText}>
-              {transaction.date.toLocaleString(DateTime.DATE_MED)}
+              {DateTime.fromJSDate(transaction.date).toLocaleString(DateTime.DATE_MED)}
             </Text>
           </View>
 

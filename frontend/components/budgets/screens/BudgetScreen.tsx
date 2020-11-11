@@ -19,7 +19,7 @@ import TemplateRow from './TemplateRow'
 import AppStyles from 'constants/AppStyles'
 import HeaderButton from 'components/shared/components/HeaderButton'
 
-export default function BudgetRow() {
+export default function BudgetScreen() {
   const { colors }: any = useTheme()
   const { styles } = AppStyles()
 

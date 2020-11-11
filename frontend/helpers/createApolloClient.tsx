@@ -1,7 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
 import { offsetLimitPagination } from '@apollo/client/utilities'
 import Decimal from 'decimal.js-light'
-import { DateTime } from "luxon"
 
 const createApolloClient = (token: string | null) => {
   const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
@@ -74,7 +73,7 @@ const createApolloClient = (token: string | null) => {
           },
           date: {
             read(date) {
-              return DateTime.fromISO(date)
+              return new Date(date)
             }
           }
         }
