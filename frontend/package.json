@@ -10,7 +10,7 @@
     "@apollo/client": "^3.2.5",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/push-notification-ios": "^1.7.3",
-    "@react-navigation/bottom-tabs": "^5.11.0",
+    "@react-navigation/bottom-tabs": "^5.11.1",
     "@react-navigation/native": "^5.8.8",
     "@react-navigation/stack": "^5.12.5",
     "decimal.js-light": "^2.5.1",
