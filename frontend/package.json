@@ -30,7 +30,7 @@
     "react-native-plaid-link-sdk": "^5.0.2",
     "react-native-reanimated": "^1.13.1",
     "react-native-safe-area-context": "^3.1.8",
-    "react-native-screens": "^2.13.0",
+    "react-native-screens": "^2.14.0",
     "react-native-unimodules": "^0.11.0",
     "react-native-web": "^0.13.18"
   },
