@@ -17,6 +17,8 @@ import { useQuery } from '@apollo/client'
 import BudgetRow from './BudgetRow'
 import AppStyles from 'constants/AppStyles'
 import { FormField } from './FormInput'
+import { CurrentUser } from 'components/headers/spendable-header/graphql/CurrentUser'
+import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
 type Props = {
   info: FormField
@@ -42,13 +44,15 @@ export default function BudgetSelect({ info }: Props) {
     },
   })
 
+  const { data: userData } = useQuery<CurrentUser>(GET_SPENDABLE)
   const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
 
   const budgets = data?.budgets.filter(budget => !budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
   const goals = data?.budgets.filter(budget => budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
+  const spendable = {id: 'spendable', name: 'Spendable', balance: userData?.currentUser.spendable}
 
   const listData = [
-    { title: "Expenses", data: budgets },
+    { title: "Expenses", data: [spendable].concat(budgets) },
     { title: "Goals", data: goals }
   ]
 

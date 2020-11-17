@@ -56,10 +56,14 @@ export default function TransactionScreen() {
     : 'Spendable'
 
   const setSpendFrom = (budgetId: string) => {
-    setAllocations([{
-      amount: amount,
-      budgetId: budgetId
-    }])
+    if (budgetId === 'spendable') {
+      setAllocations([])
+    } else {
+      setAllocations([{
+        amount: amount,
+        budgetId: budgetId
+      }])
+    }
   }
 
   const navigateToTransactions = () => navigation.navigate('Transactions')
