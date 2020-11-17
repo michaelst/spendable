@@ -7,16 +7,11 @@
 // GraphQL query operation: GetBudget
 // ====================================================
 
-export interface GetBudget_budget_recentAllocations_transaction_bankTransaction {
-  __typename: "BankTransaction";
-  pending: boolean;
-}
-
 export interface GetBudget_budget_recentAllocations_transaction {
   __typename: "Transaction";
+  id: string;
   name: string | null;
   date: Date;
-  bankTransaction: GetBudget_budget_recentAllocations_transaction_bankTransaction | null;
 }
 
 export interface GetBudget_budget_recentAllocations {

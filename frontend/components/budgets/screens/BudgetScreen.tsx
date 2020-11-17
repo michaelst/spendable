@@ -18,8 +18,9 @@ import {
 import TemplateRow from './TemplateRow'
 import AppStyles from 'constants/AppStyles'
 import HeaderButton from 'components/shared/components/HeaderButton'
+import TransactionRow from './TransactionRow'
 
-export default function BudgetRow() {
+export default function BudgetScreen() {
   const { colors }: any = useTheme()
   const { styles } = AppStyles()
 
@@ -30,7 +31,7 @@ export default function BudgetRow() {
   const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
   const headerRight = () => <HeaderButton text="Edit" onPress={navigateToEdit} />
   
-  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
+  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId }, fetchPolicy: 'cache-and-network' })
 
   if (data?.budget) {
     const headerTitle = () => {
@@ -57,7 +58,7 @@ export default function BudgetRow() {
     {
       title: 'Recent Transactions',
       data: data.budget.recentAllocations,
-      renderItem: ({ item }: { item: Allocation }) => <Text style={{ color: 'white' }}>{item.transaction.name}</Text>
+      renderItem: ({ item }: { item: Allocation }) => <TransactionRow allocation={item} />
     },
   ]
 

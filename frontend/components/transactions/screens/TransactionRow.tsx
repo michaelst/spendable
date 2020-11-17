@@ -8,32 +8,33 @@ import { useNavigation } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
-import { ListBudgets, ListBudgets_budgets } from 'components/budgets/graphql/ListBudgets'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'helpers/formatCurrency'
-import { LIST_BUDGETS, DELETE_BUDGET } from 'components/budgets/queries'
 import AppStyles from 'constants/AppStyles'
+import { ListTransactions, ListTransactions_transactions } from '../graphql/ListTransactions'
+import { DELETE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
+import { DateTime } from 'luxon'
 
 type Props = {
-  budget: ListBudgets_budgets,
+  transaction: ListTransactions_transactions,
 }
 
-export default function BudgetRow({ budget }: Props) {
+export default function TransactionRow({ transaction }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize, padding } = AppStyles()
+  const { styles, fontSize } = AppStyles()
 
-  const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budget.id })
+  const navigateToTransaction = () => navigation.navigate('Transaction', { transactionId: transaction.id })
 
-  const [deleteBudget] = useMutation(DELETE_BUDGET, {
-    variables: { id: budget.id },
-    update(cache, { data: { deleteBudget } }) {
-      const data = cache.readQuery<ListBudgets | null>({ query: LIST_BUDGETS })
+  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
+    variables: { id: transaction.id },
+    update(cache, { data: { deleteTransaction } }) {
+      const data = cache.readQuery<ListTransactions | null>({ query: LIST_TRANSACTIONS })
 
       cache.writeQuery({
-        query: LIST_BUDGETS,
-        data: { budgets: data?.budgets.filter(budget => budget.id !== deleteBudget.id) }
+        query: LIST_TRANSACTIONS,
+        data: { budgets: data?.transactions.filter(transaction => transaction.id !== deleteTransaction.id) }
       })
     }
   })
@@ -47,27 +48,30 @@ export default function BudgetRow({ budget }: Props) {
   }
 
   return (
-    <TouchableHighlight onPress={navigateToBudget}>
+    <TouchableHighlight onPress={navigateToTransaction}>
       <Swipeable
         renderRightActions={renderRightActions}
-        onSwipeableOpen={deleteBudget}
+        onSwipeableOpen={deleteTransaction}
       >
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.text}>
-              {budget.name}
+            <Text numberOfLines={1} style={{...styles.text, ...{paddingRight: 8}}}>
+              {transaction.name}
+            </Text>
+            <Text style={styles.secondaryText}>
+              {DateTime.fromJSDate(transaction.date).toLocaleString(DateTime.DATE_MED)}
             </Text>
           </View>
 
           <View style={{ flexDirection: "row" }}>
             <Text
               style={{
-                color: budget.balance.isNegative() ? 'red' : colors.secondary,
+                color: transaction.amount.isNegative() ? 'red' : colors.secondary,
                 fontSize: fontSize,
-                paddingRight: padding
+                paddingRight: 8
               }}
             >
-              {formatCurrency(budget.balance)}
+              {formatCurrency(transaction.amount)}
             </Text>
             <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
           </View>

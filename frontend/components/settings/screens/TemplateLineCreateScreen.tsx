@@ -3,10 +3,11 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/settings/Settings'
 import { CREATE_TEMPLATE_LINE, GET_TEMPLATE } from 'components/settings/queries'
-import FormScreen, { FormField, FormFieldType } from 'components/shared/screen/form/FormScreen'
+import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
 import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
+import FormScreen from 'components/shared/screen/form/FormScreen'
 
 export default function TemplateLineCreateScreen() {
   const navigation = useNavigation()

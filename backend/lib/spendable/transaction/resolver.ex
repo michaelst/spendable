@@ -10,7 +10,7 @@ defmodule Spendable.Transaction.Resolver do
        where: [user_id: ^user.id],
        order_by: [desc: :date, desc: :id],
        limit: 100,
-       offset: ^(args[:offset] || 0)
+       offset: ^args[:offset]
      )
      |> Repo.all()}
   end

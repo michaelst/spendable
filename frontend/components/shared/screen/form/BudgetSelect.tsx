@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native'
 import { useTheme } from '@react-navigation/native'
-import { FormField } from './FormScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
@@ -17,21 +16,18 @@ import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { useQuery } from '@apollo/client'
 import BudgetRow from './BudgetRow'
 import AppStyles from 'constants/AppStyles'
+import { FormField } from './FormInput'
+import { CurrentUser } from 'components/headers/spendable-header/graphql/CurrentUser'
+import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
 type Props = {
   info: FormField
 }
 
-export enum FormFieldType {
-  DecimalInput,
-  StringInput,
-  BudgetSelect
-}
-
 export default function BudgetSelect({ info }: Props) {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
-  const { styles, fontSize } = AppStyles()
+  const { styles, padding, fontSize } = AppStyles()
 
   const localStyles = StyleSheet.create({
     modal: {
@@ -44,17 +40,19 @@ export default function BudgetSelect({ info }: Props) {
     },
     close: {
       alignItems: 'flex-end',
-      padding: 16
+      padding: padding * 2
     },
   })
 
+  const { data: userData } = useQuery<CurrentUser>(GET_SPENDABLE)
   const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
 
   const budgets = data?.budgets.filter(budget => !budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
   const goals = data?.budgets.filter(budget => budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
+  const spendable = {id: 'spendable', name: 'Spendable', balance: userData?.currentUser.spendable}
 
   const listData = [
-    { title: "Expenses", data: budgets },
+    { title: "Expenses", data: [spendable].concat(budgets) },
     { title: "Goals", data: goals }
   ]
 

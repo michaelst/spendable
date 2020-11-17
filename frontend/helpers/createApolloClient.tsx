@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
+import { offsetLimitPagination } from '@apollo/client/utilities'
 import Decimal from 'decimal.js-light'
 
 const createApolloClient = (token: string | null) => {
@@ -16,6 +17,11 @@ const createApolloClient = (token: string | null) => {
 
   const cache = new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          transactions: offsetLimitPagination()
+        }
+      },
       Budget: {
         fields: {
           balance: {
@@ -49,11 +55,34 @@ const createApolloClient = (token: string | null) => {
           }
         }
       },
+      Allocation: {
+        fields: {
+          amount: {
+            read(amount) {
+              return new Decimal(amount)
+            }
+          }
+        }
+      },
       AllocationTemplateLine: {
         fields: {
           amount: {
             read(amount) {
               return new Decimal(amount)
+            }
+          }
+        }
+      },
+      Transaction: {
+        fields: {
+          amount: {
+            read(amount) {
+              return new Decimal(amount)
+            }
+          },
+          date: {
+            read(date) {
+              return new Date(date)
             }
           }
         }

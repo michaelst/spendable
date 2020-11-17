@@ -6,7 +6,7 @@ import {
   View,
   KeyboardType
 } from 'react-native'
-import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/budgets/Budgets'
 import { GET_BUDGET, UPDATE_BUDGET } from 'components/budgets/queries'
@@ -15,7 +15,6 @@ import AppStyles from 'constants/AppStyles'
 import HeaderButton from 'components/shared/components/HeaderButton'
 
 export default function BudgetEditScreen() {
-  const { colors }: any = useTheme()
   const { styles } = AppStyles()
 
   const navigation = useNavigation()

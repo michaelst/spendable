@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'components/settings/queries'
-import FormScreen, { FormField, FormFieldType } from 'components/shared/screen/form/FormScreen'
+import FormScreen from 'components/shared/screen/form/FormScreen'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
+import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
 
 export default function TemplateEditScreen() {
   const navigation = useNavigation()

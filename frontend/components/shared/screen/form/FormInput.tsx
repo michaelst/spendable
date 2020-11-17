@@ -1,21 +1,30 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import {
   Text,
   TextInput,
   View,
   KeyboardType
 } from 'react-native'
-import { FormField } from './FormScreen'
 import AppStyles from 'constants/AppStyles'
 
 type Props = {
   info: FormField
 }
 
+export type FormField = {
+  key: string,
+  placeholder: string,
+  value: string,
+  setValue: any,
+  type: FormFieldType
+}
+
 export enum FormFieldType {
   DecimalInput,
   StringInput,
-  BudgetSelect
+  MultiLineStringInput,
+  BudgetSelect,
+  DatePicker
 }
 
 export default function FormInput({ info }: Props) {
@@ -38,13 +47,14 @@ export default function FormInput({ info }: Props) {
         </Text>
       </View>
 
-      <View style={{ flex: 1 }}>
+      <View style={{ width: '70%' }}>
         <TextInput
           keyboardType={keyboardType}
           selectTextOnFocus={true}
           style={styles.formInputText}
           onChangeText={text => info.setValue(text)}
           value={info.value}
+          multiline={info.type === FormFieldType.MultiLineStringInput}
         />
       </View>
     </View>

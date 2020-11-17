@@ -23,7 +23,7 @@ export default function BudgetsScreen() {
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Expense')}>
-        <Text style={{ color: colors.primary, fontSize: 20, paddingRight: 20 }}>Add</Text>
+        <Text style={styles.headerButtonText}>Add</Text>
       </TouchableWithoutFeedback>
     )
   }

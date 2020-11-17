@@ -4,7 +4,8 @@ import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'components/settings/Settings'
 import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'components/settings/queries'
 import { GetAllocationTemplate } from 'components/settings/graphql/GetAllocationTemplate'
-import FormScreen, { FormField, FormFieldType } from 'components/shared/screen/form/FormScreen'
+import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
+import FormScreen from 'components/shared/screen/form/FormScreen'
 
 export default function TemplateEditScreen() {
   const navigation = useNavigation()
