@@ -26,7 +26,7 @@ export default function TransactionScreen() {
   const [note, setNote] = useState('')
   const [allocations, setAllocations] = useState<AllocationInputObject[]>([])
 
-  const { data: budgetsData } = useQuery<ListBudgets>(LIST_BUDGETS)
+  const { data: budgetsData, refetch: refetchBudgets } = useQuery<ListBudgets>(LIST_BUDGETS)
   const getTransaction = useQuery<GetTransaction>(GET_TRANSACTION, { 
     variables: { id: transactionId },
     onCompleted: data => {
@@ -64,7 +64,7 @@ export default function TransactionScreen() {
 
   const navigateToTransactions = () => navigation.navigate('Transactions')
   const saveAndGoBack = () => {
-    updateTransactions()
+    updateTransactions().then(() => refetchBudgets())
     navigateToTransactions()
   }
 
