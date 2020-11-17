@@ -23,7 +23,6 @@ export interface GetTransaction_transaction_allocations {
 export interface GetTransaction_transaction_bankTransaction {
   __typename: "BankTransaction";
   name: string;
-  pending: boolean;
 }
 
 export interface GetTransaction_transaction {

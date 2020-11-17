@@ -22,11 +22,9 @@ export const GET_BUDGET = gql`
         id
         amount
         transaction {
+          id
           name
           date
-          bankTransaction {
-            pending
-          }
         }
       }
       allocationTemplateLines {

@@ -18,6 +18,7 @@ import {
 import TemplateRow from './TemplateRow'
 import AppStyles from 'constants/AppStyles'
 import HeaderButton from 'components/shared/components/HeaderButton'
+import TransactionRow from './TransactionRow'
 
 export default function BudgetScreen() {
   const { colors }: any = useTheme()
@@ -57,7 +58,7 @@ export default function BudgetScreen() {
     {
       title: 'Recent Transactions',
       data: data.budget.recentAllocations,
-      renderItem: ({ item }: { item: Allocation }) => <Text style={{ color: 'white' }}>{item.transaction.name}</Text>
+      renderItem: ({ item }: { item: Allocation }) => <TransactionRow allocation={item} />
     },
   ]
 

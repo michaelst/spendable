@@ -55,6 +55,15 @@ const createApolloClient = (token: string | null) => {
           }
         }
       },
+      Allocation: {
+        fields: {
+          amount: {
+            read(amount) {
+              return new Decimal(amount)
+            }
+          }
+        }
+      },
       AllocationTemplateLine: {
         fields: {
           amount: {

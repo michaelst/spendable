@@ -36,7 +36,6 @@ export const GET_TRANSACTION = gql`
       ...TransactionFragment
       bankTransaction {
         name
-        pending
       }
     }
   }
