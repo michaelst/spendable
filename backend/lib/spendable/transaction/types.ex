@@ -57,7 +57,7 @@ defmodule Spendable.Transaction.Types do
       arg(:date, :string)
       arg(:name, :string)
       arg(:note, :string)
-      arg(:allocations, :allocation_input_object |> non_null |> list_of |> non_null)
+      arg(:allocations, :allocation_input_object |> non_null |> list_of)
       arg(:tag_ids, list_of(:id))
       resolve(&Resolver.update/2)
     end

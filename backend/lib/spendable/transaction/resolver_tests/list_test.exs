@@ -25,7 +25,7 @@ defmodule Spendable.Transaction.Resolver.ListTest do
 
     query = """
       query {
-        transactions {
+        transactions(offset: 0) {
           id
           name
           note
