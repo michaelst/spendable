@@ -9,31 +9,26 @@ import { AllocationInputObject } from "./../../../graphql/globalTypes";
 // GraphQL mutation operation: UpdateTransaction
 // ====================================================
 
-export interface UpdateTransaction_updateTransaction_category {
-  __typename: "Category";
-  id: string | null;
-}
-
 export interface UpdateTransaction_updateTransaction_allocations_budget {
   __typename: "Budget";
   id: string;
+  name: string;
 }
 
 export interface UpdateTransaction_updateTransaction_allocations {
   __typename: "Allocation";
   id: string;
-  budget: UpdateTransaction_updateTransaction_allocations_budget;
   amount: Decimal;
+  budget: UpdateTransaction_updateTransaction_allocations_budget;
 }
 
 export interface UpdateTransaction_updateTransaction {
   __typename: "Transaction";
   id: string;
-  amount: Decimal;
   name: string | null;
-  date: Date;
   note: string | null;
-  category: UpdateTransaction_updateTransaction_category | null;
+  amount: Decimal;
+  date: Date;
   allocations: UpdateTransaction_updateTransaction_allocations[];
 }
 
@@ -47,6 +42,5 @@ export interface UpdateTransactionVariables {
   name?: string | null;
   date?: string | null;
   note?: string | null;
-  categoryId?: string | null;
   allocations: AllocationInputObject[];
 }

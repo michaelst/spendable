@@ -25,7 +25,7 @@ type Props = {
 export default function BudgetSelect({ info }: Props) {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
-  const { styles, fontSize } = AppStyles()
+  const { styles, padding, fontSize } = AppStyles()
 
   const localStyles = StyleSheet.create({
     modal: {
@@ -38,7 +38,7 @@ export default function BudgetSelect({ info }: Props) {
     },
     close: {
       alignItems: 'flex-end',
-      padding: 16
+      padding: padding * 2
     },
   })
 

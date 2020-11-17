@@ -7,6 +7,7 @@ import { FormField, FormFieldType } from 'components/shared/screen/form/FormInpu
 import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
+import FormScreen from 'components/shared/screen/form/FormScreen'
 
 export default function TemplateLineCreateScreen() {
   const navigation = useNavigation()

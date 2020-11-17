@@ -22,7 +22,7 @@ type Props = {
 export default function BudgetRow({ budget }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+  const { styles, fontSize, padding } = AppStyles()
 
   const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budget.id })
 
@@ -64,7 +64,7 @@ export default function BudgetRow({ budget }: Props) {
               style={{
                 color: budget.balance.isNegative() ? 'red' : colors.secondary,
                 fontSize: fontSize,
-                paddingRight: 8
+                paddingRight: padding
               }}
             >
               {formatCurrency(budget.balance)}

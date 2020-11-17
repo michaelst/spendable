@@ -16,14 +16,14 @@ import AppStyles from 'constants/AppStyles'
 export default function BudgetsScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize, padding } = AppStyles()
+  const { styles } = AppStyles()
 
   const { data, loading, refetch } = useQuery<ListBudgets>(LIST_BUDGETS)
 
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Expense')}>
-        <Text style={{ color: colors.primary, fontSize: fontSize, paddingRight: padding }}>Add</Text>
+        <Text style={styles.headerButtonText}>Add</Text>
       </TouchableWithoutFeedback>
     )
   }

@@ -3,9 +3,10 @@ import { useTheme } from '@react-navigation/native'
 
 export default function AppStyles() {
   const { colors }: any = useTheme()
+
   const fontSize = 18
   const secondaryFontSize = 14
-  const padding = 20
+  const padding = 8
   
   const styles = StyleSheet.create({
     activityIndicator: {
@@ -24,7 +25,7 @@ export default function AppStyles() {
     rightText: {
       color: colors.secondary,
       fontSize: fontSize,
-      paddingRight: 8
+      paddingRight: padding
     },
     headerTitleText: {
       color: colors.text, 
@@ -34,8 +35,8 @@ export default function AppStyles() {
     headerButtonText: {
       color: colors.primary, 
       fontSize: fontSize, 
-      paddingLeft: padding,
-      paddingRight: padding
+      paddingLeft: padding * 2,
+      paddingRight: padding * 2
     },
     sectionHeaderText: {
       backgroundColor: colors.background,
@@ -52,7 +53,7 @@ export default function AppStyles() {
     deleteButtonText: {
       color: 'white',
       fontSize: fontSize,
-      padding: 10,
+      padding: padding,
       fontWeight: 'bold'
     },
     deleteButton: {
@@ -64,7 +65,7 @@ export default function AppStyles() {
     },
     row: {
       flexDirection: 'row',
-      padding: padding,
+      padding: padding * 2,
       alignItems: 'center',
       backgroundColor: colors.card,
       borderBottomColor: colors.border,
@@ -77,11 +78,11 @@ export default function AppStyles() {
       color: colors.secondary
     },
     sectionlistContentContainerStyle: {
-      paddingBottom: 36
+      paddingBottom: padding * 4
     },
     flatlistContentContainerStyle: {
-      paddingTop: 36,
-      paddingBottom: 36
+      paddingTop: padding * 4,
+      paddingBottom: padding * 4
     }
   })
 

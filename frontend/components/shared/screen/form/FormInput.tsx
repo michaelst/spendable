@@ -15,13 +15,14 @@ export type FormField = {
   key: string,
   placeholder: string,
   value: string,
-  setValue: Dispatch<SetStateAction<string>>,
+  setValue: any,
   type: FormFieldType
 }
 
 export enum FormFieldType {
   DecimalInput,
   StringInput,
+  MultiLineStringInput,
   BudgetSelect,
   DatePicker
 }
@@ -53,6 +54,7 @@ export default function FormInput({ info }: Props) {
           style={styles.formInputText}
           onChangeText={text => info.setValue(text)}
           value={info.value}
+          multiline={info.type === FormFieldType.MultiLineStringInput}
         />
       </View>
     </View>

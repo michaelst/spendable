@@ -12,18 +12,14 @@ import { AllocationInputObject } from "./../../../graphql/globalTypes";
 export interface CreateTransaction_createTransaction_allocations_budget {
   __typename: "Budget";
   id: string;
+  name: string;
 }
 
 export interface CreateTransaction_createTransaction_allocations {
   __typename: "Allocation";
   id: string;
-  budget: CreateTransaction_createTransaction_allocations_budget;
   amount: Decimal;
-}
-
-export interface CreateTransaction_createTransaction_category {
-  __typename: "Category";
-  id: string | null;
+  budget: CreateTransaction_createTransaction_allocations_budget;
 }
 
 export interface CreateTransaction_createTransaction {
@@ -34,7 +30,6 @@ export interface CreateTransaction_createTransaction {
   amount: Decimal;
   date: Date;
   allocations: CreateTransaction_createTransaction_allocations[];
-  category: CreateTransaction_createTransaction_category | null;
 }
 
 export interface CreateTransaction {

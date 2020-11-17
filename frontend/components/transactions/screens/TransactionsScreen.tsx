@@ -11,7 +11,7 @@ import { ListTransactions } from '../graphql/ListTransactions'
 export default function TransactionsScreen() {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize, padding } = AppStyles()
+  const { styles } = AppStyles()
 
   const { data, loading, fetchMore, refetch } = useQuery<ListTransactions>(LIST_TRANSACTIONS, {
     variables: {
@@ -22,7 +22,7 @@ export default function TransactionsScreen() {
   const headerRight = () => {
     return (
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Create Transaction')}>
-        <Text style={{ color: colors.primary, fontSize: fontSize, paddingRight: padding }}>Add</Text>
+        <Text style={styles.headerButtonText}>Add</Text>
       </TouchableWithoutFeedback>
     )
   }

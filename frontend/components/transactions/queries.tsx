@@ -11,23 +11,29 @@ export const LIST_TRANSACTIONS = gql`
   }
 `
 
+export const TRANSACTION_FRAGMENT = gql`
+  fragment TransactionFragment on Transaction {
+    id
+    name
+    note
+    amount
+    date
+    allocations {
+      id
+      amount
+      budget {
+        id
+        name
+      }
+    }
+  }
+`
+
 export const GET_TRANSACTION = gql`
+  ${TRANSACTION_FRAGMENT}
   query GetTransaction($id: ID!) {
     transaction(id: $id) {
-      name
-      note
-      amount
-      date
-      allocations {
-        id
-        budget {
-          id
-        }
-        amount
-      }
-      category {
-        id
-      }
+      ...TransactionFragment
       bankTransaction {
         name
         pending
@@ -37,6 +43,7 @@ export const GET_TRANSACTION = gql`
 `
 
 export const CREATE_TRANSACTION = gql`
+  ${TRANSACTION_FRAGMENT}
   mutation CreateTransaction($amount: String!, $name: String, $date: String, $note: String, $categoryId: ID, $allocations: [AllocationInputObject!]!) {
     createTransaction(
       amount: $amount
@@ -46,51 +53,23 @@ export const CREATE_TRANSACTION = gql`
       categoryId: $categoryId
       allocations: $allocations
     ) {
-      id
-      name
-      note
-      amount
-      date
-      allocations {
-        id
-        budget {
-          id
-        }
-        amount
-      }
-      category {
-        id
-      }
+      ...TransactionFragment
     }
   }
 `
 
 export const UPDATE_TRANSACTION = gql`
-  mutation UpdateTransaction($id: ID!, $amount: String!, $name: String, $date: String, $note: String, $categoryId: ID, $allocations: [AllocationInputObject!]!) {
+  ${TRANSACTION_FRAGMENT}
+  mutation UpdateTransaction($id: ID!, $amount: String!, $name: String, $date: String, $note: String, $allocations: [AllocationInputObject!]!) {
     updateTransaction(
       id: $id
       amount: $amount
       name: $name
       date: $date
       note: $note
-      categoryId: $categoryId
       allocations: $allocations
     ) {
-      id
-      amount
-      name
-      date
-      note
-      category {
-        id
-      }
-      allocations {
-        id
-        budget {
-          id
-        }
-        amount
-      }
+      ...TransactionFragment
     }
   }
 `

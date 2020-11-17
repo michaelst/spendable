@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
-import { Button, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import AppStyles from 'constants/AppStyles'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
@@ -14,14 +14,6 @@ export type DateField = {
   placeholder: string,
   value: Date,
   setValue: Dispatch<SetStateAction<Date>>,
-  type: FormFieldType
-}
-
-export enum FormFieldType {
-  DecimalInput,
-  StringInput,
-  BudgetSelect,
-  DatePicker
 }
 
 export default function DateInput({ info }: Props) {
