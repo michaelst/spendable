@@ -41,7 +41,7 @@
     "@babel/core": "^7.12.3",
     "@types/luxon": "^1.25.0",
     "@types/react": "^16.9.56",
-    "@types/react-native": "^0.63.35",
+    "@types/react-native": "^0.63.37",
     "babel-jest": "^26.6.3",
     "babel-preset-expo": "^8.3.0",
     "jest": "^26.6.3",
