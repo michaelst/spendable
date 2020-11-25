@@ -1,15 +1,21 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
+import { Text, View, } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
+
 import { RootStackParamList } from 'components/settings/Settings'
 import { CREATE_TEMPLATE_LINE, GET_TEMPLATE } from 'components/settings/queries'
-import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
 import { LIST_BUDGETS } from 'components/budgets/queries'
 import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
-import FormScreen from 'components/shared/screen/form/FormScreen'
+import AppStyles from 'constants/AppStyles'
+import FormInput from 'components/shared/screen/form/FormInput'
+import BudgetSelect from 'components/shared/screen/form/BudgetSelect'
 
 export default function TemplateLineCreateScreen() {
+  const { styles } = AppStyles()
+
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Create Template Line'>>()
   const { templateId } = route.params
@@ -42,23 +48,21 @@ export default function TemplateLineCreateScreen() {
     createTemplateLine()
     navigateToTemplate()
   }
+  
+  const headerRight = () => {
+    return (
+      <TouchableWithoutFeedback onPress={saveAndGoBack}>
+        <Text style={styles.headerButtonText}>Save</Text>
+      </TouchableWithoutFeedback>
+    )
+  }
 
-  const fields: FormField[] = [
-    {
-      key: 'Amount',
-      placeholder: 'Amount',
-      value: amount,
-      setValue: setAmount,
-      type: FormFieldType.DecimalInput
-    },
-    {
-      key: 'Expense/Goal',
-      placeholder: 'Expense/Goal',
-      value: budgetName,
-      setValue: setBudgetId,
-      type: FormFieldType.BudgetSelect
-    }
-  ]
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
 
-  return <FormScreen saveAndGoBack={saveAndGoBack} fields={fields} />
+  return (
+    <View>
+      <FormInput title='Amount' value={amount} setValue={setAmount} keyboardType='decimal-pad' />
+      <BudgetSelect title='Expense/Goal' value={budgetName} setValue={setBudgetId} />
+    </View>
+  )
 }

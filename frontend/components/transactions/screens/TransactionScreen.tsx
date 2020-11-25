@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import { RootStackParamList } from '../Transactions'
 import { GET_TRANSACTION, UPDATE_TRANSACTION } from '../queries'
 import { GetTransaction } from '../graphql/GetTransaction'
-import FormInput, { FormFieldType } from 'components/shared/screen/form/FormInput'
+import FormInput from 'components/shared/screen/form/FormInput'
 import AppStyles from 'constants/AppStyles'
 import DateInput from 'components/shared/screen/form/DateInput'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
@@ -84,43 +84,15 @@ export default function TransactionScreen() {
 
   return (
     <View>
-      <FormInput info={{
-        key: 'name',
-        placeholder: 'Name',
-        value: name,
-        setValue: setName,
-        type: FormFieldType.StringInput
-      }} />
-      <FormInput info={{
-        key: 'amount',
-        placeholder: 'Amount',
-        value: amount,
-        setValue: setAmount,
-        type: FormFieldType.DecimalInput
-      }} />
-      <DateInput info={{
-        key: 'date',
-        placeholder: 'Date',
-        value: date,
-        setValue: setDate
-      }} />
-      <FormInput info={{
-        key: 'note',
-        placeholder: 'Note',
-        value: note,
-        setValue: setNote,
-        type: FormFieldType.MultiLineStringInput
-      }} />
+      <FormInput title='Name' value={name} setValue={setName} />
+      <FormInput title='Amount' value={amount} setValue={setAmount} keyboardType='decimal-pad' />
+      <DateInput title='Date' value={date} setValue={setDate} />
+      <FormInput title='Note' value={note} setValue={setNote} multiline={true} />
       <Text style={{...styles.secondaryText, ...{paddingLeft: padding * 2, paddingTop: padding, paddingBottom: padding * 3}}}>
         Bank Memo: {getTransaction.data?.transaction.bankTransaction?.name}
       </Text>
-      <BudgetSelect info={{
-        key: 'spend-from',
-        placeholder: 'Spend From',
-        value: spendFromValue,
-        setValue: setSpendFrom,
-        type: FormFieldType.StringInput
-      }} />
+
+      <BudgetSelect title='Spend From' value={spendFromValue} setValue={setSpendFrom} />
     </View>
   )
 }

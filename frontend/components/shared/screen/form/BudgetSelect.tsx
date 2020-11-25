@@ -20,11 +20,7 @@ import { FormField } from './FormInput'
 import { CurrentUser } from 'components/headers/spendable-header/graphql/CurrentUser'
 import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
-type Props = {
-  info: FormField
-}
-
-export default function BudgetSelect({ info }: Props) {
+export default function BudgetSelect({ title, value, setValue }: FormField) {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
   const { styles, padding, fontSize } = AppStyles()
@@ -63,13 +59,13 @@ export default function BudgetSelect({ info }: Props) {
       <View style={styles.row}>
         <View style={{ flex: 1 }}>
           <Text style={styles.text}>
-            {info.placeholder}
+            {title}
           </Text>
         </View>
 
         <View style={{ flex: 1, flexDirection: "row" }}>
           <Text style={[styles.formInputText, { paddingRight: 8 }]}>
-            {info.value}
+            {value}
           </Text>
           <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
@@ -88,7 +84,7 @@ export default function BudgetSelect({ info }: Props) {
                   <BudgetRow 
                     budget={item} 
                     setBudgetId={(id) => {
-                      info.setValue(id)
+                      setValue(id)
                       setModalVisible(false)
                     }}
                   />

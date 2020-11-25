@@ -5,18 +5,13 @@ import AppStyles from 'constants/AppStyles'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { DateTime } from 'luxon'
 
-type Props = {
-  info: DateField
-}
-
 export type DateField = {
-  key: string,
-  placeholder: string,
+  title: string,
   value: Date,
   setValue: Dispatch<SetStateAction<Date>>,
 }
 
-export default function DateInput({ info }: Props) {
+export default function DateInput({ title, value, setValue }: DateField) {
   const { styles } = AppStyles()
 
   const [modalVisible, setModalVisible] = useState(false)
@@ -25,22 +20,22 @@ export default function DateInput({ info }: Props) {
     <View style={styles.row}>
       <View style={{ flex: 1 }}>
         <Text style={styles.text}>
-          {info.placeholder}
+          {title}
         </Text>
       </View>
 
       <View style={{ width: '70%' }}>
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
           <Text style={styles.formInputText}>
-            {DateTime.fromJSDate(info.value).toLocaleString(DateTime.DATE_MED)}
+            {DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED)}
           </Text>
         </TouchableWithoutFeedback>
         <DateTimePickerModal
           isVisible={modalVisible}
           mode="date"
-          date={info.value}
+          date={value}
           onConfirm={date => {
-            info.setValue(date)
+            setValue(date)
             setModalVisible(false)
           }}
           onCancel={() => setModalVisible(false)}

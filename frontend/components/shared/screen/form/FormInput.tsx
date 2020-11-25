@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React from 'react'
 import {
   Text,
   TextInput,
@@ -7,54 +7,33 @@ import {
 } from 'react-native'
 import AppStyles from 'constants/AppStyles'
 
-type Props = {
-  info: FormField
-}
-
 export type FormField = {
-  key: string,
-  placeholder: string,
-  value: string,
+  keyboardType?: KeyboardType,
+  multiline?: boolean
+  title: string,
   setValue: any,
-  type: FormFieldType
+  value: string,
 }
 
-export enum FormFieldType {
-  DecimalInput,
-  StringInput,
-  MultiLineStringInput,
-  BudgetSelect,
-  DatePicker
-}
-
-export default function FormInput({ info }: Props) {
+export default function FormInput({ title, value, setValue, keyboardType, multiline = false }: FormField) {
   const { styles } = AppStyles()
-
-  const keyboardType: KeyboardType = (() => {
-    switch(info.type) {
-      case FormFieldType.DecimalInput:
-        return 'decimal-pad' 
-      default:
-        return 'default'
-    }
-  })()
 
   return (
     <View style={styles.row}>
       <View style={{ flex: 1 }}>
         <Text style={styles.text}>
-          {info.placeholder}
+          {title}
         </Text>
       </View>
 
       <View style={{ width: '70%' }}>
         <TextInput
-          keyboardType={keyboardType}
+          keyboardType={keyboardType ?? 'default'}
           selectTextOnFocus={true}
           style={styles.formInputText}
-          onChangeText={text => info.setValue(text)}
-          value={info.value}
-          multiline={info.type === FormFieldType.MultiLineStringInput}
+          onChangeText={text => setValue(text)}
+          value={value}
+          multiline={multiline}
         />
       </View>
     </View>

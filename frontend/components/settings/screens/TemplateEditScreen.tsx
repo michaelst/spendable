@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
+import { Text, View, } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
+
 import { RootStackParamList } from 'components/settings/Settings'
 import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'components/settings/queries'
 import { GetAllocationTemplate } from 'components/settings/graphql/GetAllocationTemplate'
-import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
-import FormScreen from 'components/shared/screen/form/FormScreen'
+import AppStyles from 'constants/AppStyles'
+import FormInput from 'components/shared/screen/form/FormInput'
 
 export default function TemplateEditScreen() {
+  const { styles } = AppStyles()
+
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Edit Template'>>()
   const { templateId } = route.params
@@ -28,16 +33,19 @@ export default function TemplateEditScreen() {
     updateTemplate()
     navigateToTemplate()
   }
+  const headerRight = () => {
+    return (
+      <TouchableWithoutFeedback onPress={saveAndGoBack}>
+        <Text style={styles.headerButtonText}>Save</Text>
+      </TouchableWithoutFeedback>
+    )
+  }
 
-  const fields: FormField[] = [
-    {
-      key: 'name',
-      placeholder: 'Name',
-      value: name,
-      setValue: setName,
-      type: FormFieldType.StringInput
-    }
-  ]
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
 
-  return <FormScreen saveAndGoBack={saveAndGoBack} fields={fields} />
+  return (
+    <View>
+      <FormInput title='Name' value={name} setValue={setName} />
+    </View>
+  )
 }

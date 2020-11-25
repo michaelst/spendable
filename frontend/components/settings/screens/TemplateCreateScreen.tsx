@@ -1,12 +1,17 @@
-import React, { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import React, { useLayoutEffect, useState } from 'react'
+import { Text, View, } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
+import { useNavigation } from '@react-navigation/native'
+
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'components/settings/queries'
-import FormScreen from 'components/shared/screen/form/FormScreen'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
-import { FormField, FormFieldType } from 'components/shared/screen/form/FormInput'
+import AppStyles from 'constants/AppStyles'
+import FormInput from 'components/shared/screen/form/FormInput'
 
 export default function TemplateEditScreen() {
+  const { styles } = AppStyles()
+  
   const navigation = useNavigation()
 
   const [name, setName] = useState('')
@@ -30,16 +35,19 @@ export default function TemplateEditScreen() {
     createTemplate()
     navigateToTemplates()
   }
+  const headerRight = () => {
+    return (
+      <TouchableWithoutFeedback onPress={saveAndGoBack}>
+        <Text style={styles.headerButtonText}>Save</Text>
+      </TouchableWithoutFeedback>
+    )
+  }
 
-  const fields: FormField[] = [
-    {
-      key: 'name',
-      placeholder: 'Name',
-      value: name,
-      setValue: setName,
-      type: FormFieldType.StringInput
-    }
-  ]
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
 
-  return <FormScreen saveAndGoBack={saveAndGoBack} fields={fields} />
+  return (
+    <View>
+      <FormInput title='Name' value={name} setValue={setName} />
+    </View>
+  )
 }
