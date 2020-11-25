@@ -52,7 +52,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Spendable to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Spendable to access your device's accelerometer</string>
+	<string>Allow Spendable to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Spendable periences permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -78,6 +78,8 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
