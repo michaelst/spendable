@@ -30,7 +30,7 @@ defmodule Spendable.Budgets.Allocation.Types do
   end
 
   object :allocation_mutations do
-    field :create_allocation, :allocation do
+    field :create_allocation, non_null(:allocation) do
       middleware(CheckAuthentication)
       arg(:amount, non_null(:decimal))
       arg(:budget_id, non_null(:id))
@@ -38,7 +38,7 @@ defmodule Spendable.Budgets.Allocation.Types do
       resolve(&Resolver.create/2)
     end
 
-    field :update_allocation, :allocation do
+    field :update_allocation, non_null(:allocation) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Allocation)
       arg(:id, non_null(:id))
@@ -47,7 +47,7 @@ defmodule Spendable.Budgets.Allocation.Types do
       resolve(&Resolver.update/2)
     end
 
-    field :delete_allocation, :allocation do
+    field :delete_allocation, non_null(:allocation) do
       middleware(CheckAuthentication)
       middleware(LoadModel, module: Allocation)
       arg(:id, non_null(:id))
