@@ -27,7 +27,7 @@ export default function TransactionsScreen() {
     )
   }
 
-  useLayoutEffect(() => navigation.setOptions({headerRight: headerRight}))
+  useLayoutEffect(() => navigation.setOptions({ headerRight: headerRight }))
 
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
@@ -36,7 +36,7 @@ export default function TransactionsScreen() {
       contentContainerStyle={styles.flatlistContentContainerStyle}
       data={data?.transactions}
       renderItem={({ item }) => <TransactionRow transaction={item} />}
-      onEndReached={() => fetchMore({ variables: { offset: data?.transactions.length }})}
+      onEndReached={() => fetchMore({ variables: { offset: data?.transactions.length } })}
       onEndReachedThreshold={0.5}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     />

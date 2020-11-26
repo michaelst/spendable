@@ -89,6 +89,7 @@ export const DELETE_TRANSACTION = gql`
 `
 
 export const GET_ALLOCATION = gql`
+  ${ALLOCATION_FRAGMENT}
   query Allocation($id: ID!) {
     allocation(id: $id) {
       ...AllocationFragment
