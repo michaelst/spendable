@@ -3,7 +3,7 @@ defmodule Spendable.Repo.Migrations.AddUserToAllocations do
 
   def change do
     alter table(:budget_allocations) do
-      add :user_id, references(:users)
+      add :user_id, references(:users), null: false
     end
   end
 end
