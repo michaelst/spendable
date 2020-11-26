@@ -66,7 +66,7 @@ export const CREATE_TRANSACTION = gql`
 
 export const UPDATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation UpdateTransaction($id: ID!, $amount: String!, $name: String, $date: String, $note: String, $allocations: [AllocationInputObject!]!) {
+  mutation UpdateTransaction($id: ID!, $amount: String, $name: String, $date: String, $note: String, $allocations: [AllocationInputObject!]) {
     updateTransaction(
       id: $id
       amount: $amount

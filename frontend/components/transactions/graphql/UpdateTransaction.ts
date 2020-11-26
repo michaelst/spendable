@@ -38,9 +38,9 @@ export interface UpdateTransaction {
 
 export interface UpdateTransactionVariables {
   id: string;
-  amount: string;
+  amount?: string | null;
   name?: string | null;
   date?: string | null;
   note?: string | null;
-  allocations: AllocationInputObject[];
+  allocations?: AllocationInputObject[] | null;
 }
