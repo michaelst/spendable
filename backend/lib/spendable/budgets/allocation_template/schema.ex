@@ -17,6 +17,7 @@ defmodule Spendable.Budgets.AllocationTemplate do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, __schema__(:fields) -- [:id])
+    |> Spendable.Utils.Changeset.propogate_relation_id(:lines, :user_id)
     |> cast_assoc(:lines)
     |> validate_required([:user_id, :name])
   end

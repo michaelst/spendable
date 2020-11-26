@@ -8,7 +8,7 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Factory do
           user: attrs[:user]
         }
 
-        merge_attributes(line, Map.drop(attrs, [:user]))
+        merge_attributes(line, attrs)
       end
     end
   end

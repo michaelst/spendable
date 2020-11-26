@@ -1,5 +1,5 @@
 defmodule Spendable.Utils.Changeset do
-  def propogate_parent_key(%{params: params, data: data} = changeset, relation, key) do
+  def propogate_relation_id(%{params: params, data: data} = changeset, relation, key) do
     if is_nil(params["#{relation}"]) do
       changeset
     else
