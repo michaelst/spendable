@@ -45,7 +45,7 @@ export default function BudgetSelect({ title, value, setValue }: FormField) {
 
   const budgets = data?.budgets.filter(budget => !budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
   const goals = data?.budgets.filter(budget => budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
-  const spendable = {id: 'spendable', name: 'Spendable', balance: userData?.currentUser.spendable}
+  const spendable = { id: 'spendable', name: 'Spendable', balance: userData?.currentUser.spendable }
 
   const listData = [
     { title: "Expenses", data: [spendable].concat(budgets) },
@@ -63,12 +63,13 @@ export default function BudgetSelect({ title, value, setValue }: FormField) {
           </Text>
         </View>
 
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <Text style={[styles.formInputText, { paddingRight: 8 }]}>
+        <View style={{ flex: 1, flexDirection: "row", alignItems: 'center', paddingRight: padding }}>
+          <Text style={[styles.formInputText, { paddingRight: padding }]}>
             {value}
           </Text>
           <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
         </View>
+
         <Modal
           isVisible={modalVisible}
           style={localStyles.modal}>
@@ -81,8 +82,8 @@ export default function BudgetSelect({ title, value, setValue }: FormField) {
               sections={listData}
               renderItem={({ item }) => {
                 return (
-                  <BudgetRow 
-                    budget={item} 
+                  <BudgetRow
+                    budget={item}
                     setBudgetId={(id) => {
                       setValue(id)
                       setModalVisible(false)

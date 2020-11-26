@@ -9,7 +9,7 @@ import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/
 import { useQuery } from '@apollo/client'
 import { RootStackParamList } from 'components/settings/Settings'
 import { GET_TEMPLATE } from 'components/settings/queries'
-import { 
+import {
   GetAllocationTemplate,
   GetAllocationTemplate_allocationTemplate_lines as AllocationTemplateLine
 } from 'components/settings/graphql/GetAllocationTemplate'
@@ -29,7 +29,7 @@ export default function TemplateScreen() {
   const navigateToCreate = () => navigation.navigate('Create Template Line', { templateId: templateId })
   const navigateToEdit = () => navigation.navigate('Edit Template', { templateId: templateId })
   const headerRight = () => <HeaderButton text="Edit" onPress={navigateToEdit} />
-  
+
   const { data } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
 
   if (data?.allocationTemplate) {
@@ -56,7 +56,7 @@ export default function TemplateScreen() {
       renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} templateId={templateId} />
     },
   ]
-  
+
   return (
     <SectionList
       contentContainerStyle={styles.sectionlistContentContainerStyle}
@@ -64,7 +64,7 @@ export default function TemplateScreen() {
       renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       renderSectionFooter={() => (
         <TouchableHighlight onPress={navigateToCreate}>
-          <Text style={[styles.sectionFooterText, {color: colors.primary}]}>Add Expense/Goal</Text>
+          <Text style={[styles.sectionFooterText, { color: colors.primary }]}>Add Expense/Goal</Text>
         </TouchableHighlight>
       )}
       stickySectionHeadersEnabled={false}
