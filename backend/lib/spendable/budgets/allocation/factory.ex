@@ -8,7 +8,7 @@ defmodule Spendable.Budgets.Allocation.Factory do
           transaction: build(:transaction, user: attrs[:user])
         }
 
-        merge_attributes(allocation, Map.drop(attrs, [:user]))
+        merge_attributes(allocation, attrs)
       end
     end
   end

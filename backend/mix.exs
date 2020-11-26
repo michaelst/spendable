@@ -66,7 +66,7 @@ defmodule Spendable.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:protobuf, "~> 0.7.1"},
       {:sentry, "~> 8.0"},
-      {:tesla, "~> 1.3.2"}
+      {:tesla, "~> 1.4"}
     ]
   end
 

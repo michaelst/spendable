@@ -10,7 +10,7 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
     category_id = Repo.get_by!(Category, external_id: "22006001").id
     budget = insert(:budget, user: user)
     transaction = insert(:transaction, user: user)
-    allocation = insert(:allocation, transaction: transaction, budget: budget, amount: 25.24)
+    allocation = insert(:allocation, transaction: transaction, budget: budget, amount: 25.24, user: user)
 
     query = """
       mutation {
