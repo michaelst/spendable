@@ -88,6 +88,14 @@ export const DELETE_TRANSACTION = gql`
   }
 `
 
+export const GET_ALLOCATION = gql`
+  query Allocation($id: ID!) {
+    allocation(id: $id) {
+      ...AllocationFragment
+    }
+  }
+`
+
 export const CREATE_ALLOCATION = gql`
   ${ALLOCATION_FRAGMENT}
   mutation CreateAllocation($transactionId: ID!, $amount: Decimal!, $budgetId: ID!) {
