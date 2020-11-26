@@ -7,6 +7,7 @@ defmodule Spendable.Budgets.Allocation do
 
     belongs_to :budget, Spendable.Budgets.Budget
     belongs_to :transaction, Spendable.Transaction
+    belongs_to :user, Spendable.User
 
     timestamps()
   end

@@ -11,7 +11,19 @@ export const LIST_TRANSACTIONS = gql`
   }
 `
 
+export const ALLOCATION_FRAGMENT = gql`
+  fragment AllocationFragment on Allocation {
+    id
+    amount
+    budget {
+      id
+      name
+    }
+  }
+`
+
 export const TRANSACTION_FRAGMENT = gql`
+  ${ALLOCATION_FRAGMENT}
   fragment TransactionFragment on Transaction {
     id
     name
@@ -19,12 +31,7 @@ export const TRANSACTION_FRAGMENT = gql`
     amount
     date
     allocations {
-      id
-      amount
-      budget {
-        id
-        name
-      }
+      ...AllocationFragment
     }
   }
 `
@@ -59,7 +66,7 @@ export const CREATE_TRANSACTION = gql`
 
 export const UPDATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation UpdateTransaction($id: ID!, $amount: String!, $name: String, $date: String, $note: String, $allocations: [AllocationInputObject!]!) {
+  mutation UpdateTransaction($id: ID!, $amount: String, $name: String, $date: String, $note: String, $allocations: [AllocationInputObject!]) {
     updateTransaction(
       id: $id
       amount: $amount
@@ -76,6 +83,41 @@ export const UPDATE_TRANSACTION = gql`
 export const DELETE_TRANSACTION = gql`
   mutation DeleteTransaction($id: ID!) {
     deleteTransaction(id: $id) {
+      id
+    }
+  }
+`
+
+export const GET_ALLOCATION = gql`
+  ${ALLOCATION_FRAGMENT}
+  query Allocation($id: ID!) {
+    allocation(id: $id) {
+      ...AllocationFragment
+    }
+  }
+`
+
+export const CREATE_ALLOCATION = gql`
+  ${ALLOCATION_FRAGMENT}
+  mutation CreateAllocation($transactionId: ID!, $amount: Decimal!, $budgetId: ID!) {
+    createAllocation(transactionId: $transactionId, amount: $amount, budgetId: $budgetId) {
+      ...AllocationFragment
+    }
+  }
+`
+
+export const UPDATE_ALLOCATION = gql`
+  ${ALLOCATION_FRAGMENT}
+  mutation UpdateAllocation($id: ID!, $amount: Decimal, $budgetId: ID) {
+    updateAllocation(id: $id, amount: $amount, budgetId: $budgetId) {
+      ...AllocationFragment
+    }
+  }
+`
+
+export const DELETE_ALLOCATION = gql`
+  mutation DeleteAllocation($id: ID!) {
+    deleteAllocation(id: $id) {
       id
     }
   }

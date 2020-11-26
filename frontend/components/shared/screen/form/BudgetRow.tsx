@@ -17,7 +17,7 @@ type Props = {
 
 export default function BudgetRow({ budget, setBudgetId }: Props) {
   const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+  const { styles, fontSize, padding } = AppStyles()
 
   return (
     <TouchableHighlight onPress={() => setBudgetId(budget.id)}>
@@ -33,7 +33,7 @@ export default function BudgetRow({ budget, setBudgetId }: Props) {
             style={{
               color: budget.balance.isNegative() ? 'red' : colors.secondary,
               fontSize: fontSize,
-              paddingRight: 8
+              paddingRight: padding
             }}
           >
             {formatCurrency(budget.balance)}

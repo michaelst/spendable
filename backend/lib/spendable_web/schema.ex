@@ -19,6 +19,7 @@ defmodule Spendable.Web.Schema do
 
   query do
     field :health, :string, resolve: fn _args, _resolution -> {:ok, "up"} end
+    import_fields(:allocation_queries)
     import_fields(:allocation_template_line_queries)
     import_fields(:allocation_template_queries)
     import_fields(:bank_member_queries)
@@ -31,6 +32,7 @@ defmodule Spendable.Web.Schema do
   end
 
   mutation do
+    import_fields(:allocation_mutations)
     import_fields(:allocation_template_line_mutations)
     import_fields(:allocation_template_mutations)
     import_fields(:auth_mutations)

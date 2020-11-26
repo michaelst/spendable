@@ -25,6 +25,7 @@ defmodule Spendable.Transaction do
     model
     |> cast(params, __schema__(:fields) -- [:id])
     |> validate_required([:user_id, :amount, :date])
+    |> Spendable.Utils.Changeset.propogate_relation_id(:allocations, :user_id)
     |> cast_assoc(:allocations)
     |> maybe_put_tags(params)
   end

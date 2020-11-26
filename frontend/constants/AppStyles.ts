@@ -38,6 +38,13 @@ export default function AppStyles() {
       paddingLeft: padding * 2,
       paddingRight: padding * 2
     },
+    smallButtonText: {
+      color: colors.primary, 
+      fontSize: secondaryFontSize,
+      paddingTop: padding,
+      paddingLeft: padding * 2,
+      paddingRight: padding * 2
+    },
     sectionHeaderText: {
       backgroundColor: colors.background,
       color: colors.secondary,

@@ -20,7 +20,7 @@ type Props = {
   templateId: string
 }
 
-export default function TemplateRow({ line, templateId }: Props) {
+export default function TemplateLineRow({ line, templateId }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
   const { styles, fontSize } = AppStyles()
@@ -35,7 +35,7 @@ export default function TemplateRow({ line, templateId }: Props) {
 
       cache.writeQuery({
         query: GET_TEMPLATE,
-        data: { allocationTemplate: {...data?.allocationTemplate, ...{lines: lines}} }
+        data: { allocationTemplate: { ...data?.allocationTemplate, ...{ lines: lines } } }
       })
     }
   })
@@ -50,7 +50,7 @@ export default function TemplateRow({ line, templateId }: Props) {
 
   return (
     <TouchableHighlight onPress={navigateToEdit}>
-       <Swipeable
+      <Swipeable
         renderRightActions={renderRightActions}
         onSwipeableOpen={deleteAllocationTemplateLine}
       >

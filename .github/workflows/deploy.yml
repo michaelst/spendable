@@ -61,7 +61,7 @@ jobs:
 
       - name: Rollout Deploy
         run: |
-          helm upgrade --install spendable cloud-57/cloud-57 \
+          helm upgrade spendable cloud-57/cloud-57 \
           -f .devops/helm/values.yaml \
           --version v1.0.2 \
           --set image.repository=us.gcr.io/cloud-57/spendable-api \

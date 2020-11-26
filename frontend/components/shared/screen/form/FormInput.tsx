@@ -3,9 +3,13 @@ import {
   Text,
   TextInput,
   View,
-  KeyboardType
+  KeyboardType,
+  InputAccessoryView,
+  Button
 } from 'react-native'
 import AppStyles from 'constants/AppStyles'
+import { useTheme } from '@react-navigation/native'
+import Decimal from 'decimal.js-light'
 
 export type FormField = {
   keyboardType?: KeyboardType,
@@ -16,7 +20,8 @@ export type FormField = {
 }
 
 export default function FormInput({ title, value, setValue, keyboardType, multiline = false }: FormField) {
-  const { styles } = AppStyles()
+  const { styles, padding } = AppStyles()
+  const { colors }: any = useTheme()
 
   return (
     <View style={styles.row}>
@@ -34,8 +39,24 @@ export default function FormInput({ title, value, setValue, keyboardType, multil
           onChangeText={text => setValue(text)}
           value={value}
           multiline={multiline}
+          returnKeyType='done'
+          inputAccessoryViewID={keyboardType === 'decimal-pad' ? 'negate-' + title : 'none'}
         />
       </View>
+      {keyboardType === 'decimal-pad' ? (
+        <InputAccessoryView nativeID={'negate-' + title} backgroundColor={colors.card} style={{ padding: padding }}>
+          <View style={{ backgroundColor: colors.secondary, width: 36, borderRadius: 8 }}>
+            <Button
+              onPress={() => {
+                const decimalValue = new Decimal(value)
+                setValue(decimalValue.neg().toDecimalPlaces(2).toFixed(2))
+              }}
+              title="-"
+              color={colors.text}
+            />
+          </View>
+        </InputAccessoryView>
+      ) : null}
     </View>
   )
 }

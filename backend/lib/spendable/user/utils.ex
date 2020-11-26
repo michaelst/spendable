@@ -24,13 +24,12 @@ defmodule Spendable.User.Utils do
 
     allocations_query =
       from(a in Allocation,
-        join: b in assoc(a, :budget),
-        where: b.user_id == ^user.id,
+        where: a.user_id == ^user.id,
         select: %{
-          budget_id: b.id,
+          budget_id: a.budget_id,
           allocated: sum(a.amount)
         },
-        group_by: b.id
+        group_by: a.budget_id
       )
 
     allocated =
