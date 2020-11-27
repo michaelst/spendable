@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import {
   Text,
   TouchableHighlight,
@@ -12,9 +12,11 @@ import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'helpers/formatCurrency'
 import AppStyles from 'constants/AppStyles'
-import { ListTransactions, ListTransactions_transactions } from '../graphql/ListTransactions'
-import { DELETE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
+import { ListTransactions_transactions } from '../graphql/ListTransactions'
+import { DELETE_TRANSACTION } from '../queries'
 import { DateTime } from 'luxon'
+import { LIST_BUDGETS } from 'components/budgets/queries'
+import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
 type Props = {
   transaction: ListTransactions_transactions,
@@ -29,13 +31,10 @@ export default function TransactionRow({ transaction }: Props) {
 
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
     variables: { id: transaction.id },
+    refetchQueries: [{ query: LIST_BUDGETS }, { query: GET_SPENDABLE }],
     update(cache, { data: { deleteTransaction } }) {
-      const data = cache.readQuery<ListTransactions | null>({ query: LIST_TRANSACTIONS })
-
-      cache.writeQuery({
-        query: LIST_TRANSACTIONS,
-        data: { budgets: data?.transactions.filter(transaction => transaction.id !== deleteTransaction.id) }
-      })
+      cache.evict({ id: 'Transaction:' + deleteTransaction.id })
+      cache.gc()
     }
   })
 
@@ -51,11 +50,13 @@ export default function TransactionRow({ transaction }: Props) {
     <TouchableHighlight onPress={navigateToTransaction}>
       <Swipeable
         renderRightActions={renderRightActions}
-        onSwipeableOpen={deleteTransaction}
+        onSwipeableOpen={() => {
+          deleteTransaction()
+        }}
       >
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Text numberOfLines={1} style={{...styles.text, ...{paddingRight: 8}}}>
+            <Text numberOfLines={1} style={{ ...styles.text, ...{ paddingRight: 8 } }}>
               {transaction.name}
             </Text>
             <Text style={styles.secondaryText}>

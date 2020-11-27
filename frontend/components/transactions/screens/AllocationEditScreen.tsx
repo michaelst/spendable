@@ -12,6 +12,7 @@ import BudgetSelect from 'components/shared/screen/form/BudgetSelect'
 import { RootStackParamList } from 'components/transactions/Transactions'
 import { GET_ALLOCATION, UPDATE_ALLOCATION } from '../queries'
 import { Allocation } from '../graphql/Allocation'
+import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
 export default function AllocationEditScreen() {
   const { styles } = AppStyles()
@@ -39,7 +40,8 @@ export default function AllocationEditScreen() {
       id: allocationId,
       amount: amount,
       budgetId: budgetId,
-    }
+    },
+    refetchQueries: [{ query: LIST_BUDGETS }, { query: GET_SPENDABLE }]
   })
 
   const navigateToSpendFrom = () => navigation.navigate('Spend From', { transactionId: transactionId })

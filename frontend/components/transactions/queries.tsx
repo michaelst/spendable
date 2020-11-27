@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const LIST_TRANSACTIONS = gql`
-  query ListTransactions($offset: Int!){
+  query ListTransactions($offset: Int){
     transactions(offset: $offset) {
       id
       name
@@ -50,7 +50,7 @@ export const GET_TRANSACTION = gql`
 
 export const CREATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation CreateTransaction($amount: String!, $name: String, $date: String, $note: String, $categoryId: ID, $allocations: [AllocationInputObject!]!) {
+  mutation CreateTransaction($amount: String!, $name: String, $date: String!, $note: String, $categoryId: ID, $allocations: [AllocationInputObject!]) {
     createTransaction(
       amount: $amount
       name: $name

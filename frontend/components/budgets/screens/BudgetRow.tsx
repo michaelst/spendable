@@ -29,12 +29,8 @@ export default function BudgetRow({ budget }: Props) {
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
     variables: { id: budget.id },
     update(cache, { data: { deleteBudget } }) {
-      const data = cache.readQuery<ListBudgets | null>({ query: LIST_BUDGETS })
-
-      cache.writeQuery({
-        query: LIST_BUDGETS,
-        data: { budgets: data?.budgets.filter(budget => budget.id !== deleteBudget.id) }
-      })
+      cache.evict({ id: 'Budget:' + deleteBudget.id })
+      cache.gc()
     }
   })
 

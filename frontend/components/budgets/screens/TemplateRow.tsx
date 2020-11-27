@@ -18,12 +18,12 @@ type Props = {
 export default function TemplateRow({ templateLine }: Props) {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize} = AppStyles()
+  const { styles, fontSize } = AppStyles()
 
-  const navigateToTemplate = () => navigation.navigate('Settings', { 
-    screen: 'Template', 
+  const navigateToTemplate = () => navigation.navigate('Settings', {
+    screen: 'Template',
     initial: false,
-    params: { templateId: templateLine.allocationTemplate.id } 
+    params: { templateId: templateLine.allocationTemplate.id }
   })
 
   return (

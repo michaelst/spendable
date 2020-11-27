@@ -12,6 +12,7 @@ import BudgetSelect from 'components/shared/screen/form/BudgetSelect'
 import { RootStackParamList } from 'components/transactions/Transactions'
 import { GetTransaction } from '../graphql/GetTransaction'
 import { CREATE_ALLOCATION, GET_TRANSACTION } from '../queries'
+import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
 export default function AllocationCreateScreen() {
   const { styles } = AppStyles()
@@ -32,6 +33,7 @@ export default function AllocationCreateScreen() {
       budgetId: budgetId,
       transactionId: transactionId,
     },
+    refetchQueries: [{ query: LIST_BUDGETS }, { query: GET_SPENDABLE }],
     update(cache, { data: { createAllocation } }) {
       const data = cache.readQuery<GetTransaction | null>({ query: GET_TRANSACTION, variables: { id: transactionId } })
       const allocations = data?.transaction.allocations.concat([createAllocation])

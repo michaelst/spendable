@@ -21,13 +21,17 @@ export default function TransactionRow({ allocation }: Props) {
   const { colors }: any = useTheme()
   const { styles, fontSize } = AppStyles()
 
-  const navigateToTransaction = () => navigation.navigate('Transaction', { transactionId: allocation.transaction.id })
+  const navigateToTransaction = () => navigation.navigate('Transactions', {
+    screen: 'Transaction',
+    initial: false,
+    params: { transactionId: allocation.transaction.id }
+  })
 
   return (
     <TouchableHighlight onPress={navigateToTransaction}>
       <View style={styles.row}>
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{...styles.text, ...{paddingRight: 8}}}>
+          <Text numberOfLines={1} style={{ ...styles.text, ...{ paddingRight: 8 } }}>
             {allocation.transaction.name}
           </Text>
           <Text style={styles.secondaryText}>

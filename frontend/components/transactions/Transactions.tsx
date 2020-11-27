@@ -5,6 +5,7 @@ import TransactionsScreen from './screens/TransactionsScreen'
 import AppStyles from 'constants/AppStyles'
 import SpendableHeader from 'components/headers/spendable-header/SpendableHeader'
 import TransactionScreen from './screens/TransactionScreen'
+import TransactionCreateScreen from './screens/TransactionCreateScreen'
 import SpendFromScreen from './screens/SpendFromScreen'
 import AllocationCreateScreen from './screens/AllocationCreateScreen'
 import AllocationEditScreen from './screens/AllocationEditScreen'
@@ -12,6 +13,7 @@ import AllocationEditScreen from './screens/AllocationEditScreen'
 export type RootStackParamList = {
   Transactions: undefined,
   Transaction: { transactionId: string },
+  'Create Transaction': undefined,
   'Spend From': { transactionId: string },
   'Create Allocation': { transactionId: string },
   'Edit Allocation': { allocationId: string, transactionId: string },
@@ -33,6 +35,7 @@ export default function Budgets() {
     <Stack.Navigator>
       <Stack.Screen name="Transactions" component={TransactionsScreen} options={{ ...options, ...{ headerTitle: () => <SpendableHeader /> } }} />
       <Stack.Screen name="Transaction" component={TransactionScreen} options={options} />
+      <Stack.Screen name="Create Transaction" component={TransactionCreateScreen} options={options} />
       <Stack.Screen name="Spend From" component={SpendFromScreen} options={options} />
       <Stack.Screen name="Create Allocation" component={AllocationCreateScreen} options={options} />
       <Stack.Screen name="Edit Allocation" component={AllocationEditScreen} options={options} />

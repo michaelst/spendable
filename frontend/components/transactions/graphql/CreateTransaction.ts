@@ -39,8 +39,8 @@ export interface CreateTransaction {
 export interface CreateTransactionVariables {
   amount: string;
   name?: string | null;
-  date?: string | null;
+  date: string;
   note?: string | null;
   categoryId?: string | null;
-  allocations: AllocationInputObject[];
+  allocations?: AllocationInputObject[] | null;
 }

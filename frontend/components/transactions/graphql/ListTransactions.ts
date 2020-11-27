@@ -20,5 +20,5 @@ export interface ListTransactions {
 }
 
 export interface ListTransactionsVariables {
-  offset: number;
+  offset?: number | null;
 }

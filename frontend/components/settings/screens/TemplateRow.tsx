@@ -7,12 +7,12 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
-import { ListAllocationTemplates, ListAllocationTemplates_allocationTemplates } from '../graphql/ListAllocationTemplates'
+import { ListAllocationTemplates_allocationTemplates } from '../graphql/ListAllocationTemplates'
 import Decimal from 'decimal.js-light'
 import formatCurrency from 'helpers/formatCurrency'
 import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
-import { DELETE_TEMPLATE, LIST_TEMPLATES } from '../queries'
+import { DELETE_TEMPLATE } from '../queries'
 import { useMutation } from '@apollo/client'
 import AppStyles from 'constants/AppStyles'
 
@@ -30,12 +30,8 @@ export default function TemplateRow({ template }: Props) {
   const [deleteAllocationTemplate] = useMutation(DELETE_TEMPLATE, {
     variables: { id: template.id },
     update(cache, { data: { deleteAllocationTemplate } }) {
-      const data = cache.readQuery<ListAllocationTemplates | null>({ query: LIST_TEMPLATES })
-
-      cache.writeQuery({
-        query: LIST_TEMPLATES,
-        data: { allocationTemplates: data?.allocationTemplates.filter(template => template.id !== deleteAllocationTemplate.id) }
-      })
+      cache.evict({ id: 'AllocationTemplate:' + deleteAllocationTemplate.id })
+      cache.gc()
     }
   })
 

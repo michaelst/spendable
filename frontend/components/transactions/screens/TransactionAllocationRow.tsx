@@ -12,8 +12,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import AppStyles from 'constants/AppStyles'
-import { DELETE_ALLOCATION, GET_TRANSACTION } from '../queries'
-import { GetTransaction, GetTransaction_transaction_allocations } from '../graphql/GetTransaction'
+import { DELETE_ALLOCATION } from '../queries'
+import { GetTransaction_transaction_allocations } from '../graphql/GetTransaction'
 import Decimal from 'decimal.js-light'
 
 type Props = {
@@ -31,13 +31,8 @@ export default function TransactionAllocationRow({ allocation, transactionId }: 
   const [deleteAllocation] = useMutation(DELETE_ALLOCATION, {
     variables: { id: allocation.id },
     update(cache, { data: { deleteAllocation } }) {
-      const data = cache.readQuery<GetTransaction | null>({ query: GET_TRANSACTION, variables: { id: transactionId } })
-      const allocations = data?.transaction.allocations.filter(a => a.id !== deleteAllocation.id)
-
-      cache.writeQuery({
-        query: GET_TRANSACTION,
-        data: { transaction: { ...data?.transaction, ...{ allocations: allocations } } }
-      })
+      cache.evict({ id: 'Allocation:' + deleteAllocation.id })
+      cache.gc()
     }
   })
 

@@ -13,11 +13,7 @@ export default function TransactionsScreen() {
   const { colors }: any = useTheme()
   const { styles } = AppStyles()
 
-  const { data, loading, fetchMore, refetch } = useQuery<ListTransactions>(LIST_TRANSACTIONS, {
-    variables: {
-      offset: 0
-    }
-  })
+  const { data, loading, refetch } = useQuery<ListTransactions>(LIST_TRANSACTIONS)
 
   const headerRight = () => {
     return (
@@ -34,10 +30,8 @@ export default function TransactionsScreen() {
   return (
     <FlatList
       contentContainerStyle={styles.flatlistContentContainerStyle}
-      data={data?.transactions}
+      data={[...data?.transactions ?? []].sort((a, b) => b.date - a.date)}
       renderItem={({ item }) => <TransactionRow transaction={item} />}
-      onEndReached={() => fetchMore({ variables: { offset: data?.transactions.length } })}
-      onEndReachedThreshold={0.5}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     />
   )

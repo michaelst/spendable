@@ -40,13 +40,6 @@ export default function TransactionScreen() {
 
   useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
 
-  const { refetch: refetchBudgets } = useQuery<ListBudgets>(LIST_BUDGETS)
-  const { refetch: refetchSpendable } = useQuery<CurrentUser>(GET_SPENDABLE)
-  const refetch = () => {
-    refetchBudgets()
-    refetchSpendable()
-  }
-
   const { data } = useQuery<GetTransaction>(GET_TRANSACTION, {
     variables: { id: transactionId },
     onCompleted: data => {
@@ -57,7 +50,9 @@ export default function TransactionScreen() {
     }
   })
 
-  const [updateTransaction] = useMutation(UPDATE_TRANSACTION)
+  const [updateTransaction] = useMutation(UPDATE_TRANSACTION, {
+    refetchQueries: [{ query: LIST_BUDGETS }, { query: GET_SPENDABLE }]
+  })
 
   if (!data?.transaction) {
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
@@ -95,7 +90,7 @@ export default function TransactionScreen() {
         name: name,
         note: note
       }
-    }).then(() => refetch())
+    })
     navigateToTransactions()
   }
 
@@ -105,30 +100,35 @@ export default function TransactionScreen() {
       <FormInput title='Amount' value={amount} setValue={setAmount} keyboardType='decimal-pad' />
       <DateInput title='Date' value={date} setValue={setDate} />
       <FormInput title='Note' value={note} setValue={setNote} multiline={true} />
-      <Text style={{ ...styles.secondaryText, ...{ padding: padding * 2, paddingTop: padding, paddingBottom: padding * 3 } }}>
-        Bank Memo: {data?.transaction.bankTransaction?.name}
-      </Text>
 
-      {allocations.length <= 1
-        ? <BudgetSelect title='Spend From' value={spendFromValue} setValue={setSpendFrom} />
-        : (
-          <TouchableHighlight onPress={navigateToSpendFrom}>
-            <View style={styles.row}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.text}>
-                  Spend From
-                </Text>
-              </View>
+      {data.transaction.bankTransaction ? (
+        <Text style={{ ...styles.secondaryText, ...{ padding: padding * 2, paddingTop: padding } }}>
+          Bank Memo: {data?.transaction.bankTransaction?.name}
+        </Text>
+      ) : null}
 
-              <View style={{ flex: 1, flexDirection: "row", alignItems: 'center', paddingRight: padding }}>
-                <Text style={[styles.formInputText, { paddingRight: padding }]}>
-                  {spendFromValue}
+      <View style={{ paddingTop: padding * 3 }}>
+        {allocations.length <= 1
+          ? <BudgetSelect title='Spend From' value={spendFromValue} setValue={setSpendFrom} />
+          : (
+            <TouchableHighlight onPress={navigateToSpendFrom}>
+              <View style={styles.row}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.text}>
+                    Spend From
                 </Text>
-                <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+                </View>
+
+                <View style={{ flex: 1, flexDirection: "row", alignItems: 'center', paddingRight: padding }}>
+                  <Text style={[styles.formInputText, { paddingRight: padding }]}>
+                    {spendFromValue}
+                  </Text>
+                  <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+                </View>
               </View>
-            </View>
-          </TouchableHighlight>
-        )}
+            </TouchableHighlight>
+          )}
+      </View>
 
       <View style={{ flexDirection: "row" }}>
         <View style={{ flexDirection: "row", width: '50%' }}>
