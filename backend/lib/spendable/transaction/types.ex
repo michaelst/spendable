@@ -23,7 +23,7 @@ defmodule Spendable.Transaction.Types do
   object :transaction_queries do
     field :transactions, :transaction |> non_null |> list_of |> non_null do
       middleware(CheckAuthentication)
-      arg(:offset, non_null(:integer))
+      arg(:offset, :integer)
       resolve(&Resolver.list/2)
     end
 
@@ -38,12 +38,12 @@ defmodule Spendable.Transaction.Types do
   object :transaction_mutations do
     field :create_transaction, non_null(:transaction) do
       middleware(CheckAuthentication)
-      arg(:amount, :string)
+      arg(:amount, non_null(:string))
       arg(:category_id, :id)
-      arg(:date, :string)
+      arg(:date, non_null(:string))
       arg(:name, :string)
       arg(:note, :string)
-      arg(:allocations, :allocation_input_object |> non_null |> list_of |> non_null)
+      arg(:allocations, :allocation_input_object |> non_null |> list_of)
       arg(:tag_ids, list_of(:id))
       resolve(&Resolver.create/2)
     end
