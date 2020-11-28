@@ -8,15 +8,14 @@ import { useMutation, useQuery } from '@apollo/client'
 import { GET_TRANSACTION, UPDATE_TRANSACTION } from '../queries'
 import { GetTransaction } from '../graphql/GetTransaction'
 import { LIST_BUDGETS } from 'components/budgets/queries'
-import { ListBudgets } from 'components/budgets/graphql/ListBudgets'
 import { RootStackParamList } from '../Transactions'
 import AppStyles from 'constants/AppStyles'
 import BudgetSelect from 'components/shared/screen/form/BudgetSelect'
 import DateInput from 'components/shared/screen/form/DateInput'
 import FormInput from 'components/shared/screen/form/FormInput'
 import getAllocations from '../helpers/getAllocations'
-import { CurrentUser } from 'components/headers/spendable-header/graphql/CurrentUser'
 import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
+import TemplateSelect from './TemplateSelect'
 
 export default function TransactionScreen() {
   const { colors }: any = useTheme()
@@ -137,9 +136,7 @@ export default function TransactionScreen() {
           </TouchableHighlight>
         </View>
         <View style={{ flexDirection: "row", justifyContent: 'flex-end', width: '50%' }}>
-          <TouchableHighlight onPress={() => { }}>
-            <Text style={styles.smallButtonText}>Apply Template</Text>
-          </TouchableHighlight>
+          <TemplateSelect setValue={allocations => updateTransaction({ variables: { id: transactionId, allocations: allocations } })} />
         </View>
       </View>
     </View>

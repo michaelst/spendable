@@ -7,9 +7,15 @@
 // GraphQL query operation: ListAllocationTemplates
 // ====================================================
 
+export interface ListAllocationTemplates_allocationTemplates_lines_budget {
+  __typename: "Budget";
+  id: string;
+}
+
 export interface ListAllocationTemplates_allocationTemplates_lines {
   __typename: "AllocationTemplateLine";
   amount: Decimal;
+  budget: ListAllocationTemplates_allocationTemplates_lines_budget;
 }
 
 export interface ListAllocationTemplates_allocationTemplates {

@@ -79,6 +79,9 @@ export const LIST_TEMPLATES = gql`
       name
       lines {
         amount
+        budget {
+          id
+        }
       }
     }
   }
