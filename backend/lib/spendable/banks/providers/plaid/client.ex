@@ -24,8 +24,9 @@ defmodule Plaid do
   def institution(id) do
     client()
     |> Tesla.post("/institutions/get_by_id", %{
+      client_id: Application.get_env(:spendable, Plaid)[:client_id],
+      secret: Application.get_env(:spendable, Plaid)[:secret_key],
       institution_id: id,
-      public_key: Application.get_env(:spendable, Plaid)[:public_key],
       options: %{
         include_optional_metadata: true
       }

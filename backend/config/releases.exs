@@ -18,8 +18,7 @@ config :pigeon, :apns,
 
 config :spendable, Plaid,
   client_id: File.read!("/etc/secrets/PLAID_CLIENT_ID"),
-  secret_key: File.read!("/etc/secrets/PLAID_SECRET_KEY"),
-  public_key: File.read!("/etc/secrets/PLAID_PUBLIC_KEY")
+  secret_key: File.read!("/etc/secrets/PLAID_SECRET_KEY")
 
 config :sentry,
   dsn: File.read!("/etc/secrets/SENTRY_DSN")

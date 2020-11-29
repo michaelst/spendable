@@ -17,7 +17,7 @@ export default function BankMembersScreen() {
   const { styles } = AppStyles()
 
   const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
-  const { data: plaidData } = useQuery<GetPlaidLinkToken>(GET_PLAID_LINK_TOKEN)
+  const { data: plaidData } = useQuery<GetPlaidLinkToken>(GET_PLAID_LINK_TOKEN, { fetchPolicy: 'no-cache' })
 
   const [createBankMember] = useMutation(CREATE_BANK_MEMBER, {
     update(cache, { data: { createBankMember } }) {

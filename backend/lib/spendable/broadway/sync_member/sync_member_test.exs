@@ -24,7 +24,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
         method: :post,
         url: "https://sandbox.plaid.com/institutions/get_by_id",
         body:
-          "{\"institution_id\":\"ins_109511\",\"options\":{\"include_optional_metadata\":true},\"public_key\":\"test\"}"
+          "{\"client_id\":\"test\",\"institution_id\":\"ins_109511\",\"options\":{\"include_optional_metadata\":true},\"secret\":\"test\"}"
       } ->
         json(TestData.institution())
 
