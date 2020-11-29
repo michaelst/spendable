@@ -50,6 +50,20 @@ defmodule Plaid do
     })
   end
 
+  def create_link_token(user_id) do
+    client()
+    |> Tesla.post("/link/token/create", %{
+      client_id: Application.get_env(:spendable, Plaid)[:client_id],
+      client_name: "Spendable",
+      country_codes: ["US"],
+      language: "en",
+      products: ["transactions"],
+      secret: Application.get_env(:spendable, Plaid)[:secret_key],
+      user: %{client_user_id: "#{user_id}"},
+      webhook: "https://spendable.money/plaid/webhook"
+    })
+  end
+
   def accounts(token) do
     client()
     |> Tesla.post("/accounts/get", %{

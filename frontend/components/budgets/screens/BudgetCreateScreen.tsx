@@ -44,8 +44,8 @@ export default function BudgetCreateScreen() {
     navigateToBudgets()
   }
 
-  const headerLeft = () => <HeaderButton text="Cancel" onPress={navigateToBudgets} />
-  const headerRight = () => <HeaderButton text="Save" onPress={createAndGoBack} />
+  const headerLeft = () => <HeaderButton title="Cancel" onPress={navigateToBudgets} />
+  const headerRight = () => <HeaderButton title="Save" onPress={createAndGoBack} />
 
   useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
 
