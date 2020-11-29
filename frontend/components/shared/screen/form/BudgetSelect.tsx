@@ -78,7 +78,7 @@ export default function BudgetSelect({ title, value, setValue }: FormField) {
               <Ionicons name='ios-close' size={32} color={colors.text} />
             </TouchableHighlight>
             <SectionList
-              contentContainerStyle={styles.sectionlistContentContainerStyle}
+              contentContainerStyle={styles.sectionListContentContainerStyle}
               sections={listData}
               renderItem={({ item }) => {
                 return (

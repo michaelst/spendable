@@ -28,7 +28,7 @@ export default function BudgetsScreen() {
     )
   }
 
-  useLayoutEffect(() => navigation.setOptions({headerRight: headerRight}))
+  useLayoutEffect(() => navigation.setOptions({ headerRight: headerRight }))
 
   const budgets = data?.budgets.filter(budget => !budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []
   const goals = data?.budgets.filter(budget => budget.goal).sort((a, b) => b.balance.comparedTo(a.balance)) ?? []

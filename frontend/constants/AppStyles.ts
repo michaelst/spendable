@@ -84,7 +84,7 @@ export default function AppStyles() {
       fontSize: fontSize,
       color: colors.secondary
     },
-    sectionlistContentContainerStyle: {
+    sectionListContentContainerStyle: {
       paddingBottom: padding * 4
     },
     flatlistContentContainerStyle: {

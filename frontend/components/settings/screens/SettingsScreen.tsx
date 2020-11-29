@@ -69,11 +69,11 @@ const notificationsRow = () => {
   const { styles, padding } = AppStyles()
   const [id, setId] = useState<string | null>(null)
   const [enabled, setEnabled] = useState(false)
-  const  { deviceToken } = useContext(TokenContext)
+  const { deviceToken } = useContext(TokenContext)
 
   PushNotificationIOS.requestPermissions()
-  
-  useQuery<GetNotificationSettings>(GET_NOTIFICATION_SETTINGS, { 
+
+  useQuery<GetNotificationSettings>(GET_NOTIFICATION_SETTINGS, {
     variables: { deviceToken: deviceToken },
     onCompleted: data => {
       setId(data.notificationSettings.id)
@@ -81,10 +81,10 @@ const notificationsRow = () => {
     }
   })
 
-  const [ updateNotificationSettings ] = useMutation<UpdateNotificationSettings>(UPDATE_NOTIFICATION_SETTINGS)
+  const [updateNotificationSettings] = useMutation<UpdateNotificationSettings>(UPDATE_NOTIFICATION_SETTINGS)
 
   const toggleSwitch = () => {
-    updateNotificationSettings({ variables: { id: id, enabled: !enabled}})
+    updateNotificationSettings({ variables: { id: id, enabled: !enabled } })
     setEnabled(!enabled)
   }
 
@@ -99,7 +99,7 @@ const notificationsRow = () => {
       <View style={{ flexDirection: "row", paddingRight: padding }}>
         <Switch
           onValueChange={(toggleSwitch)}
-          value={enabled} 
+          value={enabled}
         />
       </View>
     </View>
@@ -133,7 +133,7 @@ const logoutRow = () => {
 
 export default function SettingsScreen() {
   const { styles } = AppStyles()
-  
+
   const firstSection = [
     { key: 'banks', view: bankRow() },
     { key: 'templates', view: templatesRow() },
@@ -155,7 +155,7 @@ export default function SettingsScreen() {
 
   return (
     <SectionList
-      contentContainerStyle={styles.sectionlistContentContainerStyle}
+      contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={listData}
       renderItem={({ item }) => item.view}
       stickySectionHeadersEnabled={false}

@@ -59,7 +59,7 @@ export default function TemplateScreen() {
 
   return (
     <SectionList
-      contentContainerStyle={styles.sectionlistContentContainerStyle}
+      contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={sections}
       renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
       renderSectionFooter={() => (

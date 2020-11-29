@@ -58,7 +58,7 @@ export default function TemplateSelect({ setValue }: Props) {
               <Ionicons name='ios-close' size={32} color={colors.text} />
             </TouchableHighlight>
             <FlatList
-              contentContainerStyle={styles.sectionlistContentContainerStyle}
+              contentContainerStyle={styles.sectionListContentContainerStyle}
               data={data?.allocationTemplates}
               renderItem={({ item }: { item: ListAllocationTemplates_allocationTemplates }) => {
                 const allocated = item.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))

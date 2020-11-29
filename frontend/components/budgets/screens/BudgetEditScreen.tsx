@@ -13,6 +13,7 @@ import { GET_BUDGET, UPDATE_BUDGET } from 'components/budgets/queries'
 import { GetBudget } from 'components/budgets/graphql/GetBudget'
 import AppStyles from 'constants/AppStyles'
 import HeaderButton from 'components/shared/components/HeaderButton'
+import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 
 export default function BudgetEditScreen() {
   const { styles } = AppStyles()
@@ -33,7 +34,8 @@ export default function BudgetEditScreen() {
       name: name,
       balance: balance,
       goal: goal === '' ? null : goal
-    }
+    },
+    refetchQueries: [{ query: GET_SPENDABLE }]
   })
 
 
