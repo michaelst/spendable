@@ -15,7 +15,7 @@ type Props = {
 export default function BankAccountRow({ bankAccount }: Props) {
   const { styles } = AppStyles()
 
-  const [updateBankAccount] = useMutation<UpdateBankAccount>(UPDATE_BANK_ACCOUNT, { variables: { id: bankAccount.id } })
+  const [updateBankAccount] = useMutation<UpdateBankAccount>(UPDATE_BANK_ACCOUNT)
 
   return (
     <View style={styles.row}>
@@ -31,7 +31,7 @@ export default function BankAccountRow({ bankAccount }: Props) {
       <View style={{ flexDirection: "row", marginLeft: 18 }}>
         <Switch
           value={bankAccount.sync}
-          onValueChange={value => updateBankAccount({ variables: { sync: value } })}
+          onValueChange={value => updateBankAccount({ variables: { id: bankAccount.id, sync: value } })}
         />
       </View>
     </View>
