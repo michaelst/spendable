@@ -29,8 +29,8 @@ export default function BudgetScreen() {
   const { budgetId } = route.params
 
   const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
-  const headerRight = () => <HeaderButton text="Edit" onPress={navigateToEdit} />
-  
+  const headerRight = () => <HeaderButton title="Edit" onPress={navigateToEdit} />
+
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId }, fetchPolicy: 'cache-and-network' })
 
   if (data?.budget) {

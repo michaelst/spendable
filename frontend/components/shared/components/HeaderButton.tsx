@@ -4,16 +4,16 @@ import { Text } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 type Props = {
-  text: string,
+  title: string,
   onPress: () => void
 }
 
-export default function HeaderButton({ text, onPress }: Props) {
+export default function HeaderButton({ title, onPress }: Props) {
   const { styles } = AppStyles()
 
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <Text style={styles.headerButtonText}>{text}</Text>
+      <Text style={styles.headerButtonText}>{title}</Text>
     </TouchableWithoutFeedback>
   )
 } 

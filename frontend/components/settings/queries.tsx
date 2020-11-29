@@ -1,5 +1,14 @@
 import { gql } from "@apollo/client";
 
+export const GET_PLAID_LINK_TOKEN = gql`
+  query GetPlaidLinkToken{
+    currentUser {
+      id
+      plaidLinkToken
+    }
+  }
+`
+
 export const GET_NOTIFICATION_SETTINGS = gql`
 query GetNotificationSettings($deviceToken: String!) {
   notificationSettings(deviceToken: $deviceToken) {

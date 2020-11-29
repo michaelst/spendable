@@ -43,7 +43,7 @@ export default function BudgetEditScreen() {
     navigateToBudget()
   }
 
-  const headerRight = () => <HeaderButton text="Save" onPress={updateAndGoBack} />
+  const headerRight = () => <HeaderButton title="Save" onPress={updateAndGoBack} />
 
   useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
 

@@ -30,7 +30,7 @@
     "react-native-gesture-handler": "^1.9.0",
     "react-native-modal": "^11.5.6",
     "react-native-modal-datetime-picker": "^9.1.0",
-    "react-native-plaid-link-sdk": "^5.0.2",
+    "react-native-plaid-link-sdk": "^6.0.4",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.15.0",

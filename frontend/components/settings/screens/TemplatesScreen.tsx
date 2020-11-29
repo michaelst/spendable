@@ -16,7 +16,7 @@ export default function TemplatesScreen() {
   const { styles } = AppStyles()
 
   const navigateToCreateTemplate = () => navigation.navigate('Create Template')
-  const headerRight = () => <HeaderButton text="Add" onPress={navigateToCreateTemplate} />
+  const headerRight = () => <HeaderButton title="Add" onPress={navigateToCreateTemplate} />
 
   const { data, loading, refetch } = useQuery<ListAllocationTemplates>(LIST_TEMPLATES)
 
@@ -27,7 +27,7 @@ export default function TemplatesScreen() {
   const templates = [...data?.allocationTemplates ?? []].sort((a, b) => {
     const aAllocated = a.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
     const bAllocated = b.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
-    
+
     return bAllocated.comparedTo(aAllocated)
   })
 

@@ -28,7 +28,7 @@ export default function TemplateScreen() {
 
   const navigateToCreate = () => navigation.navigate('Create Template Line', { templateId: templateId })
   const navigateToEdit = () => navigation.navigate('Edit Template', { templateId: templateId })
-  const headerRight = () => <HeaderButton text="Edit" onPress={navigateToEdit} />
+  const headerRight = () => <HeaderButton title="Edit" onPress={navigateToEdit} />
 
   const { data } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
 

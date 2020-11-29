@@ -6,7 +6,7 @@ defmodule Spendable.User.Types do
   alias Spendable.User.Utils
 
   object :user do
-    field :id, :id
+    field :id, non_null(:id)
     field :bank_limit, non_null(:integer)
     field :email, :string
     field :token, :string
@@ -16,6 +16,16 @@ defmodule Spendable.User.Types do
 
       resolve(fn user, _args, _resolution ->
         {:ok, Utils.calculate_spendable(user)}
+      end)
+    end
+
+    field :plaid_link_token, non_null(:string) do
+      complexity(50)
+
+      resolve(fn user, _args, _resolution ->
+        with {:ok, %{body: %{"link_token" => token}}} <- Plaid.create_link_token(user.id) do
+          {:ok, token}
+        end
       end)
     end
   end

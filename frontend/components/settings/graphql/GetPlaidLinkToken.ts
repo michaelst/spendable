@@ -4,15 +4,15 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: CurrentUser
+// GraphQL query operation: GetPlaidLinkToken
 // ====================================================
 
-export interface CurrentUser_currentUser {
+export interface GetPlaidLinkToken_currentUser {
   __typename: "User";
   id: string;
-  spendable: Decimal;
+  plaidLinkToken: string;
 }
 
-export interface CurrentUser {
-  currentUser: CurrentUser_currentUser;
+export interface GetPlaidLinkToken {
+  currentUser: GetPlaidLinkToken_currentUser;
 }
