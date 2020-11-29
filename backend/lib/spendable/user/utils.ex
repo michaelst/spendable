@@ -36,7 +36,8 @@ defmodule Spendable.User.Utils do
       from(a in subquery(allocations_query),
         full_join: b in Budget,
         on: a.budget_id == b.id,
-        select: fragment("SUM(ABS(COALESCE(?, 0) + ?))", a.allocated, b.adjustment)
+        select: fragment("SUM(ABS(COALESCE(?, 0) + ?))", a.allocated, b.adjustment),
+        where: b.user_id == ^user.id
       )
       |> Repo.one()
       |> Kernel.||("0.00")
