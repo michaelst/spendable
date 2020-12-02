@@ -1,5 +1,5 @@
-defmodule Spendable.Guardian do
-  use GuardianFirebase, otp_app: :spendable
+defmodule Spendable.Auth.Guardian do
+  use Guardian, otp_app: :spendable
 
   import Ecto.Query
 

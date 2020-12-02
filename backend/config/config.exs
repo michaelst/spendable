@@ -37,10 +37,11 @@ config :sentry,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :spendable, Spendable.Guardian,
-  issuer: "Spendable",
-  ttl: {365, :days},
-  secret_key: "TZc05TFSvH7nzsbhKVTs9++F3X8e/cmnk/UHM9chuEhhKRygFmBnqc+TUvjirMZP"
+config :spendable, Spendable.Auth.Guardian,
+  issuer: "https://securetoken.google.com/cloud-57",
+  verify_issuer: true,
+  allowed_algos: ["RS256"],
+  secret_fetcher: Spendable.Auth.Guardian.KeyServer
 
 config :tesla, Tesla.Adapter.Mint, timeout: 30000
 

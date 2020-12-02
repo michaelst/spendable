@@ -7,8 +7,6 @@ config :spendable, Spendable.Repo,
   username: System.fetch_env!("DB_USERNAME"),
   password: File.read!("/etc/secrets/DB_PASSWORD")
 
-config :spendable, Spendable.Guardian, secret_key: File.read!("/etc/secrets/GUARDIAN_SECRET")
-
 config :pigeon, :apns,
   apns_default: %{
     cert: File.read!("/etc/secrets/APNS_CERT"),
