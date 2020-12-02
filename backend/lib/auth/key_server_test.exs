@@ -1,8 +1,8 @@
 defmodule Spendable.Auth.Guardian.KeyServerTest do
   use Spendable.DataCase, async: true
 
-  alias Spendable.Auth.Guardian.KeyServer
   alias Spendable.Auth.Guardian
+  alias Spendable.Auth.Guardian.KeyServer
 
   test "fetch verifying secret" do
     kid = "9ad0cb7c0f55902f97dc5245a8e7971f18d9c766"
