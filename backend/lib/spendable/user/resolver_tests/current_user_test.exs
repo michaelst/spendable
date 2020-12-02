@@ -81,4 +81,30 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
               }
             }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{current_user: user})
   end
+
+  test "unauthenticated", %{conn: conn} do
+    query = """
+      query {
+        currentUser {
+          plaidLinkToken
+        }
+      }
+    """
+
+    response =
+      conn
+      |> post("/graphql", %{query: query})
+      |> json_response(200)
+
+    assert %{
+             "data" => nil,
+             "errors" => [
+               %{
+                 "locations" => [%{"column" => 5, "line" => 2}],
+                 "message" => "unauthenticated",
+                 "path" => ["currentUser"]
+               }
+             ]
+           } = response
+  end
 end
