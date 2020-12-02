@@ -2,8 +2,8 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  test "list members", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "list members" do
+    user = Spendable.TestUtils.create_user()
     member = insert(:bank_member, user: user)
 
     checking_account =
@@ -31,32 +31,27 @@ defmodule Spendable.Banks.Member.Resolver.ListTest do
     }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "bankMembers" => [
-                 %{
-                   "bankAccounts" => [
-                     %{"balance" => "100.00", "id" => "#{checking_account.id}", "name" => "Checking", "sync" => true},
-                     %{
-                       "balance" => "-1025.00",
-                       "id" => "#{credit_account.id}",
-                       "name" => "Credit Card",
-                       "sync" => true
-                     },
-                     %{"balance" => "500.00", "id" => "#{savings_account.id}", "name" => "Savings", "sync" => true}
-                   ],
-                   "id" => "#{member.id}",
-                   "name" => "Plaid",
-                   "status" => "Connected"
-                 }
-               ]
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "bankMembers" => [
+                  %{
+                    "bankAccounts" => [
+                      %{"balance" => "100.00", "id" => "#{checking_account.id}", "name" => "Checking", "sync" => true},
+                      %{
+                        "balance" => "-1025.00",
+                        "id" => "#{credit_account.id}",
+                        "name" => "Credit Card",
+                        "sync" => true
+                      },
+                      %{"balance" => "500.00", "id" => "#{savings_account.id}", "name" => "Savings", "sync" => true}
+                    ],
+                    "id" => "#{member.id}",
+                    "name" => "Plaid",
+                    "status" => "Connected"
+                  }
+                ]
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

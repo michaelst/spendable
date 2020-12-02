@@ -51,6 +51,7 @@ defmodule Spendable.MixProject do
       {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},
+      {:guardian_firebase, "~> 1.0"},
       {:guardian, "~> 2.0"},
       {:jason, "~> 1.0"},
       {:kadabra, "~> 0.4.4"},

@@ -5,8 +5,8 @@ defmodule Spendable.Banks.Category.Resolver.ListTest do
   alias Spendable.Banks.Member
   alias Spendable.Repo
 
-  test "list categories", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "list categories" do
+    user = Spendable.TestUtils.create_user()
 
     member =
       %Member{}
@@ -49,23 +49,18 @@ defmodule Spendable.Banks.Category.Resolver.ListTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "bankMembers" => [
-                 %{
-                   "bankAccounts" => [%{"id" => "#{account.id}", "name" => "Checking", "sync" => false}],
-                   "id" => "#{member.id}",
-                   "name" => "Capital One",
-                   "status" => nil
-                 }
-               ]
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "bankMembers" => [
+                  %{
+                    "bankAccounts" => [%{"id" => "#{account.id}", "name" => "Checking", "sync" => false}],
+                    "id" => "#{member.id}",
+                    "name" => "Capital One",
+                    "status" => nil
+                  }
+                ]
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

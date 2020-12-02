@@ -11,6 +11,7 @@ target 'Spendable' do
 
   # Other native modules
   pod 'Plaid', '~> 2.0.8'
+  pod 'Firebase/Auth'
 
   # Automatically detect installed unimodules
   use_unimodules!

@@ -20,7 +20,7 @@ defmodule Spendable.Web.Controllers.PlaidTest do
   end
 
   test "webhook", %{conn: conn} do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     conn
     |> post("/plaid/webhook", %{"item_id" => "bogus"})

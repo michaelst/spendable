@@ -26,7 +26,7 @@ defmodule Spendable.Middleware.LoadModelTest do
   end
 
   test "successfully load model" do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     member =
       %Member{}
@@ -73,7 +73,7 @@ defmodule Spendable.Middleware.LoadModelTest do
   end
 
   test "model doesn't exist" do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     doc = """
     mutation {
@@ -91,8 +91,8 @@ defmodule Spendable.Middleware.LoadModelTest do
   end
 
   test "wrong user" do
-    {user, _token} = Spendable.TestUtils.create_user()
-    {other_user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
+    other_user = Spendable.TestUtils.create_user()
 
     member =
       %Member{}

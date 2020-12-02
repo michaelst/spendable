@@ -2,8 +2,8 @@ defmodule Spendable.Budgets.Budget.Resolver.DeleteTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  test "delete budget", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "delete budget" do
+    user = Spendable.TestUtils.create_user()
 
     budget = insert(:budget, user: user)
 
@@ -15,18 +15,13 @@ defmodule Spendable.Budgets.Budget.Resolver.DeleteTest do
     }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "deleteBudget" => %{
-                 "id" => "#{budget.id}"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "deleteBudget" => %{
+                  "id" => "#{budget.id}"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

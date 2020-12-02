@@ -2,8 +2,8 @@ defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  test "register APNS device token", %{conn: conn} do
-    {_user, token} = Spendable.TestUtils.create_user()
+  test "register APNS device token" do
+    user = Spendable.TestUtils.create_user()
 
     query = """
       query {
@@ -13,23 +13,18 @@ defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "notificationSettings" => %{
-                 "enabled" => true
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "notificationSettings" => %{
+                  "enabled" => true
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 
-  test "get existing APNS device token", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "get existing APNS device token" do
+    user = Spendable.TestUtils.create_user()
     insert(:notification_settings, user: user, device_token: "test-device-token", enabled: true)
 
     query = """
@@ -40,18 +35,13 @@ defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "notificationSettings" => %{
-                 "enabled" => true
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "notificationSettings" => %{
+                  "enabled" => true
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

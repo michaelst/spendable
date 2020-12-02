@@ -15,8 +15,8 @@ defmodule Spendable.Banks.Member.Resolver.CreatePublicTokenTest do
     :ok
   end
 
-  test "create public token to fix connection", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "create public token to fix connection" do
+    user = Spendable.TestUtils.create_user()
     member = insert(:bank_member, user: user)
 
     query = """
@@ -25,16 +25,11 @@ defmodule Spendable.Banks.Member.Resolver.CreatePublicTokenTest do
     }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "createPublicToken" => "public-sandbox-b0e2c4ee-a763-4df5-bfe9-46a46bce993d"
-             }
-           } = response
+    assert {:ok,
+            %{
+              data: %{
+                "createPublicToken" => "public-sandbox-b0e2c4ee-a763-4df5-bfe9-46a46bce993d"
+              }
+            }} = Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

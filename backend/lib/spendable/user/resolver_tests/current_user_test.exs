@@ -2,8 +2,8 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  test "current user", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "current user" do
+    user = Spendable.TestUtils.create_user()
 
     insert(:bank_account, user: user, balance: 100)
     budget = insert(:budget, user: user)
@@ -20,24 +20,19 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "currentUser" => %{
-                 "bankLimit" => 0,
-                 "spendable" => "64.44"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "currentUser" => %{
+                  "bankLimit" => 10,
+                  "spendable" => "64.44"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 
-  test "new current user", %{conn: conn} do
-    {_user, token} = Spendable.TestUtils.create_user()
+  test "new current user" do
+    user = Spendable.TestUtils.create_user()
 
     query = """
       query {
@@ -48,20 +43,15 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "currentUser" => %{
-                 "bankLimit" => 0,
-                 "spendable" => "0.00"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "currentUser" => %{
+                  "bankLimit" => 10,
+                  "spendable" => "0.00"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 
   test "plaid link token" do
@@ -72,7 +62,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
         %Tesla.Env{status: 200, body: %{"link_token" => token}}
     end)
 
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     doc = """
       query {

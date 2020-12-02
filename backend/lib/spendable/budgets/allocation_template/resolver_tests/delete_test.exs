@@ -2,8 +2,8 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.DeleteTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  test "delete budget", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "delete budget" do
+    user = Spendable.TestUtils.create_user()
 
     template = insert(:allocation_template, user: user)
 
@@ -15,18 +15,13 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.DeleteTest do
     }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "deleteAllocationTemplate" => %{
-                 "id" => "#{template.id}"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "deleteAllocationTemplate" => %{
+                  "id" => "#{template.id}"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

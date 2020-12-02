@@ -9,7 +9,7 @@ defmodule Spendable.Broadway.SendNotificationTest do
   alias Spendable.Repo
 
   test "send notification" do
-    {user, _} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
     bad_settings = insert(:notification_settings, user: user, device_token: "bad-device-token-1", enabled: false)
     insert(:notification_settings, user: user, device_token: "test-device-token-1", enabled: true)
 

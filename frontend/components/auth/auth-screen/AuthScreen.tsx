@@ -1,66 +1,75 @@
 import React from 'react'
-import { Platform, View, Text } from 'react-native'
-import * as AppleAuthentication from 'expo-apple-authentication'
-import { gql, useMutation } from '@apollo/client'
-import { TokenContext } from 'components/auth/TokenContext'
-import { SignInWithApple } from './graphql/SignInWithApple'
-
-export const SIGN_IN_WITH_APPLE = gql`
-  mutation SignInWithApple($token: String!) {
-    signInWithApple(token: $token) {
-      token
-    }
-  }
-`
+import { Platform, View, Text, Button } from 'react-native'
+import appleAuth, { AppleButton } from '@invertase/react-native-apple-authentication'
+import auth from '@react-native-firebase/auth'
+import { GoogleSignin, GoogleSigninButton } from '@react-native-community/google-signin'
 
 export default function AuthScreen() {
+
   return (
-    <TokenContext.Consumer>
-      {({ setToken }) => (
-        <View style={{
-          flex: 1,
-          backgroundColor: 'rgb(50, 120, 200)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          width: '100%'
-        }}>
-          <Text>Spendable</Text>
-          {Platform.OS === 'ios' && <SignInWithAppleButton setToken={setToken} />}
-        </View>
+    <View style={{
+      flex: 1,
+      backgroundColor: 'rgb(50, 120, 200)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+      width: '100%'
+    }}>
+      <Text>Spendable</Text>
+      {Platform.OS === 'ios' && (
+        <AppleButton
+          buttonStyle={AppleButton.Style.BLACK}
+          buttonType={AppleButton.Type.SIGN_IN}
+          cornerRadius={5}
+          style={{
+            width: '80%',
+            height: 48,
+            marginBottom: 8
+          }}
+          onPress={onAppleButtonPress}
+        />
       )}
-    </TokenContext.Consumer>
+      <GoogleSigninButton
+        style={{ width: '80%', height: 48 }}
+        size={GoogleSigninButton.Size.Wide}
+        color={GoogleSigninButton.Color.Light}
+        onPress={onGoogleButtonPress}
+      />
+    </View>
   )
 }
 
-type SignInWithAppleButtonProps = {
-  setToken: React.Dispatch<React.SetStateAction<string | null>>
+async function onAppleButtonPress() {
+  // Start the sign-in request
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+  });
+
+  // Ensure Apple returned a user identityToken
+  if (!appleAuthRequestResponse.identityToken) {
+    throw 'Apple Sign-In failed - no identify token returned';
+  }
+
+  // Create a Firebase credential from the response
+  const { identityToken, nonce } = appleAuthRequestResponse;
+  const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+
+  // Sign the user in with the credential
+  return auth().signInWithCredential(appleCredential);
 }
 
-function SignInWithAppleButton({ setToken }: SignInWithAppleButtonProps) {
-  const [signInWithApple] = useMutation<SignInWithApple>(SIGN_IN_WITH_APPLE, {
-    onCompleted: (data: SignInWithApple) => setToken(data.signInWithApple?.token ?? null)
-
+async function onGoogleButtonPress() {
+  GoogleSignin.configure({
+    webClientId: '973501356954-1hjtihk253ub2vou4oom4kdlokpe44t4.apps.googleusercontent.com',
   })
 
-  return (
-    <AppleAuthentication.AppleAuthenticationButton
-      buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-      buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-      cornerRadius={5}
-      style={{ width: '80%', height: 60 }}
-      onPress={async () => {
-        try {
-          const credential = await AppleAuthentication.signInAsync({})
-          signInWithApple({ variables: { token: credential.identityToken } })
-        } catch (e) {
-          if (e.code === 'ERR_CANCELED') {
-            // handle that the user canceled the sign-in flow
-          } else {
-            // handle other errors
-          }
-        }
-      }}
-    />
-  )
+  // Get the users ID token
+  const { idToken } = await GoogleSignin.signIn();
+
+  // Create a Google credential with the token
+  const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+  // Sign-in the user with the credential
+  return auth().signInWithCredential(googleCredential);
 }

@@ -3,6 +3,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { FontAwesome5, Ionicons } from '@expo/vector-icons'
 import { useColorScheme } from 'react-native-appearance'
+
 import Budgets from './budgets/Budgets'
 import Transactions from './transactions/Transactions'
 import Settings from './settings/Settings'
@@ -34,7 +35,7 @@ export default function Main() {
             } else if (route.name === 'Settings') {
               return <Ionicons name='ios-settings' size={size} color={color} />
             }
-          },
+          }
         })}
       >
         <Tab.Screen name="Expenses" component={Budgets} />
