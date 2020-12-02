@@ -42,7 +42,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
   end
 
   test "sync member" do
-    {user, _} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
     token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
     {:ok, %{body: details}} = Plaid.item(token)
 
