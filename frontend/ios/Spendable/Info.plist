@@ -20,8 +20,21 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.973501356954-0hkqmce5bt483bjh34pasmma93vtvcve</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -52,7 +65,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Spendable to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Spendable to access your device&apos;s accelerometer</string>
+	<string>Allow Spendable to access your device's accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Spendable periences permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -78,8 +91,6 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Automatic</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

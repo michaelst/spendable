@@ -3,7 +3,7 @@ defmodule Spendable.Budgets.Allocation.Resolver.CreateAndUpdateTest do
   import Spendable.Factory
 
   test "create and update allocation" do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     transaction = insert(:transaction, user: user)
     budget = insert(:budget, user: user)

@@ -1,8 +1,8 @@
 defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
 
-  test "create budget", %{conn: conn} do
-    {_user, token} = Spendable.TestUtils.create_user()
+  test "create budget" do
+    user = Spendable.TestUtils.create_user()
 
     query = """
       mutation {
@@ -14,25 +14,20 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "createBudget" => %{
-                 "name" => "test budget",
-                 "balance" => "0.05",
-                 "goal" => nil
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "createBudget" => %{
+                  "name" => "test budget",
+                  "balance" => "0.05",
+                  "goal" => nil
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 
-  test "create goal", %{conn: conn} do
-    {_user, token} = Spendable.TestUtils.create_user()
+  test "create goal" do
+    user = Spendable.TestUtils.create_user()
 
     query = """
       mutation {
@@ -44,20 +39,15 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "createBudget" => %{
-                 "name" => "test budget",
-                 "balance" => "0.00",
-                 "goal" => "1000.25"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "createBudget" => %{
+                  "name" => "test budget",
+                  "balance" => "0.00",
+                  "goal" => "1000.25"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

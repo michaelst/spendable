@@ -38,17 +38,5 @@ defmodule Spendable.User.Types do
   end
 
   object :user_mutations do
-    field :create_user, non_null(:user) do
-      arg(:email, non_null(:string))
-      arg(:password, non_null(:string))
-      resolve(&Resolver.create/2)
-    end
-
-    field :update_user, non_null(:user) do
-      middleware(CheckAuthentication)
-      arg(:email, non_null(:string))
-      arg(:password, :string)
-      resolve(&Resolver.update/2)
-    end
   end
 end

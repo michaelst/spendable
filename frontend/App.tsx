@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from 'react'
-import { Platform } from 'react-native'
 import { ApolloProvider } from '@apollo/client'
+import { AppearanceProvider } from 'react-native-appearance'
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import PushNotificationIOS from '@react-native-community/push-notification-ios'
+import React, { useState, useEffect } from 'react'
+
 import { TokenContext } from 'components/auth/TokenContext'
 import Main from 'components/Main'
 import AuthScreen from './components/auth/auth-screen/AuthScreen'
 import createApolloClient from 'helpers/createApolloClient'
-import * as SecureStore from 'expo-secure-store'
-import { AppearanceProvider } from 'react-native-appearance'
-import PushNotificationIOS from '@react-native-community/push-notification-ios'
 
 export default function App() {
-  const [token, setToken] = useState<string | null>(null)
+  const [initializing, setInitializing] = useState(true)
+  const [token, setToken] = useState<string | null>()
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>()
   const [deviceToken, setDeviceToken] = useState<string | null>(null)
-  const context = { token: token, setToken: setToken, deviceToken: deviceToken }
+  const context = { deviceToken: deviceToken }
 
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      setToken(localStorage.getItem('token'))
-    } else {
-      SecureStore.getItemAsync('token').then(tokenInStore => setToken(tokenInStore))
-    }
-  })
+    const subscriber = auth().onAuthStateChanged(user => {
+      setUser(user)
+      if (initializing) setInitializing(false)
+    })
+    return subscriber // unsubscribe on unmount
+  }, [])
 
-  useEffect(() => {
-    if (token) {
-      if (Platform.OS === 'web') {
-        localStorage.setItem('token', token)
-      } else {
-        SecureStore.setItemAsync('token', token)
-      }
-    }
-  }, [token])
+  if (initializing) return null
+
+  if (!user) return <AuthScreen />
+
+  user.getIdToken().then((idToken => setToken(idToken)))
+
+  if (!token) return null
 
   PushNotificationIOS.addEventListener('register', deviceToken => setDeviceToken(deviceToken))
 
@@ -38,7 +38,7 @@ export default function App() {
     <AppearanceProvider>
       <TokenContext.Provider value={context}>
         <ApolloProvider client={createApolloClient(token)}>
-          {token ? <Main /> : <AuthScreen />}
+          <Main />
         </ApolloProvider>
       </TokenContext.Provider>
     </AppearanceProvider>

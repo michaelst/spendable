@@ -3,7 +3,7 @@ defmodule Spendable.Banks.Member.Resolver.GetTest do
   import Spendable.Factory
 
   test "get member" do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
     member = insert(:bank_member, user: user)
 
     doc = """

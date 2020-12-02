@@ -21,8 +21,8 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
     :ok
   end
 
-  test "update", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "update" do
+    user = Spendable.TestUtils.create_user()
 
     member =
       %Member{}
@@ -59,20 +59,15 @@ defmodule Spendable.Banks.Account.Resolver.UpdateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "updateBankAccount" => %{
-                 "id" => "#{account.id}",
-                 "sync" => true
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "updateBankAccount" => %{
+                  "id" => "#{account.id}",
+                  "sync" => true
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
 
     TestUtils.assert_published(%SyncMemberRequest{member_id: member.id})
   end

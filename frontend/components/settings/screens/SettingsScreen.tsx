@@ -4,15 +4,15 @@ import {
   Switch,
   Text,
   View,
-  Platform
 } from 'react-native'
 import { useTheme, useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
-import { TokenContext } from 'components/auth/TokenContext'
-import * as SecureStore from 'expo-secure-store'
+import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { useMutation, useQuery } from '@apollo/client'
+
+import { TokenContext } from 'components/auth/TokenContext'
 import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from '../queries'
 import { GetNotificationSettings } from '../graphql/GetNotificationSettings'
 import { UpdateNotificationSettings } from '../graphql/UpdateNotificationSettings'
@@ -65,7 +65,6 @@ const templatesRow = () => {
 }
 
 const notificationsRow = () => {
-  const { colors }: any = useTheme()
   const { styles, padding } = AppStyles()
   const [id, setId] = useState<string | null>(null)
   const [enabled, setEnabled] = useState(false)
@@ -110,24 +109,15 @@ const logoutRow = () => {
   const { styles } = AppStyles()
 
   return (
-    <TokenContext.Consumer>
-      {({ setToken }) => (
-        <TouchableHighlight
-          onPress={() => {
-            Platform.OS === 'web' ? localStorage.removeItem('token') : SecureStore.deleteItemAsync('token')
-            setToken(null)
-          }}
-        >
-          <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.text}>
-                Logout
-              </Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-      )}
-    </TokenContext.Consumer>
+    <TouchableHighlight onPress={() => auth().signOut()}>
+      <View style={styles.row}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.text}>
+            Logout
+          </Text>
+        </View>
+      </View>
+    </TouchableHighlight>
   )
 }
 

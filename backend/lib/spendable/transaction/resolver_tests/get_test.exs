@@ -5,8 +5,8 @@ defmodule Spendable.Transaction.Resolver.GetTest do
   alias Spendable.Banks.Category
   alias Spendable.Repo
 
-  test "get transaction", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "get transaction" do
+    user = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
 
     transaction = insert(:transaction, user: user, category_id: category_id)
@@ -26,23 +26,18 @@ defmodule Spendable.Transaction.Resolver.GetTest do
     }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "transaction" => %{
-                 "amount" => "#{transaction.amount}",
-                 "category" => %{"id" => "#{category_id}"},
-                 "date" => "#{transaction.date}",
-                 "id" => "#{transaction.id}",
-                 "name" => "test",
-                 "note" => "some notes"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "transaction" => %{
+                  "amount" => "#{transaction.amount}",
+                  "category" => %{"id" => "#{category_id}"},
+                  "date" => "#{transaction.date}",
+                  "id" => "#{transaction.id}",
+                  "name" => "test",
+                  "note" => "some notes"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

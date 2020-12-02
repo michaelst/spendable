@@ -5,8 +5,8 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
   alias Spendable.Banks.Category
   alias Spendable.Repo
 
-  test "create transaction", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "create transaction" do
+    user = Spendable.TestUtils.create_user()
     category_id = Repo.get_by!(Category, external_id: "22006001").id
     budget = insert(:budget, user: user)
     tag_one = insert(:tag, user: user, name: "First tag")
@@ -49,39 +49,34 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "createTransaction" => %{
-                 "name" => "new name",
-                 "category" => %{
-                   "id" => "#{category_id}"
-                 },
-                 "allocations" => [
-                   %{
-                     "amount" => "26.25",
-                     "budget" => %{
-                       "id" => "#{budget.id}"
-                     }
-                   },
-                   %{
-                     "amount" => "100.00",
-                     "budget" => %{
-                       "id" => "#{budget.id}"
-                     }
-                   }
-                 ],
-                 "tags" => [
-                   %{"id" => "#{tag_one.id}", "name" => "First tag"},
-                   %{"id" => "#{tag_two.id}", "name" => "Second tag"}
-                 ]
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "createTransaction" => %{
+                  "name" => "new name",
+                  "category" => %{
+                    "id" => "#{category_id}"
+                  },
+                  "allocations" => [
+                    %{
+                      "amount" => "26.25",
+                      "budget" => %{
+                        "id" => "#{budget.id}"
+                      }
+                    },
+                    %{
+                      "amount" => "100.00",
+                      "budget" => %{
+                        "id" => "#{budget.id}"
+                      }
+                    }
+                  ],
+                  "tags" => [
+                    %{"id" => "#{tag_one.id}", "name" => "First tag"},
+                    %{"id" => "#{tag_two.id}", "name" => "Second tag"}
+                  ]
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

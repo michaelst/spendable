@@ -6,7 +6,7 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Resolver.DeleteTest do
   alias Spendable.Repo
 
   test "delete budget" do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     line = insert(:allocation_template, user: user) |> Map.get(:lines) |> List.first()
 

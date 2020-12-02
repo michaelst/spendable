@@ -109,13 +109,8 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
     :ok
   end
 
-  test "create member from plaid public token", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
-
-    user
-    |> Spendable.User.changeset(%{})
-    |> Ecto.Changeset.put_change(:bank_limit, 1)
-    |> Spendable.Repo.update()
+  test "create member from plaid public token" do
+    user = Spendable.TestUtils.create_user()
 
     query = """
       mutation {
@@ -127,23 +122,18 @@ defmodule Spendable.Banks.Member.Resolver.CreateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "createBankMember" => %{
-                 "externalId" => "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
-                 "name" => "Plaid Bank",
-                 "logo" => "https://plaid.com",
-                 "status" => "CONNECTED",
-                 "id" => member_id
-               }
-             }
-           } = response
+    assert {:ok,
+            %{
+              data: %{
+                "createBankMember" => %{
+                  "externalId" => "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
+                  "name" => "Plaid Bank",
+                  "logo" => "https://plaid.com",
+                  "status" => "CONNECTED",
+                  "id" => member_id
+                }
+              }
+            }} = Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
 
     TestUtils.assert_published(%SyncMemberRequest{member_id: String.to_integer(member_id)})
   end

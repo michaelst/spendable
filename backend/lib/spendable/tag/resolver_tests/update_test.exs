@@ -2,8 +2,8 @@ defmodule Spendable.Tag.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  test "update tag", %{conn: conn} do
-    {user, token} = Spendable.TestUtils.create_user()
+  test "update tag" do
+    user = Spendable.TestUtils.create_user()
     tag = insert(:tag, user: user)
 
     query = """
@@ -15,19 +15,14 @@ defmodule Spendable.Tag.Resolver.UpdateTest do
       }
     """
 
-    response =
-      conn
-      |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/graphql", %{query: query})
-      |> json_response(200)
-
-    assert %{
-             "data" => %{
-               "updateTag" => %{
-                 "id" => "#{tag.id}",
-                 "name" => "new tag"
-               }
-             }
-           } == response
+    assert {:ok,
+            %{
+              data: %{
+                "updateTag" => %{
+                  "id" => "#{tag.id}",
+                  "name" => "new tag"
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
   end
 end

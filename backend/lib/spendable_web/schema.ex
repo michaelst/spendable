@@ -3,7 +3,6 @@ defmodule Spendable.Web.Schema do
 
   import_types(Absinthe.Type.Custom)
 
-  import_types(Spendable.Auth.Types)
   import_types(Spendable.Banks.Account.Types)
   import_types(Spendable.Banks.Category.Types)
   import_types(Spendable.Banks.Member.Types)
@@ -35,7 +34,6 @@ defmodule Spendable.Web.Schema do
     import_fields(:allocation_mutations)
     import_fields(:allocation_template_line_mutations)
     import_fields(:allocation_template_mutations)
-    import_fields(:auth_mutations)
     import_fields(:bank_account_mutations)
     import_fields(:bank_member_mutations)
     import_fields(:budget_mutations)

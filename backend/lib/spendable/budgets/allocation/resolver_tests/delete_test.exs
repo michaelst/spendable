@@ -6,7 +6,7 @@ defmodule Spendable.Budgets.Allocation.Resolver.DeleteTest do
   alias Spendable.Repo
 
   test "delete allocation" do
-    {user, _token} = Spendable.TestUtils.create_user()
+    user = Spendable.TestUtils.create_user()
 
     %{id: id} = insert(:allocation, user: user)
 
