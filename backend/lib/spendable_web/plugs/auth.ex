@@ -6,7 +6,7 @@ defmodule Spendable.Plug.Auth do
 
   import Plug.Conn
 
-  alias Spendable.Guardian
+  alias Spendable.Auth.Guardian
   alias Spendable.User
 
   def init(opts), do: opts

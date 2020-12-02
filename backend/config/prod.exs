@@ -22,6 +22,4 @@ config :cors_plug,
   origin: ["https://spendable.money"],
   max_age: 86400
 
-config :spendable, Spendable.Guardian, issuer: "spendable.money"
-
 config :spendable, Plaid, base_url: "https://development.plaid.com"
