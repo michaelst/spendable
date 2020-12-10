@@ -22,7 +22,7 @@
     "expo": "^39.0.5",
     "expo-constants": "^9.2.0",
     "expo-splash-screen": "^0.6.2",
-    "expo-updates": "^0.3.5",
+    "expo-updates": "^0.4.1",
     "graphql": "^15.4.0",
     "luxon": "^1.25.0",
     "react": "^16.14.0",
