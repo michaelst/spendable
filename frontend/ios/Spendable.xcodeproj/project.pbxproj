@@ -222,6 +222,7 @@
 				4C0F394325786BBC00E5B4DA /* Sources */,
 				4C0F394425786BBC00E5B4DA /* Frameworks */,
 				4C0F394525786BBC00E5B4DA /* Resources */,
+				4CBB8672259BD5FB00C55B3C /* Increment Build Number */,
 			);
 			buildRules = (
 			);
@@ -327,6 +328,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cp ${PROJECT_DIR}/${TARGET_NAME}/Firebase/${CONFIGURATION}/GoogleService-Info.plist ${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\n";
+		};
+		4CBB8672259BD5FB00C55B3C /* Increment Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Increment Build Number";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "branch=${1:-'master'}\nbuildNumber=$(expr $(git rev-list $branch --count) - $(git rev-list HEAD..$branch --count))\necho \"Updating build number to $buildNumber using branch '$branch'.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nif [ -f \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}.dSYM/Contents/Info.plist\" ]; then\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}.dSYM/Contents/Info.plist\"\nfi\n";
 		};
 		4CD700FD252D2988007B14DE /* Increment Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -554,6 +573,7 @@
 				INFOPLIST_FILE = SpendableWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.SpendableDev.SpendableWidget;
@@ -585,6 +605,7 @@
 				INFOPLIST_FILE = SpendableWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.Spendable.SpendableWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
