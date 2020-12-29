@@ -37,6 +37,15 @@ defmodule Spendable.Auth.Guardian.KeyServer do
   end
 
   def handle_call({:fetch_public_key, kid}, _from, %{public_keys: public_keys} = state) do
-    {:reply, Map.fetch(public_keys, kid), state}
+    case Map.fetch(public_keys, kid) do
+      {:ok, public_key} ->
+        {:reply, {:ok, public_key}, state}
+
+      :error ->
+        # if the kid is not found firebase most likely rotated the public keys
+        # and we need to get new ones
+        {:ok, %{body: public_keys}} = Google.get_firebase_public_keys()
+        {:reply, Map.fetch(public_keys, kid), %{public_keys: public_keys}}
+    end
   end
 end

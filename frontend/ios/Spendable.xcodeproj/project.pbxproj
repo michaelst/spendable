@@ -14,8 +14,41 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3DE4DAD41476765101945408 /* libPods-Spendable.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D43FF9D506E70904424FA7E9 /* libPods-Spendable.a */; };
 		4C0F391D2575CE6700E5B4DA /* Firebase in Resources */ = {isa = PBXBuildFile; fileRef = 4C0F391C2575CE6700E5B4DA /* Firebase */; };
+		4C0F394925786BBC00E5B4DA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C0F394825786BBC00E5B4DA /* WidgetKit.framework */; };
+		4C0F394B25786BBC00E5B4DA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C0F394A25786BBC00E5B4DA /* SwiftUI.framework */; };
+		4C0F394E25786BBC00E5B4DA /* SpendableWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0F394D25786BBC00E5B4DA /* SpendableWidget.swift */; };
+		4C0F395125786BBD00E5B4DA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C0F395025786BBD00E5B4DA /* Assets.xcassets */; };
+		4C0F395325786BBD00E5B4DA /* SpendableWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4C0F394F25786BBC00E5B4DA /* SpendableWidget.intentdefinition */; };
+		4C0F395425786BBD00E5B4DA /* SpendableWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4C0F394F25786BBC00E5B4DA /* SpendableWidget.intentdefinition */; };
+		4C0F395725786BBD00E5B4DA /* SpendableWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4C0F394725786BBC00E5B4DA /* SpendableWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4CBB8669259BCBCE00C55B3C /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBB8668259BCBCE00C55B3C /* UserDefaults.swift */; };
+		4CBB866D259BCDA900C55B3C /* UserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CBB866C259BCDA900C55B3C /* UserDefaults.m */; };
 		99EC63CFB4B549BBAF093D10 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3ABB89D1E68496EB7D95742 /* SplashScreen.storyboard */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4C0F395525786BBD00E5B4DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C0F394625786BBC00E5B4DA;
+			remoteInfo = SpendableWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4C0F395825786BBD00E5B4DA /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4C0F395725786BBD00E5B4DA /* SpendableWidgetExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -30,6 +63,16 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B47C5AFCB8BDE514B7D1AC6 /* Pods-Spendable.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendable.debug.xcconfig"; path = "Target Support Files/Pods-Spendable/Pods-Spendable.debug.xcconfig"; sourceTree = "<group>"; };
 		4C0F391C2575CE6700E5B4DA /* Firebase */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Firebase; path = Spendable/Firebase; sourceTree = "<group>"; };
+		4C0F394725786BBC00E5B4DA /* SpendableWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpendableWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C0F394825786BBC00E5B4DA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4C0F394A25786BBC00E5B4DA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4C0F394D25786BBC00E5B4DA /* SpendableWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendableWidget.swift; sourceTree = "<group>"; };
+		4C0F394F25786BBC00E5B4DA /* SpendableWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = SpendableWidget.intentdefinition; sourceTree = "<group>"; };
+		4C0F395025786BBD00E5B4DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4C0F395225786BBD00E5B4DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CBB8661259BCBA200C55B3C /* Spendable-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spendable-Bridging-Header.h"; sourceTree = "<group>"; };
+		4CBB8668259BCBCE00C55B3C /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
+		4CBB866C259BCDA900C55B3C /* UserDefaults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserDefaults.m; sourceTree = "<group>"; };
 		8AC623DBF3A3E2CB072F81F2 /* Pods-Spendable.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spendable.release.xcconfig"; path = "Target Support Files/Pods-Spendable/Pods-Spendable.release.xcconfig"; sourceTree = "<group>"; };
 		D43FF9D506E70904424FA7E9 /* libPods-Spendable.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Spendable.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3ABB89D1E68496EB7D95742 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Spendable/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -46,12 +89,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4C0F394425786BBC00E5B4DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0F394B25786BBC00E5B4DA /* SwiftUI.framework in Frameworks */,
+				4C0F394925786BBC00E5B4DA /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		13B07FAE1A68108700A75B9A /* Spendable */ = {
 			isa = PBXGroup;
 			children = (
+				4CBB8668259BCBCE00C55B3C /* UserDefaults.swift */,
+				4CBB866C259BCDA900C55B3C /* UserDefaults.m */,
 				4C0F391C2575CE6700E5B4DA /* Firebase */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -73,8 +127,21 @@
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				D43FF9D506E70904424FA7E9 /* libPods-Spendable.a */,
+				4C0F394825786BBC00E5B4DA /* WidgetKit.framework */,
+				4C0F394A25786BBC00E5B4DA /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4C0F394C25786BBC00E5B4DA /* SpendableWidget */ = {
+			isa = PBXGroup;
+			children = (
+				4C0F394D25786BBC00E5B4DA /* SpendableWidget.swift */,
+				4C0F394F25786BBC00E5B4DA /* SpendableWidget.intentdefinition */,
+				4C0F395025786BBD00E5B4DA /* Assets.xcassets */,
+				4C0F395225786BBD00E5B4DA /* Info.plist */,
+			);
+			path = SpendableWidget;
 			sourceTree = "<group>";
 		};
 		72E5486571395D51695C2A02 /* Pods */ = {
@@ -98,9 +165,11 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* Spendable */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				4C0F394C25786BBC00E5B4DA /* SpendableWidget */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				72E5486571395D51695C2A02 /* Pods */,
+				4CBB8661259BCBA200C55B3C /* Spendable-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -111,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Spendable.app */,
+				4C0F394725786BBC00E5B4DA /* SpendableWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,15 +203,34 @@
 				D5A887644EB9FA84901E8E34 /* [CP] Copy Pods Resources */,
 				4CD700FD252D2988007B14DE /* Increment Build Number */,
 				64775B6C2DAA30315681322C /* [CP-User] [RNFB] Core Configuration */,
+				4C0F395825786BBD00E5B4DA /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4C0F395625786BBD00E5B4DA /* PBXTargetDependency */,
 			);
 			name = Spendable;
 			productName = "Hello World";
 			productReference = 13B07F961A680F5B00A75B9A /* Spendable.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4C0F394625786BBC00E5B4DA /* SpendableWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C0F395B25786BBD00E5B4DA /* Build configuration list for PBXNativeTarget "SpendableWidgetExtension" */;
+			buildPhases = (
+				4C0F394325786BBC00E5B4DA /* Sources */,
+				4C0F394425786BBC00E5B4DA /* Frameworks */,
+				4C0F394525786BBC00E5B4DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpendableWidgetExtension;
+			productName = SpendableWidgetExtension;
+			productReference = 4C0F394725786BBC00E5B4DA /* SpendableWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -149,11 +238,18 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = A4TA99R8XM;
+						LastSwiftMigration = 1230;
+					};
+					4C0F394625786BBC00E5B4DA = {
+						CreatedOnToolsVersion = 12.2;
+						DevelopmentTeam = A4TA99R8XM;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -171,6 +267,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Spendable */,
+				4C0F394625786BBC00E5B4DA /* SpendableWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -185,6 +282,14 @@
 				4C0F391D2575CE6700E5B4DA /* Firebase in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				99EC63CFB4B549BBAF093D10 /* SplashScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C0F394525786BBC00E5B4DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0F395125786BBD00E5B4DA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,12 +442,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CBB8669259BCBCE00C55B3C /* UserDefaults.swift in Sources */,
+				4CBB866D259BCDA900C55B3C /* UserDefaults.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				4C0F395425786BBD00E5B4DA /* SpendableWidget.intentdefinition in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C0F394325786BBC00E5B4DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C0F395325786BBD00E5B4DA /* SpendableWidget.intentdefinition in Sources */,
+				4C0F394E25786BBC00E5B4DA /* SpendableWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4C0F395625786BBD00E5B4DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C0F394625786BBC00E5B4DA /* SpendableWidgetExtension */;
+			targetProxy = 4C0F395525786BBD00E5B4DA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
@@ -361,7 +486,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B47C5AFCB8BDE514B7D1AC6 /* Pods-Spendable.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Spendable/Spendable.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -376,6 +503,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.SpendableDev;
 				PRODUCT_NAME = Spendable;
+				SWIFT_OBJC_BRIDGING_HEADER = "Spendable-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -384,7 +514,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8AC623DBF3A3E2CB072F81F2 /* Pods-Spendable.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Spendable/Spendable.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A4TA99R8XM;
@@ -398,7 +530,68 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.Spendable;
 				PRODUCT_NAME = Spendable;
+				SWIFT_OBJC_BRIDGING_HEADER = "Spendable-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		4C0F395925786BBD00E5B4DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = A4TA99R8XM;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SpendableWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.SpendableDev.SpendableWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4C0F395A25786BBD00E5B4DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = A4TA99R8XM;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = SpendableWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.Spendable.SpendableWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -519,6 +712,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4C0F395B25786BBD00E5B4DA /* Build configuration list for PBXNativeTarget "SpendableWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C0F395925786BBD00E5B4DA /* Debug */,
+				4C0F395A25786BBD00E5B4DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
