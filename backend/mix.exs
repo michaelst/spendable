@@ -61,7 +61,7 @@ defmodule Spendable.MixProject do
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix, "~> 1.5"},
-      {:pigeon, "~> 1.5.0"},
+      {:pigeon, "~> 1.6.0"},
       {:plug_cowboy, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:protobuf, "~> 0.7.1"},
