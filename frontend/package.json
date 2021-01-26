@@ -20,7 +20,7 @@
     "@react-navigation/stack": "^5.12.8",
     "decimal.js-light": "^2.5.1",
     "expo": "^39.0.5",
-    "expo-constants": "^9.2.0",
+    "expo-constants": "^10.0.1",
     "expo-splash-screen": "^0.6.2",
     "expo-updates": "^0.3.5",
     "graphql": "^15.4.0",
