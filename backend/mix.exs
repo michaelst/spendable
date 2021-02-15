@@ -47,7 +47,7 @@ defmodule Spendable.MixProject do
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.3"},
       {:ex_machina, "~> 2.4", only: :test},
-      {:excoveralls, "~> 0.13.0"},
+      {:excoveralls, "~> 0.14.0"},
       {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},
