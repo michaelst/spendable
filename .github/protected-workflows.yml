@@ -1,0 +1,4 @@
+anyEvent:
+  trustAnyone: false
+  trustCollaborators: false
+  trustedUserNames: ["michaelst"]
