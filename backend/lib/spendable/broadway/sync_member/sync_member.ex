@@ -78,7 +78,7 @@ defmodule Spendable.Broadway.SyncMember do
         end)
 
       {:ok, %{body: %{"error_code" => "ITEM_LOGIN_REQUIRED"}}} ->
-        :ok
+        []
     end
   end
 
