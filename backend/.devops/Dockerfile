@@ -13,7 +13,7 @@ RUN mix local.hex --force && \
 
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs ./config/
-RUN mix do deps.get, deps.compile
+RUN mix do deps.get --only prod, deps.compile
 
 COPY lib lib
 COPY priv priv

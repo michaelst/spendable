@@ -64,18 +64,22 @@ defmodule Spendable.Broadway.SyncMember do
   defp sync_member(nil), do: :ok
 
   def sync_accounts(member) do
-    {:ok, %{body: %{"accounts" => accounts_details}}} = Plaid.accounts(member.plaid_token)
+    case Plaid.accounts(member.plaid_token) do
+      {:ok, %{body: %{"accounts" => accounts_details}}} ->
+        Enum.map(accounts_details, fn account_details ->
+          Repo.get_by(Account, user_id: member.user_id, external_id: account_details["account_id"])
+          |> case do
+            nil -> struct(Account)
+            account -> account
+          end
+          |> Account.changeset(Adapter.format(account_details, member.id, member.user_id, :account))
+          |> Repo.insert_or_update!()
+          |> Map.put(:bank_member, member)
+        end)
 
-    Enum.map(accounts_details, fn account_details ->
-      Repo.get_by(Account, user_id: member.user_id, external_id: account_details["account_id"])
-      |> case do
-        nil -> struct(Account)
-        account -> account
-      end
-      |> Account.changeset(Adapter.format(account_details, member.id, member.user_id, :account))
-      |> Repo.insert_or_update!()
-      |> Map.put(:bank_member, member)
-    end)
+      {:ok, %{body: %{"error_code" => "ITEM_LOGIN_REQUIRED"}}} ->
+        :ok
+    end
   end
 
   defp sync_transactions(account, opts \\ []) do
@@ -83,13 +87,16 @@ defmodule Spendable.Broadway.SyncMember do
     offset = opts[:offset] || 0
     cursor = offset + count
 
-    {:ok, %{body: %{"transactions" => transactions_details} = response}} =
-      Plaid.account_transactions(account.bank_member.plaid_token, account.external_id, opts)
+    case Plaid.account_transactions(account.bank_member.plaid_token, account.external_id, opts) do
+      {:ok, %{body: %{"transactions" => transactions_details} = response}} ->
+        Enum.each(transactions_details, fn transaction_details -> sync_transaction(transaction_details, account) end)
 
-    Enum.each(transactions_details, fn transaction_details -> sync_transaction(transaction_details, account) end)
+        with %{"total_transactions" => total} when total > cursor <- response do
+          sync_transactions(account, Keyword.merge(opts, offset: cursor))
+        end
 
-    with %{"total_transactions" => total} when total > cursor <- response do
-      sync_transactions(account, Keyword.merge(opts, offset: cursor))
+      {:ok, %{body: %{"error_code" => "PRODUCT_NOT_READY"}}} ->
+        :ok
     end
   end
 
