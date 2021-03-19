@@ -37,13 +37,16 @@ jobs:
           -t registry.fiftyseven.media/spendable-api:${CACHE_HASH} \
           -f .devops/Dockerfile .
 
+      - name: Push
+        run: |
+          docker login --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
           docker push registry.fiftyseven.media/spendable-api:${GITHUB_SHA} 
           docker push registry.fiftyseven.media/spendable-api:${CACHE_HASH} 
 
       - name: Setup Helm
         run: |
           helm plugin install https://github.com/chartmuseum/helm-push.git
-          helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.HELM_USERNAME }} --password ${{ secrets.HELM_PASSWORD }}
+          helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
           helm repo update
 
       - name: Rollout Deploy
