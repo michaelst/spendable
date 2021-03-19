@@ -32,16 +32,20 @@ jobs:
           docker login registry.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
 
           CACHE_IMAGE=registry.fiftyseven.media/spendable-api:$(sha256sum mix.exs mix.lock config/config.exs config/prod.exs | sha256sum  | awk '{ print $1 }')
-          docker pull $CACHE_IMAGE
+          LATEST_IMAGE=registry.fiftyseven.media/spendable-api:latest
 
+          docker pull $CACHE_IMAGE || true
+          docker pull $LATEST_IMAGE || true
+
+          docker build --target build --cache-from $CACHE_IMAGE -t $CACHE_IMAGE -f .devops/Dockerfile .
           docker build \
           --cache-from $CACHE_IMAGE \
+          --cache-from $LATEST_IMAGE \
+          -t $LATEST_IMAGE \
           -t registry.fiftyseven.media/spendable-api:${GITHUB_SHA} \
-          -t $CACHE_IMAGE \
           -f .devops/Dockerfile .
 
-          docker push registry.fiftyseven.media/spendable-api:${GITHUB_SHA} 
-          docker push $CACHE_IMAGE 
+          docker push registry.fiftyseven.media/spendable-api
 
       - name: Setup Helm
         run: |
