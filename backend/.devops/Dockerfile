@@ -28,6 +28,7 @@ ENV LANG=C.UTF-8
 
 RUN apk add --update --no-cache openssl ncurses-libs
 RUN addgroup -S app && adduser -S app -G app 
+
 USER app
 WORKDIR /home/app
 

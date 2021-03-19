@@ -3,60 +3,47 @@ on:
   push:
     branches:
       - master
+      - self-hosted
 
 jobs:
   backend:
     name: Backend
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64]
 
     defaults:
       run:
         working-directory: backend
 
     env:
-      DOCKER_HOST: ssh://build@192.168.5.181
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-      SSH_KEY: ${{ secrets.SSH_KEY }}
-      WIREGUARD_CONF: ${{ secrets.WIREGUARD_CONF }}
 
     steps:
       - uses: actions/checkout@main
 
-      - name: Setup Files
+      - name: Setup kube config
         run: |
-          mkdir $HOME/.ssh
-          echo "$SSH_KEY" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
           mkdir $HOME/.kube
-          echo "$KUBE_CONFIG" > $HOME/.kube/config
+          touch $HOME/.kube/config
           chmod 600 $HOME/.kube/config
-
-      - name: Connect to Private Network
-        run: |
-          sudo apt-get -y install wireguard resolvconf
-          echo "$WIREGUARD_CONF" | sudo tee -a /etc/wireguard/wg0.conf
-          wg-quick up wg0
-          ssh-keyscan -H 192.168.5.181 >> $HOME/.ssh/known_hosts
-          
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          project_id: cloud-57
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: GCP Authentication
-        run: |
-          gcloud auth configure-docker us.gcr.io
+          echo "$KUBE_CONFIG" > $HOME/.kube/config
 
       - name: Build
         run: |    
-          docker buildx build -t us.gcr.io/cloud-57/spendable-api:${GITHUB_SHA} -f .devops/Dockerfile .
-          docker push us.gcr.io/cloud-57/spendable-api:${GITHUB_SHA}
+          CACHE_HASH=$(sha256sum mix.exs mix.lock config/config.exs config/prod.exs | sha256sum  | awk '{ print $1 }')
+
+          docker build \
+          --cache-from registry.fiftyseven.media/spendable-api:${CACHE_HASH} \
+          -t registry.fiftyseven.media/spendable-api:${GITHUB_SHA} \
+          -t registry.fiftyseven.media/spendable-api:${CACHE_HASH} \
+          -f .devops/Dockerfile .
+
+          docker push registry.fiftyseven.media/spendable-api:${GITHUB_SHA} 
+          docker push registry.fiftyseven.media/spendable-api:${CACHE_HASH} 
 
       - name: Setup Helm
         run: |
-          helm plugin install https://github.com/hayorov/helm-gcs.git
-          helm repo add cloud-57 gs://cloud-57-helm
+          helm plugin install https://github.com/chartmuseum/helm-push.git
+          helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.HELM_USERNAME }} --password ${{ secrets.HELM_PASSWORD }}
           helm repo update
 
       - name: Rollout Deploy
@@ -64,7 +51,7 @@ jobs:
           helm upgrade --install spendable cloud-57/cloud-57 \
           -f .devops/helm/values.yaml \
           --version v1.0.2 \
-          --set image.repository=us.gcr.io/cloud-57/spendable-api \
+          --set image.repository=registry.fiftyseven.media/spendable-api \
           --set image.tag=${GITHUB_SHA} \
           -n backend
           kubectl rollout status --watch deployment spendable -n backend
