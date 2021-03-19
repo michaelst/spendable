@@ -27,23 +27,19 @@ jobs:
           chmod 600 $HOME/.kube/config
           echo "$KUBE_CONFIG" > $HOME/.kube/config
 
-      - name: Docker Login
+      - name: Docker
         run: |    
           docker login registry.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
 
-      - name: Build
-        run: |    
           CACHE_IMAGE=registry.fiftyseven.media/spendable-api:$(sha256sum mix.exs mix.lock config/config.exs config/prod.exs | sha256sum  | awk '{ print $1 }')
           docker pull $CACHE_IMAGE
-          
+
           docker build \
           --cache-from $CACHE_IMAGE \
           -t registry.fiftyseven.media/spendable-api:${GITHUB_SHA} \
           -t $CACHE_IMAGE \
           -f .devops/Dockerfile .
 
-      - name: Push
-        run: |
           docker push registry.fiftyseven.media/spendable-api:${GITHUB_SHA} 
           docker push $CACHE_IMAGE 
 
