@@ -1,5 +1,10 @@
 name: Tests
 on: push
+env:
+  MIX_ENV: test
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  OTP_VERSION: 23.2.7
+  ELIXIR_VERSION: 1.11.3
 
 jobs:
   backend:
@@ -26,8 +31,9 @@ jobs:
 
       - uses: actions/setup-elixir@master
         with:
-          otp-version: 22.3.3
-          elixir-version: 1.10.3
+          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          experimental-otp: true
 
       - name: Cache Backend Deps
         uses: actions/cache@master
@@ -66,8 +72,9 @@ jobs:
 
       - uses: actions/setup-elixir@master
         with:
-          otp-version: 22.3.3
-          elixir-version: 1.10.3
+          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          experimental-otp: true
 
       - name: Cache Backend Deps
         uses: actions/cache@master

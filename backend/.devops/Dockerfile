@@ -3,13 +3,11 @@ FROM elixir:1.11-alpine AS build
 ENV MIX_ENV=prod \
     LANG=C.UTF-8
 
-RUN apk add --update --no-cache build-base git
-
-RUN mkdir /app
 WORKDIR /app
 
-RUN mix local.hex --force && \
-    mix local.rebar --force
+RUN apk add --update --no-cache build-base git \
+  && mix local.hex --force \
+  && mix local.rebar --force
 
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs ./config/
@@ -28,6 +26,7 @@ ENV LANG=C.UTF-8
 
 RUN apk add --update --no-cache openssl ncurses-libs
 RUN addgroup -S app && adduser -S app -G app 
+
 USER app
 WORKDIR /home/app
 
