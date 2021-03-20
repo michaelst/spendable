@@ -15,8 +15,10 @@ RUN mix do deps.get --only prod, deps.compile
 
 COPY lib lib
 COPY priv priv
+RUN mix compile
+
 COPY config/releases.exs ./config/
-RUN mix do compile, release
+RUN mix release
 
 FROM alpine:3.12 AS release
 
