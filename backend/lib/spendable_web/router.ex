@@ -5,11 +5,13 @@ defmodule Spendable.Web.Router do
     plug :accepts, [:urlencoded, :multipart, :json]
     plug Spendable.Plug.Auth
     plug :put_secure_browser_headers
+    plug(Plug.Logger)
   end
 
   pipeline(:public) do
     plug :accepts, ["json"]
     plug :put_secure_browser_headers
+    plug(Plug.Logger)
   end
 
   pipeline :browser do
@@ -18,6 +20,7 @@ defmodule Spendable.Web.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug(Plug.Logger)
   end
 
   forward "/_health", HealthCheck
