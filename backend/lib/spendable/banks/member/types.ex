@@ -16,6 +16,16 @@ defmodule Spendable.Banks.Member.Types do
     field :provider, non_null(:string)
     field :status, :string
     field :bank_accounts, :bank_account |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
+
+    field :plaid_link_token, non_null(:string) do
+      complexity(50)
+
+      resolve(fn member, _args, _resolution ->
+        with {:ok, %{body: %{"link_token" => token}}} <- Plaid.create_link_token(member.user_id, member.plaid_token) do
+          {:ok, token}
+        end
+      end)
+    end
   end
 
   object :bank_member_queries do
@@ -37,13 +47,6 @@ defmodule Spendable.Banks.Member.Types do
       middleware(CheckAuthentication)
       arg(:public_token, non_null(:string))
       resolve(&Resolver.create/2)
-    end
-
-    field :create_public_token, non_null(:string) do
-      middleware(CheckAuthentication)
-      middleware(LoadModel, module: Member)
-      arg(:id, non_null(:id))
-      resolve(&Resolver.create_public_token/2)
     end
   end
 end

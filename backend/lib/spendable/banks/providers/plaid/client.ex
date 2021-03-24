@@ -42,16 +42,9 @@ defmodule Plaid do
     })
   end
 
-  def create_public_token(token) do
-    client()
-    |> Tesla.post("/item/public_token/create", %{
-      client_id: Application.get_env(:spendable, Plaid)[:client_id],
-      secret: Application.get_env(:spendable, Plaid)[:secret_key],
-      access_token: token
-    })
-  end
+  def create_link_token(user_id, access_token \\ nil)
 
-  def create_link_token(user_id) do
+  def create_link_token(user_id, nil) do
     client()
     |> Tesla.post("/link/token/create", %{
       client_id: Application.get_env(:spendable, Plaid)[:client_id],
@@ -59,6 +52,22 @@ defmodule Plaid do
       country_codes: ["US"],
       language: "en",
       products: ["transactions"],
+      secret: Application.get_env(:spendable, Plaid)[:secret_key],
+      user: %{client_user_id: "#{user_id}"},
+      webhook: "https://spendable.money/plaid/webhook"
+    })
+  end
+
+  def create_link_token(user_id, access_token) do
+    client()
+    |> Tesla.post("/link/token/create", %{
+      # access_token is passed for existing items, for example to verify micro deposits
+      # do not pass products with this request or it will fail.
+      access_token: access_token,
+      client_id: Application.get_env(:spendable, Plaid)[:client_id],
+      client_name: "Genesis Block",
+      country_codes: ["US"],
+      language: "en",
       secret: Application.get_env(:spendable, Plaid)[:secret_key],
       user: %{client_user_id: "#{user_id}"},
       webhook: "https://spendable.money/plaid/webhook"
