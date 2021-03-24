@@ -10,7 +10,7 @@ target 'Spendable' do
   use_react_native!(:path => config["reactNativePath"])
 
   # Other native modules
-  pod 'Plaid', '~> 2.0.8'
+  pod 'Plaid', '~> 2.1.0'
   pod 'Firebase/Auth'
 
   # Automatically detect installed unimodules

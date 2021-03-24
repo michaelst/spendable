@@ -9,6 +9,15 @@ export const GET_PLAID_LINK_TOKEN = gql`
   }
 `
 
+export const GET_BANK_MEMBER_PLAID_LINK_TOKEN = gql`
+  query GetBankMemberPlaidLinkToken($id: ID!) {
+    bankMember(id: $id) {
+      id
+      plaidLinkToken
+    }
+  }
+`
+
 export const GET_NOTIFICATION_SETTINGS = gql`
 query GetNotificationSettings($deviceToken: String!) {
   notificationSettings(deviceToken: $deviceToken) {
@@ -63,12 +72,6 @@ export const CREATE_BANK_MEMBER = gql`
       status
       logo
     }
-  }
-`
-
-export const CREATE_PUBLIC_TOKEN = gql`
-  mutation CreatePublicToken($id: ID!) {
-    createPublicToken(id: $id)
   }
 `
 
