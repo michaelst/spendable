@@ -70,9 +70,14 @@
 	<string>Give Spendable periences permission to access your photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow Spendable to access your reminders</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>ConfigurationIntent</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>fetch</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>

@@ -3,6 +3,7 @@ import { AppearanceProvider } from 'react-native-appearance'
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import React, { useState, useEffect } from 'react'
+import * as Sentry from "@sentry/react-native"
 
 import { TokenContext } from 'components/auth/TokenContext'
 import Main from 'components/Main'
@@ -15,6 +16,10 @@ export default function App() {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>()
   const [deviceToken, setDeviceToken] = useState<string | null>(null)
   const context = { deviceToken: deviceToken }
+
+  Sentry.init({
+    dsn: "https://367743cfa4b94f46bddca20a382cb601@o460075.ingest.sentry.io/5690083",
+  })
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(user => {
