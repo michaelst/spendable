@@ -55,6 +55,13 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+ 
+      - name: Setup Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+          helm plugin install https://github.com/chartmuseum/helm-push.git
+          helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
+          helm repo update
 
       # - name: Setup kube config
       #   run: |
@@ -62,13 +69,6 @@ jobs:
       #     touch $HOME/.kube/config
       #     chmod 600 $HOME/.kube/config
       #     echo "$KUBE_CONFIG" > $HOME/.kube/config
- 
-      # - name: Setup Helm
-      #   run: |
-      #     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-      #     helm plugin install https://github.com/chartmuseum/helm-push.git
-      #     helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
-      #     helm repo update
 
       # - name: Rollout Deploy
       #   run: |
