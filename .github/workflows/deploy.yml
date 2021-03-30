@@ -12,6 +12,7 @@ jobs:
 
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
 
     steps:
       - uses: actions/checkout@v2
@@ -55,29 +56,49 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Setup kube config
+        run: |
+          mkdir $HOME/.kube
+          touch $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          echo "$KUBE_CONFIG" > $HOME/.kube/config
+
+      - name: Setup SSH files
+        run: |
+          mkdir $HOME/.ssh
+          touch  $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          echo "$SSH_KEY" > $HOME/.ssh/id_rsa
+
+      - name: Install cloudflared
+        run: |
+          wget -q https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.deb
+          sudo dpkg -i cloudflared-stable-linux-amd64.deb
+
+      - name: Setup SSH tunnel
+        run: |
+          ssh \
+            -i $HOME/.ssh/id_rsa \
+            -NL 6443:127.0.0.1:6443 \
+            -o ProxyCommand="cloudflared access ssh --hostname sapphire.fiftyseven.media --id ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }} --secret ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}" \
+            ubuntu@sapphire.fiftyseven.media
  
       - name: Setup Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-          helm plugin install https://github.com/chartmuseum/helm-push.git
-          helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
-          helm repo update
 
-      # - name: Setup kube config
-      #   run: |
-      #     mkdir $HOME/.kube
-      #     touch $HOME/.kube/config
-      #     chmod 600 $HOME/.kube/config
-      #     echo "$KUBE_CONFIG" > $HOME/.kube/config
-
-      # - name: Rollout Deploy
-      #   run: |
-      #     helm upgrade --install spendable cloud-57/cloud-57 \
-      #     -f backend/.devops/helm/values.yaml \
-      #     --version v1.0.2 \
-      #     --set image.repository=registry.fiftyseven.media/spendable-api \
-      #     --set image.tag=${GITHUB_SHA} \
-      #     --atomic \
-      #     --debug \
-      #     -n backend
+      - name: Rollout Deploy
+        run: |
+          helm upgrade --install spendable cloud-57/cloud-57 \
+          -f backend/.devops/helm/values.yaml \
+          --repo https://helm.fiftyseven.media
+          --username ${{ secrets.BASIC_AUTH_USERNAME }}
+          --password ${{ secrets.BASIC_AUTH_PASSWORD }}
+          --version v1.0.2 \
+          --set image.repository=registry.fiftyseven.media/spendable-api \
+          --set image.tag=${GITHUB_SHA} \
+          --atomic \
+          --debug \
+          -n backend
           
