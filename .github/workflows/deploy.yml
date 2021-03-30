@@ -10,10 +10,6 @@ jobs:
     name: Backend
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: backend
-
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
@@ -46,8 +42,8 @@ jobs:
         with:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
-          context: .
-          file: .devops/Dockerfile
+          context: backend
+          file: backend/.devops/Dockerfile
           platforms: linux/arm64
           push: true
           tags: registry.fiftyseven.media/spendable-api:${{ github.sha }}
@@ -77,7 +73,7 @@ jobs:
       # - name: Rollout Deploy
       #   run: |
       #     helm upgrade --install spendable cloud-57/cloud-57 \
-      #     -f .devops/helm/values.yaml \
+      #     -f backend/.devops/helm/values.yaml \
       #     --version v1.0.2 \
       #     --set image.repository=registry.fiftyseven.media/spendable-api \
       #     --set image.tag=${GITHUB_SHA} \
