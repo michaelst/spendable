@@ -13,6 +13,7 @@ jobs:
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
 
     steps:
       - uses: actions/checkout@v2
@@ -64,12 +65,13 @@ jobs:
           chmod 600 $HOME/.kube/config
           echo "$KUBE_CONFIG" > $HOME/.kube/config
 
-      - name: Setup SSH files
+      - name: Setup SSH
         run: |
           mkdir $HOME/.ssh
           touch  $HOME/.ssh/id_rsa
           chmod 600 $HOME/.ssh/id_rsa
           echo "$SSH_KEY" > $HOME/.ssh/id_rsa
+          echo "$SSH_KNOWN_HOSTS" > $HOME/.ssh/known_hosts
 
       - name: Install cloudflared
         run: |
