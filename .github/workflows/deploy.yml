@@ -81,6 +81,7 @@ jobs:
       - name: Setup SSH tunnel
         run: |
           ssh \
+            -f -o ExitOnForwardFailure=yes \
             -i $HOME/.ssh/id_rsa \
             -NL 6443:127.0.0.1:6443 \
             -o ProxyCommand="cloudflared access ssh --hostname sapphire.fiftyseven.media --id ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }} --secret ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}" \
