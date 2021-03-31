@@ -7,17 +7,55 @@ on:
 jobs:
   backend:
     name: Backend
-    runs-on: [self-hosted, Linux, ARM64]
-
-    defaults:
-      run:
-        working-directory: backend
+    runs-on: ubuntu-latest
 
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v2
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+      
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-$(sha256sum mix.exs mix.lock config/config.exs config/prod.exs | sha256sum  | awk '{ print $1 }')
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.fiftyseven.media
+          username: ${{ secrets.BASIC_AUTH_USERNAME }}
+          password: ${{ secrets.BASIC_AUTH_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          context: backend
+          file: backend/.devops/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: registry.fiftyseven.media/spendable-api:${{ github.sha }}
+
+      # Temp fix
+      # https://github.com/docker/build-push-action/issues/252
+      # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Setup kube config
         run: |
@@ -26,38 +64,43 @@ jobs:
           chmod 600 $HOME/.kube/config
           echo "$KUBE_CONFIG" > $HOME/.kube/config
 
-      - name: Docker
-        run: |    
-          docker login registry.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
+      - name: Setup SSH
+        run: |
+          mkdir $HOME/.ssh
+          touch  $HOME/.ssh/id_rsa
+          chmod 600 $HOME/.ssh/id_rsa
+          echo "$SSH_KEY" > $HOME/.ssh/id_rsa
+          echo "$SSH_KNOWN_HOSTS" > $HOME/.ssh/known_hosts
 
-          CACHE_IMAGE=registry.fiftyseven.media/spendable-api:$(sha256sum mix.exs mix.lock config/config.exs config/prod.exs | sha256sum  | awk '{ print $1 }')
-          LATEST_IMAGE=registry.fiftyseven.media/spendable-api:latest
+      - name: Install cloudflared
+        run: |
+          wget -q https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.deb
+          sudo dpkg -i cloudflared-stable-linux-amd64.deb
 
-          docker pull $CACHE_IMAGE || true
-          docker pull $LATEST_IMAGE || true
-
-          docker build --target build --cache-from $CACHE_IMAGE -t $CACHE_IMAGE -f .devops/Dockerfile .
-          docker build \
-          --cache-from $CACHE_IMAGE \
-          --cache-from $LATEST_IMAGE \
-          -t $LATEST_IMAGE \
-          -t registry.fiftyseven.media/spendable-api:${GITHUB_SHA} \
-          -f .devops/Dockerfile .
-
-          docker push registry.fiftyseven.media/spendable-api
-
+      - name: Setup SSH tunnel
+        run: |
+          ssh \
+            -f -o ExitOnForwardFailure=yes \
+            -i $HOME/.ssh/id_rsa \
+            -NL 6443:127.0.0.1:6443 \
+            -o ProxyCommand="cloudflared access ssh --hostname sapphire.fiftyseven.media --id ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }} --secret ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}" \
+            ubuntu@sapphire.fiftyseven.media
+ 
       - name: Setup Helm
         run: |
-          helm plugin install https://github.com/chartmuseum/helm-push.git
-          helm repo add cloud-57 https://helm.fiftyseven.media --username ${{ secrets.BASIC_AUTH_USERNAME }} --password ${{ secrets.BASIC_AUTH_PASSWORD }}
-          helm repo update
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
       - name: Rollout Deploy
         run: |
-          helm upgrade --install spendable cloud-57/cloud-57 \
-          -f .devops/helm/values.yaml \
+          helm upgrade --install spendable cloud-57 \
+          -f backend/.devops/helm/values.yaml \
+          --repo https://helm.fiftyseven.media \
+          --username ${{ secrets.BASIC_AUTH_USERNAME }} \
+          --password ${{ secrets.BASIC_AUTH_PASSWORD }} \
           --version v1.0.2 \
+          --namespace backend \
           --set image.repository=registry.fiftyseven.media/spendable-api \
           --set image.tag=${GITHUB_SHA} \
-          -n backend
-          kubectl rollout status --watch deployment spendable -n backend
+          --atomic \
+          --debug
+          
