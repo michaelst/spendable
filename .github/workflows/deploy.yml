@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-$(sha256sum mix.exs mix.lock config/config.exs config/prod.exs | sha256sum  | awk '{ print $1 }')
+          key: ${{ runner.os }}-buildx-${{ hashFiles('**/mix.exs', '**/mix.lock', '**/config/config.exs', '**/config/prod.exs') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
