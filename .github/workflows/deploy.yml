@@ -93,7 +93,7 @@ jobs:
 
       - name: Rollout Deploy
         run: |
-          helm upgrade --install spendable cloud-57/cloud-57 \
+          helm upgrade --install spendable cloud-57 \
           -f backend/.devops/helm/values.yaml \
           --repo https://helm.fiftyseven.media \
           --username ${{ secrets.BASIC_AUTH_USERNAME }} \
