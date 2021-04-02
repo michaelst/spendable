@@ -9,7 +9,7 @@
   "dependencies": {
     "@apollo/client": "^3.3.12",
     "@invertase/react-native-apple-authentication": "^2.1.1",
-    "@react-native-community/datetimepicker": "^3.4.0",
+    "@react-native-community/datetimepicker": "^3.4.3",
     "@react-native-community/google-signin": "^5.0.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/push-notification-ios": "^1.8",
