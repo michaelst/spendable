@@ -41,7 +41,7 @@
     "react-native-web": "^0.15.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.10",
+    "@babel/core": "^7.13.14",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "@types/luxon": "^1.26.2",
