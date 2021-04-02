@@ -49,15 +49,18 @@ export default function BudgetScreen() {
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 
+  const allocationTemplateLines = [...data.budget.allocationTemplateLines].sort((a, b) => b.amount.comparedTo(a.amount))
+  const recentAllocations = [...data.budget.recentAllocations].sort((a, b) => b.transaction.date - a.transaction.date)
+
   const sections = [
     {
       title: 'Templates',
-      data: data.budget.allocationTemplateLines,
+      data: allocationTemplateLines,
       renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateRow templateLine={item} />
     },
     {
       title: 'Recent Transactions',
-      data: data.budget.recentAllocations,
+      data: recentAllocations,
       renderItem: ({ item }: { item: Allocation }) => <TransactionRow allocation={item} />
     },
   ]

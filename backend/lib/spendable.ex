@@ -13,7 +13,7 @@ defmodule Spendable do
   def query(Allocation, %{recent: true}) do
     from(a in Allocation,
       join: t in assoc(a, :transaction),
-      where: t.date >= ^(Date.utc_today() |> Date.add(-30))
+      where: t.date >= ^(Date.utc_today() |> Date.add(-60))
     )
   end
 
