@@ -5,10 +5,12 @@ defmodule Spendable.TestUtils do
   alias Spendable.Api
   alias Spendable.User
 
-  def create_user do
+  def create_user() do
     firebase_id = Ecto.UUID.generate()
 
-    Changeset.new(User, %{bank_limit: 10, firebase_id: firebase_id})
+    User
+    |> Changeset.for_create(:create, %{bank_limit: 10, firebase_id: firebase_id})
+    |> Changeset.force_change_attribute(:firebase_id, firebase_id)
     |> Api.create!()
   end
 

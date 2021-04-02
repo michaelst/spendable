@@ -10,9 +10,7 @@ defmodule Spendable.User do
     integer_primary_key :id
 
     attribute :bank_limit, :integer, default: 0, allow_nil?: false
-    attribute :firebase_id, :string, allow_nil?: false
-    # https://github.com/ash-project/ash/issues/217
-    # attribute :firebase_id, :string, private?: true, allow_nil?: false
+    attribute :firebase_id, :string, private?: true, allow_nil?: false
 
     timestamps()
   end
