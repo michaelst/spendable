@@ -1,13 +1,15 @@
 defmodule Spendable.TestUtils do
   import ExUnit.Assertions
 
-  alias Spendable.Repo
+  alias Ash.Changeset
+  alias Spendable.Api
   alias Spendable.User
 
-  def create_user() do
+  def create_user do
     firebase_id = Ecto.UUID.generate()
 
-    %User{} |> User.changeset(%{firebase_id: firebase_id, bank_limit: 10}) |> Repo.insert!()
+    Changeset.new(User, %{bank_limit: 10, firebase_id: firebase_id})
+    |> Api.create!()
   end
 
   def random_decimal(range, precision \\ 2) do

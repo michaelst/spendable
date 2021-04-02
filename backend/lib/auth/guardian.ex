@@ -1,6 +1,7 @@
 defmodule Spendable.Auth.Guardian do
   use Guardian, otp_app: :spendable
 
+  alias Spendable.Api
   alias Spendable.Repo
   alias Spendable.User
 
@@ -22,8 +23,7 @@ defmodule Spendable.Auth.Guardian do
   end
 
   defp maybe_create_user(nil, firebase_id) do
-    %User{}
-    |> User.changeset(%{firebase_id: firebase_id})
-    |> Repo.insert()
+    Ash.Changeset.new(User, %{firebase_id: firebase_id})
+    |> Api.create()
   end
 end

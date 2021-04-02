@@ -8,8 +8,6 @@ defmodule Spendable.User.Types do
   object :user do
     field :id, non_null(:id)
     field :bank_limit, non_null(:integer)
-    field :email, :string
-    field :token, :string
 
     field :spendable, non_null(:decimal) do
       complexity(50)

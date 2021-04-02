@@ -35,15 +35,15 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe_plug, "~> 1.5.0"},
-      {:absinthe, "~> 1.6.0"},
+      {:ash_graphql, "~> 0.13.0"},
+      {:ash_postgres, "~> 0.36.0"},
+      {:ash, "~> 1.39.0-rc0"},
       {:bcrypt_elixir, "~> 2.0"},
       {:broadway_cloud_pub_sub, "~> 0.6.0"},
       {:broadway, "~> 0.6.0"},
       {:castore, "~> 0.1.0"},
       {:cors_plug, "~> 2.0"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
-      {:dataloader, "~> 1.0.0"},
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.3"},
       {:ex_machina, "~> 2.4", only: :test},
