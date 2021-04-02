@@ -26,7 +26,7 @@
     "expo-updates": "^0.4.2",
     "graphql": "^15.5.0",
     "luxon": "^1.26.0",
-    "react": "17.0.1",
+    "react": "17.0.2",
     "react-dom": "^16.14.0",
     "react-native": "^0.64.0",
     "react-native-appearance": "^0.3.3",
