@@ -6,7 +6,7 @@ PODS:
   - AppAuth/ExternalUserAgent (1.4.0)
   - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.6)
-  - EXConstants (10.1.1):
+  - EXConstants (10.1.0):
     - UMConstantsInterface
     - UMCore
   - EXErrorRecovery (1.3.0):
@@ -17,7 +17,7 @@ PODS:
   - EXFont (8.3.0):
     - UMCore
     - UMFontInterface
-  - EXImageLoader (2.1.1):
+  - EXImageLoader (2.1.0):
     - React-Core
     - UMCore
     - UMImageLoaderInterface
@@ -49,17 +49,17 @@ PODS:
     - React-Core (= 0.64.0)
     - React-jsi (= 0.64.0)
     - ReactCommon/turbomodule/core (= 0.64.0)
-  - Firebase/Auth (7.6.0):
+  - Firebase/Auth (7.9.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 7.6.0)
-  - Firebase/CoreOnly (7.6.0):
-    - FirebaseCore (= 7.6.0)
-  - FirebaseAuth (7.6.0):
+    - FirebaseAuth (~> 7.9.0)
+  - Firebase/CoreOnly (7.9.0):
+    - FirebaseCore (= 7.9.0)
+  - FirebaseAuth (7.9.0):
     - FirebaseCore (~> 7.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
     - GoogleUtilities/Environment (~> 7.0)
     - GTMSessionFetcher/Core (~> 1.4)
-  - FirebaseCore (7.6.0):
+  - FirebaseCore (7.9.0):
     - FirebaseCoreDiagnostics (~> 7.4)
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/Logger (~> 7.0)
@@ -69,7 +69,7 @@ PODS:
     - GoogleUtilities/Logger (~> 7.0)
     - nanopb (~> 2.30907.0)
   - glog (0.3.5)
-  - GoogleDataTransport (8.3.0):
+  - GoogleDataTransport (8.3.1):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30907.0)
     - PromisesObjC (~> 1.2)
@@ -302,7 +302,7 @@ PODS:
   - React-jsinspector (0.64.0)
   - react-native-appearance (0.3.4):
     - React
-  - react-native-plaid-link-sdk (7.0.2):
+  - react-native-plaid-link-sdk (7.0.1):
     - Plaid (~> 2.1.0)
     - React-Core
   - react-native-safe-area-context (3.2.0):
@@ -379,11 +379,11 @@ PODS:
     - React-Core
   - RNDateTimePicker (3.4.3):
     - React-Core
-  - RNFBApp (10.8.1):
-    - Firebase/CoreOnly (~> 7.6.0)
+  - RNFBApp (11.2.0):
+    - Firebase/CoreOnly (= 7.9.0)
     - React-Core
-  - RNFBAuth (10.8.1):
-    - Firebase/Auth (~> 7.6.0)
+  - RNFBAuth (11.2.0):
+    - Firebase/Auth (= 7.9.0)
     - React-Core
     - RNFBApp
   - RNGestureHandler (1.10.3):
@@ -442,7 +442,7 @@ PODS:
   - UMImageLoaderInterface (6.1.0)
   - UMPermissionsInterface (6.1.0):
     - UMCore
-  - UMReactNativeAdapter (6.2.1):
+  - UMReactNativeAdapter (6.2.0):
     - React-Core
     - UMCore
     - UMFontInterface
@@ -468,7 +468,6 @@ DEPENDENCIES:
   - EXUpdates (from `../node_modules/expo-updates/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
-  - Firebase/Auth
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - Plaid (~> 2.1.0)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -683,11 +682,11 @@ SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
-  EXConstants: d912a27157b11d68129981d6399bec115cb806f6
+  EXConstants: 2b36f00507f5b21198e8210f40a692d4c8f23e2f
   EXErrorRecovery: cfb65ec51567cf57a00b2720a2367ac009298319
   EXFileSystem: 3f6e97acddad508c73c26e4300d1fbcc3c9886da
   EXFont: 91111ccdce7c739ff51c5fcb484f2dd9a9a4ce45
-  EXImageLoader: 1ad8b491fd0f3200b57b37ecb1801abeb6549926
+  EXImageLoader: d653ba133cc8ac2fddca26aa6e9df30020a10c81
   EXKeepAwake: 4502a0ed7b7c5135587004e6d118acf8cea055fc
   EXLinearGradient: 54bec9b1b4940407fc498cab6a0c49c617c8cf54
   EXLocation: 210d39a6e5d793f9721117a11c0b27dc523a3183
@@ -697,12 +696,12 @@ SPEC CHECKSUMS:
   EXUpdates: 060bc885bc697acaf3b0a4606508ce909d91571d
   FBLazyVector: 49cbe4b43e445b06bf29199b6ad2057649e4c8f5
   FBReactNativeSpec: cdeda1fe20f3cbd1be9fed54e12e0e18d5fd6c71
-  Firebase: e1e089d9aac215a52442583f818ab61de3c4581b
-  FirebaseAuth: 0a1df88dc32569db509e6269c3e4bf2a168e8ae8
-  FirebaseCore: 0a43b7f1c5b36f3358cd703011ca4c7e0df55870
+  Firebase: d8bd6bd34b4c7ed57bfdd056c66ff5adcdde53ab
+  FirebaseAuth: 20625f04fdd213995249a82375b3dab39b1c136c
+  FirebaseCore: 0798738ad1ae0fda67e17c7b9081241c431c6859
   FirebaseCoreDiagnostics: 3d36e05da74cb8b7ce30e6594a8f201b982c725c
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
-  GoogleDataTransport: b006084b73915a42c28a3466961a4edda3065da6
+  GoogleDataTransport: 8b0e733ea77c9218778e5a9e34ba9508b8328939
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
   GoogleUtilities: e1d9ed4e544fc32a93e00e721400cbc3f377200d
   GTMAppAuth: 197a8dabfea5d665224aa00d17f164fc2248dab9
@@ -722,7 +721,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
   react-native-appearance: fc2014516054585d531e07aa0b40ab0de1d2be85
-  react-native-plaid-link-sdk: 7f2212ea50572e37545cc3ff3e47f50ad349f105
+  react-native-plaid-link-sdk: fa90b642c9485c6486ba9cd65a1e46ead2d419dd
   react-native-safe-area-context: e471852c5ed67eea4b10c5d9d43c1cebae3b231d
   React-perflogger: 9c547d8f06b9bf00cb447f2b75e8d7f19b7e02af
   React-RCTActionSheet: 3080b6e12e0e1a5b313c8c0050699b5c794a1b11
@@ -740,8 +739,8 @@ SPEC CHECKSUMS:
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNCPushNotificationIOS: 5b1cf9ad2aaa107ecb92d5d2d7005ba521b2b97a
   RNDateTimePicker: e1c24487ab8aa0850403bd90dba75eff8a4e9b84
-  RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
-  RNFBAuth: 16f2b91bf53f398d83a15cff0dd52225967c1d78
+  RNFBApp: d9ab9f2e63c70a9974294bb44c749b728cd4028f
+  RNFBAuth: 73ef569faa4618624313fbc969dfaba66bb6d0ed
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNGoogleSignin: ad866d4c4af2651e36801dd3b7771d7715353499
   RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
@@ -758,11 +757,11 @@ SPEC CHECKSUMS:
   UMFontInterface: 81a951117d03f57aa636fba3992adefd0191f200
   UMImageLoaderInterface: 5cd09b41630dc8aef7619fabc497c01c0f6b715c
   UMPermissionsInterface: 4351145563e703c521fe2299e08227bc3584b94a
-  UMReactNativeAdapter: 7e15ed07bf2d7290e997e5d892e31bd276d4f4f1
+  UMReactNativeAdapter: 6f882c5581595613f71f7135a2aa19131458a2bb
   UMSensorsInterface: 50439b47826e716a514cbd7384aebe9ab4fde5f4
   UMTaskManagerInterface: 482155764886069beb1bc7fcf6036f12e4ad0751
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
-PODFILE CHECKSUM: 492bbfff6c321499cb8551e1af391dc9927b29ed
+PODFILE CHECKSUM: 5164b374ed4a158b703cbd182079454d44f65582
 
 COCOAPODS: 1.10.1
