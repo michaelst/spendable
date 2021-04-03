@@ -35,7 +35,7 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash_graphql, "~> 0.13.0"},
+      {:ash_graphql, path: "../../ash_graphql"},
       {:ash_postgres, "~> 0.36.0"},
       {:ash, "~> 1.39.0-rc0"},
       {:bcrypt_elixir, "~> 2.0"},

@@ -3,19 +3,10 @@ defmodule Spendable.User.Types do
 
   alias Spendable.Middleware.CheckAuthentication
   alias Spendable.User.Resolver
-  alias Spendable.User.Utils
 
   object :user do
     field :id, non_null(:id)
     field :bank_limit, non_null(:integer)
-
-    field :spendable, non_null(:decimal) do
-      complexity(50)
-
-      resolve(fn user, _args, _resolution ->
-        {:ok, Utils.calculate_spendable(user)}
-      end)
-    end
 
     field :plaid_link_token, non_null(:string) do
       complexity(50)

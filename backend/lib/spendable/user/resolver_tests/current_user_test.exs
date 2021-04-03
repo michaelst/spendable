@@ -13,7 +13,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
 
     query = """
       query {
-        currentUser {
+        currentUser(id: #{user.id}) {
           bankLimit
           spendable
         }
@@ -28,7 +28,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
                   "spendable" => "64.44"
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "new current user" do
@@ -36,7 +36,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
 
     query = """
       query {
-        currentUser {
+        currentUser(id: #{user.id}) {
           bankLimit
           spendable
         }
@@ -51,7 +51,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
                   "spendable" => "0.00"
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "plaid link token" do
@@ -66,7 +66,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
 
     doc = """
       query {
-        currentUser {
+        currentUser(id: #{user.id}) {
           plaidLinkToken
         }
       }
@@ -79,13 +79,13 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
                   "plaidLinkToken" => token
                 }
               }
-            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "unauthenticated", %{conn: conn} do
     query = """
       query {
-        currentUser {
+        currentUser(id: 1) {
           plaidLinkToken
         }
       }

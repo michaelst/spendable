@@ -1,12 +1,15 @@
-defmodule Spendable.User.Utils do
-  import Ecto.Query, only: [from: 2, subquery: 1]
+defmodule Spendable.User.CalculateSpendable do
+  use Ash.Calculation, type: :decimal
+
+  import Ecto.Query
 
   alias Spendable.Banks.Account
   alias Spendable.Budgets.Allocation
   alias Spendable.Budgets.Budget
   alias Spendable.Repo
 
-  def calculate_spendable(user) do
+  @impl Ash.Calculation
+  def calculate([user], _opts, _args) do
     balance =
       from(ba in Account,
         select:
@@ -42,6 +45,6 @@ defmodule Spendable.User.Utils do
       |> Repo.one()
       |> Kernel.||("0.00")
 
-    Decimal.sub(balance, allocated)
+    {:ok, [Decimal.sub(balance, allocated)]}
   end
 end

@@ -1,6 +1,10 @@
 defmodule Spendable.Web.Schema do
   use Absinthe.Schema
 
+  @apis [Spendable.Api]
+
+  use AshGraphql, apis: @apis
+
   import_types(Absinthe.Type.Custom)
 
   import_types(Spendable.Banks.Account.Types)
@@ -48,7 +52,9 @@ defmodule Spendable.Web.Schema do
       Dataloader.new()
       |> Dataloader.add_source(Spendable, Spendable.data())
 
-    Map.put(context, :loader, loader)
+    context
+    |> Map.put(:loader, loader)
+    |> AshGraphql.add_context(@apis)
   end
 
   def plugins() do
