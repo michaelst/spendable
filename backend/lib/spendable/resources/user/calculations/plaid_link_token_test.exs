@@ -1,6 +1,8 @@
 defmodule Spendable.User.Calculations.PlaidLinkTokenTest do
   use Spendable.DataCase, async: true
 
+  alias Spendable.User.Calculations.PlaidLinkToken
+
   test "calculate plaid link token" do
     user = Spendable.TestUtils.create_user()
 
@@ -11,7 +13,7 @@ defmodule Spendable.User.Calculations.PlaidLinkTokenTest do
         %Tesla.Env{status: 200, body: %{"link_token" => token}}
     end)
 
-    {:ok, [calculated_token]} = Spendable.User.Calculations.PlaidLinkToken.calculate([user], [], %{})
+    {:ok, [calculated_token]} = PlaidLinkToken.calculate([user], [], %{})
 
     assert token == calculated_token
   end
