@@ -4,9 +4,10 @@ defmodule Spendable.TestUtils do
   alias Spendable.Repo
   alias Spendable.User
 
-  def create_user do
-    email = "#{Ecto.UUID.generate()}@example.com"
-    %User{} |> User.changeset(%{email: email, password: "password", bank_limit: 10}) |> Repo.insert!()
+  def create_user() do
+    firebase_id = Ecto.UUID.generate()
+
+    %User{} |> User.changeset(%{firebase_id: firebase_id, bank_limit: 10}) |> Repo.insert!()
   end
 
   def random_decimal(range, precision \\ 2) do

@@ -1,5 +1,5 @@
 defmodule Plaid do
-  def client do
+  def client() do
     middleware = [
       {Tesla.Middleware.BaseUrl, Application.get_env(:spendable, Plaid)[:base_url]},
       Tesla.Middleware.JSON
@@ -17,7 +17,7 @@ defmodule Plaid do
     })
   end
 
-  def categories do
+  def categories() do
     client() |> Tesla.post("/categories/get", %{})
   end
 

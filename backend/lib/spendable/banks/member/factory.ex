@@ -1,7 +1,7 @@
 defmodule Spendable.Banks.Member.Factory do
   defmacro __using__(_opts) do
     quote do
-      def bank_member_factory do
+      def bank_member_factory() do
         %Spendable.Banks.Member{
           external_id: Faker.UUID.v4(),
           institution_id: "ins_1",

@@ -1,5 +1,5 @@
 defmodule Spendable.Broadway.SyncMemberTest.TestData do
-  def item do
+  def item() do
     %{
       item: %{
         available_products: [
@@ -31,7 +31,7 @@ defmodule Spendable.Broadway.SyncMemberTest.TestData do
     }
   end
 
-  def institution do
+  def institution() do
     %{
       institution: %{
         country_codes: [
@@ -81,7 +81,7 @@ defmodule Spendable.Broadway.SyncMemberTest.TestData do
     }
   end
 
-  def accounts do
+  def accounts() do
     %{
       accounts: [
         %{

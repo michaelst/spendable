@@ -17,7 +17,7 @@ defmodule Spendable.Web do
   and import those modules here.
   """
 
-  def controller do
+  def controller() do
     quote do
       use Phoenix.Controller, namespace: Spendable.Web
 
@@ -27,7 +27,7 @@ defmodule Spendable.Web do
     end
   end
 
-  def view do
+  def view() do
     quote do
       use Phoenix.View,
         root: "lib/spendable_web/templates",
@@ -44,7 +44,7 @@ defmodule Spendable.Web do
     end
   end
 
-  def router do
+  def router() do
     quote do
       use Phoenix.Router
       import Plug.Conn
@@ -52,7 +52,7 @@ defmodule Spendable.Web do
     end
   end
 
-  def channel do
+  def channel() do
     quote do
       use Phoenix.Channel
       import Spendable.Web.Gettext

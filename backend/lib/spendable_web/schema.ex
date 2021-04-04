@@ -51,7 +51,7 @@ defmodule Spendable.Web.Schema do
     Map.put(context, :loader, loader)
   end
 
-  def plugins do
+  def plugins() do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 
