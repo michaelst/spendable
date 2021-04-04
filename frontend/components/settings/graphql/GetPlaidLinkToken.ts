@@ -9,10 +9,10 @@
 
 export interface GetPlaidLinkToken_currentUser {
   __typename: "User";
-  id: string;
+  id: number;
   plaidLinkToken: string;
 }
 
 export interface GetPlaidLinkToken {
-  currentUser: GetPlaidLinkToken_currentUser;
+  currentUser: GetPlaidLinkToken_currentUser | null;
 }

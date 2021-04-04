@@ -9,10 +9,10 @@
 
 export interface CurrentUser_currentUser {
   __typename: "User";
-  id: string;
+  id: number;
   spendable: Decimal;
 }
 
 export interface CurrentUser {
-  currentUser: CurrentUser_currentUser;
+  currentUser: CurrentUser_currentUser | null;
 }

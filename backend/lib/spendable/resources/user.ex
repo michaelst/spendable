@@ -24,8 +24,8 @@ defmodule Spendable.User do
   end
 
   calculations do
-    calculate :plaid_link_token, :string, Spendable.User.Calculations.PlaidLinkToken
-    calculate :spendable, :decimal, Spendable.User.Calculations.Spendable
+    calculate :plaid_link_token, :string, Spendable.User.Calculations.PlaidLinkToken, allow_nil?: false
+    calculate :spendable, :decimal, Spendable.User.Calculations.Spendable, allow_nil?: false
   end
 
   actions do
