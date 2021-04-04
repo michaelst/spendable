@@ -1,7 +1,7 @@
 defmodule Spendable.Repo.Migrations.AddMissingIndexes do
   use Ecto.Migration
 
-  def change do
+  def change() do
     create index(:bank_accounts, [:bank_member_id])
     create index(:bank_transactions, [:user_id])
     create index(:bank_transactions, [:category_id])

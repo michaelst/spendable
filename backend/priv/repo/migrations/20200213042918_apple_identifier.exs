@@ -1,7 +1,7 @@
 defmodule Spendable.Repo.Migrations.AppleIdentifier do
   use Ecto.Migration
 
-  def change do
+  def change() do
     alter table(:users) do
       add(:apple_identifier, :string)
       modify(:email, :citext, null: true)

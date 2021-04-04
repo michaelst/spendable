@@ -5,13 +5,13 @@ defmodule Spendable.Web.Router do
     plug :accepts, [:urlencoded, :multipart, :json]
     plug Spendable.Plug.Auth
     plug :put_secure_browser_headers
-    plug(Plug.Logger)
+    plug Plug.Logger
   end
 
   pipeline(:public) do
     plug :accepts, ["json"]
     plug :put_secure_browser_headers
-    plug(Plug.Logger)
+    plug Plug.Logger
   end
 
   pipeline :browser do
@@ -20,7 +20,7 @@ defmodule Spendable.Web.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug(Plug.Logger)
+    plug Plug.Logger
   end
 
   forward "/_health", HealthCheck
@@ -28,16 +28,16 @@ defmodule Spendable.Web.Router do
   scope "/", Spendable.Web.Controllers do
     pipe_through :public
 
-    get("/.well-known/apple-app-site-association", WellKnown, :apple_app_site_association)
-    post("/plaid/webhook", Plaid, :webhook)
+    get "/.well-known/apple-app-site-association", WellKnown, :apple_app_site_association
+    post "/plaid/webhook", Plaid, :webhook
   end
 
   scope "/", Spendable.Web.Controllers do
     pipe_through :browser
 
-    get("/", Site, :index)
-    get("/privacy-policy", Site, :privacy_policy)
-    get("/contact-us", Site, :contact_us)
+    get "/", Site, :index
+    get "/privacy-policy", Site, :privacy_policy
+    get "/contact-us", Site, :contact_us
   end
 
   scope "/" do

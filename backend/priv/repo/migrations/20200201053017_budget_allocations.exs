@@ -1,7 +1,7 @@
 defmodule Spendable.Repo.Migrations.BudgetAllocations do
   use Ecto.Migration
 
-  def change do
+  def change() do
     create table(:budget_allocations) do
       add(:transaction_id, references(:transactions, on_delete: :delete_all), null: false)
       add(:budget_id, references(:budgets, on_delete: :delete_all), null: false)

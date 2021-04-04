@@ -1,7 +1,7 @@
 defmodule Spendable.Repo.Migrations.Tags do
   use Ecto.Migration
 
-  def change do
+  def change() do
     create table(:tags) do
       add(:user_id, references(:users, on_delete: :delete_all), null: false)
       add(:name, :text, null: false)

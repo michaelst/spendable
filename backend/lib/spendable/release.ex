@@ -1,5 +1,5 @@
 defmodule Spendable.Release do
-  def migrate do
+  def migrate() do
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
@@ -9,7 +9,7 @@ defmodule Spendable.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
-  defp repos do
+  defp repos() do
     Application.load(:spendable)
     Application.fetch_env!(:spendable, :ecto_repos)
   end

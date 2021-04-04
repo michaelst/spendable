@@ -1,7 +1,7 @@
 defmodule Spendable.MixProject do
   use Mix.Project
 
-  def project do
+  def project() do
     [
       app: :spendable,
       version: "0.1.0",
@@ -19,7 +19,7 @@ defmodule Spendable.MixProject do
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
-  def application do
+  def application() do
     [
       mod: {Spendable.Application, []},
       extra_applications: [:logger, :runtime_tools]

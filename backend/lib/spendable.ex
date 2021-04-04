@@ -4,7 +4,7 @@ defmodule Spendable do
   alias Spendable.Banks.Account
   alias Spendable.Budgets.Allocation
 
-  def data do
+  def data() do
     Dataloader.Ecto.new(Spendable.Repo, query: &query/2)
   end
 

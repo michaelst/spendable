@@ -1,7 +1,7 @@
 defmodule Spendable.Repo.Migrations.BankSetup do
   use Ecto.Migration
 
-  def change do
+  def change() do
     create table(:bank_members) do
       add(:external_id, :string, null: false)
       add(:user_id, references(:users, on_delete: :delete_all), null: false)
