@@ -1,4 +1,4 @@
-defmodule Spendable.User.CalculateSpendable do
+defmodule Spendable.User.Calculations.Spendable do
   use Ash.Calculation, type: :decimal
 
   import Ecto.Query
@@ -9,7 +9,7 @@ defmodule Spendable.User.CalculateSpendable do
   alias Spendable.Repo
 
   @impl Ash.Calculation
-  def calculate([user], _opts, _args) do
+  def calculate([user], _opts, _resolution) do
     balance =
       from(ba in Account,
         select:

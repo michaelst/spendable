@@ -18,7 +18,6 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.Notifications.Settings.Types)
   import_types(Spendable.Tag.Types)
   import_types(Spendable.Transaction.Types)
-  import_types(Spendable.User.Types)
 
   query do
     field :health, :string, resolve: fn _args, _resolution -> {:ok, "up"} end
@@ -31,7 +30,6 @@ defmodule Spendable.Web.Schema do
     import_fields(:notification_settings_queries)
     import_fields(:tag_queries)
     import_fields(:transaction_queries)
-    import_fields(:user_queries)
   end
 
   mutation do
@@ -44,17 +42,17 @@ defmodule Spendable.Web.Schema do
     import_fields(:notification_settings_mutations)
     import_fields(:tag_mutations)
     import_fields(:transaction_mutations)
-    import_fields(:user_mutations)
   end
 
   def context(context) do
+    context = AshGraphql.add_context(context, @apis)
+
     loader =
-      Dataloader.new()
+      context
+      |> Map.fetch!(:loader)
       |> Dataloader.add_source(Spendable, Spendable.data())
 
-    context
-    |> Map.put(:loader, loader)
-    |> AshGraphql.add_context(@apis)
+    Map.put(context, :loader, loader)
   end
 
   def plugins() do

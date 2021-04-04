@@ -28,11 +28,11 @@ defmodule Spendable.User do
   # end
 
   calculations do
-    calculate :spendable, :decimal, Spendable.User.CalculateSpendable
+    calculate :plaid_link_token, :string, Spendable.User.Calculations.PlaidLinkToken
+    calculate :spendable, :decimal, Spendable.User.Calculations.Spendable
   end
 
   actions do
-    # TODO: need to remove id requirement
     read :current_user do
       filter id: actor(:id)
     end
@@ -42,7 +42,7 @@ defmodule Spendable.User do
     type :post
 
     queries do
-      get :current_user, :current_user
+      read_one :current_user, :current_user
     end
   end
 end
