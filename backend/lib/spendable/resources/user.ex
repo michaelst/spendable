@@ -23,10 +23,6 @@ defmodule Spendable.User do
     identity :firebase_id, [:firebase_id]
   end
 
-  # relationships do
-  #  has_many :notification_settings, Spendable.Notifications.Settings, destination_field: :user_id
-  # end
-
   calculations do
     calculate :plaid_link_token, :string, Spendable.User.Calculations.PlaidLinkToken
     calculate :spendable, :decimal, Spendable.User.Calculations.Spendable
@@ -39,7 +35,7 @@ defmodule Spendable.User do
   end
 
   graphql do
-    type :post
+    type :user
 
     queries do
       read_one :current_user, :current_user
