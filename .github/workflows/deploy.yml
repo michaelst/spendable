@@ -24,7 +24,7 @@ jobs:
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v1
-      
+
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -87,7 +87,7 @@ jobs:
             -NL 6443:127.0.0.1:6443 \
             -o ProxyCommand="cloudflared access ssh --hostname sapphire.fiftyseven.media --id ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }} --secret ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}" \
             ubuntu@sapphire.fiftyseven.media
- 
+
       - name: Setup Helm
         run: |
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
@@ -105,4 +105,4 @@ jobs:
           --set image.tag=${GITHUB_SHA} \
           --atomic \
           --debug
-          
+

@@ -1,3 +1,4 @@
 vendor/
 GoogleService-Info.plist
 sentry.properties
+ios/Pods/
