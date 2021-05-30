@@ -52,6 +52,7 @@ defmodule Plaid do
       country_codes: ["US"],
       language: "en",
       products: ["transactions"],
+      redirect_uri: "https://api.spendable.money/plaid/oauth.html",
       secret: Application.get_env(:spendable, Plaid)[:secret_key],
       user: %{client_user_id: "#{user_id}"},
       webhook: "https://spendable.money/plaid/webhook"
