@@ -9,15 +9,20 @@ defmodule Spendable.Web.Controllers.WellKnown do
       appLinks: %{
         apps: [],
         details: [
-          appIDs: ["A4TA99R8XM.fiftysevenmedia.Spendable", "A4TA99R8XM.fiftysevenmedia.SpendableDev"],
-          components: [
-            %{
-              /: "/plaid/oauth.html"
-            },
-            %{
-              /: "/plaid/oauth"
-            }
-          ]
+          %{
+            appIDs: [
+              "A4TA99R8XM.fiftysevenmedia.Spendable",
+              "A4TA99R8XM.fiftysevenmedia.SpendableDev"
+            ],
+            components: [
+              %{
+                /: "/plaid/oauth.html"
+              },
+              %{
+                /: "/plaid/oauth"
+              }
+            ]
+          }
         ]
       }
     })
