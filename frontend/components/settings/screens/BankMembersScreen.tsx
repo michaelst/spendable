@@ -9,6 +9,7 @@ import BankMemberRow from './BankMemberRow'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
 import AppStyles from 'constants/AppStyles'
 import { GetPlaidLinkToken } from '../graphql/GetPlaidLinkToken'
+import { LinkSuccess } from 'react-native-plaid-link-sdk'
 
 export default function BankMembersScreen() {
   const navigation = useNavigation()
@@ -34,7 +35,7 @@ export default function BankMembersScreen() {
       return (
         <PlaidLink
           tokenConfig={{ token: plaidData.currentUser.plaidLinkToken, }}
-          onSuccess={({ public_token: publicToken }: { public_token: String }) => createBankMember({ variables: { publicToken: publicToken } })}
+          onSuccess={(success: LinkSuccess) => createBankMember({ variables: { publicToken: success.publicToken } })}
         >
           <Text style={styles.headerButtonText}>Add</Text>
         </PlaidLink>

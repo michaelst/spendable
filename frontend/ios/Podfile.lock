@@ -105,7 +105,7 @@ PODS:
     - nanopb/encode (= 2.30907.0)
   - nanopb/decode (2.30907.0)
   - nanopb/encode (2.30907.0)
-  - Plaid (2.1.0)
+  - Plaid (2.1.2)
   - PromisesObjC (1.2.12)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
@@ -302,8 +302,8 @@ PODS:
   - React-jsinspector (0.64.0)
   - react-native-appearance (0.3.4):
     - React
-  - react-native-plaid-link-sdk (7.0.1):
-    - Plaid (~> 2.1.0)
+  - react-native-plaid-link-sdk (7.0.6):
+    - Plaid (~> 2.1.2)
     - React-Core
   - react-native-safe-area-context (3.2.0):
     - React-Core
@@ -469,7 +469,7 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - Plaid (~> 2.1.0)
+  - Plaid (~> 2.1.2)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -707,7 +707,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: 197a8dabfea5d665224aa00d17f164fc2248dab9
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
-  Plaid: 05d097f9fd0b1dec242a1450f2f746641c3ef613
+  Plaid: c02276ccc630a726a9ed790bf923d29839ff4017
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 2f8cb5b7533219bf4218a045f92768129cf7050a
@@ -721,7 +721,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 06a9c77b56902ae7ffcdd7a4905f664adc5d237b
   React-jsinspector: 0ae35a37b20d5e031eb020a69cc5afdbd6406301
   react-native-appearance: fc2014516054585d531e07aa0b40ab0de1d2be85
-  react-native-plaid-link-sdk: fa90b642c9485c6486ba9cd65a1e46ead2d419dd
+  react-native-plaid-link-sdk: 01ec3a9c5a448f15f476ee3be16df27758031aae
   react-native-safe-area-context: e471852c5ed67eea4b10c5d9d43c1cebae3b231d
   React-perflogger: 9c547d8f06b9bf00cb447f2b75e8d7f19b7e02af
   React-RCTActionSheet: 3080b6e12e0e1a5b313c8c0050699b5c794a1b11
@@ -762,6 +762,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 482155764886069beb1bc7fcf6036f12e4ad0751
   Yoga: 8c8436d4171c87504c648ae23b1d81242bdf3bbf
 
-PODFILE CHECKSUM: 5164b374ed4a158b703cbd182079454d44f65582
+PODFILE CHECKSUM: b09761643572a26b9ab4fb36b168e20878a1357c
 
 COCOAPODS: 1.10.1
