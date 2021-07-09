@@ -20,7 +20,7 @@
     "@react-navigation/stack": "^5.14.3",
     "@sentry/react-native": "^2.4.0",
     "decimal.js-light": "^2.5.1",
-    "expo": "^39.0.5",
+    "expo": "^42.0.1",
     "expo-constants": "^10.0.1",
     "expo-splash-screen": "^0.10.0",
     "expo-updates": "^0.4.2",
