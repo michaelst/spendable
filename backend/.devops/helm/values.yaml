@@ -1,5 +1,5 @@
 nameOverride: spendable
-replicaCount: 3
+replicaCount: 1
 
 service:
   port: 80
@@ -35,10 +35,13 @@ imagePullSecrets:
 
 resources:
   requests:
-    cpu: 250m
-    memory: 500M
+    cpu: 50m
+    memory: 64M
+  limits:
+    cpu: "1"
+    memory: 256M
 
 envVars:
-  DB_HOSTNAME: postgres-postgresql.postgres.svc.cluster.local
+  DB_HOSTNAME: 10.122.112.3
   DB_USERNAME: postgres
 
