@@ -13,6 +13,7 @@ defmodule Spendable.Transaction.Types do
     field :date, non_null(:date)
     field :name, :string
     field :note, :string
+    field :reviewed, non_null(:boolean)
 
     field :allocations, :allocation |> non_null |> list_of |> non_null, resolve: dataloader(Spendable)
     field :bank_transaction, :bank_transaction, resolve: dataloader(Spendable)
@@ -43,6 +44,7 @@ defmodule Spendable.Transaction.Types do
       arg(:date, non_null(:string))
       arg(:name, :string)
       arg(:note, :string)
+      arg(:reviewed, non_null(:boolean))
       arg(:allocations, :allocation_input_object |> non_null |> list_of)
       arg(:tag_ids, list_of(:id))
       resolve(&Resolver.create/2)
@@ -57,6 +59,7 @@ defmodule Spendable.Transaction.Types do
       arg(:date, :string)
       arg(:name, :string)
       arg(:note, :string)
+      arg(:reviewed, :boolean)
       arg(:allocations, :allocation_input_object |> non_null |> list_of)
       arg(:tag_ids, list_of(:id))
       resolve(&Resolver.update/2)

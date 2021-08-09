@@ -9,6 +9,7 @@ defmodule Spendable.Transaction do
     field :date, :date
     field :name, :string
     field :note, :string
+    field :reviewed, :boolean
 
     belongs_to :bank_transaction, Spendable.Banks.Transaction
     belongs_to :category, Spendable.Banks.Category
@@ -24,7 +25,7 @@ defmodule Spendable.Transaction do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, __schema__(:fields) -- [:id])
-    |> validate_required([:user_id, :amount, :date])
+    |> validate_required([:user_id, :amount, :date, :reviewed])
     |> Spendable.Utils.Changeset.propogate_relation_id(:allocations, :user_id)
     |> cast_assoc(:allocations)
     |> maybe_put_tags(params)

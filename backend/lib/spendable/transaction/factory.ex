@@ -6,7 +6,8 @@ defmodule Spendable.Transaction.Factory do
           amount: 10.25,
           date: Date.utc_today(),
           name: "test",
-          note: "some notes"
+          note: "some notes",
+          reviewed: false
         }
       end
     end

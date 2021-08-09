@@ -19,6 +19,7 @@ defmodule Spendable.Transaction.Resolver.GetTest do
         note
         amount
         date
+        reviewed
         category {
             id
         }
@@ -35,7 +36,8 @@ defmodule Spendable.Transaction.Resolver.GetTest do
                   "date" => "#{transaction.date}",
                   "id" => "#{transaction.id}",
                   "name" => "test",
-                  "note" => "some notes"
+                  "note" => "some notes",
+                  "reviewed" => false
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})

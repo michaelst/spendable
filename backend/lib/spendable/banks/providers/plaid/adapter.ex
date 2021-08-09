@@ -59,7 +59,8 @@ defmodule Spendable.Banks.Providers.Plaid.Adapter do
       category_id: bank_transaction.category_id,
       amount: bank_transaction.amount,
       date: bank_transaction.date,
-      name: bank_transaction.name
+      name: bank_transaction.name,
+      reviewed: false
     }
   end
 end

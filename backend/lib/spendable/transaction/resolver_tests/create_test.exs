@@ -19,6 +19,7 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
           amount: "126.25"
           date: "#{Date.utc_today()}"
           categoryId: "#{category_id}"
+          reviewed: true
           allocations: [
             {
               amount: "26.25"
@@ -35,6 +36,7 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
           category {
             id
           }
+          reviewed
           allocations {
             amount
             budget {
@@ -54,6 +56,7 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
               data: %{
                 "createTransaction" => %{
                   "name" => "new name",
+                  "reviewed" => true,
                   "category" => %{
                     "id" => "#{category_id}"
                   },

@@ -18,6 +18,7 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
           id: #{transaction.id}
           name: "new name"
           categoryId: "#{category_id}"
+          reviewed: true
           allocations: [
             {
               id: #{allocation.id}
@@ -32,6 +33,7 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
         ) {
           id
           name
+          reviewed
           category {
             id
           }
@@ -51,6 +53,7 @@ defmodule Spendable.Transaction.Resolver.UpdateTest do
                 "updateTransaction" => %{
                   "id" => "#{transaction.id}",
                   "name" => "new name",
+                  "reviewed" => true,
                   "category" => %{
                     "id" => "#{category_id}"
                   },
