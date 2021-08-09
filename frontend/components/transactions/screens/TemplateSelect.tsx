@@ -80,7 +80,7 @@ export default function TemplateSelect({ setValue }: Props) {
                         <Text style={styles.rightText} >
                           {formatCurrency(allocated)}
                         </Text>
-                        <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+                        <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
                       </View>
                     </View>
                   </TouchableHighlight>

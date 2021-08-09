@@ -122,7 +122,7 @@ export default function TransactionScreen() {
                   <Text style={[styles.formInputText, { paddingRight: padding }]}>
                     {spendFromValue}
                   </Text>
-                  <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+                  <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
                 </View>
               </View>
             </TouchableHighlight>

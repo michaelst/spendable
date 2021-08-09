@@ -27,6 +27,7 @@ export default function Main() {
     <NavigationContainer theme={theme}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
+          headerShown: false,
           tabBarIcon: ({ color, size }) => {
             if (route.name === 'Expenses') {
               return <FontAwesome5 name='money-check-alt' size={size} color={color} />

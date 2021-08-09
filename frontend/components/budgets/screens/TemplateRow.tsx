@@ -39,7 +39,7 @@ export default function TemplateRow({ templateLine }: Props) {
           <Text style={styles.rightText} >
             {formatCurrency(templateLine.amount)}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>

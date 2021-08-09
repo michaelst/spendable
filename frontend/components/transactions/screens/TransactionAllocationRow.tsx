@@ -79,7 +79,7 @@ export default function TransactionAllocationRow({ allocation, transactionId }: 
             <Text style={styles.rightText} >
               {formatCurrency(allocation.amount)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+            <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

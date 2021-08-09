@@ -67,7 +67,7 @@ export default function BudgetSelect({ title, value, setValue }: FormField) {
           <Text style={[styles.formInputText, { paddingRight: padding }]}>
             {value}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
         </View>
 
         <Modal

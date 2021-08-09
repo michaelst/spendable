@@ -65,7 +65,7 @@ export default function BudgetRow({ budget }: Props) {
             >
               {formatCurrency(budget.balance)}
             </Text>
-            <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+            <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

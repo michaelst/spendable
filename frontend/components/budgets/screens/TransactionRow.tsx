@@ -49,7 +49,7 @@ export default function TransactionRow({ allocation }: Props) {
           >
             {formatCurrency(allocation.amount)}
           </Text>
-          <Ionicons name='ios-arrow-forward' size={fontSize} color={colors.secondary} />
+          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>

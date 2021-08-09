@@ -27,7 +27,7 @@ export default function Budgets() {
     }
   }
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerMode: 'screen' }}>
       <Stack.Screen name="Expenses" component={BudgetsScreen} options={{ ...options, ...{ headerTitle: () => <SpendableHeader /> } }} />
       <Stack.Screen name="Expense" component={BudgetScreen} options={options} />
       <Stack.Screen name="Create Expense" component={BudgetCreateScreen} options={options} />
