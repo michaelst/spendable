@@ -32,6 +32,7 @@ export interface GetTransaction_transaction {
   note: string | null;
   amount: Decimal;
   date: Date;
+  reviewed: boolean;
   allocations: GetTransaction_transaction_allocations[];
   bankTransaction: GetTransaction_transaction_bankTransaction | null;
 }

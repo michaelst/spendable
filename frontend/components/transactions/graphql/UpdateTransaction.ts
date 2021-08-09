@@ -29,6 +29,7 @@ export interface UpdateTransaction_updateTransaction {
   note: string | null;
   amount: Decimal;
   date: Date;
+  reviewed: boolean;
   allocations: UpdateTransaction_updateTransaction_allocations[];
 }
 
@@ -42,5 +43,6 @@ export interface UpdateTransactionVariables {
   name?: string | null;
   date?: string | null;
   note?: string | null;
+  reviewed?: boolean | null;
   allocations?: AllocationInputObject[] | null;
 }

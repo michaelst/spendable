@@ -13,7 +13,8 @@ export default function TransactionsScreen() {
   const { colors }: any = useTheme()
   const { styles } = AppStyles()
 
-  const { data, loading, refetch } = useQuery<ListTransactions>(LIST_TRANSACTIONS)
+  const { data, loading, refetch, error} = useQuery<ListTransactions>(LIST_TRANSACTIONS)
+  console.log(error)
 
   const headerRight = () => {
     return (

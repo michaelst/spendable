@@ -1,25 +1,24 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Text, View, } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Switch, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 
 import { CREATE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
-import { LIST_BUDGETS } from 'components/budgets/queries'
 import AppStyles from 'constants/AppStyles'
 import DateInput from 'components/shared/screen/form/DateInput'
 import FormInput from 'components/shared/screen/form/FormInput'
-import { GET_SPENDABLE } from 'components/headers/spendable-header/queries'
 import { ListTransactions } from '../graphql/ListTransactions'
 
 export default function TransactionCreateScreen() {
-  const { styles } = AppStyles()
+  const { styles, padding } = AppStyles()
   const navigation = useNavigation()
 
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(new Date())
   const [note, setNote] = useState('')
+  const [reviewed, setReviewed] = useState(true)
 
   const headerRight = () => {
     return (
@@ -36,7 +35,8 @@ export default function TransactionCreateScreen() {
       amount: amount,
       date: date,
       name: name,
-      note: note
+      note: note,
+      reviewed: reviewed
     },
     update(cache, { data: { createTransaction } }) {
       const data = cache.readQuery<ListTransactions | null>({ query: LIST_TRANSACTIONS })
@@ -60,6 +60,21 @@ export default function TransactionCreateScreen() {
       <FormInput title='Amount' value={amount} setValue={setAmount} keyboardType='decimal-pad' />
       <DateInput title='Date' value={date} setValue={setDate} />
       <FormInput title='Note' value={note} setValue={setNote} multiline={true} />
+
+      <View style={[styles.row, { padding: padding }]}>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.text, { padding: padding }]}>
+            Reviewed
+          </Text>
+        </View>
+
+        <View style={{ flexDirection: "row", paddingRight: padding }}>
+          <Switch
+            onValueChange={() => setReviewed(!reviewed)}
+            value={reviewed}
+          />
+        </View>
+      </View>
     </View>
   )
 }

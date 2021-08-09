@@ -13,6 +13,7 @@ export interface ListTransactions_transactions {
   name: string | null;
   amount: Decimal;
   date: Date;
+  reviewed: boolean;
 }
 
 export interface ListTransactions {

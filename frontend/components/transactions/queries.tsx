@@ -7,6 +7,7 @@ export const LIST_TRANSACTIONS = gql`
       name
       amount
       date
+      reviewed
     }
   }
 `
@@ -30,6 +31,7 @@ export const TRANSACTION_FRAGMENT = gql`
     note
     amount
     date
+    reviewed
     allocations {
       ...AllocationFragment
     }
@@ -50,12 +52,13 @@ export const GET_TRANSACTION = gql`
 
 export const CREATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation CreateTransaction($amount: String!, $name: String, $date: String!, $note: String, $categoryId: ID, $allocations: [AllocationInputObject!]) {
+  mutation CreateTransaction($amount: String!, $name: String, $date: String!, $note: String, $reviewed: Boolean!, $categoryId: ID, $allocations: [AllocationInputObject!]) {
     createTransaction(
       amount: $amount
       name: $name
       date: $date
       note: $note
+      reviewed: $reviewed
       categoryId: $categoryId
       allocations: $allocations
     ) {
@@ -66,13 +69,14 @@ export const CREATE_TRANSACTION = gql`
 
 export const UPDATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation UpdateTransaction($id: ID!, $amount: String, $name: String, $date: String, $note: String, $allocations: [AllocationInputObject!]) {
+  mutation UpdateTransaction($id: ID!, $amount: String, $name: String, $date: String, $note: String, $reviewed: Boolean, $allocations: [AllocationInputObject!]) {
     updateTransaction(
       id: $id
       amount: $amount
       name: $name
       date: $date
       note: $note
+      reviewed: $reviewed
       allocations: $allocations
     ) {
       ...TransactionFragment

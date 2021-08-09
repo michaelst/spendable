@@ -27,5 +27,6 @@ export interface TransactionFragment {
   note: string | null;
   amount: Decimal;
   date: Date;
+  reviewed: boolean;
   allocations: TransactionFragment_allocations[];
 }

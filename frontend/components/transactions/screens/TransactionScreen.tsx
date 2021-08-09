@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import { RouteProp, useRoute, useNavigation, useTheme } from '@react-navigation/native'
 import { ActivityIndicator, Text, View, } from 'react-native'
-import { TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Switch, TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useMutation, useQuery } from '@apollo/client'
 
 import { GET_TRANSACTION, UPDATE_TRANSACTION } from '../queries'
@@ -28,6 +28,7 @@ export default function TransactionScreen() {
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(new Date())
   const [note, setNote] = useState('')
+  const [reviewed, setReviewed] = useState(false)
 
   const headerRight = () => {
     return (
@@ -46,6 +47,7 @@ export default function TransactionScreen() {
       setAmount(data.transaction.amount.toDecimalPlaces(2).toFixed(2))
       setDate(data.transaction.date)
       setNote(data.transaction.note ?? '')
+      setReviewed(data.transaction.reviewed)
     }
   })
 
@@ -87,7 +89,8 @@ export default function TransactionScreen() {
         amount: amount,
         date: date,
         name: name,
-        note: note
+        note: note,
+        reviewed: reviewed
       }
     })
     navigateToTransactions()
@@ -99,6 +102,21 @@ export default function TransactionScreen() {
       <FormInput title='Amount' value={amount} setValue={setAmount} keyboardType='decimal-pad' />
       <DateInput title='Date' value={date} setValue={setDate} />
       <FormInput title='Note' value={note} setValue={setNote} multiline={true} />
+
+      <View style={[styles.row, { padding: padding }]}>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.text, { padding: padding }]}>
+            Reviewed
+          </Text>
+        </View>
+
+        <View style={{ flexDirection: "row", paddingRight: padding }}>
+          <Switch
+            onValueChange={() => setReviewed(!reviewed)}
+            value={reviewed}
+          />
+        </View>
+      </View>
 
       {data.transaction.bankTransaction ? (
         <Text style={{ ...styles.secondaryText, ...{ padding: padding * 2, paddingTop: padding } }}>

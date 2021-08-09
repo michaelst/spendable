@@ -74,6 +74,9 @@ export default function TransactionRow({ transaction }: Props) {
             >
               {formatCurrency(transaction.amount)}
             </Text>
+            {transaction.reviewed ?
+              <Ionicons name='checkmark-circle-outline' size={fontSize} color={colors.secondary} /> : null
+            }
             <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
           </View>
         </View>

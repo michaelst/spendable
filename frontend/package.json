@@ -4,7 +4,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "web": "expo start --web",
-    "codegen": "apollo client:codegen --target typescript --endpoint https://spendable.money/graphql graphql --passthroughCustomScalars"
+    "codegen": "apollo client:codegen --target typescript --endpoint http://localhost:4000/graphql graphql --passthroughCustomScalars"
   },
   "dependencies": {
     "@apollo/client": "^3.4.5",

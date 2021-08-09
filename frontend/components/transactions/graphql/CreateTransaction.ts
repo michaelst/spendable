@@ -29,6 +29,7 @@ export interface CreateTransaction_createTransaction {
   note: string | null;
   amount: Decimal;
   date: Date;
+  reviewed: boolean;
   allocations: CreateTransaction_createTransaction_allocations[];
 }
 
@@ -41,6 +42,7 @@ export interface CreateTransactionVariables {
   name?: string | null;
   date: string;
   note?: string | null;
+  reviewed: boolean;
   categoryId?: string | null;
   allocations?: AllocationInputObject[] | null;
 }
