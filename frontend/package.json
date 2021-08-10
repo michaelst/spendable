@@ -7,7 +7,7 @@
     "codegen": "apollo client:codegen --target typescript --endpoint http://localhost:4000/graphql graphql --passthroughCustomScalars"
   },
   "dependencies": {
-    "@apollo/client": "^3.4.5",
+    "@apollo/client": "^3.4.7",
     "@invertase/react-native-apple-authentication": "^2.1.2",
     "@react-native-community/datetimepicker": "^3.5.2",
     "@react-native-community/google-signin": "^5.0.0",
