@@ -35,18 +35,18 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe_plug, "~> 1.5.0"},
-      {:absinthe, "~> 1.6.0"},
+      {:ash_graphql, "~> 0.16"},
+      {:ash_postgres, "~> 0.40"},
+      {:ash, "~> 1.47"},
       {:bcrypt_elixir, "~> 2.0"},
-      {:broadway_cloud_pub_sub, "~> 0.6.0"},
-      {:broadway, "~> 0.6.0"},
+      {:broadway_cloud_pub_sub, "~> 0.7"},
+      {:broadway, "~> 1.0"},
       {:castore, "~> 0.1.0"},
       {:cors_plug, "~> 2.0"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
-      {:dataloader, "~> 1.0.0"},
       {:ecto_enum, "~> 1.4"},
-      {:ecto_sql, "~> 3.3"},
-      {:ex_machina, "~> 2.4", only: :test},
+      {:ecto_sql, "~> 3.7"},
+      {:ex_machina, "~> 2.7", only: :test},
       {:excoveralls, ">= 0.0.0", only: :test},
       {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
@@ -62,7 +62,7 @@ defmodule Spendable.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix, "~> 1.5"},
       {:pigeon, "~> 1.6"},
-      {:plug_cowboy, "~> 2.0"},
+      {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:protobuf, "~> 0.7.1"},
       {:sentry, "~> 8.0"},
@@ -78,6 +78,7 @@ defmodule Spendable.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      "ash.gen.migrations": ["ash_postgres.generate_migrations"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
