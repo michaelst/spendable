@@ -1,13 +1,15 @@
-FROM elixir:1.11-alpine AS build
+FROM elixir:1.12-slim AS build
 
 ENV MIX_ENV=prod \
     LANG=C.UTF-8
 
-WORKDIR /app
-
-RUN apk add --update --no-cache build-base git \
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends build-essential software-properties-common \
+  && rm -rf /var/lib/apt/lists/* \
   && mix local.hex --force \
   && mix local.rebar --force
+
+WORKDIR /app
 
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs ./config/
@@ -20,12 +22,16 @@ RUN mix compile
 COPY config/releases.exs ./config/
 RUN mix release
 
-FROM alpine:3.12 AS release
+FROM ubuntu:20.04 AS app
 
 ENV LANG=C.UTF-8
 
-RUN apk add --update --no-cache openssl ncurses-libs
-RUN addgroup -S app && adduser -S app -G app 
+RUN set -xe \
+  && apt-get update \
+  && apt-get -y upgrade \
+  && apt-get install -y --no-install-recommends openssl \
+  && useradd --create-home -u 1000 app \
+  && rm -rf /var/lib/apt/lists/*
 
 USER app
 WORKDIR /home/app

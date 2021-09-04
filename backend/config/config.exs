@@ -4,7 +4,8 @@ use Mix.Config
 
 config :spendable,
   env: Mix.env(),
-  ecto_repos: [Spendable.Repo]
+  ecto_repos: [Spendable.Repo],
+  ash_apis: [Spendable.Api]
 
 config :spendable, Spendable.Repo,
   username: "postgres",

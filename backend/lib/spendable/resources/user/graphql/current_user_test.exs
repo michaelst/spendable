@@ -33,13 +33,9 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
 
     assert {:ok,
             %{
-              data: %{"currentUser" => nil},
+              data: nil,
               errors: [
-                %{
-                  locations: [%{column: 5, line: 2}],
-                  message: "\n\n* \": Read action requires actor\"",
-                  path: ["currentUser"]
-                }
+                %{locations: [%{column: 5, line: 2}], message: "Forbidden", path: ["currentUser"], code: "forbidden"}
               ]
             }} == Absinthe.run(doc, Spendable.Web.Schema)
   end

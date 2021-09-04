@@ -14,3 +14,21 @@ defmodule Spendable.Web.ErrorView do
     Phoenix.Controller.status_message_from_template(template)
   end
 end
+
+defimpl AshGraphql.Error, for: Ash.Error.Forbidden do
+  def to_error(_error) do
+    %{
+      message: "Forbidden",
+      code: "forbidden"
+    }
+  end
+end
+
+defimpl AshGraphql.Error, for: Ash.Error.Query.ReadActionRequiresActor do
+  def to_error(_error) do
+    %{
+      message: "Forbidden",
+      code: "forbidden"
+    }
+  end
+end
