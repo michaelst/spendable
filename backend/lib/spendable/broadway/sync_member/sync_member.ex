@@ -139,16 +139,16 @@ defmodule Spendable.Broadway.SyncMember do
     Repo.get_by(BankTransaction, external_id: pending_id, pending: true)
     |> Repo.preload(:transaction)
     |> case do
-      nil ->
-        transaction
-
-      pending_bank_transaction ->
-        from(Spendable.Budgets.Allocation, where: [transaction_id: ^pending_bank_transaction.transaction.id])
+      %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction ->
+        from(Spendable.Budgets.Allocation, where: [transaction_id: ^pending_transasction_id])
         |> Repo.update_all(set: [transaction_id: transaction.id])
 
         Repo.delete!(pending_bank_transaction.transaction)
         Repo.delete!(pending_bank_transaction)
 
+        transaction
+
+      _nil_or_bank_transaction ->
         transaction
     end
   end
