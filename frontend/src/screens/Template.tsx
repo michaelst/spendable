@@ -12,7 +12,7 @@ import {
   GetAllocationTemplate,
   GetAllocationTemplate_allocationTemplate_lines as AllocationTemplateLine
 } from 'src/screens/settings/graphql/GetAllocationTemplate'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import TemplateLineRow from './settings/screens/TemplateLineRow'
 import useAppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
@@ -50,21 +50,20 @@ const Template = () => {
     {
       title: 'Expenses/Goals',
       data: lines,
-      renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} templateId={templateId} />
     },
   ]
 
   return (
-    <SectionList
-      contentContainerStyle={styles.sectionListContentContainerStyle}
-      sections={sections}
-      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
-      renderSectionFooter={() => (
+    <FlatList
+      data={lines}
+      renderItem={({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} templateId={templateId} />}
+      ListFooterComponent={() => (
         <TouchableHighlight onPress={navigateToCreate}>
-          <Text style={[styles.sectionFooterText, { color: colors.primary }]}>Add Expense/Goal</Text>
+          <View style={styles.footer}>
+            <Text style={{ color: colors.primary }}>Add Expense/Goal</Text>
+          </View>
         </TouchableHighlight>
       )}
-      stickySectionHeadersEnabled={false}
     />
   )
 }

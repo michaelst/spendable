@@ -16,9 +16,8 @@ import { GetBudget } from 'src/graphql/GetBudget'
 const EditBudget = () => {
   const { styles } = useAppStyles()
 
-  const navigation = useNavigation()
-  const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
-  const { budgetId } = route.params
+  const navigation = useNavigation<NavigationProp>()
+  const { params: { budgetId } } = useRoute<RouteProp<RootStackParamList, 'Edit Budget'>>()
 
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
 
@@ -37,10 +36,9 @@ const EditBudget = () => {
   })
 
 
-  const navigateToBudget = () => navigation.navigate('Expense', { budgetId: budgetId })
   const updateAndGoBack = () => {
     updateBudget()
-    navigateToBudget()
+    navigation.goBack()
   }
 
   const headerRight = () => <HeaderButton title="Save" onPress={updateAndGoBack} />

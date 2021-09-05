@@ -5,31 +5,25 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
-import { GetBudget_budget_allocationTemplateLines } from '../screens/budgets/graphql/GetBudget'
 import useAppStyles from 'src/utils/useAppStyles'
+import { GetBudget_budget_allocationTemplateLines } from 'src/graphql/GetBudget'
 
 type Props = {
   templateLine: GetBudget_budget_allocationTemplateLines,
 }
 
 const TemplateRow = ({ templateLine }: Props) => {
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = useAppStyles()
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, fontSize, colors } = useAppStyles()
 
-  const navigateToTemplate = () => navigation.navigate('Settings', {
-    screen: 'Template',
-    initial: false,
-    params: { templateId: templateLine.allocationTemplate.id }
-  })
+  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateLine.allocationTemplate.id })
 
   return (
     <TouchableHighlight onPress={navigateToTemplate}>
       <View style={styles.row}>
-        <View style={{ flex: 1 }}>
+        <View style={styles.flex}>
           <Text style={styles.text}>
             {templateLine.allocationTemplate.name}
           </Text>

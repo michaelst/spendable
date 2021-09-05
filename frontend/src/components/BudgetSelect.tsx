@@ -58,7 +58,7 @@ const BudgetSelect = ({ title, value, setValue }: FormField) => {
           </View>
 
           <View style={styles.selectedView}>
-            <Text style={styles.selectedText}>
+            <Text style={styles.formInputText}>
               {value}
             </Text>
             <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
@@ -102,13 +102,8 @@ const useStyles = () => {
       padding: baseUnit * 2
     },
     selectedView: {
-      flexDirection: "row",
+      flexDirection: 'row',
       alignItems: 'center',
-      paddingRight: baseUnit
-    },
-    selectedText: {
-      ...styles.formInputText,
-      paddingRight: baseUnit
     }
   })
 

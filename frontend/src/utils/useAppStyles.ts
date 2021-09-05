@@ -78,14 +78,12 @@ const useAppStyles = () => {
       borderBottomColor: colors.border,
       borderBottomWidth: StyleSheet.hairlineWidth
     },
+    footer: {
+      marginHorizontal: baseUnit * 2,
+      marginTop: baseUnit * 2,
+    },
     sectionHeaderText: {
       color: colors.secondary
-    },
-    sectionFooterText: {
-      backgroundColor: colors.background,
-      color: colors.secondary,
-      padding: baseUnit,
-      paddingTop: 5
     },
     deleteButtonText: {
       color: 'white',
@@ -123,7 +121,6 @@ const useAppStyles = () => {
     },
     formInputText: {
       textAlign: 'right',
-      width: '100%',
       fontSize: fontSize,
       color: colors.secondary
     },

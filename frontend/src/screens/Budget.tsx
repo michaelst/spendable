@@ -11,17 +11,16 @@ import formatCurrency from 'src/utils/formatCurrency'
 import TemplateRow from '../components/TemplateRow'
 import HeaderButton from 'src/components/HeaderButton'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
-import { GetBudget } from 'src/graphql/GetBudget'
+import { GetBudget, GetBudget_budget_allocationTemplateLines } from 'src/graphql/GetBudget'
 import { GET_BUDGET } from 'src/queries'
-import { AllocationTemplateLine } from './settings/graphql/AllocationTemplateLine'
 import useAppStyles from 'src/utils/useAppStyles'
 
 const Budget = () => {
   const { styles, colors } = useAppStyles()
   const navigation = useNavigation<NavigationProp>()
-  const { params: { budgetId } } = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
+  const { params: { budgetId } } = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
 
-  const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
+  const navigateToEdit = () => navigation.navigate('Edit Budget', { budgetId: budgetId })
   const headerRight = () => <HeaderButton title="Edit" onPress={navigateToEdit} />
 
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId }, fetchPolicy: 'cache-and-network' })
@@ -40,7 +39,7 @@ const Budget = () => {
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 
-  const allocationTemplateLines = [...data.budget.allocationTemplateLines].sort((a, b) => b.amount.comparedTo(a.amount))
+  const allocationTemplateLines: GetBudget_budget_allocationTemplateLines[] = [...data.budget.allocationTemplateLines].sort((a, b) => b.amount.comparedTo(a.amount))
   const recentAllocations: TransactionRowItem[] =
     [...data.budget.recentAllocations]
       .sort((a, b) => b.transaction.date - a.transaction.date)
@@ -58,7 +57,7 @@ const Budget = () => {
     {
       title: 'Templates',
       data: allocationTemplateLines,
-      renderItem: ({ item }: { item: AllocationTemplateLine }) => <TemplateRow templateLine={item} />
+      renderItem: ({ item }: { item: GetBudget_budget_allocationTemplateLines }) => <TemplateRow templateLine={item} />
     },
     {
       title: 'Recent Transactions',
