@@ -8,7 +8,7 @@ import { RootStackParamList } from 'src/screens/settings/Settings'
 import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'src/screens/settings/queries'
 import { GetAllocationTemplate } from 'src/screens/settings/graphql/GetAllocationTemplate'
 import AppStyles from 'src/utils/useAppStyles'
-import FormInput from 'src/screens/shared/screen/form/FormInput'
+import FormInput from 'src/components/FormInput'
 
 export default function TemplateEditScreen() {
   const { styles } = AppStyles()

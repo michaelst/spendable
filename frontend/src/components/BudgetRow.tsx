@@ -4,27 +4,28 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
-import { DELETE_BUDGET } from 'src/screens/budgets/queries'
 import useAppStyles from 'src/utils/useAppStyles'
 import { StyleSheet } from 'react-native'
+import { DELETE_BUDGET } from 'src/queries'
 
 export type BudgetRowItem = {
   id: string
   title: string
   amount: Decimal
   subText: string
+  hideDelete?: boolean
+  onPress: () => void
 }
 
 type BudgetRowProps = {
   item: BudgetRowItem
 }
 
-export default function BudgetRow({item}: BudgetRowProps) {
+const BudgetRow = ({item}: BudgetRowProps) => {
   const { styles } = useStyles()
 
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
@@ -43,8 +44,7 @@ export default function BudgetRow({item}: BudgetRowProps) {
     )
   }
 
-  // no swipe actions available on Spendable
-  if (item.id === 'spendable') return <Row item={item} />
+  if (item.hideDelete) return <Row item={item} />
 
   return (
     <Swipeable
@@ -56,16 +56,13 @@ export default function BudgetRow({item}: BudgetRowProps) {
   )
 }
 
-const Row = ({item: { id, title, amount, subText }}: BudgetRowProps) => {
-  const navigation = useNavigation<UseNavigationProp>()
+const Row = ({item: { title, amount, subText, onPress }}: BudgetRowProps) => {
   const { styles } = useStyles()
   const amountTextStyle = amount.isNegative() ? styles.dangerText : styles.text
 
-  const navigateToBudget = () => navigation.navigate('Expense', { budgetId: id })
-
   return (
-    <TouchableHighlight onPress={navigateToBudget}>
-      <View style={styles.rowView}>
+    <TouchableHighlight onPress={onPress}>
+      <View style={styles.row}>
         <View>
           <Text style={styles.headerTitleText}>{title}</Text>
         </View>
@@ -79,19 +76,10 @@ const Row = ({item: { id, title, amount, subText }}: BudgetRowProps) => {
 }
 
 const useStyles = () => {
-  const { styles, colors, baseUnit } = useAppStyles()
+  const { styles, baseUnit } = useAppStyles()
 
   const screenStyles = StyleSheet.create({
     ...styles,
-    rowView: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      borderBottomColor: colors.border,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      paddingVertical: baseUnit * 3,
-      marginHorizontal: baseUnit * 2
-    },
     amountText: {
       textAlign: 'right',
       marginBottom: baseUnit / 4
@@ -106,3 +94,5 @@ const useStyles = () => {
     styles: screenStyles
   }
 }
+
+export default BudgetRow

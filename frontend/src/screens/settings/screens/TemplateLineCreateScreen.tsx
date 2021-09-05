@@ -10,8 +10,8 @@ import { LIST_BUDGETS } from 'src/screens/budgets/queries'
 import { ListBudgets } from 'src/screens/budgets/graphql/ListBudgets'
 import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
 import AppStyles from 'src/utils/useAppStyles'
-import FormInput from 'src/screens/shared/screen/form/FormInput'
-import BudgetSelect from 'src/screens/shared/screen/form/BudgetSelect'
+import FormInput from 'src/components/FormInput'
+import BudgetSelect from 'src/screens/BudgetSelect'
 
 export default function TemplateLineCreateScreen() {
   const { styles } = AppStyles()

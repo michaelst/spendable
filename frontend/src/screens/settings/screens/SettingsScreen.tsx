@@ -12,7 +12,7 @@ import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { useMutation, useQuery } from '@apollo/client'
 
-import { TokenContext } from 'src/screens/auth/TokenContext'
+import { TokenContext } from 'src/components/TokenContext'
 import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from '../queries'
 import { GetNotificationSettings } from '../graphql/GetNotificationSettings'
 import { UpdateNotificationSettings } from '../graphql/UpdateNotificationSettings'

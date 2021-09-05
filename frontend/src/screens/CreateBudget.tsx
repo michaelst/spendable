@@ -8,14 +8,13 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
-import { CREATE_BUDGET, LIST_BUDGETS } from 'src/screens/budgets/queries'
-import { ListBudgets } from 'src/screens/budgets/graphql/ListBudgets'
 import AppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/screens/shared/components/HeaderButton'
-import { CreateBudget } from '../graphql/CreateBudget'
-import { MAIN_SCREEN_QUERY } from 'src/queries'
+import HeaderButton from 'src/components/HeaderButton'
+import { CREATE_BUDGET, MAIN_SCREEN_QUERY } from 'src/queries'
+import { CreateBudget as CreateBudgetData } from 'src/graphql/CreateBudget'
+import { MainScreen } from 'src/graphql/MainScreen'
 
-export default function BudgetCreateScreen() {
+const CreateBudget = () => {
   const { styles } = AppStyles()
 
   const navigation = useNavigation()
@@ -32,12 +31,15 @@ export default function BudgetCreateScreen() {
     },
     refetchQueries: [{ query: MAIN_SCREEN_QUERY }],
     update(cache, { data }) {
-      const { createBudget: createBudgetData }: CreateBudget = data
-      const cacheData = cache.readQuery<ListBudgets | null>({ query: LIST_BUDGETS })
+      const { createBudget: createBudgetData }: CreateBudgetData = data
+      const cacheData = cache.readQuery<MainScreen | null>({ query: MAIN_SCREEN_QUERY })
 
       cache.writeQuery({
-        query: LIST_BUDGETS,
-        data: { budgets: cacheData?.budgets.concat([createBudgetData]) }
+        query: MAIN_SCREEN_QUERY,
+        data: { 
+          ...cacheData,
+          budgets: cacheData?.budgets.concat([createBudgetData]) 
+        }
       })
     }
   })
@@ -108,3 +110,5 @@ export default function BudgetCreateScreen() {
     />
   )
 }
+
+export default CreateBudget

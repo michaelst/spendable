@@ -7,18 +7,15 @@ import {
 } from 'react-native'
 import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
-import { RootStackParamList } from 'src/screens/budgets/Budgets'
-import { GET_BUDGET } from 'src/screens/budgets/queries'
 import formatCurrency from 'src/utils/formatCurrency'
-import {
-  GetBudget,
-  GetBudget_budget_recentAllocations as Allocation,
-  GetBudget_budget_allocationTemplateLines as AllocationTemplateLine
-} from 'src/screens/budgets/graphql/GetBudget'
-import TemplateRow from './TemplateRow'
+import TemplateRow from '../components/TemplateRow'
 import AppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/screens/shared/components/HeaderButton'
-import TransactionRow from './TransactionRow'
+import HeaderButton from 'src/components/HeaderButton'
+import TransactionRow from '../components/TransactionRow'
+import { GetBudget } from 'src/graphql/GetBudget'
+import { GET_BUDGET } from 'src/queries'
+import { AllocationTemplateLine } from './settings/graphql/AllocationTemplateLine'
+import { Allocation } from './transactions/graphql/Allocation'
 
 export default function BudgetScreen() {
   const { colors }: any = useTheme()

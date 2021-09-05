@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
 import AppStyles from 'src/utils/useAppStyles'
 import { DateTime } from 'luxon'
-import { GetBudget_budget_recentAllocations } from '../graphql/GetBudget'
+import { GetBudget_budget_recentAllocations } from '../screens/budgets/graphql/GetBudget'
 
 type Props = {
   allocation: GetBudget_budget_recentAllocations,

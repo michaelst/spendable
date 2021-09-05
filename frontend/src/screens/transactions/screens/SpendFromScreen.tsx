@@ -8,7 +8,7 @@ import { GetTransaction } from '../graphql/GetTransaction'
 import AppStyles from 'src/utils/useAppStyles'
 import { FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import TransactionAllocationRow from './TransactionAllocationRow'
-import getAllocations from '../helpers/getAllocations'
+import getAllocations from '../../../utils/getAllocations'
 
 export default function SpendFromScreen() {
   const { colors }: any = useTheme()

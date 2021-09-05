@@ -6,8 +6,8 @@ import { useMutation } from '@apollo/client'
 
 import { CREATE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
 import AppStyles from 'src/utils/useAppStyles'
-import DateInput from 'src/screens/shared/screen/form/DateInput'
-import FormInput from 'src/screens/shared/screen/form/FormInput'
+import DateInput from 'src/components/DateInput'
+import FormInput from 'src/components/FormInput'
 import { ListTransactions } from '../graphql/ListTransactions'
 
 export default function TransactionCreateScreen() {

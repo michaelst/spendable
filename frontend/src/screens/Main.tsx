@@ -10,6 +10,7 @@ import formatCurrency from 'src/utils/formatCurrency'
 import useAppStyles from 'src/utils/useAppStyles'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
+import { useNavigation } from '@react-navigation/native'
 
 type monthListDataItem = {
   month: string
@@ -17,7 +18,8 @@ type monthListDataItem = {
 }
 
 const Main = () => {
-  const { isDarkMode, styles } = useStyles()
+  const navigation = useNavigation<UseNavigationProp>()
+  const { isDarkMode } = useStyles()
 
   const { data } = useQuery<MainScreen>(MAIN_SCREEN_QUERY, {
     onCompleted: (data) => {
@@ -60,13 +62,16 @@ const Main = () => {
       id: 'spendable',
       title: "Spendable",
       amount: data.currentUser.spendable,
-      subText: "AVAILABLE"
+      subText: "AVAILABLE",
+      hideDelete: true,
+      onPress: () => navigation.navigate('Expense', { budgetId: 'spendabe' })
     },
     ...data.budgets.map(budget => ({
       id: budget.id,
       title: budget.name,
       amount: budget.balance,
-      subText: "REMAINING"
+      subText: "REMAINING",
+      onPress: () => navigation.navigate('Expense', { budgetId: budget.id })
     }))
   ]
 
@@ -74,7 +79,6 @@ const Main = () => {
     <SafeAreaView>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <FlatList
-        style={styles.budgetsList}
         data={budgetListData}
         keyExtractor={item => item.id}
         renderItem={({ item }) => <BudgetRow item={item} />}
@@ -138,8 +142,6 @@ const useStyles = () => {
       paddingHorizontal: baseUnit * 2,
       borderRadius: baseUnit
     },
-    budgetsList: {
-    },
     monthView: {
       paddingHorizontal: baseUnit,
       justifyContent: 'center'
@@ -158,29 +160,6 @@ const useStyles = () => {
     },
     monthDetailSecondaryText: {
       ...styles.secondaryText
-    },
-    budgetView: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      borderBottomColor: colors.border,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      paddingVertical: baseUnit * 3,
-      marginHorizontal: baseUnit * 2
-    },
-    budgetNameView: {
-
-    },
-    budgetDetailView: {
-    },
-    budgetDetailText: {
-      ...styles.text,
-      textAlign: 'right',
-      marginBottom: baseUnit / 4
-    },
-    budgetDetailSubText: {
-      ...styles.subText,
-      textAlign: 'right'
     }
   })
 

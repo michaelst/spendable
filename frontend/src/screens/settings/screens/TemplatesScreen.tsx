@@ -8,7 +8,7 @@ import TemplateRow from './TemplateRow'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 import Decimal from 'decimal.js-light'
 import AppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/screens/shared/components/HeaderButton'
+import HeaderButton from 'src/components/HeaderButton'
 
 export default function TemplatesScreen() {
   const navigation = useNavigation()

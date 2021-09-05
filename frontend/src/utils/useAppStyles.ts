@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
 import { Theme, useTheme } from '@react-navigation/native'
 
 export type SpendableTheme = Theme & {
@@ -11,6 +11,7 @@ export type SpendableTheme = Theme & {
 const useAppStyles = () => {
   const { dark: isDarkMode, colors } = useTheme() as SpendableTheme
 
+  const height = Dimensions.get('window').height
   const fontSize = 18
   const secondaryFontSize = 14
   const subTextFontSize = 12
@@ -86,13 +87,23 @@ const useAppStyles = () => {
       backgroundColor: '#dd2c00',
       justifyContent: 'flex-end'
     },
-    row: {
+    inputRow: {
       flexDirection: 'row',
-      padding: baseUnit * 2,
       alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: baseUnit * 2,
       backgroundColor: colors.card,
       borderBottomColor: colors.border,
       borderBottomWidth: StyleSheet.hairlineWidth
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottomColor: colors.border,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      paddingVertical: baseUnit * 3,
+      marginHorizontal: baseUnit * 2
     },
     formInputText: {
       textAlign: 'right',
@@ -110,6 +121,7 @@ const useAppStyles = () => {
   })
 
   return {
+    height: height,
     baseUnit: baseUnit,
     colors: colors,
     fontSize: fontSize,

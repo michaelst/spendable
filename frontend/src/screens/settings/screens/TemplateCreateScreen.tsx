@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'src/screens/settings/queries'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 import AppStyles from 'src/utils/useAppStyles'
-import FormInput from 'src/screens/shared/screen/form/FormInput'
+import FormInput from 'src/components/FormInput'
 
 export default function TemplateEditScreen() {
   const { styles } = AppStyles()

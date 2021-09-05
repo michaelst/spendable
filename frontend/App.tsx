@@ -5,15 +5,15 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import * as Sentry from "@sentry/react-native"
-import { TokenContext } from 'src/screens/auth/TokenContext'
+import { TokenContext } from 'src/components/TokenContext'
 import Main from 'src/screens/Main'
-import AuthScreen from './src/screens/auth/auth-screen/AuthScreen'
+import AuthScreen from './src/screens/AuthScreen'
 import createApolloClient from 'src/utils/createApolloClient'
 import { SpendableTheme } from 'src/utils/useAppStyles'
 import { createStackNavigator } from '@react-navigation/stack'
-import BudgetScreen from 'src/screens/budgets/screens/BudgetScreen'
-import BudgetCreateScreen from 'src/screens/budgets/screens/BudgetCreateScreen'
-import BudgetEditScreen from 'src/screens/budgets/screens/BudgetEditScreen'
+import BudgetScreen from 'src/screens/BudgetScreen'
+import BudgetCreateScreen from 'src/screens/CreateBudget'
+import BudgetEditScreen from 'src/screens/EditBudget'
 
 const Stack = createStackNavigator<RootStackParamList>()
 
@@ -30,7 +30,7 @@ export default function App() {
     colors: {
       ...baseTheme.colors,
       primary: 'rgb(75, 145, 215)',
-      secondary: 'rgb(75, 75, 75)',
+      secondary: 'rgb(90, 90, 90)',
       danger: 'red'
     }
   }

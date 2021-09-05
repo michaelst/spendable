@@ -1,5 +1,5 @@
 import React from 'react'
-import { Platform, View, Text, Button } from 'react-native'
+import { Platform, View, Text } from 'react-native'
 import appleAuth, { AppleButton } from '@invertase/react-native-apple-authentication'
 import auth from '@react-native-firebase/auth'
 import { GoogleSignin, GoogleSigninButton } from '@react-native-community/google-signin'

@@ -16,7 +16,7 @@ import {
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import TemplateLineRow from './TemplateLineRow'
 import AppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/screens/shared/components/HeaderButton'
+import HeaderButton from 'src/components/HeaderButton'
 
 export default function TemplateScreen() {
   const { colors }: any = useTheme()

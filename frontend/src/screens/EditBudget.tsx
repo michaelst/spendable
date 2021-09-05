@@ -8,14 +8,13 @@ import {
 } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
-import { GET_BUDGET, UPDATE_BUDGET } from 'src/screens/budgets/queries'
-import { GetBudget } from 'src/screens/budgets/graphql/GetBudget'
-import AppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/screens/shared/components/HeaderButton'
-import { MAIN_SCREEN_QUERY } from 'src/queries'
+import useAppStyles from 'src/utils/useAppStyles'
+import HeaderButton from 'src/components/HeaderButton'
+import { GET_BUDGET, MAIN_SCREEN_QUERY, UPDATE_BUDGET } from 'src/queries'
+import { GetBudget } from 'src/graphql/GetBudget'
 
-export default function BudgetEditScreen() {
-  const { styles } = AppStyles()
+const EditBudget = () => {
+  const { styles } = useAppStyles()
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
@@ -83,7 +82,7 @@ export default function BudgetEditScreen() {
       data={fields}
       renderItem={
         ({ item }) => (
-          <View style={styles.row}>
+          <View style={styles.inputRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.text}>{item.placeholder}</Text>
             </View>
@@ -103,3 +102,5 @@ export default function BudgetEditScreen() {
     />
   )
 }
+
+export default EditBudget

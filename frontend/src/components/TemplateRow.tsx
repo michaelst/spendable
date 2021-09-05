@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
-import { GetBudget_budget_allocationTemplateLines } from '../graphql/GetBudget'
+import { GetBudget_budget_allocationTemplateLines } from '../screens/budgets/graphql/GetBudget'
 import AppStyles from 'src/utils/useAppStyles'
 
 type Props = {

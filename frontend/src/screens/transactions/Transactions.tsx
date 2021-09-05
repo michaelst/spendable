@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack'
 import TransactionsScreen from './screens/TransactionsScreen'
 
 import AppStyles from 'src/utils/useAppStyles'
-import SpendableHeader from 'src/screens/headers/spendable-header/SpendableHeader'
 import TransactionScreen from './screens/TransactionScreen'
 import TransactionCreateScreen from './screens/TransactionCreateScreen'
 import SpendFromScreen from './screens/SpendFromScreen'
@@ -33,7 +32,7 @@ export default function Budgets() {
   }
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Transactions" component={TransactionsScreen} options={{ ...options, ...{ headerTitle: () => <SpendableHeader /> } }} />
+      <Stack.Screen name="Transactions" component={TransactionsScreen} options={options} />
       <Stack.Screen name="Transaction" component={TransactionScreen} options={options} />
       <Stack.Screen name="Create Transaction" component={TransactionCreateScreen} options={options} />
       <Stack.Screen name="Spend From" component={SpendFromScreen} options={options} />

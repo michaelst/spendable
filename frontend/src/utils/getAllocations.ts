@@ -1,5 +1,5 @@
 import Decimal from "decimal.js-light";
-import { GetTransaction_transaction, GetTransaction_transaction_allocations } from "../graphql/GetTransaction";
+import { GetTransaction_transaction, GetTransaction_transaction_allocations } from "../screens/transactions/graphql/GetTransaction";
 
 const getAllocations = (transaction: GetTransaction_transaction) => {
   const sortedAllocations = [...transaction.allocations].sort((a, b) => b.amount.comparedTo(a.amount))
