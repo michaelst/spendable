@@ -6,24 +6,21 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { useQuery } from '@apollo/client'
-
-import { ListBankMembers_bankMembers } from '../graphql/ListBankMembers'
 import useAppStyles from 'src/utils/useAppStyles'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
-import { GET_BANK_MEMBER_PLAID_LINK_TOKEN } from '../queries'
-import { GetBankMemberPlaidLinkToken } from '../graphql/GetBankMemberPlaidLinkToken'
+import { ListBankMembers_bankMembers } from 'src/graphql/ListBankMembers'
+import { GetBankMemberPlaidLinkToken } from 'src/graphql/GetBankMemberPlaidLinkToken'
+import { GET_BANK_MEMBER_PLAID_LINK_TOKEN } from 'src/queries'
 
 type Props = {
   bankMember: ListBankMembers_bankMembers,
 }
 
 const BankMemberRow = ({ bankMember }: Props) => {
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = useAppStyles()
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, fontSize, colors } = useAppStyles()
 
   const { data: plaidData } = useQuery<GetBankMemberPlaidLinkToken>(GET_BANK_MEMBER_PLAID_LINK_TOKEN, {
     variables: { id: bankMember.id },

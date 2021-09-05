@@ -1,12 +1,12 @@
 import React, { useLayoutEffect } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'
-import { GET_BANK_MEMBER } from './settings/queries'
-import { GetBankMember } from './settings/graphql/GetBankMember'
 import { useQuery } from '@apollo/client'
 import { FlatList } from 'react-native-gesture-handler'
-import BankAccountRow from './settings/screens/BankAccountRow'
+import BankAccountRow from '../components/BankAccountRow'
 import { RefreshControl } from 'react-native'
 import useAppStyles from 'src/utils/useAppStyles'
+import { GET_BANK_MEMBER } from 'src/queries'
+import { GetBankMember } from 'src/graphql/GetBankMember'
 
 const BankMember = () => {
   const { styles } = useAppStyles()

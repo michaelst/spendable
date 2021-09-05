@@ -5,36 +5,32 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
-import { ListAllocationTemplates_allocationTemplates } from '../graphql/ListAllocationTemplates'
-import Decimal from 'decimal.js-light'
 import formatCurrency from 'src/utils/formatCurrency'
-import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
-import { DELETE_TEMPLATE } from '../queries'
+import { RectButton } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
+import { GetAllocationTemplate_allocationTemplate_lines } from 'src/graphql/GetAllocationTemplate'
+import { DELETE_TEMPLATE_LINE } from 'src/queries'
 
 type Props = {
-  template: ListAllocationTemplates_allocationTemplates,
+  line: GetAllocationTemplate_allocationTemplate_lines,
 }
 
-const TemplateRow = ({ template }: Props) => {
+const TemplateLineRow = ({ line }: Props) => {
   const navigation = useNavigation<NavigationProp>()
   const { styles, fontSize, colors } = useAppStyles()
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: template.id })
+  const navigateToEdit = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
-  const [deleteAllocationTemplate] = useMutation(DELETE_TEMPLATE, {
-    variables: { id: template.id },
-    update(cache, { data: { deleteAllocationTemplate } }) {
-      cache.evict({ id: 'AllocationTemplate:' + deleteAllocationTemplate.id })
+  const [deleteAllocationTemplateLine] = useMutation(DELETE_TEMPLATE_LINE, {
+    variables: { id: line.id },
+    update(cache, { data: { deleteAllocationTemplateLine } }) {
+      cache.evict({ id: 'AllocationTemplateLine:' + deleteAllocationTemplateLine.id })
       cache.gc()
     }
   })
-
-  const allocated = template.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
 
   const renderRightActions = () => {
     return (
@@ -45,21 +41,21 @@ const TemplateRow = ({ template }: Props) => {
   }
 
   return (
-    <TouchableHighlight onPress={navigateToTemplate}>
+    <TouchableHighlight onPress={navigateToEdit}>
       <Swipeable
         renderRightActions={renderRightActions}
-        onSwipeableOpen={deleteAllocationTemplate}
+        onSwipeableOpen={deleteAllocationTemplateLine}
       >
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <Text style={styles.text}>
-              {template.name}
+              {line.budget.name}
             </Text>
           </View>
 
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.rightText} >
-              {formatCurrency(allocated)}
+              {formatCurrency(line.amount)}
             </Text>
             <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
           </View>
@@ -69,4 +65,4 @@ const TemplateRow = ({ template }: Props) => {
   )
 }
 
-export default TemplateRow
+export default TemplateLineRow

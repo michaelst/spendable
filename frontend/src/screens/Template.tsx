@@ -7,15 +7,13 @@ import {
 } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
-import { GET_TEMPLATE } from 'src/screens/settings/queries'
-import {
-  GetAllocationTemplate,
-  GetAllocationTemplate_allocationTemplate_lines as AllocationTemplateLine
-} from 'src/screens/settings/graphql/GetAllocationTemplate'
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
-import TemplateLineRow from './settings/screens/TemplateLineRow'
+import TemplateLineRow from '../components/TemplateLineRow'
 import useAppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
+import { GetAllocationTemplate } from 'src/graphql/GetAllocationTemplate'
+import { GET_TEMPLATE } from 'src/queries'
+import { AllocationTemplateLine } from 'src/graphql/AllocationTemplateLine'
 
 const Template = () => {
   const { styles, colors } = useAppStyles()
@@ -46,17 +44,10 @@ const Template = () => {
 
   const lines = [...data.allocationTemplate.lines].sort((a, b) => b.amount.comparedTo(a.amount))
 
-  const sections = [
-    {
-      title: 'Expenses/Goals',
-      data: lines,
-    },
-  ]
-
   return (
     <FlatList
       data={lines}
-      renderItem={({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} templateId={templateId} />}
+      renderItem={({ item }: { item: AllocationTemplateLine }) => <TemplateLineRow line={item} />}
       ListFooterComponent={() => (
         <TouchableHighlight onPress={navigateToCreate}>
           <View style={styles.footer}>

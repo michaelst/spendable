@@ -9,7 +9,6 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
 import useAppStyles from 'src/utils/useAppStyles'
-import { StyleSheet } from 'react-native'
 import { DELETE_BUDGET } from 'src/queries'
 
 export type BudgetRowItem = {

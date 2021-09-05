@@ -8,7 +8,7 @@ import {
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
-import TemplateRow from '../components/TemplateRow'
+import TemplateRow, { TemplateRowItem } from '../components/TemplateRow'
 import HeaderButton from 'src/components/HeaderButton'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
 import { GetBudget, GetBudget_budget_allocationTemplateLines } from 'src/graphql/GetBudget'
@@ -39,7 +39,18 @@ const Budget = () => {
     return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   }
 
-  const allocationTemplateLines: GetBudget_budget_allocationTemplateLines[] = [...data.budget.allocationTemplateLines].sort((a, b) => b.amount.comparedTo(a.amount))
+  const allocationTemplateLines: TemplateRowItem[] = 
+    [...data.budget.allocationTemplateLines]
+    .sort((a, b) => b.amount.comparedTo(a.amount))
+    .map(line => ({
+      key: line.id,
+      templateId: line.allocationTemplate.id,
+      name: line.allocationTemplate.name,
+      amount: line.amount,
+      hideDelete: true,
+      onPress: () => navigation.navigate('Template', { templateId: line.allocationTemplate.id })
+    }))
+  
   const recentAllocations: TransactionRowItem[] =
     [...data.budget.recentAllocations]
       .sort((a, b) => b.transaction.date - a.transaction.date)

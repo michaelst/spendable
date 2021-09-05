@@ -2,11 +2,10 @@ import React, { useLayoutEffect, useState } from 'react'
 import { View, } from 'react-native'
 import { useMutation } from '@apollo/client'
 import { useNavigation } from '@react-navigation/native'
-import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'src/screens/settings/queries'
-import { ListAllocationTemplates } from './settings/graphql/ListAllocationTemplates'
-import useAppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
 import HeaderButton from 'src/components/HeaderButton'
+import { ListAllocationTemplates } from 'src/graphql/ListAllocationTemplates'
+import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'src/queries'
 
 const CreateTemplate = () => {
   const navigation = useNavigation<NavigationProp>()

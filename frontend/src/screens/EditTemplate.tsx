@@ -1,15 +1,12 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { Text, View, } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { View, } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
-
-import { RootStackParamList } from 'src/screens/settings/Settings'
-import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'src/screens/settings/queries'
-import { GetAllocationTemplate } from 'src/screens/settings/graphql/GetAllocationTemplate'
 import useAppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
 import HeaderButton from 'src/components/HeaderButton'
+import { GetAllocationTemplate } from 'src/graphql/GetAllocationTemplate'
+import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'src/queries'
 
 const EditTemplate = () => {
   const { styles } = useAppStyles()

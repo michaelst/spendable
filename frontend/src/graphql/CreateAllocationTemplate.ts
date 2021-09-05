@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { AllocationTemplateLineInputObject } from "../../../../graphql/globalTypes";
+import { AllocationTemplateLineInputObject } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: CreateAllocationTemplate

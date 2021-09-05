@@ -1,12 +1,12 @@
 import React from 'react'
 import { Text, View } from 'react-native'
-import { GetBankMember_bankMember_bankAccounts } from '../graphql/GetBankMember'
 import formatCurrency from 'src/utils/formatCurrency'
 import { Switch } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
-import { UpdateBankAccount } from '../graphql/UpdateBankAccount'
-import { UPDATE_BANK_ACCOUNT } from '../queries'
 import useAppStyles from 'src/utils/useAppStyles'
+import { GetBankMember_bankMember_bankAccounts } from 'src/graphql/GetBankMember'
+import { UpdateBankAccount } from 'src/graphql/UpdateBankAccount'
+import { UPDATE_BANK_ACCOUNT } from 'src/queries'
 
 type Props = {
   bankAccount: GetBankMember_bankMember_bankAccounts,

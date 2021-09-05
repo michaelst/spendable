@@ -4,39 +4,79 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
+import Decimal from 'decimal.js-light'
 import formatCurrency from 'src/utils/formatCurrency'
+import { RectButton } from 'react-native-gesture-handler'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
+import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
-import { GetBudget_budget_allocationTemplateLines } from 'src/graphql/GetBudget'
+import { DELETE_TEMPLATE } from 'src/queries'
 
-type Props = {
-  templateLine: GetBudget_budget_allocationTemplateLines,
+export type TemplateRowItem = {
+  key: string
+  templateId: string
+  name: string
+  amount: Decimal
+  hideDelete?: boolean
+  onPress: () => void
 }
 
-const TemplateRow = ({ templateLine }: Props) => {
-  const navigation = useNavigation<NavigationProp>()
-  const { styles, fontSize, colors } = useAppStyles()
+type TemplateRowProps = {
+  item: TemplateRowItem
+}
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateLine.allocationTemplate.id })
+const TemplateRow = ({ item }: TemplateRowProps) => {
+  const { styles } = useAppStyles()
+
+  const [deleteAllocationTemplate] = useMutation(DELETE_TEMPLATE, {
+    variables: { id: item.templateId },
+    update(cache, { data: { deleteAllocationTemplate } }) {
+      cache.evict({ id: 'AllocationTemplate:' + deleteAllocationTemplate.id })
+      cache.gc()
+    }
+  })
+
+  if (item.hideDelete) return <Row item={item} />
+
+  const renderRightActions = () => {
+    return (
+      <RectButton style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </RectButton>
+    )
+  }
 
   return (
-    <TouchableHighlight onPress={navigateToTemplate}>
+    <Swipeable
+      renderRightActions={renderRightActions}
+      onSwipeableOpen={deleteAllocationTemplate}
+    >
+      <Row item={item} />
+    </Swipeable>
+  )
+}
+
+const Row = ({ item: { name, amount, onPress } }: TemplateRowProps) => {
+  const { styles, fontSize, colors } = useAppStyles()
+
+  return (
+    <TouchableHighlight onPress={onPress}>
       <View style={styles.row}>
         <View style={styles.flex}>
           <Text style={styles.text}>
-            {templateLine.allocationTemplate.name}
+            {name}
           </Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.rightText} >
-            {formatCurrency(templateLine.amount)}
+            {formatCurrency(amount)}
           </Text>
           <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableHighlight >
   )
 }
 

@@ -5,17 +5,17 @@ import {
   Text,
   View,
 } from 'react-native'
-import { useTheme, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { useMutation, useQuery } from '@apollo/client'
 import { TokenContext } from 'src/components/TokenContext'
-import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from './settings/queries'
-import { GetNotificationSettings } from './settings/graphql/GetNotificationSettings'
-import { UpdateNotificationSettings } from './settings/graphql/UpdateNotificationSettings'
 import useAppStyles from 'src/utils/useAppStyles'
+import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from 'src/queries'
+import { GetNotificationSettings } from 'src/graphql/GetNotificationSettings'
+import { UpdateNotificationSettings } from 'src/graphql/UpdateNotificationSettings'
 
 const Settings = () => {
   const { styles } = useAppStyles()
@@ -51,9 +51,8 @@ const Settings = () => {
 }
 
 const bankRow = () => {
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = useAppStyles()
-  const navigation = useNavigation()
+  const { styles, fontSize, colors } = useAppStyles()
+  const navigation = useNavigation<NavigationProp>()
   const navigateToBanks = () => navigation.navigate('Banks')
 
   return (
@@ -74,9 +73,8 @@ const bankRow = () => {
 }
 
 const templatesRow = () => {
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = useAppStyles()
-  const navigation = useNavigation()
+  const { styles, fontSize, colors } = useAppStyles()
+  const navigation = useNavigation<NavigationProp>()
   const navigateToTemplates = () => navigation.navigate('Templates')
 
   return (
@@ -97,7 +95,7 @@ const templatesRow = () => {
 }
 
 const notificationsRow = () => {
-  const { styles, padding } = useAppStyles()
+  const { styles, baseUnit } = useAppStyles()
   const [id, setId] = useState<string | null>(null)
   const [enabled, setEnabled] = useState(false)
   const { deviceToken } = useContext(TokenContext)
@@ -122,12 +120,12 @@ const notificationsRow = () => {
   return (
     <View style={[styles.row, { padding: 0 }]}>
       <View style={{ flex: 1 }}>
-        <Text style={[styles.text, { padding: padding }]}>
+        <Text style={[styles.text, { padding: baseUnit }]}>
           Notifications
         </Text>
       </View>
 
-      <View style={{ flexDirection: "row", paddingRight: padding }}>
+      <View style={{ flexDirection: "row", paddingRight: baseUnit }}>
         <Switch
           onValueChange={(toggleSwitch)}
           value={enabled}
@@ -143,7 +141,7 @@ const logoutRow = () => {
   return (
     <TouchableHighlight onPress={() => auth().signOut()}>
       <View style={styles.row}>
-        <View style={{ flex: 1 }}>
+        <View style={styles.flex}>
           <Text style={styles.text}>
             Logout
           </Text>

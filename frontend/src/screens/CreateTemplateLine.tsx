@@ -2,13 +2,12 @@ import React, { useLayoutEffect, useState } from 'react'
 import { View, } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
-import { CREATE_TEMPLATE_LINE, GET_TEMPLATE } from 'src/screens/settings/queries'
-import { GetAllocationTemplate } from './settings/graphql/GetAllocationTemplate'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { MAIN_QUERY } from 'src/queries'
+import { CREATE_TEMPLATE_LINE, GET_TEMPLATE, MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
+import { GetAllocationTemplate } from 'src/graphql/GetAllocationTemplate'
 
 const CreateTemplateLine = () => {
   const navigation = useNavigation<NavigationProp>()

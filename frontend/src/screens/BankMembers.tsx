@@ -2,14 +2,14 @@ import React, { useLayoutEffect } from 'react'
 import { ActivityIndicator, RefreshControl, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FlatList } from 'react-native-gesture-handler'
-import { GET_PLAID_LINK_TOKEN, LIST_BANK_MEMBERS, CREATE_BANK_MEMBER } from './settings/queries'
-import { ListBankMembers } from './settings/graphql/ListBankMembers'
 import { useQuery, useMutation } from '@apollo/client'
-import BankMemberRow from './settings/screens/BankMemberRow'
+import BankMemberRow from '../components/BankMemberRow'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
 import useAppStyles from 'src/utils/useAppStyles'
-import { GetPlaidLinkToken } from './settings/graphql/GetPlaidLinkToken'
 import { LinkSuccess } from 'react-native-plaid-link-sdk'
+import { CREATE_BANK_MEMBER, GET_PLAID_LINK_TOKEN, LIST_BANK_MEMBERS } from 'src/queries'
+import { ListBankMembers } from 'src/graphql/ListBankMembers'
+import { GetPlaidLinkToken } from 'src/graphql/GetPlaidLinkToken'
 
 const BankMembers = () => {
   const navigation = useNavigation<NavigationProp>()
