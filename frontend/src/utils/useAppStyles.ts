@@ -9,7 +9,7 @@ export type SpendableTheme = Theme & {
 }
 
 const useAppStyles = () => {
-  const { colors } = useTheme() as SpendableTheme
+  const { dark: isDarkMode, colors } = useTheme() as SpendableTheme
 
   const fontSize = 18
   const secondaryFontSize = 14
@@ -24,6 +24,10 @@ const useAppStyles = () => {
     },
     text: {
       color: colors.text,
+      fontSize: fontSize
+    },
+    dangerText: {
+      color: colors.danger,
       fontSize: fontSize
     },
     secondaryText: {
@@ -109,6 +113,7 @@ const useAppStyles = () => {
     baseUnit: baseUnit,
     colors: colors,
     fontSize: fontSize,
+    isDarkMode: isDarkMode,
     styles: styles,
   }
 } 

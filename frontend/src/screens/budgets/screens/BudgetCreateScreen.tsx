@@ -12,8 +12,8 @@ import { CREATE_BUDGET, LIST_BUDGETS } from 'src/screens/budgets/queries'
 import { ListBudgets } from 'src/screens/budgets/graphql/ListBudgets'
 import AppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/screens/shared/components/HeaderButton'
-import { GET_SPENDABLE } from 'src/screens/headers/spendable-header/queries'
 import { CreateBudget } from '../graphql/CreateBudget'
+import { MAIN_SCREEN_QUERY } from 'src/queries'
 
 export default function BudgetCreateScreen() {
   const { styles } = AppStyles()
@@ -30,7 +30,7 @@ export default function BudgetCreateScreen() {
       balance: balance,
       goal: goal === '' ? null : goal
     },
-    refetchQueries: [{ query: GET_SPENDABLE }],
+    refetchQueries: [{ query: MAIN_SCREEN_QUERY }],
     update(cache, { data }) {
       const { createBudget: createBudgetData }: CreateBudget = data
       const cacheData = cache.readQuery<ListBudgets | null>({ query: LIST_BUDGETS })

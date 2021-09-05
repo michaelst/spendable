@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StatusBar, useColorScheme } from 'react-native'
+import { useColorScheme } from 'react-native'
 import { ApolloProvider } from '@apollo/client'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
@@ -10,7 +10,12 @@ import Main from 'src/screens/Main'
 import AuthScreen from './src/screens/auth/auth-screen/AuthScreen'
 import createApolloClient from 'src/utils/createApolloClient'
 import { SpendableTheme } from 'src/utils/useAppStyles'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
+import { createStackNavigator } from '@react-navigation/stack'
+import BudgetScreen from 'src/screens/budgets/screens/BudgetScreen'
+import BudgetCreateScreen from 'src/screens/budgets/screens/BudgetCreateScreen'
+import BudgetEditScreen from 'src/screens/budgets/screens/BudgetEditScreen'
+
+const Stack = createStackNavigator<RootStackParamList>()
 
 export default function App() {
   const [initializing, setInitializing] = useState(true)
@@ -52,12 +57,12 @@ export default function App() {
     <NavigationContainer theme={theme}>
       <TokenContext.Provider value={context}>
         <ApolloProvider client={createApolloClient()}>
-          <SafeAreaProvider>
-            <SafeAreaView>
-              <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
-              <Main />
-            </SafeAreaView>
-          </SafeAreaProvider>
+              <Stack.Navigator>
+                <Stack.Screen name="Main" component={Main} options={{headerShown: false}} />
+                <Stack.Screen name="Expense" component={BudgetScreen} />
+                <Stack.Screen name="Create Expense" component={BudgetCreateScreen} />
+                <Stack.Screen name="Edit Expense" component={BudgetEditScreen} />
+              </Stack.Navigator>
         </ApolloProvider>
       </TokenContext.Provider>
     </NavigationContainer>

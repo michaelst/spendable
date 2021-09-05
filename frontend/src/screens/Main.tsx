@@ -1,30 +1,23 @@
-import React, { SetStateAction, useState } from 'react'
-import { View, Text, StyleSheet, TouchableWithoutFeedback, SectionList } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, StatusBar } from 'react-native'
 import { NativeModules } from 'react-native'
 import { useQuery } from '@apollo/client'
-import formatCurrency from 'src/utils/formatCurrency'
-import useAppStyles from 'src/utils/useAppStyles'
-import { MainScreen } from 'src/graphql/MainScreen'
-import { MAIN_SCREEN_QUERY } from 'src/queries'
 import { FlatList } from 'react-native-gesture-handler'
 import { DateTime } from 'luxon'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Dispatch } from 'react'
+import { MAIN_SCREEN_QUERY } from 'src/queries'
+import { MainScreen } from 'src/graphql/MainScreen'
+import formatCurrency from 'src/utils/formatCurrency'
+import useAppStyles from 'src/utils/useAppStyles'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 
 type monthListDataItem = {
   month: string
   spent: string
 }
 
-type budgetListDataItem = {
-  key: string
-  title: string
-  detailText: string
-  subText: string
-}
-
 const Main = () => {
-  const { baseUnit, styles } = useStyles()
+  const { isDarkMode, styles } = useStyles()
 
   const { data } = useQuery<MainScreen>(MAIN_SCREEN_QUERY, {
     onCompleted: (data) => {
@@ -62,27 +55,33 @@ const Main = () => {
     }
   ]
 
-  const budgetListData: budgetListDataItem[] = [
+  const budgetListData: BudgetRowItem[] = [
     {
-      key: 'Spendable',
+      id: 'spendable',
       title: "Spendable",
-      detailText: formatCurrency(data.currentUser.spendable),
+      amount: data.currentUser.spendable,
       subText: "AVAILABLE"
     },
     ...data.budgets.map(budget => ({
-      key: budget.id,
+      id: budget.id,
       title: budget.name,
-      detailText: formatCurrency(budget.balance),
+      amount: budget.balance,
       subText: "REMAINING"
     }))
   ]
 
-  return <FlatList
-    style={styles.budgetsList}
-    data={budgetListData}
-    renderItem={({ item }) => <BudgetItem item={item} />}
-    ListHeaderComponent={<MonthsFlatList data={monthListData} />}
-  />
+  return (
+    <SafeAreaView>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <FlatList
+        style={styles.budgetsList}
+        data={budgetListData}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => <BudgetRow item={item} />}
+        ListHeaderComponent={<MonthsFlatList data={monthListData} />}
+      />
+    </SafeAreaView>
+  )
 }
 
 type MonthsFlatListProps = {
@@ -127,28 +126,8 @@ const MonthItem = ({ item: { month, spent }, active, onPress }: MonthItemProps) 
   )
 }
 
-type BudgetItemProps = {
-  item: budgetListDataItem
-}
-
-const BudgetItem = ({ item: { title, detailText, subText } }: BudgetItemProps) => {
-  const { styles } = useStyles()
-
-  return (
-    <View style={styles.budgetView}>
-      <View>
-        <Text style={styles.headerTitleText}>{title}</Text>
-      </View>
-      <View style={styles.budgetDetailView}>
-        <Text style={styles.budgetDetailText}>{detailText}</Text>
-        <Text style={styles.budgetDetailSubText}>{subText}</Text>
-      </View>
-    </View>
-  )
-}
-
 const useStyles = () => {
-  const { styles, colors, baseUnit } = useAppStyles()
+  const { isDarkMode, styles, colors, baseUnit } = useAppStyles()
 
   const screenStyles = StyleSheet.create({
     ...styles,
@@ -206,6 +185,7 @@ const useStyles = () => {
   })
 
   return {
+    isDarkMode: isDarkMode,
     baseUnit: baseUnit,
     styles: screenStyles
   }

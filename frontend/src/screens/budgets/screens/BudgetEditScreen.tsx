@@ -8,12 +8,11 @@ import {
 } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
-import { RootStackParamList } from 'src/screens/budgets/Budgets'
 import { GET_BUDGET, UPDATE_BUDGET } from 'src/screens/budgets/queries'
 import { GetBudget } from 'src/screens/budgets/graphql/GetBudget'
 import AppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/screens/shared/components/HeaderButton'
-import { GET_SPENDABLE } from 'src/screens/headers/spendable-header/queries'
+import { MAIN_SCREEN_QUERY } from 'src/queries'
 
 export default function BudgetEditScreen() {
   const { styles } = AppStyles()
@@ -35,7 +34,7 @@ export default function BudgetEditScreen() {
       balance: balance,
       goal: goal === '' ? null : goal
     },
-    refetchQueries: [{ query: GET_SPENDABLE }]
+    refetchQueries: [{ query: MAIN_SCREEN_QUERY }]
   })
 
 
