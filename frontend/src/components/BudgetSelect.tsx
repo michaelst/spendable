@@ -9,18 +9,17 @@ import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQuery } from '@apollo/client'
-import BudgetRow from './shared/screen/form/BudgetRow'
-import { FormField } from '../components/FormInput'
+import { FormField } from './FormInput'
 import useAppStyles from 'src/utils/useAppStyles'
-import { MAIN_SCREEN_QUERY } from 'src/queries'
-import { MainScreen } from 'src/graphql/MainScreen'
-import { BudgetRowItem } from 'src/components/BudgetRow'
+import { MAIN_QUERY } from 'src/queries'
+import { Main } from 'src/graphql/Main'
+import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 
 export default function BudgetSelect({ title, value, setValue }: FormField) {
   const { colors, fontSize, styles } = useStyles()
   const [modalVisible, setModalVisible] = useState(false)
 
-  const { data } = useQuery<MainScreen>(MAIN_SCREEN_QUERY)
+  const { data } = useQuery<Main>(MAIN_QUERY)
 
   if (!data) return null
 

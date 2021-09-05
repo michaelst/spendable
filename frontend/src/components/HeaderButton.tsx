@@ -8,7 +8,7 @@ type Props = {
   onPress: () => void
 }
 
-export default function HeaderButton({ title, onPress }: Props) {
+const HeaderButton = ({ title, onPress }: Props) => {
   const { styles } = AppStyles()
 
   return (
@@ -17,3 +17,5 @@ export default function HeaderButton({ title, onPress }: Props) {
     </TouchableWithoutFeedback>
   )
 } 
+
+export default HeaderButton

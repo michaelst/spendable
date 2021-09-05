@@ -4,23 +4,23 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: MainScreen
+// GraphQL query operation: Main
 // ====================================================
 
-export interface MainScreen_currentUser {
+export interface Main_currentUser {
   __typename: "User";
   id: string;
   spendable: Decimal;
 }
 
-export interface MainScreen_budgets {
+export interface Main_budgets {
   __typename: "Budget";
   id: string;
   name: string;
   balance: Decimal;
 }
 
-export interface MainScreen {
-  currentUser: MainScreen_currentUser;
-  budgets: MainScreen_budgets[];
+export interface Main {
+  currentUser: Main_currentUser;
+  budgets: Main_budgets[];
 }

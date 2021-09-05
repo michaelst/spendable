@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { AllocationInputObject } from "../../../../graphql/globalTypes";
+import { AllocationInputObject } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: CreateTransaction

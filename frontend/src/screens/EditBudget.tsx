@@ -10,7 +10,7 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
-import { GET_BUDGET, MAIN_SCREEN_QUERY, UPDATE_BUDGET } from 'src/queries'
+import { GET_BUDGET, MAIN_QUERY, UPDATE_BUDGET } from 'src/queries'
 import { GetBudget } from 'src/graphql/GetBudget'
 
 const EditBudget = () => {
@@ -33,7 +33,7 @@ const EditBudget = () => {
       balance: balance,
       goal: goal === '' ? null : goal
     },
-    refetchQueries: [{ query: MAIN_SCREEN_QUERY }]
+    refetchQueries: [{ query: MAIN_QUERY }]
   })
 
 

@@ -10,7 +10,7 @@ import { GetAllocationTemplate } from 'src/screens/settings/graphql/GetAllocatio
 import AppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
 
-export default function TemplateEditScreen() {
+const EditTemplate = () => {
   const { styles } = AppStyles()
 
   const navigation = useNavigation()
@@ -49,3 +49,5 @@ export default function TemplateEditScreen() {
     </View>
   )
 }
+
+export default EditTemplate

@@ -5,26 +5,23 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
-import AppStyles from 'src/utils/useAppStyles'
-import { DELETE_ALLOCATION } from '../queries'
-import { GetTransaction_transaction_allocations } from '../graphql/GetTransaction'
-import Decimal from 'decimal.js-light'
+import useAppStyles from 'src/utils/useAppStyles'
+import { GetTransaction_transaction_allocations } from 'src/graphql/GetTransaction'
+import { DELETE_ALLOCATION } from 'src/queries'
 
 type Props = {
   allocation: GetTransaction_transaction_allocations,
   transactionId: string
 }
 
-export default function TransactionAllocationRow({ allocation, transactionId }: Props) {
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+const TransactionAllocationRow = ({ allocation, transactionId }: Props) => {
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, fontSize, colors } = useAppStyles()
 
   const navigateToEdit = () => navigation.navigate('Edit Allocation', { allocationId: allocation.id, transactionId: transactionId })
 
@@ -86,3 +83,5 @@ export default function TransactionAllocationRow({ allocation, transactionId }: 
     </TouchableHighlight>
   )
 }
+
+export default TransactionAllocationRow

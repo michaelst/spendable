@@ -26,7 +26,7 @@ type BudgetRowProps = {
 }
 
 const BudgetRow = ({item}: BudgetRowProps) => {
-  const { styles } = useStyles()
+  const { styles } = useAppStyles()
 
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
     variables: { id: item.id },
@@ -36,6 +36,8 @@ const BudgetRow = ({item}: BudgetRowProps) => {
     }
   })
 
+  if (item.hideDelete) return <Row item={item} />
+
   const renderRightActions = () => {
     return (
       <RectButton style={styles.deleteButton}>
@@ -43,8 +45,6 @@ const BudgetRow = ({item}: BudgetRowProps) => {
       </RectButton>
     )
   }
-
-  if (item.hideDelete) return <Row item={item} />
 
   return (
     <Swipeable
@@ -57,7 +57,7 @@ const BudgetRow = ({item}: BudgetRowProps) => {
 }
 
 const Row = ({item: { title, amount, subText, onPress }}: BudgetRowProps) => {
-  const { styles } = useStyles()
+  const { styles } = useAppStyles()
   const amountTextStyle = amount.isNegative() ? styles.dangerText : styles.text
 
   return (
@@ -67,32 +67,12 @@ const Row = ({item: { title, amount, subText, onPress }}: BudgetRowProps) => {
           <Text style={styles.headerTitleText}>{title}</Text>
         </View>
         <View>
-          <Text style={{ ...styles.amountText, ...amountTextStyle }}>{formatCurrency(amount)}</Text>
-          <Text style={styles.budgetDetailSubText}>{subText}</Text>
+          <Text style={{ ...styles.detailText, ...amountTextStyle }}>{formatCurrency(amount)}</Text>
+          <Text style={styles.detailSubText}>{subText}</Text>
         </View>
       </View>
     </TouchableHighlight >
   )
-}
-
-const useStyles = () => {
-  const { styles, baseUnit } = useAppStyles()
-
-  const screenStyles = StyleSheet.create({
-    ...styles,
-    amountText: {
-      textAlign: 'right',
-      marginBottom: baseUnit / 4
-    },
-    budgetDetailSubText: {
-      ...styles.subText,
-      textAlign: 'right'
-    }
-  })
-
-  return {
-    styles: screenStyles
-  }
 }
 
 export default BudgetRow

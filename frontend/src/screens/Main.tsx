@@ -4,8 +4,8 @@ import { NativeModules } from 'react-native'
 import { useQuery } from '@apollo/client'
 import { FlatList } from 'react-native-gesture-handler'
 import { DateTime } from 'luxon'
-import { MAIN_SCREEN_QUERY } from 'src/queries'
-import { MainScreen } from 'src/graphql/MainScreen'
+import { MAIN_QUERY } from 'src/queries'
+import { Main as Data } from 'src/graphql/Main'
 import formatCurrency from 'src/utils/formatCurrency'
 import useAppStyles from 'src/utils/useAppStyles'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,10 +18,10 @@ type monthListDataItem = {
 }
 
 const Main = () => {
-  const navigation = useNavigation<UseNavigationProp>()
+  const navigation = useNavigation<NavigationProp>()
   const { isDarkMode } = useStyles()
 
-  const { data } = useQuery<MainScreen>(MAIN_SCREEN_QUERY, {
+  const { data } = useQuery<Data>(MAIN_QUERY, {
     onCompleted: (data) => {
       NativeModules.RNUserDefaults.setSpendable(formatCurrency(data.currentUser.spendable))
     }

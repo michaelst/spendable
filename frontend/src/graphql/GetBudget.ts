@@ -12,6 +12,7 @@ export interface GetBudget_budget_recentAllocations_transaction {
   id: string;
   name: string | null;
   date: Date;
+  reviewed: boolean;
 }
 
 export interface GetBudget_budget_recentAllocations {

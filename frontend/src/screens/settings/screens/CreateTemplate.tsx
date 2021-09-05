@@ -3,16 +3,15 @@ import { Text, View, } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import { useNavigation } from '@react-navigation/native'
-
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'src/screens/settings/queries'
 import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
 import AppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
 
-export default function TemplateEditScreen() {
+const CreateTemplate = () => {
   const { styles } = AppStyles()
   
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')
 
@@ -51,3 +50,5 @@ export default function TemplateEditScreen() {
     </View>
   )
 }
+
+export default CreateTemplate

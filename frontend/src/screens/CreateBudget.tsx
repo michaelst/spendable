@@ -10,14 +10,11 @@ import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
 import AppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
-import { CREATE_BUDGET, MAIN_SCREEN_QUERY } from 'src/queries'
-import { CreateBudget as CreateBudgetData } from 'src/graphql/CreateBudget'
-import { MainScreen } from 'src/graphql/MainScreen'
+import { CREATE_BUDGET, MAIN_QUERY } from 'src/queries'
 
 const CreateBudget = () => {
   const { styles } = AppStyles()
-
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')
   const [balance, setBalance] = useState('0.00')
@@ -29,19 +26,7 @@ const CreateBudget = () => {
       balance: balance,
       goal: goal === '' ? null : goal
     },
-    refetchQueries: [{ query: MAIN_SCREEN_QUERY }],
-    update(cache, { data }) {
-      const { createBudget: createBudgetData }: CreateBudgetData = data
-      const cacheData = cache.readQuery<MainScreen | null>({ query: MAIN_SCREEN_QUERY })
-
-      cache.writeQuery({
-        query: MAIN_SCREEN_QUERY,
-        data: { 
-          ...cacheData,
-          budgets: cacheData?.budgets.concat([createBudgetData]) 
-        }
-      })
-    }
+    refetchQueries: [{ query: MAIN_QUERY }]
   })
 
   const navigateToBudgets = () => navigation.navigate('Expenses')

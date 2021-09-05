@@ -2,18 +2,16 @@ import React, { useLayoutEffect, useState } from 'react'
 import { View, } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
-import { CREATE_TEMPLATE_LINE, GET_TEMPLATE } from 'src/screens/settings/queries'
-import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { MAIN_QUERY } from 'src/queries'
+import { RootStackParamList } from 'src/screens/transactions/Transactions'
+import { CREATE_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
 
-export default function TemplateLineCreateScreen() {
+export default function AllocationCreateScreen() {
   const navigation = useNavigation<NavigationProp>()
-  const route = useRoute<RouteProp<RootStackParamList, 'Create Template Line'>>()
-  const { templateId } = route.params
+  const { params: { transactionId } } = useRoute<RouteProp<RootStackParamList, 'Create Allocation'>>()
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
@@ -21,27 +19,19 @@ export default function TemplateLineCreateScreen() {
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [createTemplateLine] = useMutation(CREATE_TEMPLATE_LINE, {
+  const [createAllocation] = useMutation(CREATE_ALLOCATION, {
     variables: {
-      budgetAllocationTemplateId: templateId,
       amount: amount,
-      budgetId: budgetId
+      budgetId: budgetId,
+      transactionId: transactionId,
     },
-    update(cache, { data: { createAllocationTemplateLine } }) {
-      const data = cache.readQuery<GetAllocationTemplate | null>({ query: GET_TEMPLATE, variables: { id: templateId } })
-      const lines = data?.allocationTemplate.lines.concat([createAllocationTemplateLine])
-
-      cache.writeQuery({
-        query: GET_TEMPLATE,
-        data: { allocationTemplate: {...data?.allocationTemplate, ...{lines: lines}} }
-      })
-    }
+    refetchQueries: [{ query: MAIN_QUERY }, { query: GET_TRANSACTION, variables: { id: transactionId } }]
   })
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateId })
+  const navigateToSpendFrom = () => navigation.navigate('Spend From', { transactionId: transactionId })
   const saveAndGoBack = () => {
-    createTemplateLine()
-    navigateToTemplate()
+    createAllocation()
+    navigateToSpendFrom()
   }
 
   useLayoutEffect(() => navigation.setOptions({ 

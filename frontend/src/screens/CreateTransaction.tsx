@@ -1,18 +1,18 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Text, View, } from 'react-native'
-import { Switch, TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { Switch } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
-
 import { CREATE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
-import AppStyles from 'src/utils/useAppStyles'
 import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
 import { ListTransactions } from '../graphql/ListTransactions'
+import useAppStyles from 'src/utils/useAppStyles'
+import HeaderButton from 'src/components/HeaderButton'
 
-export default function TransactionCreateScreen() {
-  const { styles, padding } = AppStyles()
-  const navigation = useNavigation()
+const CreateTransaction = () => {
+  const { styles } = useAppStyles()
+  const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
@@ -20,15 +20,10 @@ export default function TransactionCreateScreen() {
   const [note, setNote] = useState('')
   const [reviewed, setReviewed] = useState(true)
 
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={saveAndGoBack}>
-        <Text style={styles.headerButtonText}>Save</Text>
-      </TouchableWithoutFeedback>
-    )
-  }
-
-  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
+  useLayoutEffect(() => navigation.setOptions({ 
+    headerTitle: '', 
+    headerRight: <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+  }))
 
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {
     variables: {
@@ -61,20 +56,20 @@ export default function TransactionCreateScreen() {
       <DateInput title='Date' value={date} setValue={setDate} />
       <FormInput title='Note' value={note} setValue={setNote} multiline={true} />
 
-      <View style={[styles.row, { padding: padding }]}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.text, { padding: padding }]}>
+      <View style={styles.inputRow}>
+        <View>
+          <Text style={styles.text}>
             Reviewed
           </Text>
         </View>
 
-        <View style={{ flexDirection: "row", paddingRight: padding }}>
-          <Switch
-            onValueChange={() => setReviewed(!reviewed)}
-            value={reviewed}
-          />
-        </View>
+        <Switch
+          onValueChange={() => setReviewed(!reviewed)}
+          value={reviewed}
+        />
       </View>
     </View>
   )
 }
+
+export default CreateTransaction

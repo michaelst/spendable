@@ -39,6 +39,15 @@ const useAppStyles = () => {
       color: colors.secondary,
       fontSize: subTextFontSize
     },
+    detailText: {
+      textAlign: 'right',
+      marginBottom: baseUnit / 4
+    },
+    detailSubText: {
+      color: colors.secondary,
+      fontSize: subTextFontSize,
+      textAlign: 'right'
+    },
     rightText: {
       color: colors.secondary,
       fontSize: fontSize,
