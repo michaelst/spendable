@@ -11,22 +11,22 @@ import AuthScreen from './src/screens/AuthScreen'
 import createApolloClient from 'src/utils/createApolloClient'
 import useAppStyles, { SpendableTheme } from 'src/utils/useAppStyles'
 import { createStackNavigator } from '@react-navigation/stack'
-import BankMemberScreen from 'src/screens/settings/screens/BankMemberScreen'
-import BankMembersScreen from 'src/screens/settings/screens/BankMembersScreen'
-import BudgetCreateScreen from 'src/screens/CreateBudget'
-import BudgetEditScreen from 'src/screens/EditBudget'
+import BankMember from 'src/screens/BankMember'
+import BankMembers from 'src/screens/BankMembers'
 import Budget from 'src/screens/Budget'
 import CreateAllocation from 'src/screens/CreateAllocation'
-import CreateTemplate from 'src/screens/settings/screens/CreateTemplate'
+import CreateBudget from 'src/screens/CreateBudget'
+import CreateTemplate from 'src/screens/CreateTemplate'
+import CreateTemplatLine from 'src/screens/CreateTemplateLine'
 import CreateTransaction from 'src/screens/CreateTransaction'
 import EditAllocation from 'src/screens/EditAllocation'
-import EditTemplate from 'src/screens/settings/screens/EditTemplate'
-import SettingsScreen from 'src/screens/settings/screens/SettingsScreen'
-import SpendFromScreen from 'src/screens/SpendFrom'
-import TemplateLineCreateScreen from 'src/screens/settings/screens/TemplateLineCreateScreen'
-import TemplateLineEditScreen from 'src/screens/settings/screens/TemplateLineEditScreen'
-import TemplateScreen from 'src/screens/settings/screens/TemplateScreen'
-import TemplatesScreen from 'src/screens/settings/screens/TemplatesScreen'
+import EditBudget from 'src/screens/EditBudget'
+import EditTemplate from 'src/screens/EditTemplate'
+import EditTemplateLine from 'src/screens/EditTemplateLine'
+import Settings from 'src/screens/Settings'
+import SpendFrom from 'src/screens/SpendFrom'
+import Template from 'src/screens/Template'
+import Templates from 'src/screens/Templates'
 import Transaction from 'src/screens/Transaction'
 import Transactions from 'src/screens/Transactions'
 
@@ -93,23 +93,23 @@ const StackNavigator = () => {
     <Stack.Navigator>
       <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
       <Stack.Screen name="Budget" component={Budget} options={options} />
-      <Stack.Screen name="Create Expense" component={BudgetCreateScreen} options={options} />
-      <Stack.Screen name="Edit Expense" component={BudgetEditScreen} options={options} />
+      <Stack.Screen name="Create Budget" component={CreateBudget} options={options} />
+      <Stack.Screen name="Edit Budget" component={EditBudget} options={options} />
       <Stack.Screen name="Transactions" component={Transactions} options={options} />
       <Stack.Screen name="Transaction" component={Transaction} options={options} />
       <Stack.Screen name="Create Transaction" component={CreateTransaction} options={options} />
-      <Stack.Screen name="Spend From" component={SpendFromScreen} options={options} />
+      <Stack.Screen name="Spend From" component={SpendFrom} options={options} />
       <Stack.Screen name="Create Allocation" component={CreateAllocation} options={options} />
       <Stack.Screen name="Edit Allocation" component={EditAllocation} options={options} />
-      <Stack.Screen name="Settings" component={SettingsScreen} options={options} />
-      <Stack.Screen name="Banks" component={BankMembersScreen} options={options} />
-      <Stack.Screen name="Bank" component={BankMemberScreen} options={options} />
-      <Stack.Screen name="Templates" component={TemplatesScreen} options={options} />
-      <Stack.Screen name="Template" component={TemplateScreen} options={options} />
+      <Stack.Screen name="Settings" component={Settings} options={options} />
+      <Stack.Screen name="Banks" component={BankMembers} options={options} />
+      <Stack.Screen name="Bank" component={BankMember} options={options} />
+      <Stack.Screen name="Templates" component={Templates} options={options} />
+      <Stack.Screen name="Template" component={Template} options={options} />
       <Stack.Screen name="Create Template" component={CreateTemplate} options={options} />
       <Stack.Screen name="Edit Template" component={EditTemplate} options={options} />
-      <Stack.Screen name="Create Template Line" component={TemplateLineCreateScreen} options={options} />
-      <Stack.Screen name="Edit Template Line" component={TemplateLineEditScreen} options={options} />
+      <Stack.Screen name="Create Template Line" component={CreateTemplatLine} options={options} />
+      <Stack.Screen name="Edit Template Line" component={EditTemplateLine} options={options} />
     </Stack.Navigator>
   )
 }

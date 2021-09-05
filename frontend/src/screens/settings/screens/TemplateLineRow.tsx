@@ -13,16 +13,15 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
 import { DELETE_TEMPLATE_LINE } from '../queries'
 import { useMutation } from '@apollo/client'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 
 type Props = {
   line: GetAllocationTemplate_allocationTemplate_lines,
 }
 
-export default function TemplateLineRow({ line }: Props) {
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+const TemplateLineRow = ({ line }: Props) => {
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, fontSize, colors } = useAppStyles()
 
   const navigateToEdit = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
@@ -66,3 +65,5 @@ export default function TemplateLineRow({ line }: Props) {
     </TouchableHighlight>
   )
 }
+
+export default TemplateLineRow

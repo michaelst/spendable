@@ -1,20 +1,19 @@
 import React, { useLayoutEffect } from 'react'
 import { ActivityIndicator, RefreshControl, Text } from 'react-native'
-import { useTheme, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { FlatList } from 'react-native-gesture-handler'
-import { GET_PLAID_LINK_TOKEN, LIST_BANK_MEMBERS, CREATE_BANK_MEMBER } from '../queries'
-import { ListBankMembers } from '../graphql/ListBankMembers'
+import { GET_PLAID_LINK_TOKEN, LIST_BANK_MEMBERS, CREATE_BANK_MEMBER } from './settings/queries'
+import { ListBankMembers } from './settings/graphql/ListBankMembers'
 import { useQuery, useMutation } from '@apollo/client'
-import BankMemberRow from './BankMemberRow'
+import BankMemberRow from './settings/screens/BankMemberRow'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
-import AppStyles from 'src/utils/useAppStyles'
-import { GetPlaidLinkToken } from '../graphql/GetPlaidLinkToken'
+import useAppStyles from 'src/utils/useAppStyles'
+import { GetPlaidLinkToken } from './settings/graphql/GetPlaidLinkToken'
 import { LinkSuccess } from 'react-native-plaid-link-sdk'
 
-export default function BankMembersScreen() {
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-  const { styles } = AppStyles()
+const BankMembers = () => {
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, colors } = useAppStyles()
 
   const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
   const { data: plaidData } = useQuery<GetPlaidLinkToken>(GET_PLAID_LINK_TOKEN, { fetchPolicy: 'no-cache' })
@@ -56,3 +55,5 @@ export default function BankMembersScreen() {
     />
   )
 }
+
+export default BankMembers

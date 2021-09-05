@@ -9,16 +9,16 @@ import { useTheme } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
 import { GetBudget_budget_allocationTemplateLines } from '../screens/budgets/graphql/GetBudget'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 
 type Props = {
   templateLine: GetBudget_budget_allocationTemplateLines,
 }
 
-export default function TemplateRow({ templateLine }: Props) {
+const TemplateRow = ({ templateLine }: Props) => {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+  const { styles, fontSize } = useAppStyles()
 
   const navigateToTemplate = () => navigation.navigate('Settings', {
     screen: 'Template',
@@ -45,3 +45,5 @@ export default function TemplateRow({ templateLine }: Props) {
     </TouchableHighlight>
   )
 }
+
+export default TemplateRow

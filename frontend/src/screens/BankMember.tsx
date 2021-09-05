@@ -1,19 +1,17 @@
 import React, { useLayoutEffect } from 'react'
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native'
-import { GET_BANK_MEMBER } from '../queries'
-import { GetBankMember } from '../graphql/GetBankMember'
+import { GET_BANK_MEMBER } from './settings/queries'
+import { GetBankMember } from './settings/graphql/GetBankMember'
 import { useQuery } from '@apollo/client'
 import { FlatList } from 'react-native-gesture-handler'
-import BankAccountRow from './BankAccountRow'
-import { RootStackParamList } from '../Settings'
+import BankAccountRow from './settings/screens/BankAccountRow'
 import { RefreshControl } from 'react-native'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 
-export default function BankMemberScreen() {
-  const { styles } = AppStyles()
-  const navigation = useNavigation()
-  const route = useRoute<RouteProp<RootStackParamList, 'Bank'>>()
-  const { bankMemberId } = route.params
+const BankMember = () => {
+  const { styles } = useAppStyles()
+  const navigation = useNavigation<NavigationProp>()
+  const { params: { bankMemberId } } = useRoute<RouteProp<RootStackParamList, 'Bank'>>()
 
   const { data, loading, refetch } = useQuery<GetBankMember>(GET_BANK_MEMBER, { variables: { id: bankMemberId } })
 
@@ -30,3 +28,5 @@ export default function BankMemberScreen() {
     />
   )
 }
+
+export default BankMember

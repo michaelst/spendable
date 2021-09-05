@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useQuery } from '@apollo/client'
 
 import { ListBankMembers_bankMembers } from '../graphql/ListBankMembers'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
 import { GET_BANK_MEMBER_PLAID_LINK_TOKEN } from '../queries'
 import { GetBankMemberPlaidLinkToken } from '../graphql/GetBankMemberPlaidLinkToken'
@@ -20,10 +20,10 @@ type Props = {
   bankMember: ListBankMembers_bankMembers,
 }
 
-export default function BankRow({ bankMember }: Props) {
+const BankMemberRow = ({ bankMember }: Props) => {
   const navigation = useNavigation()
   const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+  const { styles, fontSize } = useAppStyles()
 
   const { data: plaidData } = useQuery<GetBankMemberPlaidLinkToken>(GET_BANK_MEMBER_PLAID_LINK_TOKEN, {
     variables: { id: bankMember.id },
@@ -73,3 +73,5 @@ export default function BankRow({ bankMember }: Props) {
     </TouchableHighlight>
   )
 }
+
+export default BankMemberRow

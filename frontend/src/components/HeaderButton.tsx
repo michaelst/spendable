@@ -1,5 +1,5 @@
 import React from 'react'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import { Text } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
@@ -9,7 +9,7 @@ type Props = {
 }
 
 const HeaderButton = ({ title, onPress }: Props) => {
-  const { styles } = AppStyles()
+  const { styles } = useAppStyles()
 
   return (
     <TouchableWithoutFeedback onPress={onPress}>

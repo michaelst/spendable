@@ -15,15 +15,14 @@ import { GetTransaction_transaction_allocations } from 'src/graphql/GetTransacti
 import { DELETE_ALLOCATION } from 'src/queries'
 
 type Props = {
-  allocation: GetTransaction_transaction_allocations,
-  transactionId: string
+  allocation: GetTransaction_transaction_allocations
 }
 
-const TransactionAllocationRow = ({ allocation, transactionId }: Props) => {
+const TransactionAllocationRow = ({ allocation }: Props) => {
   const navigation = useNavigation<NavigationProp>()
   const { styles, fontSize, colors } = useAppStyles()
 
-  const navigateToEdit = () => navigation.navigate('Edit Allocation', { allocationId: allocation.id, transactionId: transactionId })
+  const navigateToEdit = () => navigation.navigate('Edit Allocation', { allocationId: allocation.id })
 
   const [deleteAllocation] = useMutation(DELETE_ALLOCATION, {
     variables: { id: allocation.id },

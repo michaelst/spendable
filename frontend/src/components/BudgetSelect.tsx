@@ -15,7 +15,7 @@ import { MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 
-export default function BudgetSelect({ title, value, setValue }: FormField) {
+const BudgetSelect = ({ title, value, setValue }: FormField) => {
   const { colors, fontSize, styles } = useStyles()
   const [modalVisible, setModalVisible] = useState(false)
 
@@ -119,3 +119,4 @@ const useStyles = () => {
   }
 }
 
+export default BudgetSelect

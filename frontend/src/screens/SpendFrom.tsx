@@ -32,7 +32,7 @@ const SpendFrom = () => {
     <FlatList
       contentContainerStyle={styles.flatlistContentContainerStyle}
       data={allocations}
-      renderItem={({ item }) => <TransactionAllocationRow allocation={item} transactionId={transactionId} />}
+      renderItem={({ item }) => <TransactionAllocationRow allocation={item} />}
     />
   )
 }

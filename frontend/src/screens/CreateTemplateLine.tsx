@@ -3,17 +3,16 @@ import { View, } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import { CREATE_TEMPLATE_LINE, GET_TEMPLATE } from 'src/screens/settings/queries'
-import { GetAllocationTemplate } from '../graphql/GetAllocationTemplate'
+import { GetAllocationTemplate } from './settings/graphql/GetAllocationTemplate'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
 import { MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
 
-export default function TemplateLineCreateScreen() {
+const CreateTemplateLine = () => {
   const navigation = useNavigation<NavigationProp>()
-  const route = useRoute<RouteProp<RootStackParamList, 'Create Template Line'>>()
-  const { templateId } = route.params
+  const { params: { templateId } } = useRoute<RouteProp<RootStackParamList, 'Create Template Line'>>()
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
@@ -33,20 +32,19 @@ export default function TemplateLineCreateScreen() {
 
       cache.writeQuery({
         query: GET_TEMPLATE,
-        data: { allocationTemplate: {...data?.allocationTemplate, ...{lines: lines}} }
+        data: { allocationTemplate: { ...data?.allocationTemplate, ...{ lines: lines } } }
       })
     }
   })
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateId })
   const saveAndGoBack = () => {
     createTemplateLine()
-    navigateToTemplate()
+    navigation.goBack()
   }
 
-  useLayoutEffect(() => navigation.setOptions({ 
-    headerTitle: '', 
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+  useLayoutEffect(() => navigation.setOptions({
+    headerTitle: '',
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" />
   }))
 
   return (
@@ -56,3 +54,5 @@ export default function TemplateLineCreateScreen() {
     </View>
   )
 }
+
+export default CreateTemplateLine

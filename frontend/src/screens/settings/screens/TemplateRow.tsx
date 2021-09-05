@@ -14,16 +14,15 @@ import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { DELETE_TEMPLATE } from '../queries'
 import { useMutation } from '@apollo/client'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 
 type Props = {
   template: ListAllocationTemplates_allocationTemplates,
 }
 
-export default function TemplateRow({ template }: Props) {
-  const navigation = useNavigation()
-  const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+const TemplateRow = ({ template }: Props) => {
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, fontSize, colors } = useAppStyles()
 
   const navigateToTemplate = () => navigation.navigate('Template', { templateId: template.id })
 
@@ -69,3 +68,5 @@ export default function TemplateRow({ template }: Props) {
     </TouchableHighlight>
   )
 }
+
+export default TemplateRow

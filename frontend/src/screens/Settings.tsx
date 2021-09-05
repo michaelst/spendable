@@ -11,16 +11,48 @@ import { TouchableHighlight } from 'react-native-gesture-handler'
 import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { useMutation, useQuery } from '@apollo/client'
-
 import { TokenContext } from 'src/components/TokenContext'
-import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from '../queries'
-import { GetNotificationSettings } from '../graphql/GetNotificationSettings'
-import { UpdateNotificationSettings } from '../graphql/UpdateNotificationSettings'
-import AppStyles from 'src/utils/useAppStyles'
+import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from './settings/queries'
+import { GetNotificationSettings } from './settings/graphql/GetNotificationSettings'
+import { UpdateNotificationSettings } from './settings/graphql/UpdateNotificationSettings'
+import useAppStyles from 'src/utils/useAppStyles'
+
+const Settings = () => {
+  const { styles } = useAppStyles()
+
+  const firstSection = [
+    { key: 'banks', view: bankRow() },
+    { key: 'templates', view: templatesRow() },
+  ]
+
+  const secondSection = [
+    { key: 'notifications', view: notificationsRow() },
+  ]
+
+  const thirdSection = [
+    { key: 'logout', view: logoutRow() },
+  ]
+
+  const listData = [
+    { data: firstSection },
+    { data: secondSection },
+    { data: thirdSection },
+  ]
+
+  return (
+    <SectionList
+      contentContainerStyle={styles.sectionListContentContainerStyle}
+      sections={listData}
+      renderItem={({ item }) => item.view}
+      stickySectionHeadersEnabled={false}
+      renderSectionHeader={({ section }) => <View style={{ paddingBottom: 36 }} />}
+    />
+  )
+}
 
 const bankRow = () => {
   const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+  const { styles, fontSize } = useAppStyles()
   const navigation = useNavigation()
   const navigateToBanks = () => navigation.navigate('Banks')
 
@@ -43,7 +75,7 @@ const bankRow = () => {
 
 const templatesRow = () => {
   const { colors }: any = useTheme()
-  const { styles, fontSize } = AppStyles()
+  const { styles, fontSize } = useAppStyles()
   const navigation = useNavigation()
   const navigateToTemplates = () => navigation.navigate('Templates')
 
@@ -65,7 +97,7 @@ const templatesRow = () => {
 }
 
 const notificationsRow = () => {
-  const { styles, padding } = AppStyles()
+  const { styles, padding } = useAppStyles()
   const [id, setId] = useState<string | null>(null)
   const [enabled, setEnabled] = useState(false)
   const { deviceToken } = useContext(TokenContext)
@@ -106,7 +138,7 @@ const notificationsRow = () => {
 }
 
 const logoutRow = () => {
-  const { styles } = AppStyles()
+  const { styles } = useAppStyles()
 
   return (
     <TouchableHighlight onPress={() => auth().signOut()}>
@@ -121,35 +153,4 @@ const logoutRow = () => {
   )
 }
 
-export default function SettingsScreen() {
-  const { styles } = AppStyles()
-
-  const firstSection = [
-    { key: 'banks', view: bankRow() },
-    { key: 'templates', view: templatesRow() },
-  ]
-
-  const secondSection = [
-    { key: 'notifications', view: notificationsRow() },
-  ]
-
-  const thirdSection = [
-    { key: 'logout', view: logoutRow() },
-  ]
-
-  const listData = [
-    { data: firstSection },
-    { data: secondSection },
-    { data: thirdSection },
-  ]
-
-  return (
-    <SectionList
-      contentContainerStyle={styles.sectionListContentContainerStyle}
-      sections={listData}
-      renderItem={({ item }) => item.view}
-      stickySectionHeadersEnabled={false}
-      renderSectionHeader={({ section }) => <View style={{ paddingBottom: 36 }} />}
-    />
-  )
-}
+export default Settings

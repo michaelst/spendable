@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Text, View } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { DateTime } from 'luxon'
 
@@ -11,13 +11,13 @@ export type DateField = {
   setValue: Dispatch<SetStateAction<Date>>,
 }
 
-export default function DateInput({ title, value, setValue }: DateField) {
-  const { styles } = AppStyles()
+const DateInput = ({ title, value, setValue }: DateField) => {
+  const { styles } = useAppStyles()
 
   const [modalVisible, setModalVisible] = useState(false)
 
   return (
-    <View style={styles.row}>
+    <View style={styles.inputRow}>
       <View style={{ flex: 1 }}>
         <Text style={styles.text}>
           {title}
@@ -44,3 +44,5 @@ export default function DateInput({ title, value, setValue }: DateField) {
     </View>
   )
 }
+
+export default DateInput

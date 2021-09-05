@@ -11,21 +11,21 @@ import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQuery } from '@apollo/client'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import { LIST_TEMPLATES } from 'src/screens/settings/queries'
 import { ListAllocationTemplates, ListAllocationTemplates_allocationTemplates } from 'src/screens/settings/graphql/ListAllocationTemplates'
-import { AllocationInputObject } from 'graphql/globalTypes'
 import Decimal from 'decimal.js-light'
 import formatCurrency from 'src/utils/formatCurrency'
+import { AllocationInputObject } from 'src/graphql/globalTypes'
 
 type Props = {
   setValue: (allocations: AllocationInputObject[]) => any,
 }
 
-export default function TemplateSelect({ setValue }: Props) {
+const TemplateSelect = ({ setValue }: Props) => {
   const { colors }: any = useTheme()
   const { height } = Dimensions.get('window')
-  const { styles, padding, fontSize } = AppStyles()
+  const { styles, baseUnit, fontSize } = useAppStyles()
 
   const localStyles = StyleSheet.create({
     modal: {
@@ -38,7 +38,7 @@ export default function TemplateSelect({ setValue }: Props) {
     },
     close: {
       alignItems: 'flex-end',
-      padding: padding * 2
+      padding: baseUnit * 2
     },
   })
 
@@ -94,3 +94,4 @@ export default function TemplateSelect({ setValue }: Props) {
   )
 }
 
+export default TemplateSelect

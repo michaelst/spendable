@@ -43,10 +43,9 @@ const CreateTransaction = () => {
     }
   })
 
-  const navigateToTransactions = () => navigation.navigate('Transactions')
   const saveAndGoBack = () => {
     createTransaction()
-    navigateToTransactions()
+    navigation.goBack()
   }
 
   return (

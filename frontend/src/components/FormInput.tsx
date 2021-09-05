@@ -7,7 +7,7 @@ import {
   InputAccessoryView,
   Button
 } from 'react-native'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import { useTheme } from '@react-navigation/native'
 import Decimal from 'decimal.js-light'
 import { TouchableHighlight } from 'react-native-gesture-handler'
@@ -20,12 +20,11 @@ export type FormField = {
   value: string,
 }
 
-export default function FormInput({ title, value, setValue, keyboardType, multiline = false }: FormField) {
-  const { styles, padding } = AppStyles()
-  const { colors }: any = useTheme()
+const FormInput = ({ title, value, setValue, keyboardType, multiline = false }: FormField) => {
+  const { styles, baseUnit, colors } = useAppStyles()
 
   return (
-    <View style={styles.row}>
+    <View style={styles.inputRow}>
       <View style={{ flex: 1 }}>
         <Text style={styles.text}>
           {title}
@@ -44,7 +43,7 @@ export default function FormInput({ title, value, setValue, keyboardType, multil
         />
       </View>
       {keyboardType === 'decimal-pad' ? (
-        <InputAccessoryView nativeID={'negate-' + title} backgroundColor={colors.card} style={{ padding: padding }}>
+        <InputAccessoryView nativeID={'negate-' + title} backgroundColor={colors.card} style={{ padding: baseUnit }}>
           <TouchableHighlight
             onPress={() => {
               const decimalValue = new Decimal(value)
@@ -56,10 +55,12 @@ export default function FormInput({ title, value, setValue, keyboardType, multil
               borderRadius: 8
             }}
           >
-            <Text style={{ color: colors.text, padding: padding, textAlign: 'center' }}>-</Text>
+            <Text style={{ color: colors.text, padding: baseUnit, textAlign: 'center' }}>-</Text>
           </TouchableHighlight>
         </InputAccessoryView>
       ) : null}
     </View>
   )
 }
+
+export default FormInput

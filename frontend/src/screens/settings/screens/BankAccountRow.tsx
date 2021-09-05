@@ -6,14 +6,14 @@ import { Switch } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import { UpdateBankAccount } from '../graphql/UpdateBankAccount'
 import { UPDATE_BANK_ACCOUNT } from '../queries'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 
 type Props = {
   bankAccount: GetBankMember_bankMember_bankAccounts,
 }
 
-export default function BankAccountRow({ bankAccount }: Props) {
-  const { styles } = AppStyles()
+const BankAccountRow = ({ bankAccount }: Props) => {
+  const { styles } = useAppStyles()
 
   const [updateBankAccount] = useMutation<UpdateBankAccount>(UPDATE_BANK_ACCOUNT)
 
@@ -37,3 +37,5 @@ export default function BankAccountRow({ bankAccount }: Props) {
     </View>
   )
 }
+
+export default BankAccountRow

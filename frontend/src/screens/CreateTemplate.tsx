@@ -1,16 +1,14 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { Text, View, } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { View, } from 'react-native'
 import { useMutation } from '@apollo/client'
 import { useNavigation } from '@react-navigation/native'
 import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'src/screens/settings/queries'
-import { ListAllocationTemplates } from '../graphql/ListAllocationTemplates'
-import AppStyles from 'src/utils/useAppStyles'
+import { ListAllocationTemplates } from './settings/graphql/ListAllocationTemplates'
+import useAppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
+import HeaderButton from 'src/components/HeaderButton'
 
 const CreateTemplate = () => {
-  const { styles } = AppStyles()
-  
   const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')
@@ -29,20 +27,15 @@ const CreateTemplate = () => {
     }
   })
 
-  const navigateToTemplates = () => navigation.navigate('Templates')
   const saveAndGoBack = () => {
     createTemplate()
-    navigateToTemplates()
-  }
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={saveAndGoBack}>
-        <Text style={styles.headerButtonText}>Save</Text>
-      </TouchableWithoutFeedback>
-    )
+    navigation.goBack()
   }
 
-  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
+  useLayoutEffect(() => navigation.setOptions({ 
+    headerTitle: '', 
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+  }))
 
   return (
     <View>

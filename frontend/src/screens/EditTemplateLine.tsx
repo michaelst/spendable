@@ -10,7 +10,7 @@ import { MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
 
-export default function TemplateLineEditScreen() {
+const EditTemplateLine = () => {
   const navigation = useNavigation<NavigationProp>()
   const { params: { lineId } } = useRoute<RouteProp<RootStackParamList, 'Edit Template Line'>>()
 
@@ -36,10 +36,9 @@ export default function TemplateLineEditScreen() {
     }
   })
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: data?.allocationTemplateLine.allocationTemplate.id })
   const saveAndGoBack = () => {
     updateTemplateLine()
-    navigateToTemplate()
+    navigation.goBack()
   }
 
   useLayoutEffect(() => navigation.setOptions({
@@ -54,3 +53,5 @@ export default function TemplateLineEditScreen() {
     </View>
   )
 }
+
+export default EditTemplateLine

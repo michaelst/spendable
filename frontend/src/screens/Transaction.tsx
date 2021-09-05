@@ -6,7 +6,7 @@ import { Switch, TouchableHighlight } from 'react-native-gesture-handler'
 import { useMutation, useQuery } from '@apollo/client'
 import { GET_TRANSACTION, MAIN_QUERY, UPDATE_TRANSACTION } from '../queries'
 import { GetTransaction } from '../graphql/GetTransaction'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import BudgetSelect from 'src/components/BudgetSelect'
 import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
@@ -15,7 +15,7 @@ import TemplateSelect from '../components/TemplateSelect'
 import HeaderButton from 'src/components/HeaderButton'
 
 const Transaction = () => {
-  const { styles, colors, fontSize, baseUnit } = AppStyles()
+  const { styles, colors, fontSize, baseUnit } = useAppStyles()
   const navigation = useNavigation<NavigationProp>()
   const route = useRoute<RouteProp<RootStackParamList, 'Transaction'>>()
   const { transactionId } = route.params
@@ -72,7 +72,6 @@ const Transaction = () => {
   }
 
   const navigateToSpendFrom = () => navigation.navigate('Spend From', { transactionId: transactionId })
-  const navigateToTransactions = () => navigation.navigate('Transactions')
   const saveAndGoBack = () => {
     updateTransaction({
       variables: {
@@ -84,7 +83,7 @@ const Transaction = () => {
         reviewed: reviewed
       }
     })
-    navigateToTransactions()
+    navigation.goBack()
   }
 
   return (
@@ -94,7 +93,7 @@ const Transaction = () => {
       <DateInput title='Date' value={date} setValue={setDate} />
       <FormInput title='Note' value={note} setValue={setNote} multiline={true} />
 
-      <View style={[styles.row, { padding: baseUnit }]}>
+      <View style={[styles.inputRow, { padding: baseUnit }]}>
         <View style={{ flex: 1 }}>
           <Text style={[styles.text, { padding: baseUnit }]}>
             Reviewed
@@ -120,7 +119,7 @@ const Transaction = () => {
           ? <BudgetSelect title='Spend From' value={spendFromValue} setValue={setSpendFrom} />
           : (
             <TouchableHighlight onPress={navigateToSpendFrom}>
-              <View style={styles.row}>
+              <View style={styles.inputRow}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.text}>
                     Spend From

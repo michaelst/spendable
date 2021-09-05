@@ -8,7 +8,7 @@ import { CREATE_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
 
-export default function AllocationCreateScreen() {
+const CreateAllocation = () => {
   const navigation = useNavigation<NavigationProp>()
   const { params: { transactionId } } = useRoute<RouteProp<RootStackParamList, 'Create Allocation'>>()
 
@@ -27,10 +27,9 @@ export default function AllocationCreateScreen() {
     refetchQueries: [{ query: MAIN_QUERY }, { query: GET_TRANSACTION, variables: { id: transactionId } }]
   })
 
-  const navigateToSpendFrom = () => navigation.navigate('Spend From', { transactionId: transactionId })
   const saveAndGoBack = () => {
     createAllocation()
-    navigateToSpendFrom()
+    navigation.goBack()
   }
 
   useLayoutEffect(() => navigation.setOptions({ 
@@ -45,3 +44,5 @@ export default function AllocationCreateScreen() {
     </View>
   )
 }
+
+export default CreateAllocation

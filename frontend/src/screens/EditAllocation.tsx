@@ -9,9 +9,9 @@ import { Allocation } from '../graphql/Allocation'
 import HeaderButton from 'src/components/HeaderButton'
 import { Main } from 'src/graphql/Main'
 
-export default function AllocationEditScreen() {
+const EditAllocation = () => {
   const navigation = useNavigation<NavigationProp>()
-  const { params: { allocationId, transactionId } } = useRoute<RouteProp<RootStackParamList, 'Edit Allocation'>>()
+  const { params: { allocationId } } = useRoute<RouteProp<RootStackParamList, 'Edit Allocation'>>()
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
@@ -36,10 +36,9 @@ export default function AllocationEditScreen() {
     refetchQueries: [{ query: MAIN_QUERY }]
   })
 
-  const navigateToSpendFrom = () => navigation.navigate('Spend From', { transactionId: transactionId })
   const saveAndGoBack = () => {
     updateAllocation()
-    navigateToSpendFrom()
+    navigation.goBack()
   }
 
   useLayoutEffect(() => navigation.setOptions({
@@ -54,3 +53,5 @@ export default function AllocationEditScreen() {
     </View>
   )
 }
+
+export default EditAllocation

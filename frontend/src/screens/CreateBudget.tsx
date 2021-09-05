@@ -8,12 +8,12 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
 import { CREATE_BUDGET, MAIN_QUERY } from 'src/queries'
 
 const CreateBudget = () => {
-  const { styles } = AppStyles()
+  const { styles } = useAppStyles()
   const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')

@@ -5,26 +5,23 @@ import {
   Text,
   View,
 } from 'react-native'
-import { useTheme, RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
-import { RootStackParamList } from 'src/screens/settings/Settings'
 import { GET_TEMPLATE } from 'src/screens/settings/queries'
 import {
   GetAllocationTemplate,
   GetAllocationTemplate_allocationTemplate_lines as AllocationTemplateLine
 } from 'src/screens/settings/graphql/GetAllocationTemplate'
 import { TouchableHighlight } from 'react-native-gesture-handler'
-import TemplateLineRow from './TemplateLineRow'
-import AppStyles from 'src/utils/useAppStyles'
+import TemplateLineRow from './settings/screens/TemplateLineRow'
+import useAppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
 
-export default function TemplateScreen() {
-  const { colors }: any = useTheme()
-  const { styles } = AppStyles()
+const Template = () => {
+  const { styles, colors } = useAppStyles()
 
-  const navigation = useNavigation()
-  const route = useRoute<RouteProp<RootStackParamList, 'Template'>>()
-  const { templateId } = route.params
+  const navigation = useNavigation<NavigationProp>()
+  const { params: { templateId } } = useRoute<RouteProp<RootStackParamList, 'Template'>>()
 
   const navigateToCreate = () => navigation.navigate('Create Template Line', { templateId: templateId })
   const navigateToEdit = () => navigation.navigate('Edit Template', { templateId: templateId })
@@ -32,7 +29,7 @@ export default function TemplateScreen() {
 
   const { data } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
 
-  if (data?.allocationTemplate) {
+  if (data) {
     const headerTitle = () => {
       return (
         <View style={{ alignItems: 'center' }}>
@@ -71,3 +68,5 @@ export default function TemplateScreen() {
     />
   )
 }
+
+export default Template

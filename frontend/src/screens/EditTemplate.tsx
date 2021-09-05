@@ -7,11 +7,12 @@ import { useQuery, useMutation } from '@apollo/client'
 import { RootStackParamList } from 'src/screens/settings/Settings'
 import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'src/screens/settings/queries'
 import { GetAllocationTemplate } from 'src/screens/settings/graphql/GetAllocationTemplate'
-import AppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
+import HeaderButton from 'src/components/HeaderButton'
 
 const EditTemplate = () => {
-  const { styles } = AppStyles()
+  const { styles } = useAppStyles()
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Edit Template'>>()
@@ -28,20 +29,15 @@ const EditTemplate = () => {
     }
   })
 
-  const navigateToTemplate = () => navigation.navigate('Template', { templateId: templateId })
   const saveAndGoBack = () => {
     updateTemplate()
-    navigateToTemplate()
-  }
-  const headerRight = () => {
-    return (
-      <TouchableWithoutFeedback onPress={saveAndGoBack}>
-        <Text style={styles.headerButtonText}>Save</Text>
-      </TouchableWithoutFeedback>
-    )
+    navigation.goBack()
   }
 
-  useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
+  useLayoutEffect(() => navigation.setOptions({ 
+    headerTitle: '', 
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+  }))
 
   return (
     <View>
