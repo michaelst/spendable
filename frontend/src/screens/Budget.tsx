@@ -15,7 +15,6 @@ import { GetBudget } from 'src/graphql/GetBudget'
 import { GET_BUDGET } from 'src/queries'
 import { AllocationTemplateLine } from './settings/graphql/AllocationTemplateLine'
 import useAppStyles from 'src/utils/useAppStyles'
-import { Allocation } from 'src/graphql/Allocation'
 
 const Budget = () => {
   const { styles, colors } = useAppStyles()
@@ -23,7 +22,7 @@ const Budget = () => {
   const { params: { budgetId } } = useRoute<RouteProp<RootStackParamList, 'Expense'>>()
 
   const navigateToEdit = () => navigation.navigate('Edit Expense', { budgetId: budgetId })
-  const headerRight = <HeaderButton title="Edit" onPress={navigateToEdit} />
+  const headerRight = () => <HeaderButton title="Edit" onPress={navigateToEdit} />
 
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId }, fetchPolicy: 'cache-and-network' })
 
@@ -64,7 +63,7 @@ const Budget = () => {
     {
       title: 'Recent Transactions',
       data: recentAllocations,
-      renderItem: ({ item }: { item: Allocation }) => <TransactionRow allocation={item} />
+      renderItem: ({ item }: { item: TransactionRowItem }) => <TransactionRow item={item} />
     },
   ]
 
@@ -72,7 +71,11 @@ const Budget = () => {
     <SectionList
       contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={sections}
-      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+      renderSectionHeader={({ section: { title } }) => (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionHeaderText}>{title}</Text>
+        </View>
+      )}
       stickySectionHeadersEnabled={false}
     />
   )

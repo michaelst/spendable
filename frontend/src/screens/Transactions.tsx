@@ -16,7 +16,7 @@ const Transactions = () => {
   const { data, loading, refetch } = useQuery<ListTransactions>(LIST_TRANSACTIONS)
 
   useLayoutEffect(() => navigation.setOptions({ 
-    headerRight: <HeaderButton onPress={() => navigation.navigate('Create Transaction')} title="Add" /> 
+    headerRight: () => <HeaderButton onPress={() => navigation.navigate('Create Transaction')} title="Add" /> 
   }))
 
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />

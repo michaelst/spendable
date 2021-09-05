@@ -92,7 +92,7 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-      <Stack.Screen name="Expense" component={Budget} options={options} />
+      <Stack.Screen name="Budget" component={Budget} options={options} />
       <Stack.Screen name="Create Expense" component={BudgetCreateScreen} options={options} />
       <Stack.Screen name="Edit Expense" component={BudgetEditScreen} options={options} />
       <Stack.Screen name="Transactions" component={Transactions} options={options} />

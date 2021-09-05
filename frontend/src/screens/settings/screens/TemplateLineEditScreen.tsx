@@ -44,7 +44,7 @@ export default function TemplateLineEditScreen() {
 
   useLayoutEffect(() => navigation.setOptions({
     headerTitle: '',
-    headerRight: <HeaderButton onPress={saveAndGoBack} title="Save" />
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" />
   }))
 
   return (

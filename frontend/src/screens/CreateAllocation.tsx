@@ -4,7 +4,6 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { RootStackParamList } from 'src/screens/transactions/Transactions'
 import { CREATE_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
@@ -36,7 +35,7 @@ export default function AllocationCreateScreen() {
 
   useLayoutEffect(() => navigation.setOptions({ 
     headerTitle: '', 
-    headerRight: <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
   }))
 
   return (

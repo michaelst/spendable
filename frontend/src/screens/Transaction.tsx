@@ -28,7 +28,7 @@ const Transaction = () => {
 
   useLayoutEffect(() => navigation.setOptions({ 
     headerTitle: '', 
-    headerRight: <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
   }))
 
   const { data } = useQuery<GetTransaction>(GET_TRANSACTION, {

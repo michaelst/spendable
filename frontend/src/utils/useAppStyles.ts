@@ -71,11 +71,15 @@ const useAppStyles = () => {
       paddingLeft: baseUnit * 2,
       paddingRight: baseUnit * 2
     },
+    sectionHeader: {
+      marginHorizontal: baseUnit * 2,
+      marginTop: baseUnit * 4,
+      paddingBottom: baseUnit,
+      borderBottomColor: colors.border,
+      borderBottomWidth: StyleSheet.hairlineWidth
+    },
     sectionHeaderText: {
-      backgroundColor: colors.background,
-      color: colors.secondary,
-      padding: baseUnit,
-      paddingBottom: 5
+      color: colors.secondary
     },
     sectionFooterText: {
       backgroundColor: colors.background,
@@ -95,6 +99,9 @@ const useAppStyles = () => {
       flexDirection: 'row',
       backgroundColor: '#dd2c00',
       justifyContent: 'flex-end'
+    },
+    flex: {
+      flex: 1
     },
     inputRow: {
       flexDirection: 'row',

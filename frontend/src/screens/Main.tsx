@@ -64,14 +64,14 @@ const Main = () => {
       amount: data.currentUser.spendable,
       subText: "AVAILABLE",
       hideDelete: true,
-      onPress: () => navigation.navigate('Expense', { budgetId: 'spendabe' })
+      onPress: () => navigation.navigate('Budget', { budgetId: 'spendabe' })
     },
     ...data.budgets.map(budget => ({
       id: budget.id,
       title: budget.name,
       amount: budget.balance,
       subText: "REMAINING",
-      onPress: () => navigation.navigate('Expense', { budgetId: budget.id })
+      onPress: () => navigation.navigate('Budget', { budgetId: budget.id })
     }))
   ]
 

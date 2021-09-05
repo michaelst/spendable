@@ -22,7 +22,7 @@ const CreateTransaction = () => {
 
   useLayoutEffect(() => navigation.setOptions({ 
     headerTitle: '', 
-    headerRight: <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
   }))
 
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {

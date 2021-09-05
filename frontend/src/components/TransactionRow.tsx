@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -10,7 +11,6 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
-import AppStyles from 'src/utils/useAppStyles'
 import { DELETE_TRANSACTION, MAIN_QUERY } from '../queries'
 import { DateTime } from 'luxon'
 import useAppStyles from 'src/utils/useAppStyles'
@@ -32,7 +32,7 @@ type TransactionRowProps = {
 
 const TransactionRow = ({ item }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp>()
-  const { styles } = AppStyles()
+  const { styles } = useAppStyles()
 
   const navigateToTransaction = () => navigation.navigate('Transaction', { transactionId: item.transactionId })
 
@@ -69,13 +69,24 @@ const TransactionRow = ({ item }: TransactionRowProps) => {
 
 const Row = ({ item: { title, amount, transactionDate, transactionReviewed, onPress } }: TransactionRowProps) => {
   const { styles, baseUnit, fontSize, colors } = useAppStyles()
-  const amountTextStyle = amount.isNegative() ? styles.dangerText : styles.text
+
+  const componentStyles = StyleSheet.create({
+    titleText: {
+      ...styles.text,
+      paddingRight: baseUnit * 2
+    },
+    amountTextStyle: {
+      ...styles.text,
+      color: amount.isNegative() ? colors.danger : colors.secondary,
+      paddingRight: baseUnit / 2
+    }
+  })
 
   return (
     <TouchableHighlight onPress={onPress}>
       <View style={styles.row}>
-        <View>
-          <Text numberOfLines={1} style={{ ...styles.text, ...{ paddingRight: baseUnit } }}>
+        <View style={styles.flex}>
+          <Text numberOfLines={1} style={componentStyles.titleText}>
             {title}
           </Text>
           <Text style={styles.secondaryText}>
@@ -84,7 +95,7 @@ const Row = ({ item: { title, amount, transactionDate, transactionReviewed, onPr
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Text style={amountTextStyle} >
+          <Text style={componentStyles.amountTextStyle} >
             {formatCurrency(amount)}
           </Text>
           {transactionReviewed && <Ionicons name='checkmark-circle-outline' size={fontSize} color={colors.secondary} />}

@@ -19,7 +19,7 @@ const SpendFrom = () => {
 
   useLayoutEffect(() => navigation.setOptions({
     headerTitle: '',
-    headerRight: <HeaderButton onPress={navigateToCreate} title="Add" />
+    headerRight: () => <HeaderButton onPress={navigateToCreate} title="Add" />
   }))
 
   const { data } = useQuery<GetTransaction>(GET_TRANSACTION, { variables: { id: transactionId } })
