@@ -27,9 +27,9 @@ const Transaction = () => {
   const [note, setNote] = useState('')
   const [reviewed, setReviewed] = useState(false)
 
-  useLayoutEffect(() => navigation.setOptions({ 
-    headerTitle: '', 
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+  useLayoutEffect(() => navigation.setOptions({
+    headerTitle: '',
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" />
   }))
 
   const { data } = useQuery<GetTransaction>(GET_TRANSACTION, {
@@ -120,14 +120,14 @@ const Transaction = () => {
           ? <BudgetSelect title='Spend From' value={spendFromValue} setValue={setSpendFrom} />
           : (
             <TouchableHighlight onPress={navigateToSpendFrom}>
-              <View style={styles.inputRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.text}>
+              <View style={[styles.inputRow]}>
+                <View style={styles.flex}>
+                  <Text numberOfLines={1} style={styles.text}>
                     Spend From
-                </Text>
+                  </Text>
                 </View>
 
-                <View style={{ flex: 1, flexDirection: "row", alignItems: 'center', paddingRight: baseUnit }}>
+                <View style={{ flexDirection: "row", alignItems: 'center', maxWidth: '60%' }}>
                   <Text style={[styles.formInputText, { paddingRight: baseUnit }]}>
                     {spendFromValue}
                   </Text>

@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react'
 import { ActivityIndicator, RefreshControl } from 'react-native'
 import { useQuery } from '@apollo/client'
-import TransactionRow from '../components/TransactionRow'
+import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
 import { useNavigation } from '@react-navigation/native'
 import { FlatList } from 'react-native-gesture-handler'
 import { LIST_TRANSACTIONS } from '../queries'
@@ -21,12 +21,25 @@ const Transactions = () => {
 
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
+  const transactions: TransactionRowItem[] =
+  [...data?.transactions ?? []]
+    .sort((a, b) => b.date - a.date)
+    .map(transaction => ({
+      key: transaction.id,
+      transactionId: transaction.id,
+      title: transaction.name,
+      amount: transaction.amount,
+      transactionDate: transaction.date,
+      transactionReviewed: transaction.reviewed,
+      onPress: () => navigation.navigate('Transaction', { transactionId: transaction.id })
+    }))
+
   return (
     <FlatList
-      contentContainerStyle={styles.flatlistContentContainerStyle}
-      data={[...data?.transactions ?? []].sort((a, b) => b.date - a.date)}
-      renderItem={({ item }) => <TransactionRow transaction={item} />}
+      data={transactions}
+      renderItem={({ item }) => <TransactionRow item={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
+      contentInsetAdjustmentBehavior="automatic"
     />
   )
 }

@@ -29,13 +29,12 @@ const CreateBudget = () => {
     refetchQueries: [{ query: MAIN_QUERY }]
   })
 
-  const navigateToBudgets = () => navigation.navigate('Expenses')
   const createAndGoBack = () => {
     createBudget()
-    navigateToBudgets()
+    navigation.goBack()
   }
 
-  const headerLeft = () => <HeaderButton title="Cancel" onPress={navigateToBudgets} />
+  const headerLeft = () => <HeaderButton title="Cancel" onPress={() => navigation.goBack()} />
   const headerRight = () => <HeaderButton title="Save" onPress={createAndGoBack} />
 
   useLayoutEffect(() => navigation.setOptions({ headerLeft: headerLeft, headerTitle: '', headerRight: headerRight }))
@@ -75,7 +74,7 @@ const CreateBudget = () => {
       data={fields}
       renderItem={
         ({ item }) => (
-          <View style={styles.row}>
+          <View style={styles.inputRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.text}>{item.placeholder}</Text>
             </View>

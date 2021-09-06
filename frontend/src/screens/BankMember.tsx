@@ -21,10 +21,10 @@ const BankMember = () => {
 
   return (
     <FlatList
-      contentContainerStyle={styles.flatlistContentContainerStyle}
       data={data?.bankMember.bankAccounts ?? []}
       renderItem={({ item }) => <BankAccountRow bankAccount={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
+      contentInsetAdjustmentBehavior="automatic"
     />
   )
 }

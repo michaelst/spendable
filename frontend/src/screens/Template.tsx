@@ -1,7 +1,5 @@
 import React, { useLayoutEffect } from 'react'
 import {
-  ActivityIndicator,
-  SectionList,
   Text,
   View,
 } from 'react-native'
@@ -27,21 +25,10 @@ const Template = () => {
 
   const { data } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
 
-  if (data) {
-    const headerTitle = () => {
-      return (
-        <View style={{ alignItems: 'center' }}>
-          <Text style={styles.headerTitleText}>{data.allocationTemplate.name}</Text>
-        </View>
-      )
-    }
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: data?.allocationTemplate.name, headerRight: headerRight }))
 
-    useLayoutEffect(() => navigation.setOptions({ headerTitle: headerTitle, headerRight: headerRight }))
-  } else {
-    useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
-    return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
-  }
-
+  if (!data) return null
+  
   const lines = [...data.allocationTemplate.lines].sort((a, b) => b.amount.comparedTo(a.amount))
 
   return (
@@ -55,6 +42,7 @@ const Template = () => {
           </View>
         </TouchableHighlight>
       )}
+      contentInsetAdjustmentBehavior="automatic"
     />
   )
 }

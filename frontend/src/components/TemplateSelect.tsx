@@ -15,7 +15,8 @@ import { AllocationInputObject } from 'src/graphql/globalTypes'
 import { ListAllocationTemplates, ListAllocationTemplates_allocationTemplates } from 'src/graphql/ListAllocationTemplates'
 import { LIST_TEMPLATES } from 'src/queries'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faChevronRight, faCross } from '@fortawesome/free-solid-svg-icons'
+import { faWindowClose } from '@fortawesome/free-regular-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   setValue: (allocations: AllocationInputObject[]) => void,
@@ -73,7 +74,7 @@ const TemplateSelectModal = ({ modalVisible, setModalVisible, setValue }: Templa
       style={componentStyles.modal}>
       <SafeAreaView style={componentStyles.scrollableModal}>
         <TouchableHighlight onPress={() => setModalVisible(false)} style={componentStyles.close}>
-          <FontAwesomeIcon icon={faCross} size={32} color={colors.text} />
+          <FontAwesomeIcon icon={faWindowClose} size={32} color={colors.text} />
         </TouchableHighlight>
         <FlatList
           contentContainerStyle={styles.sectionListContentContainerStyle}

@@ -22,7 +22,6 @@ const Settings = () => {
   const { styles } = useAppStyles()
 
   const firstSection = [
-    { key: 'banks', view: bankRow() },
     { key: 'templates', view: templatesRow() },
   ]
 
@@ -46,30 +45,9 @@ const Settings = () => {
       sections={listData}
       renderItem={({ item }) => item.view}
       stickySectionHeadersEnabled={false}
-      renderSectionHeader={({ section }) => <View style={{ paddingBottom: 36 }} />}
+      renderSectionHeader={() => <View style={{ paddingBottom: 36 }} />}
+      contentInsetAdjustmentBehavior="automatic"
     />
-  )
-}
-
-const bankRow = () => {
-  const { styles, fontSize, colors } = useAppStyles()
-  const navigation = useNavigation<NavigationProp>()
-  const navigateToBanks = () => navigation.navigate('Banks')
-
-  return (
-    <TouchableHighlight onPress={navigateToBanks}>
-      <View style={styles.row}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.text}>
-            Banks
-        </Text>
-        </View>
-
-        <View style={{ flexDirection: "row" }}>
-          <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
-        </View>
-      </View>
-    </TouchableHighlight>
   )
 }
 
@@ -80,7 +58,7 @@ const templatesRow = () => {
 
   return (
     <TouchableHighlight onPress={navigateToTemplates}>
-      <View style={styles.row}>
+      <View style={styles.inputRow}>
         <View style={{ flex: 1 }}>
           <Text style={styles.text}>
             Transaction Templates
@@ -119,7 +97,7 @@ const notificationsRow = () => {
   }
 
   return (
-    <View style={[styles.row, { padding: 0 }]}>
+    <View style={[styles.inputRow, { padding: baseUnit }]}>
       <View style={{ flex: 1 }}>
         <Text style={[styles.text, { padding: baseUnit }]}>
           Notifications
@@ -141,9 +119,9 @@ const logoutRow = () => {
 
   return (
     <TouchableHighlight onPress={() => auth().signOut()}>
-      <View style={styles.row}>
+      <View style={styles.inputRow}>
         <View style={styles.flex}>
-          <Text style={styles.text}>
+          <Text style={styles.dangerText}>
             Logout
           </Text>
         </View>

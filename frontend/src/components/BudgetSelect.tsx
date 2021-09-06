@@ -14,7 +14,8 @@ import { MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faChevronRight, faWindowClose } from '@fortawesome/free-solid-svg-icons'
+import { faWindowClose } from '@fortawesome/free-regular-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 const BudgetSelect = ({ title, value, setValue }: FormField) => {
   const { colors, fontSize, styles } = useStyles()

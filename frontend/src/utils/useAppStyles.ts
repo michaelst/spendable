@@ -125,10 +125,6 @@ const useAppStyles = () => {
     },
     sectionListContentContainerStyle: {
       paddingBottom: baseUnit * 4
-    },
-    flatlistContentContainerStyle: {
-      paddingTop: baseUnit * 4,
-      paddingBottom: baseUnit * 4
     }
   })
 

@@ -14,7 +14,8 @@ import { DELETE_TRANSACTION, MAIN_QUERY } from '../queries'
 import { DateTime } from 'luxon'
 import useAppStyles from 'src/utils/useAppStyles'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faCheckCircle, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 export type TransactionRowItem = {
   key: string

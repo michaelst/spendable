@@ -75,6 +75,7 @@ const Budget = () => {
         </View>
       )}
       stickySectionHeadersEnabled={false}
+      contentInsetAdjustmentBehavior="automatic"
     />
   )
 }

@@ -10,7 +10,6 @@ import Main from 'src/screens/Main'
 import AuthScreen from './src/screens/AuthScreen'
 import createApolloClient from 'src/utils/createApolloClient'
 import useAppStyles, { SpendableTheme } from 'src/utils/useAppStyles'
-import { createStackNavigator } from '@react-navigation/stack'
 import BankMember from 'src/screens/BankMember'
 import BankMembers from 'src/screens/BankMembers'
 import Budget from 'src/screens/Budget'
@@ -30,6 +29,7 @@ import Templates from 'src/screens/Templates'
 import Transaction from 'src/screens/Transaction'
 import Transactions from 'src/screens/Transactions'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { BlurEffectTypes } from 'react-native-screens'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -86,6 +86,8 @@ const StackNavigator = () => {
   const options = {
     headerTitleStyle: { fontSize: fontSize },
     headerLargeTitle: true,
+    headerTransparent: true,
+    headerBlurEffect: 'regular' as BlurEffectTypes,
     headerBackTitleVisible: false,
     headerBackAllowFontScaling: true
   }

@@ -18,7 +18,7 @@ const SpendFrom = () => {
   const navigateToCreate = () => navigation.navigate('Create Allocation', { transactionId: transactionId })
 
   useLayoutEffect(() => navigation.setOptions({
-    headerTitle: '',
+    headerTitle: 'Spend From',
     headerRight: () => <HeaderButton onPress={navigateToCreate} title="Add" />
   }))
 
@@ -32,6 +32,7 @@ const SpendFrom = () => {
     <FlatList
       data={allocations}
       renderItem={({ item }) => <TransactionAllocationRow allocation={item} />}
+      contentInsetAdjustmentBehavior="automatic"
     />
   )
 }

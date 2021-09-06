@@ -36,17 +36,16 @@ const Templates = () => {
           templateId: template.id,
           name: template.name,
           amount: allocated,
-          hideDelete: true,
           onPress: () => navigation.navigate('Template', { templateId: template.id })
         }
       })
 
   return (
     <FlatList
-      contentContainerStyle={styles.flatlistContentContainerStyle}
       data={templates}
-      renderItem={({ item }) => <TemplateRow template={item} />}
+      renderItem={({ item }) => <TemplateRow item={item} />}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
+      contentInsetAdjustmentBehavior="automatic"
     />
   )
 }

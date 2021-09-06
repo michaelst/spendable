@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableWithoutFeedback, StatusBar, SafeAreaView } from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, StatusBar, SafeAreaView, TouchableHighlight } from 'react-native'
 import { NativeModules } from 'react-native'
 import { useQuery } from '@apollo/client'
 import { FlatList } from 'react-native-gesture-handler'
@@ -10,6 +10,8 @@ import formatCurrency from 'src/utils/formatCurrency'
 import useAppStyles from 'src/utils/useAppStyles'
 import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 import { useNavigation } from '@react-navigation/native'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 type monthListDataItem = {
   month: string
@@ -17,8 +19,19 @@ type monthListDataItem = {
 }
 
 const Main = () => {
-  const navigation = useNavigation<NavigationProp>()
   const { isDarkMode } = useStyles()
+
+  return (
+    <SafeAreaView>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <Budgets />
+    </SafeAreaView>
+  )
+}
+
+const Budgets = () => {
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, colors } = useAppStyles()
 
   const { data } = useQuery<Data>(MAIN_QUERY, {
     onCompleted: (data) => {
@@ -27,34 +40,6 @@ const Main = () => {
   })
 
   if (!data) return null
-
-  const monthListData: monthListDataItem[] = [
-    {
-      month: 'Sep 2021',
-      spent: formatCurrency(data.currentUser.spendable)
-    },
-    {
-      month: 'Aug 2021',
-      spent: formatCurrency(data.currentUser.spendable)
-    },
-    {
-      month: 'Jul 2021',
-      spent: formatCurrency(data.currentUser.spendable)
-    },
-    {
-      month: 'Jun 2021',
-      spent: formatCurrency(data.currentUser.spendable)
-    },
-    {
-      month: 'May 2021',
-      spent: formatCurrency(data.currentUser.spendable)
-    },
-    // add an empty space at the end
-    {
-      month: '',
-      spent: ''
-    }
-  ]
 
   const budgetListData: BudgetRowItem[] = [
     {
@@ -75,37 +60,105 @@ const Main = () => {
   ]
 
   return (
-    <SafeAreaView>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <FlatList
-        data={budgetListData}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <BudgetRow item={item} />}
-        ListHeaderComponent={<MonthsFlatList data={monthListData} />}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={budgetListData}
+      keyExtractor={item => item.id}
+      renderItem={({ item }) => <BudgetRow item={item} />}
+      ListHeaderComponent={< Header />}
+      ListFooterComponent={() => (
+        <TouchableHighlight onPress={() => navigation.navigate('Create Budget')}>
+          <View style={styles.footer}>
+            <Text style={{ color: colors.primary }}>Add Expense</Text>
+          </View>
+        </TouchableHighlight>
+      )}
+      showsVerticalScrollIndicator={false}
+    />
   )
 }
 
-type MonthsFlatListProps = {
-  data: monthListDataItem[]
-}
-
-const MonthsFlatList = ({ data }: MonthsFlatListProps) => {
-  const { styles } = useStyles()
+const Header = () => {
+  const navigation = useNavigation<NavigationProp>()
+  const { styles, colors, fontSize } = useStyles()
   const [activeMonth, setActiveMonth] = useState(DateTime.now().toFormat('MMM yyyy'))
 
-  return <FlatList
-    style={styles.monthsList}
-    data={data}
-    horizontal={true}
-    keyExtractor={item => item.month}
-    renderItem={({ item }) => <MonthItem
-      item={item}
-      active={item.month === activeMonth}
-      onPress={() => setActiveMonth(item.month)}
-    />}
-  />
+  const monthListData: monthListDataItem[] = [
+    {
+      month: 'Sep 2021',
+      spent: '$10,550.74'
+    },
+    {
+      month: 'Aug 2021',
+      spent: '$10,550.74'
+    },
+    {
+      month: 'Jul 2021',
+      spent: '$10,550.74'
+    },
+    {
+      month: 'Jun 2021',
+      spent: '$10,550.74'
+    },
+    {
+      month: 'May 2021',
+      spent: '$10,550.74'
+    },
+    // add an empty space at the end
+    {
+      month: '',
+      spent: ''
+    }
+  ]
+
+  return (
+    <>
+      <FlatList
+        style={styles.monthsList}
+        data={monthListData}
+        horizontal={true}
+        keyExtractor={item => item.month}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => <MonthItem
+          item={item}
+          active={item.month === activeMonth}
+          onPress={() => setActiveMonth(item.month)}
+        />}
+      />
+      <View>
+        <View style={styles.linkCardRow}>
+          <TouchableHighlight
+            onPress={() => navigation.navigate('Banks')}
+            style={{ ...styles.linkCard, ...styles.linkCardLeft }}
+          >
+            <>
+              <Text style={styles.text}>Banks</Text>
+              <FontAwesomeIcon icon={faChevronRight} color={colors.text} size={fontSize} />
+            </>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => navigation.navigate('Settings')}
+            style={styles.linkCard}
+          >
+            <>
+              <Text style={styles.text}>Settings</Text>
+              <FontAwesomeIcon icon={faChevronRight} color={colors.text} size={fontSize} />
+            </>
+          </TouchableHighlight>
+        </View>
+        <View style={styles.linkCardRow}>
+          <TouchableHighlight
+            onPress={() => navigation.navigate('Transactions')}
+            style={styles.linkCard}
+          >
+            <>
+              <Text style={styles.text}>View All Transactions</Text>
+              <FontAwesomeIcon icon={faChevronRight} color={colors.text} size={fontSize} />
+            </>
+          </TouchableHighlight>
+        </View>
+      </View>
+    </>
+  )
 }
 
 type MonthItemProps = {
@@ -122,7 +175,7 @@ const MonthItem = ({ item: { month, spent }, active, onPress }: MonthItemProps) 
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={active ? styles.activeMonthDetails : styles.monthDetails}>
           <Text style={styles.monthDetailText}>{month}</Text>
-          <Text style={styles.monthDetailSecondaryText}>{spent}</Text>
+          <Text style={styles.secondaryText}>{spent}</Text>
         </View>
       </TouchableWithoutFeedback>
     </View>
@@ -130,15 +183,14 @@ const MonthItem = ({ item: { month, spent }, active, onPress }: MonthItemProps) 
 }
 
 const useStyles = () => {
-  const { isDarkMode, styles, colors, baseUnit } = useAppStyles()
+  const { isDarkMode, styles, colors, baseUnit, fontSize } = useAppStyles()
 
   const screenStyles = StyleSheet.create({
     ...styles,
     monthsList: {
       backgroundColor: colors.card,
       margin: baseUnit * 2,
-      paddingVertical: baseUnit * 3,
-      paddingHorizontal: baseUnit * 2,
+      padding: baseUnit * 2,
       borderRadius: baseUnit
     },
     monthView: {
@@ -157,14 +209,34 @@ const useStyles = () => {
       ...styles.text,
       marginBottom: baseUnit / 4
     },
-    monthDetailSecondaryText: {
-      ...styles.secondaryText
-    }
+    linkCardRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginHorizontal: baseUnit * 2
+    },
+    linkCard: {
+      flexGrow: 1,
+      // give same width so they flexGrow the same
+      width: '25%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: colors.card,
+      marginBottom: baseUnit * 2,
+      padding: baseUnit * 2,
+      borderRadius: baseUnit
+    },
+    linkCardLeft: {
+      marginRight: baseUnit * 2
+    },
   })
 
   return {
+    colors: colors,
     isDarkMode: isDarkMode,
     baseUnit: baseUnit,
+    fontSize: fontSize,
     styles: screenStyles
   }
 }
