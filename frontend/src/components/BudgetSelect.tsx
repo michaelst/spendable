@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
 import {
+  SafeAreaView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQuery } from '@apollo/client'
 import { FormField } from './FormInput'
 import useAppStyles from 'src/utils/useAppStyles'
 import { MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faChevronRight, faWindowClose } from '@fortawesome/free-solid-svg-icons'
 
 const BudgetSelect = ({ title, value, setValue }: FormField) => {
   const { colors, fontSize, styles } = useStyles()
@@ -61,7 +62,7 @@ const BudgetSelect = ({ title, value, setValue }: FormField) => {
             <Text style={styles.formInputText}>
               {value}
             </Text>
-            <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+            <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </TouchableHighlight>
@@ -71,7 +72,7 @@ const BudgetSelect = ({ title, value, setValue }: FormField) => {
         style={styles.modal}>
         <SafeAreaView style={styles.scrollableModal}>
           <TouchableHighlight onPress={() => setModalVisible(false)} style={styles.close}>
-            <Ionicons name='ios-close' size={32} color={colors.text} />
+            <FontAwesomeIcon icon={faWindowClose} size={32} color={colors.text} />
           </TouchableHighlight>
           <FlatList
             data={budgetListData}

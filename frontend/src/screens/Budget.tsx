@@ -1,22 +1,20 @@
 import React, { useLayoutEffect } from 'react'
 import {
-  ActivityIndicator,
   SectionList,
   Text,
   View,
 } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
-import formatCurrency from 'src/utils/formatCurrency'
 import TemplateRow, { TemplateRowItem } from '../components/TemplateRow'
 import HeaderButton from 'src/components/HeaderButton'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
-import { GetBudget, GetBudget_budget_allocationTemplateLines } from 'src/graphql/GetBudget'
+import { GetBudget } from 'src/graphql/GetBudget'
 import { GET_BUDGET } from 'src/queries'
 import useAppStyles from 'src/utils/useAppStyles'
 
 const Budget = () => {
-  const { styles, colors } = useAppStyles()
+  const { styles } = useAppStyles()
   const navigation = useNavigation<NavigationProp>()
   const { params: { budgetId } } = useRoute<RouteProp<RootStackParamList, 'Budget'>>()
 
@@ -25,32 +23,22 @@ const Budget = () => {
 
   const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId }, fetchPolicy: 'cache-and-network' })
 
-  if (data) {
-    const headerTitle = (
-      <View style={{ alignItems: 'center' }}>
-        <Text style={styles.headerTitleText}>{formatCurrency(data.budget.balance)}</Text>
-        <Text style={styles.secondaryText}>{data.budget.name}</Text>
-      </View>
-    )
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: data?.budget.name, headerRight: headerRight }))
 
-    useLayoutEffect(() => navigation.setOptions({ headerTitle: headerTitle, headerRight: headerRight }))
-  } else {
-    useLayoutEffect(() => navigation.setOptions({ headerTitle: '', headerRight: headerRight }))
-    return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
-  }
+  if (!data) return null
 
-  const allocationTemplateLines: TemplateRowItem[] = 
+  const allocationTemplateLines: TemplateRowItem[] =
     [...data.budget.allocationTemplateLines]
-    .sort((a, b) => b.amount.comparedTo(a.amount))
-    .map(line => ({
-      key: line.id,
-      templateId: line.allocationTemplate.id,
-      name: line.allocationTemplate.name,
-      amount: line.amount,
-      hideDelete: true,
-      onPress: () => navigation.navigate('Template', { templateId: line.allocationTemplate.id })
-    }))
-  
+      .sort((a, b) => b.amount.comparedTo(a.amount))
+      .map(line => ({
+        key: line.id,
+        templateId: line.allocationTemplate.id,
+        name: line.allocationTemplate.name,
+        amount: line.amount,
+        hideDelete: true,
+        onPress: () => navigation.navigate('Template', { templateId: line.allocationTemplate.id })
+      }))
+
   const recentAllocations: TransactionRowItem[] =
     [...data.budget.recentAllocations]
       .sort((a, b) => b.transaction.date - a.transaction.date)
@@ -68,7 +56,7 @@ const Budget = () => {
     {
       title: 'Templates',
       data: allocationTemplateLines,
-      renderItem: ({ item }: { item: GetBudget_budget_allocationTemplateLines }) => <TemplateRow templateLine={item} />
+      renderItem: ({ item }: { item: TemplateRowItem }) => <TemplateRow item={item} />
     },
     {
       title: 'Recent Transactions',
@@ -76,10 +64,10 @@ const Budget = () => {
       renderItem: ({ item }: { item: TransactionRowItem }) => <TransactionRow item={item} />
     },
   ]
+  .filter(section => section.data.length > 0)
 
   return (
     <SectionList
-      contentContainerStyle={styles.sectionListContentContainerStyle}
       sections={sections}
       renderSectionHeader={({ section: { title } }) => (
         <View style={styles.sectionHeader}>

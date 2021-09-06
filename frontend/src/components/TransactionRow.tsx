@@ -9,11 +9,12 @@ import { useNavigation } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
-import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
 import { DELETE_TRANSACTION, MAIN_QUERY } from '../queries'
 import { DateTime } from 'luxon'
 import useAppStyles from 'src/utils/useAppStyles'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faCheckCircle, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 export type TransactionRowItem = {
   key: string
@@ -98,8 +99,8 @@ const Row = ({ item: { title, amount, transactionDate, transactionReviewed, onPr
           <Text style={componentStyles.amountTextStyle} >
             {formatCurrency(amount)}
           </Text>
-          {transactionReviewed && <Ionicons name='checkmark-circle-outline' size={fontSize} color={colors.secondary} />}
-          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+          {transactionReviewed && <FontAwesomeIcon icon={faCheckCircle} size={fontSize} color={colors.secondary} />}
+          <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight >

@@ -61,8 +61,7 @@ const useAppStyles = () => {
     headerButtonText: {
       color: colors.primary, 
       fontSize: fontSize, 
-      paddingLeft: baseUnit * 2,
-      paddingRight: baseUnit * 2
+      paddingRight: baseUnit
     },
     smallButtonText: {
       color: colors.primary, 

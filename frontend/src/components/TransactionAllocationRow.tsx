@@ -5,7 +5,6 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
@@ -13,6 +12,8 @@ import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
 import { GetTransaction_transaction_allocations } from 'src/graphql/GetTransaction'
 import { DELETE_ALLOCATION } from 'src/queries'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 type Props = {
   allocation: GetTransaction_transaction_allocations
@@ -75,7 +76,7 @@ const TransactionAllocationRow = ({ allocation }: Props) => {
             <Text style={styles.rightText} >
               {formatCurrency(allocation.amount)}
             </Text>
-            <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+            <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

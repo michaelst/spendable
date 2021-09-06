@@ -6,7 +6,6 @@ import {
   View,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { Ionicons } from '@expo/vector-icons'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
@@ -16,6 +15,8 @@ import useAppStyles from 'src/utils/useAppStyles'
 import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from 'src/queries'
 import { GetNotificationSettings } from 'src/graphql/GetNotificationSettings'
 import { UpdateNotificationSettings } from 'src/graphql/UpdateNotificationSettings'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 const Settings = () => {
   const { styles } = useAppStyles()
@@ -65,7 +66,7 @@ const bankRow = () => {
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+          <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>
@@ -87,7 +88,7 @@ const templatesRow = () => {
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+          <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>

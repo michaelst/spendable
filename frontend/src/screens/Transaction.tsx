@@ -1,5 +1,4 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { Ionicons } from '@expo/vector-icons'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { ActivityIndicator, Text, View, } from 'react-native'
 import { Switch, TouchableHighlight } from 'react-native-gesture-handler'
@@ -13,6 +12,8 @@ import FormInput from 'src/components/FormInput'
 import getAllocations from '../utils/getAllocations'
 import TemplateSelect from '../components/TemplateSelect'
 import HeaderButton from 'src/components/HeaderButton'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 
 const Transaction = () => {
   const { styles, colors, fontSize, baseUnit } = useAppStyles()
@@ -130,7 +131,7 @@ const Transaction = () => {
                   <Text style={[styles.formInputText, { paddingRight: baseUnit }]}>
                     {spendFromValue}
                   </Text>
-                  <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+                  <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
                 </View>
               </View>
             </TouchableHighlight>

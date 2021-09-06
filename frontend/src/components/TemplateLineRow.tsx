@@ -5,7 +5,6 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { Ionicons } from '@expo/vector-icons'
 import formatCurrency from 'src/utils/formatCurrency'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
@@ -13,6 +12,8 @@ import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
 import { GetAllocationTemplate_allocationTemplate_lines } from 'src/graphql/GetAllocationTemplate'
 import { DELETE_TEMPLATE_LINE } from 'src/queries'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   line: GetAllocationTemplate_allocationTemplate_lines,
@@ -57,7 +58,7 @@ const TemplateLineRow = ({ line }: Props) => {
             <Text style={styles.rightText} >
               {formatCurrency(line.amount)}
             </Text>
-            <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+            <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
           </View>
         </View>
       </Swipeable>

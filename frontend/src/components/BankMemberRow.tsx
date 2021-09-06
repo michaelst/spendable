@@ -6,13 +6,14 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { Ionicons } from '@expo/vector-icons'
 import { useQuery } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
 import { ListBankMembers_bankMembers } from 'src/graphql/ListBankMembers'
 import { GetBankMemberPlaidLinkToken } from 'src/graphql/GetBankMemberPlaidLinkToken'
 import { GET_BANK_MEMBER_PLAID_LINK_TOKEN } from 'src/queries'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faChevronRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   bankMember: ListBankMembers_bankMembers,
@@ -20,7 +21,7 @@ type Props = {
 
 const BankMemberRow = ({ bankMember }: Props) => {
   const navigation = useNavigation<NavigationProp>()
-  const { styles, fontSize, colors } = useAppStyles()
+  const { styles, fontSize, colors, baseUnit } = useAppStyles()
 
   const { data: plaidData } = useQuery<GetBankMemberPlaidLinkToken>(GET_BANK_MEMBER_PLAID_LINK_TOKEN, {
     variables: { id: bankMember.id },
@@ -38,7 +39,7 @@ const BankMemberRow = ({ bankMember }: Props) => {
             style={{
               width: 36,
               height: 36,
-              marginRight: 8
+              marginRight: baseUnit
             }}
           />
         )}
@@ -54,17 +55,17 @@ const BankMemberRow = ({ bankMember }: Props) => {
               tokenConfig={{ token: plaidData.bankMember.plaidLinkToken, }}
               onSuccess={() => console.log(success)}
             >
-              <Ionicons
-                name='ios-alert'
+              <FontAwesomeIcon
+                icon={faExclamationCircle}
                 size={fontSize}
                 color='red'
                 style={{
-                  marginRight: 8
+                  marginRight: baseUnit
                 }}
               />
             </PlaidLink>
           )}
-          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+          <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight>

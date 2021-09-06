@@ -1,14 +1,12 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import {
-  Dimensions,
+  SafeAreaView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useQuery } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
 import Decimal from 'decimal.js-light'
@@ -16,6 +14,8 @@ import formatCurrency from 'src/utils/formatCurrency'
 import { AllocationInputObject } from 'src/graphql/globalTypes'
 import { ListAllocationTemplates, ListAllocationTemplates_allocationTemplates } from 'src/graphql/ListAllocationTemplates'
 import { LIST_TEMPLATES } from 'src/queries'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faChevronRight, faCross } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
   setValue: (allocations: AllocationInputObject[]) => void,
@@ -73,7 +73,7 @@ const TemplateSelectModal = ({ modalVisible, setModalVisible, setValue }: Templa
       style={componentStyles.modal}>
       <SafeAreaView style={componentStyles.scrollableModal}>
         <TouchableHighlight onPress={() => setModalVisible(false)} style={componentStyles.close}>
-          <Ionicons name='ios-close' size={32} color={colors.text} />
+          <FontAwesomeIcon icon={faCross} size={32} color={colors.text} />
         </TouchableHighlight>
         <FlatList
           contentContainerStyle={styles.sectionListContentContainerStyle}
@@ -98,7 +98,7 @@ const TemplateSelectModal = ({ modalVisible, setModalVisible, setValue }: Templa
                     <Text style={styles.rightText} >
                       {formatCurrency(allocated)}
                     </Text>
-                    <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+                    <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
                   </View>
                 </View>
               </TouchableHighlight>

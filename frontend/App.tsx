@@ -29,8 +29,9 @@ import Template from 'src/screens/Template'
 import Templates from 'src/screens/Templates'
 import Transaction from 'src/screens/Transaction'
 import Transactions from 'src/screens/Transactions'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-const Stack = createStackNavigator<RootStackParamList>()
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 const App = () => {
   const [initializing, setInitializing] = useState(true)
@@ -84,32 +85,38 @@ const StackNavigator = () => {
 
   const options = {
     headerTitleStyle: { fontSize: fontSize },
-    headerBackAllowFontScaling: true,
-    headerBackTitleStyle: {
-      fontSize: fontSize
-    }
+    headerLargeTitle: true,
+    headerBackTitleVisible: false,
+    headerBackAllowFontScaling: true
   }
+
+  const smallHeaderOptions = {
+    headerTitleStyle: { fontSize: fontSize },
+    headerBackTitleVisible: false,
+    headerBackAllowFontScaling: true
+  }
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
       <Stack.Screen name="Budget" component={Budget} options={options} />
-      <Stack.Screen name="Create Budget" component={CreateBudget} options={options} />
-      <Stack.Screen name="Edit Budget" component={EditBudget} options={options} />
+      <Stack.Screen name="Create Budget" component={CreateBudget} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Budget" component={EditBudget} options={smallHeaderOptions} />
       <Stack.Screen name="Transactions" component={Transactions} options={options} />
-      <Stack.Screen name="Transaction" component={Transaction} options={options} />
-      <Stack.Screen name="Create Transaction" component={CreateTransaction} options={options} />
+      <Stack.Screen name="Transaction" component={Transaction} options={smallHeaderOptions} />
+      <Stack.Screen name="Create Transaction" component={CreateTransaction} options={smallHeaderOptions} />
       <Stack.Screen name="Spend From" component={SpendFrom} options={options} />
-      <Stack.Screen name="Create Allocation" component={CreateAllocation} options={options} />
-      <Stack.Screen name="Edit Allocation" component={EditAllocation} options={options} />
+      <Stack.Screen name="Create Allocation" component={CreateAllocation} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Allocation" component={EditAllocation} options={smallHeaderOptions} />
       <Stack.Screen name="Settings" component={Settings} options={options} />
       <Stack.Screen name="Banks" component={BankMembers} options={options} />
       <Stack.Screen name="Bank" component={BankMember} options={options} />
       <Stack.Screen name="Templates" component={Templates} options={options} />
       <Stack.Screen name="Template" component={Template} options={options} />
-      <Stack.Screen name="Create Template" component={CreateTemplate} options={options} />
-      <Stack.Screen name="Edit Template" component={EditTemplate} options={options} />
-      <Stack.Screen name="Create Template Line" component={CreateTemplatLine} options={options} />
-      <Stack.Screen name="Edit Template Line" component={EditTemplateLine} options={options} />
+      <Stack.Screen name="Create Template" component={CreateTemplate} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Template" component={EditTemplate} options={smallHeaderOptions} />
+      <Stack.Screen name="Create Template Line" component={CreateTemplatLine} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Template Line" component={EditTemplateLine} options={smallHeaderOptions} />
     </Stack.Navigator>
   )
 }

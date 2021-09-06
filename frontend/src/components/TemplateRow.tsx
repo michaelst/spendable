@@ -4,7 +4,6 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import Decimal from 'decimal.js-light'
 import formatCurrency from 'src/utils/formatCurrency'
 import { RectButton } from 'react-native-gesture-handler'
@@ -12,6 +11,8 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
 import { DELETE_TEMPLATE } from 'src/queries'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 
 export type TemplateRowItem = {
   key: string
@@ -73,7 +74,7 @@ const Row = ({ item: { name, amount, onPress } }: TemplateRowProps) => {
           <Text style={styles.rightText} >
             {formatCurrency(amount)}
           </Text>
-          <Ionicons name='chevron-forward-outline' size={fontSize} color={colors.secondary} />
+          <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
         </View>
       </View>
     </TouchableHighlight >
