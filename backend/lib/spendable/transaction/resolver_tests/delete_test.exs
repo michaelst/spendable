@@ -3,7 +3,7 @@ defmodule Spendable.Transaction.Resolver.DeleteTest do
   import Spendable.Factory
 
   test "delete transaction" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     transaction = insert(:transaction, user: user)
 

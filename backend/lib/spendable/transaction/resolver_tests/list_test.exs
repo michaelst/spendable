@@ -2,21 +2,18 @@ defmodule Spendable.Transaction.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  alias Spendable.Banks.Category
   alias Spendable.Repo
 
   test "list transactions" do
-    user = Spendable.TestUtils.create_user()
-    category_id = Repo.get_by!(Category, external_id: "22006001").id
+    user = insert(:user)
     budget = insert(:budget, user: user)
 
-    expense = insert(:transaction, user: user, category_id: category_id, amount: -20.24)
+    expense = insert(:transaction, user: user, amount: -20.24)
     insert(:allocation, user: user, budget: budget, transaction: expense, amount: -20.24)
 
     deposit =
       insert(:transaction,
         user: user,
-        category_id: category_id,
         amount: 3314.89,
         date: Date.utc_today()
       )
@@ -31,9 +28,6 @@ defmodule Spendable.Transaction.Resolver.ListTest do
           note
           amount
           date
-          category {
-              id
-          }
           allocations {
             amount
             budget {
@@ -56,7 +50,6 @@ defmodule Spendable.Transaction.Resolver.ListTest do
                       }
                     ],
                     "amount" => "#{deposit.amount}",
-                    "category" => %{"id" => "#{category_id}"},
                     "date" => "#{deposit.date}",
                     "id" => "#{deposit.id}",
                     "name" => "test",
@@ -70,7 +63,6 @@ defmodule Spendable.Transaction.Resolver.ListTest do
                       }
                     ],
                     "amount" => "#{expense.amount}",
-                    "category" => %{"id" => "#{category_id}"},
                     "date" => "#{expense.date}",
                     "id" => "#{expense.id}",
                     "name" => "test",

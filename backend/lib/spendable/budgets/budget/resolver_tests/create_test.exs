@@ -2,7 +2,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
 
   test "create budget" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     query = """
       mutation {
@@ -27,7 +27,7 @@ defmodule Spendable.Budgets.Budget.Resolver.CreateTest do
   end
 
   test "create goal" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     query = """
       mutation {

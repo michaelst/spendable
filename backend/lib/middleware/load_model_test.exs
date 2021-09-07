@@ -1,6 +1,8 @@
 defmodule Spendable.Middleware.LoadModelTest do
   use Spendable.Web.ConnCase, async: true
 
+  import Spendable.Factory
+
   alias Spendable.Banks.Account
   alias Spendable.Banks.Member
   alias Spendable.Repo
@@ -26,7 +28,7 @@ defmodule Spendable.Middleware.LoadModelTest do
   end
 
   test "successfully load model" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     member =
       %Member{}
@@ -73,7 +75,7 @@ defmodule Spendable.Middleware.LoadModelTest do
   end
 
   test "model doesn't exist" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     doc = """
     mutation {
@@ -91,8 +93,8 @@ defmodule Spendable.Middleware.LoadModelTest do
   end
 
   test "wrong user" do
-    user = Spendable.TestUtils.create_user()
-    other_user = Spendable.TestUtils.create_user()
+    user = insert(:user)
+    other_user = insert(:user)
 
     member =
       %Member{}

@@ -3,7 +3,7 @@ defmodule Spendable.Budgets.Budget.Resolver.DeleteTest do
   import Spendable.Factory
 
   test "delete budget" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     budget = insert(:budget, user: user)
 

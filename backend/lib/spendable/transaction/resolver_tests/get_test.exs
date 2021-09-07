@@ -2,14 +2,12 @@ defmodule Spendable.Transaction.Resolver.GetTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  alias Spendable.Banks.Category
   alias Spendable.Repo
 
   test "get transaction" do
-    user = Spendable.TestUtils.create_user()
-    category_id = Repo.get_by!(Category, external_id: "22006001").id
+    user = insert(:user)
 
-    transaction = insert(:transaction, user: user, category_id: category_id)
+    transaction = insert(:transaction, user: user)
 
     query = """
     query {
@@ -20,9 +18,6 @@ defmodule Spendable.Transaction.Resolver.GetTest do
         amount
         date
         reviewed
-        category {
-            id
-        }
       }
     }
     """
@@ -32,7 +27,6 @@ defmodule Spendable.Transaction.Resolver.GetTest do
               data: %{
                 "transaction" => %{
                   "amount" => "#{transaction.amount}",
-                  "category" => %{"id" => "#{category_id}"},
                   "date" => "#{transaction.date}",
                   "id" => "#{transaction.id}",
                   "name" => "test",

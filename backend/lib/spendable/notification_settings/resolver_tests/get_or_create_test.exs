@@ -3,7 +3,7 @@ defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
   import Spendable.Factory
 
   test "register APNS device token" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     query = """
       query {
@@ -24,7 +24,7 @@ defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
   end
 
   test "get existing APNS device token" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
     insert(:notification_settings, user: user, device_token: "test-device-token", enabled: true)
 
     query = """

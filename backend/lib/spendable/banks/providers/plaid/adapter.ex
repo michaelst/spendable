@@ -25,9 +25,23 @@ defmodule Spendable.Banks.Providers.Plaid.Adapter do
   end
 
   def format(details, member_id, user_id, :account) do
+    available_balance = Decimal.new(details["balances"]["available"] || "0")
+    current_balance = Decimal.new(details["balances"]["current"])
+
+    balance =
+      cond do
+        details["type"] == "credit" ->
+          Decimal.mult(current_balance, "-1")
+
+        Decimal.eq?(available_balance, "0") ->
+          current_balance
+
+        true ->
+          available_balance
+      end
+
     %{
-      available_balance: details["balances"]["available"],
-      balance: details["balances"]["current"],
+      balance: balance,
       external_id: details["account_id"],
       bank_member_id: member_id,
       name: details["official_name"] || details["name"],

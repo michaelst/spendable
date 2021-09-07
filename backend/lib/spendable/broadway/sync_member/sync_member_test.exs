@@ -1,5 +1,6 @@
 defmodule Spendable.Broadway.SyncMemberTest do
   use Spendable.DataCase, async: false
+
   import Mock
   import Tesla.Mock
   import Ecto.Query
@@ -42,7 +43,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
   end
 
   test "sync member" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
     token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
     {:ok, %{body: details}} = Plaid.item(token)
 

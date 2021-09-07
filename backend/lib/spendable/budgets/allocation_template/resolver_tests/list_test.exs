@@ -3,7 +3,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.ListTest do
   import Spendable.Factory
 
   test "update" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     template1 = insert(:allocation_template, user: user)
     template2 = insert(:allocation_template, user: user)

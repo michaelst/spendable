@@ -5,6 +5,7 @@ defmodule SyncMemberRequest do
   @type t :: %__MODULE__{
           member_id: integer
         }
+
   defstruct [:member_id]
 
   field :member_id, 1, type: :int64
@@ -19,6 +20,7 @@ defmodule SendNotificationRequest do
           title: String.t(),
           body: String.t()
         }
+
   defstruct [:user_id, :title, :body]
 
   field :user_id, 1, type: :int64

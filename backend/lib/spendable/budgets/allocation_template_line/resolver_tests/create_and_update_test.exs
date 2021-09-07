@@ -3,7 +3,7 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Resolver.CreateAndUpdateTest 
   import Spendable.Factory
 
   test "create allocation template line" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     allocation_template = insert(:allocation_template, user: user)
     budget = insert(:budget, user: user)

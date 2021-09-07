@@ -3,7 +3,7 @@ defmodule Spendable.Notifications.Settings.Resolver.UpdateTest do
   import Spendable.Factory
 
   test "update device token" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     notification_settings =
       insert(:notification_settings, user: user, device_token: "test-device-token", enabled: false)

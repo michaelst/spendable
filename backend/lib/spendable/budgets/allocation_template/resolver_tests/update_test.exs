@@ -3,7 +3,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.UpdateTest do
   import Spendable.Factory
 
   test "update budget template" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     budget = insert(:budget, user: user)
 

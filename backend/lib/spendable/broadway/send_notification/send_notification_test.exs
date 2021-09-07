@@ -1,5 +1,6 @@
 defmodule Spendable.Broadway.SendNotificationTest do
   use Spendable.DataCase, async: false
+
   import Spendable.Factory
   import Mock
   import Ecto.Query, only: [from: 2]
@@ -9,7 +10,7 @@ defmodule Spendable.Broadway.SendNotificationTest do
   alias Spendable.Repo
 
   test "send notification" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
     bad_settings = insert(:notification_settings, user: user, device_token: "bad-device-token-1", enabled: false)
     insert(:notification_settings, user: user, device_token: "test-device-token-1", enabled: true)
 

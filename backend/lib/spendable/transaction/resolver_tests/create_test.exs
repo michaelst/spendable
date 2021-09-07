@@ -2,12 +2,10 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
   import Spendable.Factory
 
-  alias Spendable.Banks.Category
   alias Spendable.Repo
 
   test "create transaction" do
-    user = Spendable.TestUtils.create_user()
-    category_id = Repo.get_by!(Category, external_id: "22006001").id
+    user = insert(:user)
     budget = insert(:budget, user: user)
     tag_one = insert(:tag, user: user, name: "First tag")
     tag_two = insert(:tag, user: user, name: "Second tag")
@@ -18,7 +16,6 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
           name: "new name"
           amount: "126.25"
           date: "#{Date.utc_today()}"
-          categoryId: "#{category_id}"
           reviewed: true
           allocations: [
             {
@@ -33,9 +30,6 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
           tagIds: ["#{tag_one.id}", "#{tag_two.id}"]
         ) {
           name
-          category {
-            id
-          }
           reviewed
           allocations {
             amount
@@ -57,9 +51,6 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
                 "createTransaction" => %{
                   "name" => "new name",
                   "reviewed" => true,
-                  "category" => %{
-                    "id" => "#{category_id}"
-                  },
                   "allocations" => [
                     %{
                       "amount" => "26.25",

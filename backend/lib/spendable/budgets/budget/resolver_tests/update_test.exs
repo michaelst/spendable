@@ -5,7 +5,7 @@ defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
   alias Spendable.Repo
 
   test "update budget" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     budget = insert(:budget, user: user)
     insert(:allocation, user: user, budget: budget, amount: 10)
@@ -85,7 +85,7 @@ defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
   end
 
   test "update budget balance with no allocations" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     budget = insert(:budget, user: user)
 

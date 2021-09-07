@@ -17,10 +17,6 @@ defmodule Plaid do
     })
   end
 
-  def categories() do
-    client() |> Tesla.post("/categories/get", %{})
-  end
-
   def institution(id) do
     client()
     |> Tesla.post("/institutions/get_by_id", %{
