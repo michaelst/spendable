@@ -36,9 +36,9 @@ defmodule Spendable.MixProject do
   defp deps do
     [
       {:ash_graphql, "~> 0.16"},
+      {:ash_policy_authorizer, "~> 0.16"},
       {:ash_postgres, "~> 0.40"},
       {:ash, "~> 1.47"},
-      {:bcrypt_elixir, "~> 2.0"},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
       {:castore, "~> 0.1.0"},
@@ -48,7 +48,6 @@ defmodule Spendable.MixProject do
       {:ecto_sql, "~> 3.7"},
       {:ex_machina, "~> 2.7", only: :test},
       {:excoveralls, ">= 0.0.0", only: :test},
-      {:faker, "~> 0.13", only: :test},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},
       {:guardian, "~> 2.0"},

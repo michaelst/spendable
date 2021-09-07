@@ -15,8 +15,6 @@ config :spendable, Spendable.Web.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :bcrypt_elixir, :log_rounds, 1
-
 config :spendable, Plaid,
   base_url: "https://sandbox.plaid.com",
   client_id: "test",
