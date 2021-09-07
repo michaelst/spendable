@@ -2,7 +2,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
   use Spendable.DataCase, async: true
 
   test "current user" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     query = """
       query {

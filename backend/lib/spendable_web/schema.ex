@@ -7,41 +7,27 @@ defmodule Spendable.Web.Schema do
 
   import_types(Absinthe.Type.Custom)
 
-  import_types(Spendable.Banks.Account.Types)
-  import_types(Spendable.Banks.Category.Types)
-  import_types(Spendable.Banks.Member.Types)
-  import_types(Spendable.Banks.Transaction.Types)
   import_types(Spendable.Budgets.Allocation.Types)
   import_types(Spendable.Budgets.AllocationTemplate.Types)
   import_types(Spendable.Budgets.AllocationTemplateLine.Types)
   import_types(Spendable.Budgets.Budget.Types)
   import_types(Spendable.Notifications.Settings.Types)
-  import_types(Spendable.Tag.Types)
-  import_types(Spendable.Transaction.Types)
 
   query do
     field :health, :string, resolve: fn _args, _resolution -> {:ok, "up"} end
     import_fields(:allocation_queries)
     import_fields(:allocation_template_line_queries)
     import_fields(:allocation_template_queries)
-    import_fields(:bank_member_queries)
     import_fields(:budget_queries)
-    import_fields(:category_queries)
     import_fields(:notification_settings_queries)
-    import_fields(:tag_queries)
-    import_fields(:transaction_queries)
   end
 
   mutation do
     import_fields(:allocation_mutations)
     import_fields(:allocation_template_line_mutations)
     import_fields(:allocation_template_mutations)
-    import_fields(:bank_account_mutations)
-    import_fields(:bank_member_mutations)
     import_fields(:budget_mutations)
     import_fields(:notification_settings_mutations)
-    import_fields(:tag_mutations)
-    import_fields(:transaction_mutations)
   end
 
   def context(context) do

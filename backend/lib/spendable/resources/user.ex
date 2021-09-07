@@ -5,6 +5,8 @@ defmodule Spendable.User do
       AshGraphql.Resource
     ]
 
+  alias Spendable.User.SpentByMonth
+
   postgres do
     repo(Spendable.Repo)
     table "users"
@@ -26,6 +28,7 @@ defmodule Spendable.User do
   calculations do
     calculate :plaid_link_token, :string, Spendable.User.Calculations.PlaidLinkToken, allow_nil?: false
     calculate :spendable, :decimal, Spendable.User.Calculations.Spendable, allow_nil?: false
+    calculate :spent_by_month, {:array, SpentByMonth}, Spendable.User.Calculations.SpentByMonth, allow_nil?: false
   end
 
   actions do

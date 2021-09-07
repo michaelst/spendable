@@ -6,7 +6,7 @@ defmodule Spendable.User.Calculations.SpendableTest do
   alias Spendable.User.Calculations.Spendable
 
   test "calculate spendable" do
-    user = TestUtils.create_user()
+    user = insert(:user)
 
     insert(:bank_account, user: user, balance: 100)
     budget = insert(:budget, user: user)
@@ -21,7 +21,7 @@ defmodule Spendable.User.Calculations.SpendableTest do
   end
 
   test "calculate spendable for new user" do
-    user = TestUtils.create_user()
+    user = insert(:user)
 
     expected_spendable = Decimal.new("0.00")
     {:ok, [calculation]} = Spendable.calculate([user], [], %{})
