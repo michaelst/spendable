@@ -1,13 +1,11 @@
 defmodule Spendable.Transaction do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [
-      AshGraphql.Resource
-    ]
+    extensions: [AshGraphql.Resource]
 
   postgres do
     repo(Spendable.Repo)
-    table "transasctions"
+    table "transactions"
   end
 
   attributes do
@@ -15,7 +13,8 @@ defmodule Spendable.Transaction do
 
     attribute :amount, :decimal, allow_nil?: false
     attribute :date, :date, allow_nil?: false
-    attribute :name, :string # allow_nil?: false
+    # allow_nil?: false
+    attribute :name, :string
     attribute :note, :string
     attribute :reviewed, :boolean, allow_nil?: false
 

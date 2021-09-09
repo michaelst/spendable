@@ -2,7 +2,7 @@ defmodule Spendable.BankMember.GraphQLTests do
   use Spendable.DataCase, async: true
 
   import Mock
-  import Spendable.Factory
+
   import Tesla.Mock
 
   alias Google.PubSub
@@ -11,6 +11,7 @@ defmodule Spendable.BankMember.GraphQLTests do
   describe "member" do
     test "get member" do
       user = insert(:user)
+      other_user = insert(:user)
       member = insert(:bank_member, user_id: user.id)
 
       doc = """
@@ -29,81 +30,27 @@ defmodule Spendable.BankMember.GraphQLTests do
                   }
                 }
               }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
-    end
-
-    test "plaid link token" do
-      user = insert(:user)
-      %{plaid_token: access_token} = member = insert(:bank_member, user_id: user.id)
-      token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
-
-      Tesla.Mock.mock(fn
-        %{method: :post, url: "https://sandbox.plaid.com/link/token/create", body: body} ->
-          assert {:ok, %{"access_token" => ^access_token}} = Jason.decode(body)
-          %Tesla.Env{status: 200, body: %{"link_token" => token}}
-      end)
-
-      doc = """
-      query {
-        bankMember(id: "#{member.id}") {
-          plaidLinkToken
-        }
-      }
-      """
 
       assert {:ok,
               %{
                 data: %{
-                  "bankMember" => %{
-                    "plaidLinkToken" => token
-                  }
+                  "bankMember" => nil
                 }
-              }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
+              }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: other_user})
     end
   end
 
   test "list members" do
     user = insert(:user)
     member = insert(:bank_member, user_id: user.id)
-
-    checking_account =
-      insert(:bank_account,
-        user_id: user.id,
-        bank_member_id: member.id,
-        name: "Checking",
-        available_balance: 100,
-        balance: 120
-      )
-
-    savings_account =
-      insert(:bank_account,
-        user_id: user.id,
-        bank_member_id: member.id,
-        name: "Savings",
-        available_balance: nil,
-        balance: 500
-      )
-
-    credit_account =
-      insert(:bank_account,
-        user_id: user.id,
-        bank_member_id: member.id,
-        name: "Credit Card",
-        balance: 1025,
-        type: "credit"
-      )
+    # this one shouldn't be returned
+    other_user = insert(:user)
+    insert(:bank_member, user_id: other_user.id)
 
     query = """
     query {
       bankMembers {
         id
-        name
-        status
-        bankAccounts {
-          id
-          name
-          sync
-          balance
-        }
       }
     }
     """
@@ -113,19 +60,7 @@ defmodule Spendable.BankMember.GraphQLTests do
               data: %{
                 "bankMembers" => [
                   %{
-                    "bankAccounts" => [
-                      %{"balance" => "100.00", "id" => "#{checking_account.id}", "name" => "Checking", "sync" => true},
-                      %{
-                        "balance" => "-1025.00",
-                        "id" => "#{credit_account.id}",
-                        "name" => "Credit Card",
-                        "sync" => true
-                      },
-                      %{"balance" => "500.00", "id" => "#{savings_account.id}", "name" => "Savings", "sync" => true}
-                    ],
-                    "id" => "#{member.id}",
-                    "name" => "Plaid",
-                    "status" => "Connected"
+                    "id" => "#{member.id}"
                   }
                 ]
               }
@@ -241,10 +176,14 @@ defmodule Spendable.BankMember.GraphQLTests do
 
       query = """
         mutation {
-          createBankMember(
-            publicToken: "test"
-          ) {
-            id, externalId, name, logo, status
+          createBankMember(input: { publicToken: "test" }) {
+            result {
+              id
+              externalId
+              name
+              logo
+              status
+            }
           }
         }
       """
@@ -253,11 +192,13 @@ defmodule Spendable.BankMember.GraphQLTests do
               %{
                 data: %{
                   "createBankMember" => %{
-                    "externalId" => "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
-                    "name" => "Plaid Bank",
-                    "logo" => "https://plaid.com",
-                    "status" => "CONNECTED",
-                    "id" => member_id
+                    "result" => %{
+                      "externalId" => "M5eVJqLnv3tbzdngLDp9FL5OlDNxlNhlE55op",
+                      "name" => "Plaid Bank",
+                      "logo" => "https://plaid.com",
+                      "status" => "CONNECTED",
+                      "id" => member_id
+                    }
                   }
                 }
               }} = Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})

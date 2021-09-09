@@ -1,8 +1,6 @@
 defmodule Spendable.User.Calculations.SpendableTest do
   use Spendable.DataCase, async: true
-  import Spendable.Factory
 
-  alias Spendable.TestUtils
   alias Spendable.User.Calculations.Spendable
 
   test "calculate spendable" do

@@ -1,6 +1,5 @@
 defmodule Spendable.Transaction.Resolver.DeleteTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
 
   test "delete transaction" do
     user = insert(:user)

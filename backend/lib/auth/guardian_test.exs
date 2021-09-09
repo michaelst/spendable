@@ -1,8 +1,6 @@
 defmodule Spendable.Auth.GuardianTest do
   use Spendable.DataCase, async: true
 
-  import Spendable.Factory
-
   alias Spendable.Auth.Guardian
 
   describe "resource_from_claims" do

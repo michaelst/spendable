@@ -1,14 +1,11 @@
 defmodule Spendable.Transaction.Resolver.CreateTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
 
   alias Spendable.Repo
 
   test "create transaction" do
     user = insert(:user)
     budget = insert(:budget, user: user)
-    tag_one = insert(:tag, user: user, name: "First tag")
-    tag_two = insert(:tag, user: user, name: "Second tag")
 
     query = """
       mutation {
@@ -27,7 +24,6 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
               budgetId: "#{budget.id}"
             }
           ]
-          tagIds: ["#{tag_one.id}", "#{tag_two.id}"]
         ) {
           name
           reviewed
@@ -36,10 +32,6 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
             budget {
               id
             }
-          }
-          tags {
-            id
-            name
           }
         }
       }
@@ -64,10 +56,6 @@ defmodule Spendable.Transaction.Resolver.CreateTest do
                         "id" => "#{budget.id}"
                       }
                     }
-                  ],
-                  "tags" => [
-                    %{"id" => "#{tag_one.id}", "name" => "First tag"},
-                    %{"id" => "#{tag_two.id}", "name" => "Second tag"}
                   ]
                 }
               }

@@ -1,6 +1,5 @@
 defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
   use Spendable.DataCase, async: true
-  import Spendable.Factory
 
   alias Spendable.Repo
 

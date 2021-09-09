@@ -1,6 +1,6 @@
 defmodule Spendable.Web.Controllers.PlaidTest do
   use Spendable.Web.ConnCase, async: false
-  import Spendable.Factory
+
   import Mock
 
   alias Google.PubSub

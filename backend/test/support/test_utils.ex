@@ -1,10 +1,6 @@
 defmodule Spendable.TestUtils do
   import ExUnit.Assertions
 
-  alias Ash.Changeset
-  alias Spendable.Api
-  alias Spendable.User
-
   def random_decimal(range, precision \\ 2) do
     Enum.random(range)
     |> Decimal.new()

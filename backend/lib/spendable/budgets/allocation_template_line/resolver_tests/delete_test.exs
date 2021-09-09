@@ -1,6 +1,5 @@
 defmodule Spendable.Budgets.AllocationTemplateLine.Resolver.DeleteTest do
   use Spendable.DataCase, async: true
-  import Spendable.Factory
 
   alias Spendable.Budgets.AllocationTemplateLine
   alias Spendable.Repo

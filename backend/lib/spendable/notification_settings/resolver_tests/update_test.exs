@@ -1,6 +1,5 @@
 defmodule Spendable.Notifications.Settings.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
 
   test "update device token" do
     user = insert(:user)

@@ -1,6 +1,5 @@
 defmodule Spendable.Budgets.Budget.Resolver.DeleteTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
 
   test "delete budget" do
     user = insert(:user)

@@ -1,8 +1,5 @@
 defmodule Spendable.Transaction.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
-
-  alias Spendable.Repo
 
   test "update transaction" do
     user = insert(:user)

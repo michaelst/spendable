@@ -1,6 +1,5 @@
 defmodule Spendable.Budgets.AllocationTemplate.Resolver.UpdateTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
 
   test "update budget template" do
     user = insert(:user)

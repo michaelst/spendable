@@ -1,9 +1,7 @@
 defmodule Spendable.BankTransaction do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [
-      AshGraphql.Resource
-    ]
+    extensions: [AshGraphql.Resource]
 
   postgres do
     repo(Spendable.Repo)

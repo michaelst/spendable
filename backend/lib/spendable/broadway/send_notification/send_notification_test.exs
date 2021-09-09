@@ -1,7 +1,6 @@
 defmodule Spendable.Broadway.SendNotificationTest do
   use Spendable.DataCase, async: false
 
-  import Spendable.Factory
   import Mock
   import Ecto.Query, only: [from: 2]
 

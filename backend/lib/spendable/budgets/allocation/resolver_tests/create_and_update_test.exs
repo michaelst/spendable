@@ -1,6 +1,5 @@
 defmodule Spendable.Budgets.Allocation.Resolver.CreateAndUpdateTest do
   use Spendable.DataCase, async: true
-  import Spendable.Factory
 
   test "create and update allocation" do
     user = insert(:user)

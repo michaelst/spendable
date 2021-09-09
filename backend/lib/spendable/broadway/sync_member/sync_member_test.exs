@@ -6,13 +6,13 @@ defmodule Spendable.Broadway.SyncMemberTest do
   import Ecto.Query
 
   alias Google.PubSub
-  alias Spendable.Banks.Account
-  alias Spendable.Banks.Category
-  alias Spendable.Banks.Member
-  alias Spendable.Banks.Providers.Plaid.Adapter
-  alias Spendable.Banks.Transaction
+  alias Spendable.Api
+  alias Spendable.BankAccount
+  alias Spendable.BankMember
+  alias Spendable.BankTransaction
   alias Spendable.Broadway.SyncMember
   alias Spendable.Broadway.SyncMemberTest.TestData
+  alias Spendable.Plaid.Adapter
   alias Spendable.Repo
   alias Spendable.TestUtils
 
@@ -47,10 +47,14 @@ defmodule Spendable.Broadway.SyncMemberTest do
     token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
     {:ok, %{body: details}} = Plaid.item(token)
 
+    formatted_data = details |> Adapter.bank_member() |> Map.put(:plaid_token, token)
+
     member =
-      %Member{plaid_token: token}
-      |> Member.changeset(Adapter.format(details, user.id, :member))
-      |> Repo.insert!()
+      BankMember
+      |> Ash.Changeset.for_create(:create)
+      |> Ash.Changeset.replace_relationship(:user, user)
+      |> Ash.Changeset.force_change_attributes(formatted_data)
+      |> Api.create!()
 
     data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
 

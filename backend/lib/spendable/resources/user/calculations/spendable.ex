@@ -3,7 +3,7 @@ defmodule Spendable.User.Calculations.Spendable do
 
   import Ecto.Query
 
-  alias Spendable.Banks.Account
+  alias Spendable.BankAccount
   alias Spendable.Budgets.Allocation
   alias Spendable.Budgets.Budget
   alias Spendable.Repo
@@ -11,7 +11,7 @@ defmodule Spendable.User.Calculations.Spendable do
   @impl Ash.Calculation
   def calculate([user], _opts, _resolution) do
     balance =
-      from(ba in Account,
+      from(ba in BankAccount,
         select:
           fragment(
             "SUM(CASE WHEN ? = 'credit' THEN -? ELSE COALESCE(?, ?) END)",

@@ -1,9 +1,9 @@
 defmodule Spendable.BankAccount do
   use Ash.Resource,
+    authorizers: [AshPolicyAuthorizer.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource],
-    notifiers: [Spendable.Notifiers.SyncMember],
-    authorizers: [AshPolicyAuthorizer.Authorizer]
+    notifiers: [Spendable.Notifiers.SyncMember]
 
   postgres do
     repo(Spendable.Repo)
@@ -33,9 +33,6 @@ defmodule Spendable.BankAccount do
   relationships do
     belongs_to :user, Spendable.User, required?: true, private?: true, field_type: :integer
     belongs_to :bank_member, Spendable.BankMember, required?: true, field_type: :integer
-  end
-
-  actions do
   end
 
   actions do

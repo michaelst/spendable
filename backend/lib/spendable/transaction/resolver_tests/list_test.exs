@@ -1,8 +1,5 @@
 defmodule Spendable.Transaction.Resolver.ListTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
-
-  alias Spendable.Repo
 
   test "list transactions" do
     user = insert(:user)

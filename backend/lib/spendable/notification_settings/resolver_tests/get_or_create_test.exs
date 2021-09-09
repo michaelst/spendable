@@ -1,6 +1,5 @@
 defmodule Spendable.Notifications.Settings.Resolver.GetOrCreateTest do
   use Spendable.Web.ConnCase, async: true
-  import Spendable.Factory
 
   test "register APNS device token" do
     user = insert(:user)
