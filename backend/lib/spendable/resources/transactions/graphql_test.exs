@@ -2,7 +2,6 @@ defmodule Spendable.Tranasction.GraphQLTests do
   use Spendable.DataCase, async: true
 
   test "get transaction" do
-    IO.inspect("test")
     user = insert(:user)
 
     transaction = insert(:transaction, user_id: user.id)
@@ -32,7 +31,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
                   "reviewed" => false
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "list transactions" do
@@ -101,7 +100,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
                   }
                 ]
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "create transaction" do
@@ -160,7 +159,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
                   ]
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "update transaction" do
@@ -225,7 +224,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
                   ]
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "delete transaction" do
@@ -240,6 +239,9 @@ defmodule Spendable.Tranasction.GraphQLTests do
         result {
           id
         }
+        errors {
+          message
+        }
       }
     }
     """
@@ -248,10 +250,11 @@ defmodule Spendable.Tranasction.GraphQLTests do
             %{
               data: %{
                 "deleteTransaction" => %{
-                  "result" => nil
+                  "result" => nil,
+                  "errors" => [%{"message" => "Forbidden"}]
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: other_user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
 
     assert {:ok,
             %{
@@ -262,6 +265,6 @@ defmodule Spendable.Tranasction.GraphQLTests do
                   }
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{current_user: user})
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 end

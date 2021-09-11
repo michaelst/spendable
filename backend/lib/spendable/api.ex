@@ -6,6 +6,7 @@ defmodule Spendable.Api do
     resource Spendable.BankAccount
     resource Spendable.BankMember
     resource Spendable.BankTransaction
+    resource Spendable.NotificationSettings
     resource Spendable.Transaction
     resource Spendable.User
   end

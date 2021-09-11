@@ -6,7 +6,7 @@ defmodule Spendable.Factory do
   use Spendable.Budgets.AllocationTemplate.Factory
   use Spendable.Budgets.AllocationTemplateLine.Factory
   use Spendable.Budgets.Budget.Factory
-  use Spendable.Notifications.Settings.Factory
+  use Spendable.NotificationSettings.Factory
   use Spendable.Transaction.Factory
   use Spendable.User.Factory
 end

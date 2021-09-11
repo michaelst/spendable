@@ -11,7 +11,6 @@ defmodule Spendable.Web.Schema do
   import_types(Spendable.Budgets.AllocationTemplate.Types)
   import_types(Spendable.Budgets.AllocationTemplateLine.Types)
   import_types(Spendable.Budgets.Budget.Types)
-  import_types(Spendable.Notifications.Settings.Types)
 
   query do
     field :health, :string, resolve: fn _args, _resolution -> {:ok, "up"} end
@@ -19,7 +18,6 @@ defmodule Spendable.Web.Schema do
     import_fields(:allocation_template_line_queries)
     import_fields(:allocation_template_queries)
     import_fields(:budget_queries)
-    import_fields(:notification_settings_queries)
   end
 
   mutation do
@@ -27,7 +25,6 @@ defmodule Spendable.Web.Schema do
     import_fields(:allocation_template_line_mutations)
     import_fields(:allocation_template_mutations)
     import_fields(:budget_mutations)
-    import_fields(:notification_settings_mutations)
   end
 
   def context(context) do

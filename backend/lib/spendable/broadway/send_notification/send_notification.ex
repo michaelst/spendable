@@ -40,7 +40,7 @@ defmodule Spendable.Broadway.SendNotification do
   defp process_data(data) do
     %SendNotificationRequest{user_id: user_id, title: title, body: body} = SendNotificationRequest.decode(data)
 
-    from(Spendable.Notifications.Settings, where: [user_id: ^user_id, enabled: true])
+    from(Spendable.NotificationSettings, where: [user_id: ^user_id, enabled: true])
     |> Repo.all()
     |> Enum.each(fn settings ->
       %{"title" => title, "body" => body}
