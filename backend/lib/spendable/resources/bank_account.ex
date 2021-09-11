@@ -13,8 +13,6 @@ defmodule Spendable.BankAccount do
   attributes do
     integer_primary_key :id
 
-    # delete this field
-    attribute :available_balance, :decimal, allow_nil?: false
     attribute :balance, :decimal, allow_nil?: false
     attribute :external_id, :string, allow_nil?: false
     attribute :name, :string, allow_nil?: false

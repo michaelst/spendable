@@ -14,8 +14,7 @@ defmodule Spendable.Transaction do
 
     attribute :amount, :decimal, allow_nil?: false
     attribute :date, :date, allow_nil?: false
-    # allow_nil?: false
-    attribute :name, :string
+    attribute :name, :string, allow_nil?: false
     attribute :note, :string
     attribute :reviewed, :boolean, allow_nil?: false
 
@@ -46,6 +45,7 @@ defmodule Spendable.Transaction do
 
   policies do
     policy always() do
+      authorize_if action(:create)
       authorize_if attribute(:user_id, actor(:id))
     end
   end
