@@ -4,7 +4,7 @@ defmodule Spendable.User.SpentByMonth do
     extensions: [AshGraphql.Resource]
 
   graphql do
-    type :spent_by_month
+    type :month_spend
   end
 
   attributes do

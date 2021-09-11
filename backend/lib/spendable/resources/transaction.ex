@@ -1,5 +1,6 @@
 defmodule Spendable.Transaction do
   use Ash.Resource,
+    authorizers: [AshPolicyAuthorizer.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
@@ -40,6 +41,12 @@ defmodule Spendable.Transaction do
       create :create_transaction, :create
       update :update_transaction, :update
       destroy :delete_transaction, :destroy
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if attribute(:user_id, actor(:id))
     end
   end
 end

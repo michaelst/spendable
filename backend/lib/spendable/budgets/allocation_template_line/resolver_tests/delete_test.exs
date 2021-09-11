@@ -7,7 +7,7 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Resolver.DeleteTest do
   test "delete budget" do
     user = insert(:user)
 
-    line = insert(:allocation_template, user: user) |> Map.get(:lines) |> List.first()
+    line = insert(:allocation_template, user_id: user.id) |> Map.get(:lines) |> List.first()
 
     query = """
     mutation {

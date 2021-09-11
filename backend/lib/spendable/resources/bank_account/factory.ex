@@ -3,7 +3,6 @@ defmodule Spendable.BankAccount.Factory do
     quote do
       def bank_account_factory(attrs) do
         bank_account = %Spendable.BankAccount{
-          bank_member: build(:bank_member, user: attrs[:user]),
           external_id: Ecto.UUID.generate(),
           name: "Checking",
           balance: "100.00",

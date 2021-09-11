@@ -4,8 +4,8 @@ defmodule Spendable.Budgets.AllocationTemplateLine.Resolver.CreateAndUpdateTest 
   test "create allocation template line" do
     user = insert(:user)
 
-    allocation_template = insert(:allocation_template, user: user)
-    budget = insert(:budget, user: user)
+    allocation_template = insert(:allocation_template, user_id: user.id)
+    budget = insert(:budget, user_id: user.id)
 
     query = """
     mutation {

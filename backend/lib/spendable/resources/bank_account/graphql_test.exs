@@ -56,7 +56,7 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     bank_member = insert(:bank_member, user_id: user.id)
     bank_account_1 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id)
     bank_account_2 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id)
-    other_userbank_account = insert(:bank_account, user_id: other_user.id, bank_member_id: bank_member.id)
+    insert(:bank_account, user_id: other_user.id, bank_member_id: bank_member.id)
 
     doc = """
     query {

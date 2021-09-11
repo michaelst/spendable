@@ -5,8 +5,8 @@ defmodule Spendable.Budgets.AllocationTemplate.Factory do
         template = %Spendable.Budgets.AllocationTemplate{
           name: "Payday",
           lines: [
-            build(:allocation_template_line, user: attrs[:user]),
-            build(:allocation_template_line, user: attrs[:user])
+            build(:allocation_template_line, user_id: attrs[:user_id]),
+            build(:allocation_template_line, user_id: attrs[:user_id])
           ]
         }
 

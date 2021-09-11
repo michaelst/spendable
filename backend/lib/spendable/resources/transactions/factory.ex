@@ -7,7 +7,9 @@ defmodule Spendable.Transaction.Factory do
           date: Date.utc_today(),
           name: "test",
           note: "some notes",
-          reviewed: false
+          reviewed: false,
+          inserted_at: DateTime.utc_now(),
+          updated_at: DateTime.utc_now()
         }
       end
     end

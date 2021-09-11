@@ -26,7 +26,7 @@ defmodule Spendable.Web.Controllers.PlaidTest do
     |> post("/plaid/webhook", %{"item_id" => "bogus"})
     |> response(:not_found)
 
-    member = insert(:bank_member, user: user, external_id: "webhook_test")
+    member = insert(:bank_member, user_id: user.id, external_id: "webhook_test")
 
     conn
     |> post("/plaid/webhook", %{"item_id" => "webhook_test"})

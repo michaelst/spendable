@@ -4,11 +4,11 @@ defmodule Spendable.Budgets.Budget.Resolver.ListTest do
   test "update" do
     user = insert(:user)
 
-    budget = insert(:budget, user: user)
-    insert(:allocation, user: user, budget: budget, amount: 100)
-    insert(:allocation, user: user, budget: budget, amount: -25.55)
-    goal = insert(:goal, user: user)
-    insert(:allocation, user: user, budget: goal, amount: 54.55)
+    budget = insert(:budget, user_id: user.id)
+    insert(:allocation, user_id: user.id, budget: budget, amount: 100)
+    insert(:allocation, user_id: user.id, budget: budget, amount: -25.55)
+    goal = insert(:goal, user_id: user.id)
+    insert(:allocation, user_id: user.id, budget: goal, amount: 54.55)
 
     query = """
       query {

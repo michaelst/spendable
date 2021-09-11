@@ -4,8 +4,8 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.ListTest do
   test "update" do
     user = insert(:user)
 
-    template1 = insert(:allocation_template, user: user)
-    template2 = insert(:allocation_template, user: user)
+    template1 = insert(:allocation_template, user_id: user.id)
+    template2 = insert(:allocation_template, user_id: user.id)
 
     query = """
       query {

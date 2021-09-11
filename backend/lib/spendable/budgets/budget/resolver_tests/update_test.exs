@@ -6,8 +6,8 @@ defmodule Spendable.Budgets.Budget.Resolver.UpdateTest do
   test "update budget" do
     user = insert(:user)
 
-    budget = insert(:budget, user: user)
-    insert(:allocation, user: user, budget: budget, amount: 10)
+    budget = insert(:budget, user_id: user.id)
+    insert(:allocation, user_id: user.id, budget: budget, amount: 10)
 
     doc = """
       mutation {

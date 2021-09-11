@@ -7,7 +7,7 @@ defmodule Spendable.Budgets.Allocation.Resolver.DeleteTest do
   test "delete allocation" do
     user = insert(:user)
 
-    %{id: id} = insert(:allocation, user: user)
+    %{id: id} = insert(:allocation, user_id: user.id)
 
     query = """
     mutation {

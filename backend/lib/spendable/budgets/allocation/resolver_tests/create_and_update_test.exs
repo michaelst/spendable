@@ -4,8 +4,8 @@ defmodule Spendable.Budgets.Allocation.Resolver.CreateAndUpdateTest do
   test "create and update allocation" do
     user = insert(:user)
 
-    transaction = insert(:transaction, user: user)
-    budget = insert(:budget, user: user)
+    transaction = insert(:transaction, user_id: user.id)
+    budget = insert(:budget, user_id: user.id)
 
     query = """
     mutation {

@@ -4,7 +4,7 @@ defmodule Spendable.Budgets.AllocationTemplate.Resolver.DeleteTest do
   test "delete budget" do
     user = insert(:user)
 
-    template = insert(:allocation_template, user: user)
+    template = insert(:allocation_template, user_id: user.id)
 
     query = """
     mutation {

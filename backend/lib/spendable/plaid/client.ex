@@ -48,7 +48,6 @@ defmodule Plaid do
       country_codes: ["US"],
       language: "en",
       products: ["transactions"],
-      redirect_uri: "https://spendable.money/plaid/oauth.html",
       secret: Application.get_env(:spendable, Plaid)[:secret_key],
       user: %{client_user_id: "#{user_id}"},
       webhook: "https://spendable.money/plaid/webhook"
@@ -62,7 +61,7 @@ defmodule Plaid do
       # do not pass products with this request or it will fail.
       access_token: access_token,
       client_id: Application.get_env(:spendable, Plaid)[:client_id],
-      client_name: "Genesis Block",
+      client_name: "Spendable",
       country_codes: ["US"],
       language: "en",
       secret: Application.get_env(:spendable, Plaid)[:secret_key],

@@ -1,11 +1,11 @@
 defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
   use Spendable.DataCase, async: true
 
-  alias Spendable.User.Calculations.PlaidLinkToken
+  alias Spendable.BankMember.Calculations.PlaidLinkToken
 
   test "calculate plaid link token" do
     user = insert(:user)
-    %{plaid_token: access_token} = member = insert(:bank_member, user_id: user.id)
+    %{plaid_token: access_token} = bank_member = insert(:bank_member, user_id: user.id)
 
     token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
 
@@ -15,7 +15,7 @@ defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
                 %{
                   "access_token" => access_token,
                   "client_id" => "test",
-                  "client_name" => "Genesis Block",
+                  "client_name" => "Spendable",
                   "country_codes" => ["US"],
                   "language" => "en",
                   "secret" => "test",
@@ -26,7 +26,7 @@ defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
         %Tesla.Env{status: 200, body: %{"link_token" => token}}
     end)
 
-    {:ok, [calculated_token]} = PlaidLinkToken.calculate([user], [], %{})
+    {:ok, [calculated_token]} = PlaidLinkToken.calculate([bank_member], [], %{})
 
     assert token == calculated_token
   end

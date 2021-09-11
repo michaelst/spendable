@@ -135,7 +135,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
              }
            ] =
              Transaction
-             |> filter([user_id: user.id])
+             |> filter(user_id: user.id)
              |> sort([:date])
              |> load(:bank_transaction)
              |> Api.read!()
