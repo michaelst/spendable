@@ -18,7 +18,7 @@ defmodule Spendable.Notifiers.SyncMember do
 
   def notify(%Ash.Notifier.Notification{
         resource: Spendable.BankMember,
-        action: %{type: :create},
+        action: %{name: :create_from_public_token},
         data: %{id: bank_member_id} = member
       }) do
     SyncMember.sync_accounts(member)

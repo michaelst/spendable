@@ -40,7 +40,7 @@ defmodule Spendable.BankMember do
   end
 
   actions do
-    create :create do
+    create :create_from_public_token do
       primary? true
       argument :public_token, :string, allow_nil?: false
       accept [:public_token]
@@ -48,6 +48,8 @@ defmodule Spendable.BankMember do
       change relate_actor(:user)
       change Spendable.BankMember.Changes.CreateBankMember
     end
+
+    create :create
 
     update :update, primary?: true
   end
@@ -61,7 +63,7 @@ defmodule Spendable.BankMember do
     end
 
     mutations do
-      create :create_bank_member, :create
+      create :create_bank_member, :create_from_public_token
     end
   end
 
@@ -71,6 +73,10 @@ defmodule Spendable.BankMember do
     end
 
     policy action_type(:read) do
+      authorize_if attribute(:user_id, actor(:id))
+    end
+
+    policy action_type(:update) do
       authorize_if attribute(:user_id, actor(:id))
     end
   end

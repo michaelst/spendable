@@ -47,7 +47,7 @@ defmodule Spendable.Broadway.SyncMember do
   defp process_data(data) do
     %SyncMemberRequest{member_id: member_id} = SyncMemberRequest.decode(data)
 
-    Member
+    BankMember
     |> Api.get(member_id, load: [:user])
     |> sync_member()
     |> sync_accounts()
@@ -55,19 +55,18 @@ defmodule Spendable.Broadway.SyncMember do
     |> Enum.each(&sync_transactions/1)
   end
 
-  defp sync_member(member) when is_struct(member) do
+  defp sync_member({:ok, member}) do
     {:ok, %{body: details}} = Plaid.item(member.plaid_token)
 
     formatted_data = Adapter.bank_member(details)
 
-    BankMember
-    |> Ash.Changeset.for_create(:create)
-    |> Ash.Changeset.replace_relationship(:user, member.user)
+    member
+    |> Ash.Changeset.for_update(:update)
     |> Ash.Changeset.force_change_attributes(formatted_data)
-    |> Api.create!()
+    |> Api.update!()
   end
 
-  defp sync_member(nil), do: :ok
+  defp sync_member(_result), do: :ok
 
   def sync_accounts(member) do
     case Plaid.accounts(member.plaid_token) do
@@ -89,6 +88,8 @@ defmodule Spendable.Broadway.SyncMember do
               bank_account
               |> Ash.Changeset.for_update(:update)
               |> Ash.Changeset.force_change_attributes(formatted_data)
+              |> Ash.Changeset.replace_relationship(:bank_member, member)
+              |> Ash.Changeset.replace_relationship(:user, member.user)
               |> Api.update!()
           end
         end)
@@ -122,7 +123,7 @@ defmodule Spendable.Broadway.SyncMember do
 
       bank_transaction =
         BankTransaction
-        |> Ash.Changeset.for_create(:create)
+        |> Ash.Changeset.for_create(:create, formatted_data)
         |> Ash.Changeset.replace_relationship(:bank_account, account)
         |> Ash.Changeset.replace_relationship(:user, account.user)
         |> Ash.Changeset.force_change_attributes(formatted_data)
@@ -131,8 +132,7 @@ defmodule Spendable.Broadway.SyncMember do
       formatted_data = Adapter.transaction(bank_transaction)
 
       Transaction
-      |> Ash.Changeset.for_create(:create)
-      |> Ash.Changeset.replace_relationship(:bank_account, account)
+      |> Ash.Changeset.for_create(:create, formatted_data)
       |> Ash.Changeset.replace_relationship(:bank_transaction, bank_transaction)
       |> Ash.Changeset.replace_relationship(:user, account.user)
       |> Ash.Changeset.force_change_attributes(formatted_data)
@@ -159,10 +159,10 @@ defmodule Spendable.Broadway.SyncMember do
   end
 
   defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id}) when is_binary(pending_id) do
-    Repo.get_by(BankTransaction, external_id: pending_id, pending: true)
-    |> Repo.preload(:transaction)
+    BankTransaction
+    |> Api.get([external_id: pending_id, pending: true], load: [:transaction])
     |> case do
-      %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction ->
+      {:ok, %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction} ->
         from(Spendable.Budgets.Allocation, where: [transaction_id: ^pending_transasction_id])
         |> Repo.update_all(set: [transaction_id: transaction.id])
 
@@ -171,7 +171,7 @@ defmodule Spendable.Broadway.SyncMember do
 
         transaction
 
-      _nil_or_bank_transaction ->
+      _not_found_or_bank_transaction ->
         transaction
     end
   end

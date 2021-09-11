@@ -5,7 +5,7 @@ defmodule Spendable.BankTransaction do
 
   postgres do
     repo(Spendable.Repo)
-    table "bank_tranasctions"
+    table "bank_transactions"
   end
 
   attributes do
@@ -25,8 +25,8 @@ defmodule Spendable.BankTransaction do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true
-    belongs_to :bank_account, Spendable.BankAccount
+    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :bank_account, Spendable.BankAccount, field_type: :integer
 
     has_one :transaction, Spendable.Transaction
   end

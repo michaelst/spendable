@@ -21,8 +21,8 @@ defmodule Spendable.Plaid.Adapter do
   end
 
   def bank_account(details) do
-    available_balance = Decimal.new(details["balances"]["available"] || "0")
-    current_balance = Decimal.new(details["balances"]["current"])
+    available_balance = Decimal.new("#{details["balances"]["available"] || 0}")
+    current_balance = Decimal.new("#{details["balances"]["current"]}")
 
     balance =
       cond do

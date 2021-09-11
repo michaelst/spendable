@@ -22,8 +22,8 @@ defmodule Spendable.Transaction do
   end
 
   relationships do
-    belongs_to :bank_transaction, Spendable.BankTransaction
-    belongs_to :user, Spendable.User, required?: true
+    belongs_to :bank_transaction, Spendable.BankTransaction, field_type: :integer
+    belongs_to :user, Spendable.User, required?: true, field_type: :integer
 
     # has_many :allocations, Spendable.Budgets.Allocation
   end
