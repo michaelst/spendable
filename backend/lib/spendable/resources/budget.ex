@@ -6,7 +6,7 @@ defmodule Spendable.Budget do
 
   postgres do
     repo(Spendable.Repo)
-    table "transactions"
+    table "budgets"
   end
 
   attributes do
@@ -21,20 +21,9 @@ defmodule Spendable.Budget do
   relationships do
     belongs_to :user, Spendable.User, required?: true, field_type: :integer
 
-    # has_many :allocations, Spendable.Budgets.Allocation
-    # has_many :allocation_template_lines, Spendable.Budgets.AllocationTemplateLine
+    has_many :allocations, Spendable.BudgetAllocation
+    has_many :allocation_template_lines, Spendable.BudgetAllocationTemplateLine
   end
-
-  # |> prepare_changes(fn
-  #   %{data: %{id: nil}, changes: %{balance: %Decimal{} = balance}} = changeset ->
-  #     put_change(changeset, :adjustment, balance)
-  #
-  #   %{data: %{id: id}, changes: %{balance: %Decimal{} = balance}} = changeset ->
-  #     put_change(changeset, :adjustment, Decimal.sub(balance, allocated(id)))
-  #
-  #   changeset ->
-  #     changeset
-  # end)
 
   calculations do
     calculate :balance, :string, Spendable.Budget.Calculations.Balance,
@@ -48,7 +37,11 @@ defmodule Spendable.Budget do
       prepare build(sort: [name: :asc])
     end
 
-    create :create, primary?: true
+    create :create do
+      primary? true
+      change relate_actor(:user)
+    end
+
     update :update, primary?: true
     destroy :destroy, primary?: true
   end

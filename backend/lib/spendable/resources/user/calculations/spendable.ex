@@ -4,8 +4,8 @@ defmodule Spendable.User.Calculations.Spendable do
   import Ecto.Query
 
   alias Spendable.BankAccount
-  alias Spendable.Budgets.Allocation
-  alias Spendable.Budgets.Budget
+  alias Spendable.BudgetAllocation
+  alias Spendable.Budget
   alias Spendable.Repo
 
   @impl Ash.Calculation
@@ -26,7 +26,7 @@ defmodule Spendable.User.Calculations.Spendable do
       |> Kernel.||("0.00")
 
     allocations_query =
-      from(a in Allocation,
+      from(a in BudgetAllocation,
         where: a.user_id == ^user.id,
         select: %{
           budget_id: a.budget_id,

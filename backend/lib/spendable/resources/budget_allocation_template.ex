@@ -1,4 +1,4 @@
-defmodule Spendable.Transaction do
+defmodule Spendable.BudgetAllocationTemplate do
   use Ash.Resource,
     authorizers: [AshPolicyAuthorizer.Authorizer],
     data_layer: AshPostgres.DataLayer,
@@ -6,40 +6,35 @@ defmodule Spendable.Transaction do
 
   postgres do
     repo(Spendable.Repo)
-    table "transactions"
+    table "budget_allocation_templates"
   end
 
   attributes do
     integer_primary_key :id
 
-    attribute :amount, :decimal, allow_nil?: false
-    attribute :date, :date, allow_nil?: false
     attribute :name, :string, allow_nil?: false
-    attribute :note, :string
-    attribute :reviewed, :boolean, allow_nil?: false
 
     timestamps()
   end
 
   relationships do
-    belongs_to :bank_transaction, Spendable.BankTransaction, field_type: :integer
     belongs_to :user, Spendable.User, required?: true, field_type: :integer
 
-    has_many :allocations, Spendable.BudgetAllocation
+    has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
   end
 
   graphql do
-    type :transaction
+    type :budget_allocation_template
 
     queries do
-      get :transaction, :read, allow_nil?: false
-      list :transactions, :read
+      get :budget_allocation_template, :read, allow_nil?: false
+      list :budget_allocation_templates, :read
     end
 
     mutations do
-      create :create_transaction, :create
-      update :update_transaction, :update
-      destroy :delete_transaction, :destroy
+      create :create_budget_allocation_template, :create
+      update :update_budget_allocation_template, :update
+      destroy :delete_budget_allocation_template, :destroy
     end
   end
 

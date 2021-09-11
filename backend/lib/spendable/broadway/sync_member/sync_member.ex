@@ -163,7 +163,7 @@ defmodule Spendable.Broadway.SyncMember do
     |> Api.get([external_id: pending_id, pending: true], load: [:transaction])
     |> case do
       {:ok, %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction} ->
-        from(Spendable.Budgets.Allocation, where: [transaction_id: ^pending_transasction_id])
+        from(Spendable.BudgetAllocation, where: [transaction_id: ^pending_transasction_id])
         |> Repo.update_all(set: [transaction_id: transaction.id])
 
         Repo.delete!(pending_bank_transaction.transaction)
