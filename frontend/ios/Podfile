@@ -1,17 +1,17 @@
 platform :ios, '14.0'
 
-require_relative '../node_modules/react-native-unimodules/cocoapods'
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'Spendable' do
   config = use_native_modules!
 
-  use_react_native!(:path => config["reactNativePath"])
+  use_react_native!(:path => config[:reactNativePath])
 
   # Other native modules
-  pod 'Plaid', '~> 2.1.3'
+  pod 'Plaid', '~> 2.2.0'
 
-  # Automatically detect installed unimodules
-  use_unimodules!
+  post_install do |installer|
+    react_native_post_install(installer)
+  end
 end
