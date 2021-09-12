@@ -32,8 +32,9 @@ defmodule Spendable.Budget do
   end
 
   actions do
-    read :read do
-      primary? true
+    read :read, do: primary? true
+
+    read :list do
       prepare build(sort: [name: :asc])
     end
 
@@ -51,7 +52,7 @@ defmodule Spendable.Budget do
 
     queries do
       get :budget, :read, allow_nil?: false
-      list :budgets, :read
+      list :budgets, :list
     end
 
     mutations do

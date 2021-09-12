@@ -3,17 +3,14 @@ defmodule Spendable.Budget.GraphQLTests do
 
   test "get budget" do
     user = insert(:user)
+    other_user = insert(:user)
 
     budget = insert(:budget, user_id: user.id)
-    insert(:budget_allocation, user_id: user.id, budget_id: budget.id, amount: 100)
-    insert(:budget_allocation, user_id: user.id, budget_id: budget.id, amount: -25.55)
 
     query = """
     query {
       budget(id: "#{budget.id}") {
         id
-        name
-        balance
       }
     }
     """
@@ -22,27 +19,38 @@ defmodule Spendable.Budget.GraphQLTests do
             %{
               data: %{
                 "budget" => %{
-                  "id" => "#{budget.id}",
-                  "name" => "Food",
-                  "balance" => "#{Decimal.new("74.45")}"
+                  "id" => "#{budget.id}"
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+            }} ==
+             Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+
+    assert {:ok,
+            %{
+              data: nil,
+              errors: [
+                %{
+                  code: "forbidden",
+                  locations: [%{column: 3, line: 2}],
+                  message: "Forbidden",
+                  path: ["deleteBudget"]
+                }
+              ]
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
   end
 
   test "list budgets" do
     user = insert(:user)
+    other_user = insert(:user)
 
-    budget = insert(:budget, user_id: user.id)
-    insert(:budget_allocation, user_id: user.id, budget_id: budget.id, amount: 100)
-    insert(:budget_allocation, user_id: user.id, budget_id: budget.id, amount: -25.55)
+    budget1 = insert(:budget, user_id: user.id, name: "first")
+    budget2 = insert(:budget, user_id: user.id, name: "second")
+    insert(:budget, user_id: other_user.id)
 
     query = """
       query {
         budgets {
           id
-          name
-          balance
         }
       }
     """
@@ -52,9 +60,10 @@ defmodule Spendable.Budget.GraphQLTests do
               data: %{
                 "budgets" => [
                   %{
-                    "id" => "#{budget.id}",
-                    "name" => "Food",
-                    "balance" => "#{Decimal.new("74.45")}"
+                    "id" => "#{budget1.id}"
+                  },
+                  %{
+                    "id" => "#{budget2.id}"
                   }
                 ]
               }
@@ -90,16 +99,60 @@ defmodule Spendable.Budget.GraphQLTests do
 
   test "update budget" do
     user = insert(:user)
+    other_user = insert(:user)
 
     budget = insert(:budget, user_id: user.id)
-    insert(:allocation, user_id: user.id, budget_id: budget.id, amount: 10)
+    insert(:budget_allocation, user_id: user.id, budget_id: budget.id, amount: 10)
 
     doc = """
       mutation {
-        updateBudget(id: #{budget.id}, name: "new name") {
-          id
-          name
-          balance
+        updateBudget(id: #{budget.id}, input: { name: "new name" }) {
+          result {
+            id
+            name
+            balance
+          }
+        }
+      }
+    """
+
+    assert {:ok,
+            %{
+              data: %{"updateBudget" => nil},
+              errors: [
+                %{
+                  code: "not_found",
+                  fields: [:id],
+                  locations: [%{column: 5, line: 2}],
+                  message: "could not be found",
+                  path: ["updateBudget"],
+                  short_message: "could not be found",
+                  vars: []
+                }
+              ]
+            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: other_user})
+
+    assert {:ok,
+            %{
+              data: %{
+                "updateBudget" => %{
+                  "result" => %{
+                    "id" => "#{budget.id}",
+                    "name" => "new name",
+                    "balance" => "10.00"
+                  }
+                }
+              }
+            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
+
+    doc = """
+      mutation {
+        updateBudget(id: #{budget.id}, input: { name: "new name", adjustment: "0.05" }) {
+          result {
+            id
+            name
+            balance
+          }
         }
       }
     """
@@ -108,19 +161,23 @@ defmodule Spendable.Budget.GraphQLTests do
             %{
               data: %{
                 "updateBudget" => %{
-                  "id" => "#{budget.id}",
-                  "name" => "new name",
-                  "balance" => "10.00"
+                  "result" => %{
+                    "id" => "#{budget.id}",
+                    "name" => "new name",
+                    "balance" => "10.05"
+                  }
                 }
               }
             }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
 
     doc = """
       mutation {
-        updateBudget(id: #{budget.id}, name: "new name", balance: "10.05") {
-          id
-          name
-          balance
+        updateBudget(id: #{budget.id}, input: { name: "new name", adjustment: "-10.00" }) {
+          result {
+            id
+            name
+            balance
+          }
         }
       }
     """
@@ -129,75 +186,28 @@ defmodule Spendable.Budget.GraphQLTests do
             %{
               data: %{
                 "updateBudget" => %{
-                  "id" => "#{budget.id}",
-                  "name" => "new name",
-                  "balance" => "10.05"
+                  "result" => %{
+                    "id" => "#{budget.id}",
+                    "name" => "new name",
+                    "balance" => "0.00"
+                  }
                 }
               }
             }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
-
-    assert Repo.get(Spendable.Budgets.Budget, budget.id).adjustment |> Decimal.eq?("0.05")
-
-    doc = """
-      mutation {
-        updateBudget(id: #{budget.id}, name: "new name", balance: "0.00") {
-          id
-          name
-          balance
-        }
-      }
-    """
-
-    assert {:ok,
-            %{
-              data: %{
-                "updateBudget" => %{
-                  "id" => "#{budget.id}",
-                  "name" => "new name",
-                  "balance" => "0.00"
-                }
-              }
-            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
-
-    assert Repo.get(Spendable.Budgets.Budget, budget.id).adjustment |> Decimal.eq?("-10.00")
-  end
-
-  test "update budget balance with no allocations" do
-    user = insert(:user)
-
-    budget = insert(:budget, user: user)
-
-    doc = """
-      mutation {
-        updateBudget(id: #{budget.id}, balance: "10.00") {
-          id
-          balance
-        }
-      }
-    """
-
-    assert {:ok,
-            %{
-              data: %{
-                "updateBudget" => %{
-                  "id" => "#{budget.id}",
-                  "balance" => "10.00"
-                }
-              }
-            }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: user})
-
-    assert Repo.get(Spendable.Budgets.Budget, budget.id).adjustment |> Decimal.eq?("10.00")
   end
 
   test "delete budget" do
     user = insert(:user)
+    other_user = insert(:user)
 
-    budget = insert(:budget, user: user)
+    budget = insert(:budget, user_id: user.id)
 
     query = """
     mutation {
       deleteBudget(id: #{budget.id}) {
-        id
+        result {
+          id
+        }
       }
     }
     """
@@ -206,9 +216,29 @@ defmodule Spendable.Budget.GraphQLTests do
             %{
               data: %{
                 "deleteBudget" => %{
-                  "id" => "#{budget.id}"
+                  "result" => %{
+                    "id" => "#{budget.id}"
+                  }
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+
+    assert {
+             :ok,
+             %{
+               data: %{"deleteBudget" => nil},
+               errors: [
+                 %{
+                   code: "not_found",
+                   locations: [%{column: 3, line: 2}],
+                   message: "could not be found",
+                   path: ["deleteBudget"],
+                   fields: [:id],
+                   short_message: "could not be found",
+                   vars: []
+                 }
+               ]
+             }
+           } == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
   end
 end
