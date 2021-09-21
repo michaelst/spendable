@@ -30,10 +30,13 @@ defmodule Spendable.Budget.GraphQLTests do
               data: nil,
               errors: [
                 %{
-                  code: "forbidden",
+                  code: "not_found",
                   locations: [%{column: 3, line: 2}],
-                  message: "Forbidden",
-                  path: ["deleteBudget"]
+                  message: "could not be found",
+                  path: ["budget"],
+                  fields: [:id],
+                  short_message: "could not be found",
+                  vars: []
                 }
               ]
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
@@ -212,17 +215,6 @@ defmodule Spendable.Budget.GraphQLTests do
     }
     """
 
-    assert {:ok,
-            %{
-              data: %{
-                "deleteBudget" => %{
-                  "result" => %{
-                    "id" => "#{budget.id}"
-                  }
-                }
-              }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
-
     assert {
              :ok,
              %{
@@ -240,5 +232,16 @@ defmodule Spendable.Budget.GraphQLTests do
                ]
              }
            } == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
+
+    assert {:ok,
+            %{
+              data: %{
+                "deleteBudget" => %{
+                  "result" => %{
+                    "id" => "#{budget.id}"
+                  }
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 end
