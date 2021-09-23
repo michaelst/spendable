@@ -25,7 +25,31 @@ defmodule Spendable.Transaction do
     belongs_to :bank_transaction, Spendable.BankTransaction, field_type: :integer
     belongs_to :user, Spendable.User, required?: true, field_type: :integer
 
-    has_many :allocations, Spendable.BudgetAllocation
+    has_many :budget_allocations, Spendable.BudgetAllocation
+  end
+
+  actions do
+    read :read do
+      primary? true
+      pagination offset?: true
+    end
+
+    create :create do
+      primary? true
+      change relate_actor(:user)
+      argument :budget_allocations, {:array, :map}
+      change manage_relationship(:budget_allocations, type: :direct_control)
+    end
+
+    create :private_create
+
+    update :update do
+      primary? true
+      argument :budget_allocations, {:array, :map}
+      change manage_relationship(:budget_allocations, type: :direct_control)
+    end
+
+    destroy :destroy, primary?: true
   end
 
   graphql do
@@ -40,6 +64,16 @@ defmodule Spendable.Transaction do
       create :create_transaction, :create
       update :update_transaction, :update
       destroy :delete_transaction, :destroy
+    end
+
+    managed_relationships do
+      managed_relationship :create, :budget_allocations do
+        types budget: :create_budget_allocation_budget_input
+      end
+
+      managed_relationship :update, :budget_allocations do
+        types budget: :update_budget_allocation_budget_input
+      end
     end
   end
 

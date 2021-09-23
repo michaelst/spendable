@@ -46,7 +46,7 @@ defmodule Spendable.BankAccount do
     type :bank_account
 
     queries do
-      get :bank_account, :read
+      get :bank_account, :read, allow_nil?: false
       list :bank_accounts, :read
     end
 

@@ -37,7 +37,6 @@ defmodule Spendable.Plaid.Adapter do
       end
 
     %{
-      available_balance: balance,
       balance: balance,
       external_id: details["account_id"],
       name: details["official_name"] || details["name"],

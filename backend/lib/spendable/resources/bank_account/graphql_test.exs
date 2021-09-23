@@ -44,9 +44,18 @@ defmodule Spendable.BanksAccount.GraphQLTests do
 
     assert {:ok,
             %{
-              data: %{
-                "bankAccount" => nil
-              }
+              data: nil,
+              errors: [
+                %{
+                  code: "not_found",
+                  fields: [:id],
+                  locations: [%{column: 3, line: 2}],
+                  message: "could not be found",
+                  path: ["bankAccount"],
+                  short_message: "could not be found",
+                  vars: []
+                }
+              ]
             }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: other_user})
   end
 
@@ -54,13 +63,13 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     user = insert(:user)
     other_user = insert(:user)
     bank_member = insert(:bank_member, user_id: user.id)
-    bank_account_1 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id)
-    bank_account_2 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id)
+    bank_account_1 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id, name: "Checking")
+    bank_account_2 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id, name: "Savings")
     insert(:bank_account, user_id: other_user.id, bank_member_id: bank_member.id)
 
     doc = """
     query {
-      bankAccounts {
+      bankAccounts(sort: [{ field: NAME }]) {
         id
       }
     }
@@ -110,13 +119,22 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     TestUtils.assert_published(%SyncMemberRequest{member_id: member.id})
 
     # can't update another user's bank account
-    assert {:ok,
-            %{
-              data: %{
-                "updateBankAccount" => %{
-                  "result" => nil
-                }
-              }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
+    assert {
+             :ok,
+             %{
+               data: %{"updateBankAccount" => nil},
+               errors: [
+                 %{
+                   code: "not_found",
+                   fields: [:id],
+                   locations: [%{column: 5, line: 2}],
+                   message: "could not be found",
+                   path: ["updateBankAccount"],
+                   short_message: "could not be found",
+                   vars: []
+                 }
+               ]
+             }
+           } == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
   end
 end

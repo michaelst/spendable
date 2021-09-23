@@ -50,7 +50,6 @@ defmodule Spendable.BankMember do
     end
 
     create :create
-
     update :update, primary?: true
   end
 
@@ -58,7 +57,7 @@ defmodule Spendable.BankMember do
     type :bank_member
 
     queries do
-      get :bank_member, :read
+      get :bank_member, :read, allow_nil?: false
       list :bank_members, :read
     end
 
@@ -69,7 +68,7 @@ defmodule Spendable.BankMember do
 
   policies do
     policy always() do
-      authorize_if action(:create)
+      authorize_if action(:create_from_public_token)
       authorize_if attribute(:user_id, actor(:id))
     end
   end

@@ -23,18 +23,42 @@ defmodule Spendable.BudgetAllocation do
     belongs_to :user, Spendable.User, required?: true, field_type: :integer
   end
 
+  actions do
+    create :create do
+      primary? true
+      change relate_actor(:user)
+      argument :budget, :map
+      change manage_relationship(:budget, type: :replace)
+    end
+
+    update :update do
+      primary? true
+      argument :budget, :map
+      change manage_relationship(:budget, type: :replace)
+    end
+  end
+
   graphql do
     type :budget_allocation
 
     queries do
       get :budget_allocation, :read, allow_nil?: false
-      list :budget_allocations, :read
     end
 
     mutations do
       create :create_budget_allocation, :create
       update :update_budget_allocation, :update
       destroy :delete_budget_allocation, :destroy
+    end
+
+    managed_relationships do
+      managed_relationship :create, :budget do
+        lookup_with_primary_key? true
+      end
+
+      managed_relationship :update, :budget do
+        lookup_with_primary_key? true
+      end
     end
   end
 

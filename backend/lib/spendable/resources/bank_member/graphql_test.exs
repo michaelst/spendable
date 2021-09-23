@@ -1,5 +1,5 @@
 defmodule Spendable.BankMember.GraphQLTests do
-  use Spendable.DataCase, async: true
+  use Spendable.DataCase, async: false
 
   import Mock
 
@@ -33,9 +33,18 @@ defmodule Spendable.BankMember.GraphQLTests do
 
       assert {:ok,
               %{
-                data: %{
-                  "bankMember" => nil
-                }
+                data: nil,
+                errors: [
+                  %{
+                    code: "not_found",
+                    locations: [%{column: 3, line: 2}],
+                    message: "could not be found",
+                    path: ["bankMember"],
+                    fields: [:id],
+                    short_message: "could not be found",
+                    vars: []
+                  }
+                ]
               }} == Absinthe.run(doc, Spendable.Web.Schema, context: %{actor: other_user})
     end
   end

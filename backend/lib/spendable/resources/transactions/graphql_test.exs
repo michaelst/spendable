@@ -1,8 +1,9 @@
 defmodule Spendable.Tranasction.GraphQLTests do
-  use Spendable.DataCase, async: true
+  use Spendable.DataCase, async: false
 
   test "get transaction" do
     user = insert(:user)
+    other_user = insert(:user)
 
     transaction = insert(:transaction, user_id: user.id)
 
@@ -32,37 +33,45 @@ defmodule Spendable.Tranasction.GraphQLTests do
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+
+    assert {:ok,
+            %{
+              data: nil,
+              errors: [
+                %{
+                  code: "not_found",
+                  fields: [:id],
+                  locations: [%{column: 3, line: 2}],
+                  message: "could not be found",
+                  path: ["transaction"],
+                  short_message: "could not be found",
+                  vars: []
+                }
+              ]
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
   end
 
   test "list transactions" do
     user = insert(:user)
-    budget = insert(:budget, user_id: user.id)
+    other_user = insert(:user)
 
     expense = insert(:transaction, user_id: user.id, amount: -20.24)
-    insert(:allocation, user_id: user.id, budget: budget, transaction: expense, amount: -20.24)
 
-    deposit =
-      insert(:transaction,
-        user_id: user.id,
-        amount: 3314.89,
-        date: Date.utc_today()
-      )
-
-    insert(:allocation, user_id: user.id, budget: budget, transaction: deposit, amount: 3314.89)
+    insert(:transaction,
+      user_id: other_user.id,
+      amount: 3314.89,
+      date: Date.utc_today()
+    )
 
     query = """
       query {
-        transactions(offset: 0) {
-          id
-          name
-          note
-          amount
-          date
-          allocations {
+        transactions(offset: 0, limit: 100) {
+          results {
+            id
+            name
+            note
             amount
-            budget {
-              id
-            }
+            date
           }
         }
       }
@@ -71,66 +80,53 @@ defmodule Spendable.Tranasction.GraphQLTests do
     assert {:ok,
             %{
               data: %{
-                "transactions" => [
-                  %{
-                    "allocations" => [
-                      %{
-                        "amount" => "#{Decimal.new("3314.89")}",
-                        "budget" => %{"id" => "#{budget.id}"}
-                      }
-                    ],
-                    "amount" => "#{deposit.amount}",
-                    "date" => "#{deposit.date}",
-                    "id" => "#{deposit.id}",
-                    "name" => "test",
-                    "note" => "some notes"
-                  },
-                  %{
-                    "allocations" => [
-                      %{
-                        "amount" => "#{Decimal.new("-20.24")}",
-                        "budget" => %{"id" => "#{budget.id}"}
-                      }
-                    ],
-                    "amount" => "#{expense.amount}",
-                    "date" => "#{expense.date}",
-                    "id" => "#{expense.id}",
-                    "name" => "test",
-                    "note" => "some notes"
-                  }
-                ]
+                "transactions" => %{
+                  "results" => [
+                    %{
+                      "amount" => "#{expense.amount}",
+                      "date" => "#{expense.date}",
+                      "id" => "#{expense.id}",
+                      "name" => "test",
+                      "note" => "some notes"
+                    }
+                  ]
+                }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
   end
 
   test "create transaction" do
     user = insert(:user)
-    budget = insert(:budget, user: user)
+    budget = insert(:budget, user_id: user.id)
 
     query = """
       mutation {
         createTransaction(
-          name: "new name"
-          amount: "126.25"
-          date: "#{Date.utc_today()}"
-          reviewed: true
-          allocations: [
-            {
-              amount: "26.25"
-              budgetId: "#{budget.id}"
-            }
-            {
-              amount: "100"
-              budgetId: "#{budget.id}"
-            }
-          ]
+          input: {
+            name: "new name"
+            amount: "126.25"
+            date: "#{Date.utc_today()}"
+            reviewed: true
+            budgetAllocations: [
+              {
+                amount: "26.25"
+                budget: { id: #{budget.id}}
+              }
+              {
+                amount: "100"
+                budget: { id: #{budget.id}}
+              }
+            ]
+          }
         ) {
-          name
-          reviewed
-          allocations {
-            amount
-            budget {
-              id
+          result {
+            name
+            reviewed
+            budgetAllocations {
+              amount
+              budget {
+                id
+              }
             }
           }
         }
@@ -141,22 +137,24 @@ defmodule Spendable.Tranasction.GraphQLTests do
             %{
               data: %{
                 "createTransaction" => %{
-                  "name" => "new name",
-                  "reviewed" => true,
-                  "allocations" => [
-                    %{
-                      "amount" => "26.25",
-                      "budget" => %{
-                        "id" => "#{budget.id}"
+                  "result" => %{
+                    "name" => "new name",
+                    "reviewed" => true,
+                    "budgetAllocations" => [
+                      %{
+                        "amount" => "26.25",
+                        "budget" => %{
+                          "id" => "#{budget.id}"
+                        }
+                      },
+                      %{
+                        "amount" => "100.00",
+                        "budget" => %{
+                          "id" => "#{budget.id}"
+                        }
                       }
-                    },
-                    %{
-                      "amount" => "100.00",
-                      "budget" => %{
-                        "id" => "#{budget.id}"
-                      }
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
@@ -164,33 +162,41 @@ defmodule Spendable.Tranasction.GraphQLTests do
 
   test "update transaction" do
     user = insert(:user)
+    other_user = insert(:user)
     budget = insert(:budget, user_id: user.id)
     transaction = insert(:transaction, user_id: user.id)
-    allocation = insert(:allocation, transaction: transaction, budget: budget, amount: 25.24, user_id: user.id)
+
+    insert(:budget_allocation,
+      transaction: transaction,
+      budget: budget,
+      amount: 25.24,
+      user_id: user.id
+    )
 
     query = """
       mutation {
-        updateTransaction(input: {
+        updateTransaction(
           id: #{transaction.id}
-          name: "new name"
-          reviewed: true
-          allocations: [
-            {
-              id: #{allocation.id}
-              amount: "26.25"
-              budgetId: "#{budget.id}"
-            }
-            {
-              amount: "100"
-              budgetId: "#{budget.id}"
-            }
-          ]
-        }) {
+          input: {
+            name: "new name"
+            reviewed: true
+            budgetAllocations: [
+              {
+                amount: "26.25"
+                budget: { id: #{budget.id}}
+              }
+              {
+                amount: "100"
+                budget: { id: #{budget.id}}
+              }
+            ]
+          }
+        ) {
           result {
             id
             name
             reviewed
-            allocations {
+            budgetAllocations {
               amount
               budget {
                 id
@@ -205,26 +211,44 @@ defmodule Spendable.Tranasction.GraphQLTests do
             %{
               data: %{
                 "updateTransaction" => %{
-                  "id" => "#{transaction.id}",
-                  "name" => "new name",
-                  "reviewed" => true,
-                  "allocations" => [
-                    %{
-                      "amount" => "26.25",
-                      "budget" => %{
-                        "id" => "#{budget.id}"
+                  "result" => %{
+                    "id" => "#{transaction.id}",
+                    "name" => "new name",
+                    "reviewed" => true,
+                    "budgetAllocations" => [
+                      %{
+                        "amount" => "26.25",
+                        "budget" => %{
+                          "id" => "#{budget.id}"
+                        }
+                      },
+                      %{
+                        "amount" => "100.00",
+                        "budget" => %{
+                          "id" => "#{budget.id}"
+                        }
                       }
-                    },
-                    %{
-                      "amount" => "100.00",
-                      "budget" => %{
-                        "id" => "#{budget.id}"
-                      }
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+
+    assert {:ok,
+            %{
+              data: %{"updateTransaction" => nil},
+              errors: [
+                %{
+                  code: "not_found",
+                  fields: [:id],
+                  locations: [%{column: 5, line: 2}],
+                  message: "could not be found",
+                  path: ["updateTransaction"],
+                  short_message: "could not be found",
+                  vars: []
+                }
+              ]
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
   end
 
   test "delete transaction" do
@@ -239,22 +263,27 @@ defmodule Spendable.Tranasction.GraphQLTests do
         result {
           id
         }
-        errors {
-          message
-        }
       }
     }
     """
 
-    assert {:ok,
-            %{
-              data: %{
-                "deleteTransaction" => %{
-                  "result" => nil,
-                  "errors" => [%{"message" => "Forbidden"}]
-                }
-              }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
+    assert {
+             :ok,
+             %{
+               data: %{"deleteTransaction" => nil},
+               errors: [
+                 %{
+                   code: "not_found",
+                   fields: [:id],
+                   locations: [%{column: 3, line: 2}],
+                   message: "could not be found",
+                   path: ["deleteTransaction"],
+                   short_message: "could not be found",
+                   vars: []
+                 }
+               ]
+             }
+           } == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: other_user})
 
     assert {:ok,
             %{

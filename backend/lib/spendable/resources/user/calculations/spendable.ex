@@ -14,10 +14,9 @@ defmodule Spendable.User.Calculations.Spendable do
       from(ba in BankAccount,
         select:
           fragment(
-            "SUM(CASE WHEN ? = 'credit' THEN -? ELSE COALESCE(?, ?) END)",
+            "SUM(CASE WHEN ? = 'credit' THEN -? ELSE ? END)",
             ba.type,
             ba.balance,
-            ba.available_balance,
             ba.balance
           ),
         where: ba.user_id == ^user.id and ba.sync

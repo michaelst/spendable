@@ -52,7 +52,7 @@ defmodule Spendable.Budget.GraphQLTests do
 
     query = """
       query {
-        budgets {
+        budgets(sort: [{ field: NAME }]) {
           id
         }
       }
