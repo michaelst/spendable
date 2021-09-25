@@ -48,8 +48,6 @@ defmodule Spendable.Transaction do
       argument :budget_allocations, {:array, :map}
       change manage_relationship(:budget_allocations, type: :direct_control)
     end
-
-    destroy :destroy, primary?: true
   end
 
   graphql do

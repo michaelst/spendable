@@ -32,15 +32,10 @@ defmodule Spendable.Budget do
   end
 
   actions do
-    read :read, do: primary?(true)
-
     create :create do
       primary? true
       change relate_actor(:user)
     end
-
-    update :update, primary?: true
-    destroy :destroy, primary?: true
   end
 
   graphql do

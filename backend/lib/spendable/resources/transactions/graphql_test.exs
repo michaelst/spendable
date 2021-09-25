@@ -110,11 +110,11 @@ defmodule Spendable.Tranasction.GraphQLTests do
             budgetAllocations: [
               {
                 amount: "26.25"
-                budget: { id: #{budget.id}}
+                budget: { id: #{budget.id} }
               }
               {
                 amount: "100"
-                budget: { id: #{budget.id}}
+                budget: { id: #{budget.id} }
               }
             ]
           }
@@ -183,11 +183,11 @@ defmodule Spendable.Tranasction.GraphQLTests do
             budgetAllocations: [
               {
                 amount: "26.25"
-                budget: { id: #{budget.id}}
+                budget: { id: #{budget.id} }
               }
               {
                 amount: "100"
-                budget: { id: #{budget.id}}
+                budget: { id: #{budget.id} }
               }
             ]
           }

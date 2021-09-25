@@ -28,7 +28,9 @@ defmodule Spendable.BudgetAllocation do
       primary? true
       change relate_actor(:user)
       argument :budget, :map
+      argument :transaction, :map
       change manage_relationship(:budget, type: :replace)
+      change manage_relationship(:transaction, type: :replace)
     end
 
     update :update do
@@ -57,6 +59,10 @@ defmodule Spendable.BudgetAllocation do
       end
 
       managed_relationship :update, :budget do
+        lookup_with_primary_key? true
+      end
+
+      managed_relationship :create, :transaction do
         lookup_with_primary_key? true
       end
     end
