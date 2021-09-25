@@ -23,6 +23,21 @@ defmodule Spendable.BudgetAllocationTemplate do
     has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
   end
 
+  actions do
+    create :create do
+      primary? true
+      change relate_actor(:user)
+      argument :budget_allocation_template_lines, {:array, :map}
+      change manage_relationship(:budget_allocation_template_lines, type: :direct_control)
+    end
+
+    update :update do
+      primary? true
+      argument :budget_allocation_template_lines, {:array, :map}
+      change manage_relationship(:budget_allocation_template_lines, type: :direct_control)
+    end
+  end
+
   graphql do
     type :budget_allocation_template
 
@@ -35,6 +50,18 @@ defmodule Spendable.BudgetAllocationTemplate do
       create :create_budget_allocation_template, :create
       update :update_budget_allocation_template, :update
       destroy :delete_budget_allocation_template, :destroy
+    end
+
+    managed_relationships do
+      managed_relationship :create, :budget_allocation_template_lines do
+        lookup_with_primary_key? true
+        types budget: :create_budget_allocation_template_line_budget_input
+      end
+
+      managed_relationship :update, :budget_allocation_template_lines do
+        lookup_with_primary_key? true
+        types budget: :update_budget_allocation_template_line_budget_input
+      end
     end
   end
 
