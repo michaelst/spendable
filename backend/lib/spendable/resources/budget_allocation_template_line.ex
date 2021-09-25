@@ -28,13 +28,17 @@ defmodule Spendable.BudgetAllocationTemplateLine do
       primary? true
       change relate_actor(:user)
       argument :budget, :map
+      argument :budget_allocation_template, :map
       change manage_relationship(:budget, type: :replace)
+      change manage_relationship(:budget_allocation_template, type: :replace)
     end
 
     update :update do
       primary? true
       argument :budget, :map
+      argument :budget_allocation_template, :map
       change manage_relationship(:budget, type: :replace)
+      change manage_relationship(:budget_allocation_template, type: :replace)
     end
   end
 
@@ -58,6 +62,14 @@ defmodule Spendable.BudgetAllocationTemplateLine do
       end
 
       managed_relationship :update, :budget do
+        lookup_with_primary_key? true
+      end
+
+      managed_relationship :create, :budget_allocation_template do
+        lookup_with_primary_key? true
+      end
+
+      managed_relationship :update, :budget_allocation_template do
         lookup_with_primary_key? true
       end
     end

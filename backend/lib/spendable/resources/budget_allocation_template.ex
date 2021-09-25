@@ -55,12 +55,16 @@ defmodule Spendable.BudgetAllocationTemplate do
     managed_relationships do
       managed_relationship :create, :budget_allocation_template_lines do
         lookup_with_primary_key? true
-        types budget: :create_budget_allocation_template_line_budget_input
+
+        types budget: :create_budget_allocation_template_line_budget_input,
+              budget_allocation_template: :create_budget_allocation_template_line_budget_allocation_template_input
       end
 
       managed_relationship :update, :budget_allocation_template_lines do
         lookup_with_primary_key? true
-        types budget: :update_budget_allocation_template_line_budget_input
+
+        types budget: :update_budget_allocation_template_line_budget_input,
+              budget_allocation_template: :update_budget_allocation_template_line_budget_allocation_template_input
       end
     end
   end
