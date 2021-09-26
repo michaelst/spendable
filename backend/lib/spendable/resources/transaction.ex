@@ -7,6 +7,11 @@ defmodule Spendable.Transaction do
   postgres do
     repo(Spendable.Repo)
     table "transactions"
+
+    custom_indexes do
+      index ["bank_transaction_id"]
+      index ["user_id"]
+    end
   end
 
   attributes do

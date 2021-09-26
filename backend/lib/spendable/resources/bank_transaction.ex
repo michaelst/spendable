@@ -6,6 +6,11 @@ defmodule Spendable.BankTransaction do
   postgres do
     repo(Spendable.Repo)
     table "bank_transactions"
+
+    custom_indexes do
+      index ["bank_account_id"]
+      index ["user_id"]
+    end
   end
 
   attributes do
@@ -21,12 +26,12 @@ defmodule Spendable.BankTransaction do
   end
 
   identities do
-    identity :external_id, [:external_id]
+    identity :external_id, [:external_id, :bank_account_id]
   end
 
   relationships do
     belongs_to :user, Spendable.User, required?: true, field_type: :integer
-    belongs_to :bank_account, Spendable.BankAccount, field_type: :integer
+    belongs_to :bank_account, Spendable.BankAccount, required?: true, field_type: :integer
 
     has_one :transaction, Spendable.Transaction
   end

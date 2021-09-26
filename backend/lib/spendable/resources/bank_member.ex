@@ -8,6 +8,10 @@ defmodule Spendable.BankMember do
   postgres do
     repo(Spendable.Repo)
     table "bank_members"
+
+    custom_indexes do
+      index ["user_id"]
+    end
   end
 
   attributes do
@@ -25,7 +29,7 @@ defmodule Spendable.BankMember do
   end
 
   identities do
-    identity :external_id, [:external_id]
+    identity :external_id, [:external_id, :user_id]
   end
 
   relationships do

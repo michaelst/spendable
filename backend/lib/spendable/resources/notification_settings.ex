@@ -12,6 +12,10 @@ defmodule Spendable.NotificationSettings do
   postgres do
     repo(Spendable.Repo)
     table "notification_settings"
+
+    custom_indexes do
+      index ["user_id"]
+    end
   end
 
   attributes do
@@ -19,9 +23,13 @@ defmodule Spendable.NotificationSettings do
 
     attribute :device_token, :string, allow_nil?: false, default: false
     attribute :enabled, :boolean, allow_nil?: false, default: false
-    attribute :provider, Provider, allow_nil?: false
+    attribute :provider, Provider, allow_nil?: false, default: :apns
 
     timestamps()
+  end
+
+  identities do
+    identity :device_token, [:device_token, :user_id]
   end
 
   relationships do

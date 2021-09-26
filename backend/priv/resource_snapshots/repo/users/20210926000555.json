@@ -48,8 +48,9 @@
   ],
   "base_filter": null,
   "check_constraints": [],
+  "custom_indexes": [],
   "has_create_action": true,
-  "hash": "A5C15712E755FC3153A65ADE334021C482F07C6769C84B3760FAF7477EF62BC7",
+  "hash": "655829D8BF37CFC9B6AB0E53362454A1DEFC4A56CCE790A516C1D6BEA4D8C529",
   "identities": [
     {
       "base_filter": null,

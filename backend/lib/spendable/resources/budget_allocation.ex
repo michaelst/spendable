@@ -7,6 +7,12 @@ defmodule Spendable.BudgetAllocation do
   postgres do
     repo(Spendable.Repo)
     table "budget_allocations"
+
+    custom_indexes do
+      index ["budget_id"]
+      index ["transaction_id"]
+      index ["user_id"]
+    end
   end
 
   attributes do
