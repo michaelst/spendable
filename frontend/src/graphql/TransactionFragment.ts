@@ -7,26 +7,26 @@
 // GraphQL fragment: TransactionFragment
 // ====================================================
 
-export interface TransactionFragment_allocations_budget {
+export interface TransactionFragment_budgetAllocations_budget {
   __typename: "Budget";
   id: string;
   name: string;
 }
 
-export interface TransactionFragment_allocations {
-  __typename: "Allocation";
+export interface TransactionFragment_budgetAllocations {
+  __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
-  budget: TransactionFragment_allocations_budget;
+  budget: TransactionFragment_budgetAllocations_budget;
 }
 
 export interface TransactionFragment {
   __typename: "Transaction";
   id: string;
-  name: string | null;
+  name: string;
   note: string | null;
   amount: Decimal;
   date: Date;
   reviewed: boolean;
-  allocations: TransactionFragment_allocations[];
+  budgetAllocations: TransactionFragment_budgetAllocations[];
 }

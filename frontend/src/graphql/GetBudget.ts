@@ -7,32 +7,32 @@
 // GraphQL query operation: GetBudget
 // ====================================================
 
-export interface GetBudget_budget_recentAllocations_transaction {
+export interface GetBudget_budget_budgetAllocations_transaction {
   __typename: "Transaction";
   id: string;
-  name: string | null;
+  name: string;
   date: Date;
   reviewed: boolean;
 }
 
-export interface GetBudget_budget_recentAllocations {
-  __typename: "Allocation";
+export interface GetBudget_budget_budgetAllocations {
+  __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
-  transaction: GetBudget_budget_recentAllocations_transaction;
+  transaction: GetBudget_budget_budgetAllocations_transaction;
 }
 
-export interface GetBudget_budget_allocationTemplateLines_allocationTemplate {
-  __typename: "AllocationTemplate";
+export interface GetBudget_budget_budgetAllocationTemplateLines_budgetAllocationTemplate {
+  __typename: "BudgetAllocationTemplate";
   id: string;
   name: string;
 }
 
-export interface GetBudget_budget_allocationTemplateLines {
-  __typename: "AllocationTemplateLine";
+export interface GetBudget_budget_budgetAllocationTemplateLines {
+  __typename: "BudgetAllocationTemplateLine";
   id: string;
   amount: Decimal;
-  allocationTemplate: GetBudget_budget_allocationTemplateLines_allocationTemplate;
+  budgetAllocationTemplate: GetBudget_budget_budgetAllocationTemplateLines_budgetAllocationTemplate;
 }
 
 export interface GetBudget_budget {
@@ -40,9 +40,8 @@ export interface GetBudget_budget {
   id: string;
   name: string;
   balance: Decimal;
-  goal: Decimal | null;
-  recentAllocations: GetBudget_budget_recentAllocations[];
-  allocationTemplateLines: GetBudget_budget_allocationTemplateLines[];
+  budgetAllocations: GetBudget_budget_budgetAllocations[];
+  budgetAllocationTemplateLines: GetBudget_budget_budgetAllocationTemplateLines[];
 }
 
 export interface GetBudget {

@@ -7,13 +7,21 @@
 // GraphQL mutation operation: DeleteTransaction
 // ====================================================
 
-export interface DeleteTransaction_deleteTransaction {
+export interface DeleteTransaction_deleteTransaction_result {
   __typename: "Transaction";
   id: string;
 }
 
+export interface DeleteTransaction_deleteTransaction {
+  __typename: "DeleteTransactionResult";
+  /**
+   * The record that was successfully deleted
+   */
+  result: DeleteTransaction_deleteTransaction_result | null;
+}
+
 export interface DeleteTransaction {
-  deleteTransaction: DeleteTransaction_deleteTransaction;
+  deleteTransaction: DeleteTransaction_deleteTransaction | null;
 }
 
 export interface DeleteTransactionVariables {

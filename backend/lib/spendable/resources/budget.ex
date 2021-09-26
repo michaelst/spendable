@@ -30,7 +30,7 @@ defmodule Spendable.Budget do
   end
 
   calculations do
-    calculate :balance, :string, Spendable.Budget.Calculations.Balance,
+    calculate :balance, :decimal, Spendable.Budget.Calculations.Balance,
       allow_nil?: false,
       select: [:adjustment]
   end

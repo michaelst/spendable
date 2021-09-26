@@ -3,46 +3,49 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { AllocationInputObject } from "./globalTypes";
+import { UpdateTransactionInput } from "./globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: UpdateTransaction
 // ====================================================
 
-export interface UpdateTransaction_updateTransaction_allocations_budget {
+export interface UpdateTransaction_updateTransaction_result_budgetAllocations_budget {
   __typename: "Budget";
   id: string;
   name: string;
 }
 
-export interface UpdateTransaction_updateTransaction_allocations {
-  __typename: "Allocation";
+export interface UpdateTransaction_updateTransaction_result_budgetAllocations {
+  __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
-  budget: UpdateTransaction_updateTransaction_allocations_budget;
+  budget: UpdateTransaction_updateTransaction_result_budgetAllocations_budget;
 }
 
-export interface UpdateTransaction_updateTransaction {
+export interface UpdateTransaction_updateTransaction_result {
   __typename: "Transaction";
   id: string;
-  name: string | null;
+  name: string;
   note: string | null;
   amount: Decimal;
   date: Date;
   reviewed: boolean;
-  allocations: UpdateTransaction_updateTransaction_allocations[];
+  budgetAllocations: UpdateTransaction_updateTransaction_result_budgetAllocations[];
+}
+
+export interface UpdateTransaction_updateTransaction {
+  __typename: "UpdateTransactionResult";
+  /**
+   * The successful result of the mutation
+   */
+  result: UpdateTransaction_updateTransaction_result | null;
 }
 
 export interface UpdateTransaction {
-  updateTransaction: UpdateTransaction_updateTransaction;
+  updateTransaction: UpdateTransaction_updateTransaction | null;
 }
 
 export interface UpdateTransactionVariables {
   id: string;
-  amount?: string | null;
-  name?: string | null;
-  date?: string | null;
-  note?: string | null;
-  reviewed?: boolean | null;
-  allocations?: AllocationInputObject[] | null;
+  input?: UpdateTransactionInput | null;
 }

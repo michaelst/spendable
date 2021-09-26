@@ -7,33 +7,33 @@
 // GraphQL query operation: GetTransaction
 // ====================================================
 
-export interface GetTransaction_transaction_allocations_budget {
+export interface GetTransaction_transaction_budgetAllocations_budget {
   __typename: "Budget";
   id: string;
   name: string;
 }
 
-export interface GetTransaction_transaction_allocations {
-  __typename: "Allocation";
+export interface GetTransaction_transaction_budgetAllocations {
+  __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
-  budget: GetTransaction_transaction_allocations_budget;
+  budget: GetTransaction_transaction_budgetAllocations_budget;
 }
 
 export interface GetTransaction_transaction_bankTransaction {
-  __typename: "BankTransaction";
+  __typename: "BankTranasction";
   name: string;
 }
 
 export interface GetTransaction_transaction {
   __typename: "Transaction";
   id: string;
-  name: string | null;
+  name: string;
   note: string | null;
   amount: Decimal;
   date: Date;
   reviewed: boolean;
-  allocations: GetTransaction_transaction_allocations[];
+  budgetAllocations: GetTransaction_transaction_budgetAllocations[];
   bankTransaction: GetTransaction_transaction_bankTransaction | null;
 }
 
