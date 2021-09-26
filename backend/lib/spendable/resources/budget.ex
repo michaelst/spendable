@@ -25,8 +25,8 @@ defmodule Spendable.Budget do
   relationships do
     belongs_to :user, Spendable.User, required?: true, field_type: :integer
 
-    has_many :allocations, Spendable.BudgetAllocation
-    has_many :allocation_template_lines, Spendable.BudgetAllocationTemplateLine
+    has_many :budget_allocations, Spendable.BudgetAllocation
+    has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
   end
 
   calculations do

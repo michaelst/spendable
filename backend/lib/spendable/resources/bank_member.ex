@@ -29,7 +29,7 @@ defmodule Spendable.BankMember do
   end
 
   identities do
-    identity :external_id, [:external_id, :user_id]
+    identity :external_id, [:external_id]
   end
 
   relationships do
@@ -45,16 +45,12 @@ defmodule Spendable.BankMember do
 
   actions do
     create :create_from_public_token do
-      primary? true
       argument :public_token, :string, allow_nil?: false
       accept [:public_token]
       allow_nil_input [:external_id, :name, :provider]
       change relate_actor(:user)
       change Spendable.BankMember.Changes.CreateBankMember
     end
-
-    create :create
-    update :update, primary?: true
   end
 
   graphql do

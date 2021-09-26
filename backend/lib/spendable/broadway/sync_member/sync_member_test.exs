@@ -9,11 +9,9 @@ defmodule Spendable.Broadway.SyncMemberTest do
   alias Google.PubSub
   alias Spendable.Api
   alias Spendable.BankAccount
-  alias Spendable.BankMember
   alias Spendable.BankTransaction
   alias Spendable.Broadway.SyncMember
   alias Spendable.Broadway.SyncMemberTest.TestData
-  alias Spendable.Plaid.Adapter
   alias Spendable.Repo
   alias Spendable.TestUtils
   alias Spendable.Transaction
@@ -46,17 +44,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
 
   test "sync member" do
     user = insert(:user)
-    token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
-    {:ok, %{body: details}} = Plaid.item(token)
-
-    formatted_data = details |> Adapter.bank_member() |> Map.put(:plaid_token, token)
-
-    member =
-      BankMember
-      |> Ash.Changeset.for_create(:create, formatted_data)
-      |> Ash.Changeset.replace_relationship(:user, user)
-      |> Ash.Changeset.force_change_attributes(formatted_data)
-      |> Api.create!()
+    member = insert(:bank_member, user_id: user.id)
 
     data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
 
@@ -111,6 +99,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
       assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
     end
 
+    # there are 8 transactions in test data but one is a pending that gets replaced
     assert 7 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
     today = Date.utc_today()

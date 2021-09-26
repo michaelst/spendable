@@ -8,7 +8,7 @@ defmodule Spendable.BankMember.Factory do
           name: "Plaid",
           plaid_token: "access-sandbox-898addd0-d983-45f8-a034-3b29d62794a7",
           provider: "Plaid",
-          status: "Connected",
+          status: "CONNECTED",
           inserted_at: DateTime.utc_now(),
           updated_at: DateTime.utc_now()
         }

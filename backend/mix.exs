@@ -36,7 +36,7 @@ defmodule Spendable.MixProject do
   defp deps do
     [
       {:ash_graphql, github: "ash-project/ash_graphql"},
-      {:ash_policy_authorizer, "~> 0.16"},
+      {:ash_policy_authorizer, github: "ash-project/ash_policy_authorizer"},
       {:ash_postgres, github: "ash-project/ash_postgres"},
       {:ash, github: "ash-project/ash", override: true},
       {:broadway_cloud_pub_sub, "~> 0.7"},

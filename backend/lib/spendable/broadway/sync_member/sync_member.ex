@@ -1,6 +1,7 @@
 defmodule Spendable.Broadway.SyncMember do
   use Broadway
-  import Ecto.Query, only: [from: 2]
+
+  import Ecto.Query
 
   alias Broadway.Message
   alias Spendable.BankAccount
@@ -11,6 +12,8 @@ defmodule Spendable.Broadway.SyncMember do
   alias Spendable.Transaction
   alias Spendable.Api
   alias Spendable.Repo
+
+  require Ash.Query
 
   @producer if Application.compile_env(:spendable, :env) == :prod,
               do:
@@ -74,7 +77,7 @@ defmodule Spendable.Broadway.SyncMember do
         Enum.map(accounts_details, fn account_details ->
           formatted_data = Adapter.bank_account(account_details)
 
-          Api.get(BankAccount, user_id: member.user_id, external_id: account_details["account_id"])
+          Api.get(BankAccount, user_id: member.user.id, external_id: account_details["account_id"])
           |> case do
             {:error, %Ash.Error.Query.NotFound{}} ->
               BankAccount
@@ -160,7 +163,9 @@ defmodule Spendable.Broadway.SyncMember do
 
   defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id}) when is_binary(pending_id) do
     BankTransaction
-    |> Api.get([external_id: pending_id, pending: true], load: [:transaction])
+    |> Ash.Query.filter(external_id: pending_id, pending: true)
+    |> Ash.Query.load(:transaction)
+    |> Api.read_one()
     |> case do
       {:ok, %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction} ->
         from(Spendable.BudgetAllocation, where: [transaction_id: ^pending_transasction_id])
