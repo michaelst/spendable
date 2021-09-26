@@ -4,8 +4,8 @@ defmodule Spendable.User.Calculations.Spendable do
   import Ecto.Query
 
   alias Spendable.BankAccount
-  alias Spendable.BudgetAllocation
   alias Spendable.Budget
+  alias Spendable.BudgetAllocation
   alias Spendable.Repo
 
   @impl Ash.Calculation

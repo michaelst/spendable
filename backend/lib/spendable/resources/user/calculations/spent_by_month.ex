@@ -3,8 +3,8 @@ defmodule Spendable.User.Calculations.SpentByMonth do
 
   import Ecto.Query
 
-  alias Spendable.Transaction
   alias Spendable.Repo
+  alias Spendable.Transaction
 
   @impl Ash.Calculation
   def calculate([user], _opts, _resolution) do

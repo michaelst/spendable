@@ -9,9 +9,9 @@ defmodule Spendable.BudgetAllocation do
     table "budget_allocations"
 
     custom_indexes do
-      index ["budget_id"]
-      index ["transaction_id"]
-      index ["user_id"]
+      index(["budget_id"])
+      index(["transaction_id"])
+      index(["user_id"])
     end
   end
 

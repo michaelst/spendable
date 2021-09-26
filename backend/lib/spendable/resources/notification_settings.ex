@@ -6,7 +6,7 @@ defmodule Spendable.NotificationSettings do
 
   defmodule Provider do
     use Ash.Type.Enum, values: [:apns]
-    def graphql_type, do: :notification_provider
+    def graphql_type(), do: :notification_provider
   end
 
   postgres do
@@ -14,7 +14,7 @@ defmodule Spendable.NotificationSettings do
     table "notification_settings"
 
     custom_indexes do
-      index ["user_id"]
+      index(["user_id"])
     end
   end
 

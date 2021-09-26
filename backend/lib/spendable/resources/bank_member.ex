@@ -10,7 +10,7 @@ defmodule Spendable.BankMember do
     table "bank_members"
 
     custom_indexes do
-      index ["user_id"]
+      index(["user_id"])
     end
   end
 

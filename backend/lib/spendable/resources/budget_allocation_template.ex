@@ -9,7 +9,7 @@ defmodule Spendable.BudgetAllocationTemplate do
     table "budget_allocation_templates"
 
     custom_indexes do
-      index ["user_id"]
+      index(["user_id"])
     end
   end
 

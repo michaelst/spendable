@@ -4,14 +4,14 @@ defmodule Spendable.Broadway.SyncMember do
   import Ecto.Query
 
   alias Broadway.Message
+  alias Spendable.Api
   alias Spendable.BankAccount
   alias Spendable.BankMember
   alias Spendable.BankTransaction
   alias Spendable.Plaid.Adapter
   alias Spendable.Publishers.SendNotificationRequest
-  alias Spendable.Transaction
-  alias Spendable.Api
   alias Spendable.Repo
+  alias Spendable.Transaction
 
   require Ash.Query
 

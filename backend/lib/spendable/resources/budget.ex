@@ -9,7 +9,7 @@ defmodule Spendable.Budget do
     table "budgets"
 
     custom_indexes do
-      index ["user_id"]
+      index(["user_id"])
     end
   end
 
