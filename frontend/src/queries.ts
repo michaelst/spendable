@@ -22,6 +22,7 @@ export const GET_BUDGET = gql`
     budget(id: $id) {
       id
       name
+      adjustment
       balance
       budgetAllocations(limit: 100) {
         id
@@ -50,8 +51,6 @@ mutation CreateBudget($input: CreateBudgetInput) {
   createBudget(input: $input) {
     result {
       id
-      name
-      balance
     }
   }
 }

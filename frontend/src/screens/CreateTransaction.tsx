@@ -1,6 +1,5 @@
-import React, { useLayoutEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { ActivityIndicator, Alert, Text, View, } from 'react-native'
+import React, { useState } from 'react'
+import { Text, View, } from 'react-native'
 import { Switch } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import { CREATE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
@@ -8,31 +7,18 @@ import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
 import { ListTransactions } from '../graphql/ListTransactions'
 import useAppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/components/HeaderButton'
 import { DateTime } from 'luxon'
 import { CreateTransaction as CreateTransactionData } from 'src/graphql/CreateTransaction'
+import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
 
 const CreateTransaction = () => {
-  const { styles, colors } = useAppStyles()
-  const navigation = useNavigation<NavigationProp>()
+  const { styles } = useAppStyles()
 
-  const [loading, setLoading] = useState(false)
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(new Date())
   const [note, setNote] = useState('')
   const [reviewed, setReviewed] = useState(true)
-
-  useLayoutEffect(() => navigation.setOptions({
-    headerTitle: '',
-    headerRight: () => (
-      <View>
-        {loading ?
-          <ActivityIndicator color={colors.text} style={styles.activityIndicator} /> :
-          <HeaderButton onPress={saveAndGoBack} title="Save" />}
-      </View>
-    )
-  }))
 
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {
     variables: {
@@ -65,16 +51,7 @@ const CreateTransaction = () => {
     }
   })
 
-  const saveAndGoBack = () => {
-    setLoading(true)
-    createTransaction().then(() => {
-      setLoading(false)
-      navigation.goBack()
-    }).catch(() => {
-      Alert.alert("Failed to create transaction, please try again.")
-      setLoading(false)
-    })
-  }
+  useSaveAndGoBack({ mutation: createTransaction, action: "create tranasction" })
 
   return (
     <View style={{ flex: 1 }}>
