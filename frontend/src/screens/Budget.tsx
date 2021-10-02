@@ -28,19 +28,19 @@ const Budget = () => {
   if (!data) return null
 
   const allocationTemplateLines: TemplateRowItem[] =
-    [...data.budget.allocationTemplateLines]
+    [...data.budget.budgetAllocationTemplateLines]
       .sort((a, b) => b.amount.comparedTo(a.amount))
       .map(line => ({
         key: line.id,
-        templateId: line.allocationTemplate.id,
-        name: line.allocationTemplate.name,
+        templateId: line.budgetAllocationTemplate.id,
+        name: line.budgetAllocationTemplate.name,
         amount: line.amount,
         hideDelete: true,
-        onPress: () => navigation.navigate('Template', { templateId: line.allocationTemplate.id })
+        onPress: () => navigation.navigate('Template', { templateId: line.budgetAllocationTemplate.id })
       }))
 
   const recentAllocations: TransactionRowItem[] =
-    [...data.budget.recentAllocations]
+    [...data.budget.budgetAllocations]
       .sort((a, b) => b.transaction.date - a.transaction.date)
       .map(allocation => ({
         key: allocation.id,

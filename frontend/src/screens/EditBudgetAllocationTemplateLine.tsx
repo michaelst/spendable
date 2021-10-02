@@ -4,40 +4,39 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { GET_ALLOCATION, MAIN_QUERY, UPDATE_ALLOCATION } from '../queries'
-import { Allocation } from '../graphql/Allocation'
-import HeaderButton from 'src/components/HeaderButton'
+import { GET_BUDGET_ALLOCATION_TEMPLATE_LINE, MAIN_QUERY, UPDATE_BUDGET_ALLOCATION_TEMPLATE_LINE } from 'src/queries'
 import { Main } from 'src/graphql/Main'
+import HeaderButton from 'src/components/HeaderButton'
+import { BudgetAllocationTemplateLine } from 'src/graphql/BudgetAllocationTemplateLine'
 
-const EditAllocation = () => {
+const EditBudgetAllocationTemplateLine = () => {
   const navigation = useNavigation<NavigationProp>()
-  const { params: { allocationId } } = useRoute<RouteProp<RootStackParamList, 'Edit Allocation'>>()
+  const { params: { lineId } } = useRoute<RouteProp<RootStackParamList, 'Edit Template Line'>>()
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
 
-  useQuery<Allocation>(GET_ALLOCATION, {
-    variables: { id: allocationId },
+  useQuery<BudgetAllocationTemplateLine>(GET_BUDGET_ALLOCATION_TEMPLATE_LINE, {
+    variables: { id: lineId },
     onCompleted: data => {
-      setAmount(data.allocation.amount.toDecimalPlaces(2).toFixed(2))
-      setBudgetId(data.allocation.budget.id)
+      setAmount(data.budgetAllocationTemplateLine.amount.toDecimalPlaces(2).toFixed(2))
+      setBudgetId(data.budgetAllocationTemplateLine.budget.id)
     }
   })
 
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [updateAllocation] = useMutation(UPDATE_ALLOCATION, {
+  const [updateTemplateLine] = useMutation(UPDATE_BUDGET_ALLOCATION_TEMPLATE_LINE, {
     variables: {
-      id: allocationId,
+      id: lineId,
       amount: amount,
-      budgetId: budgetId,
-    },
-    refetchQueries: [{ query: MAIN_QUERY }]
+      budgetId: budgetId
+    }
   })
 
   const saveAndGoBack = () => {
-    updateAllocation()
+    updateTemplateLine()
     navigation.goBack()
   }
 
@@ -54,4 +53,4 @@ const EditAllocation = () => {
   )
 }
 
-export default EditAllocation
+export default EditBudgetAllocationTemplateLine

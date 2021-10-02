@@ -4,45 +4,37 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { GET_TEMPLATE_LINE, MAIN_QUERY, UPDATE_TEMPLATE_LINE } from 'src/queries'
+import { CREATE_BUDGET_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
-import { AllocationTemplateLine } from 'src/graphql/AllocationTemplateLine'
 
-const EditTemplateLine = () => {
+const CreateBudgetAllocation = () => {
   const navigation = useNavigation<NavigationProp>()
-  const { params: { lineId } } = useRoute<RouteProp<RootStackParamList, 'Edit Template Line'>>()
+  const { params: { transactionId } } = useRoute<RouteProp<RootStackParamList, 'Create Allocation'>>()
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
 
-  useQuery<AllocationTemplateLine>(GET_TEMPLATE_LINE, {
-    variables: { id: lineId },
-    onCompleted: data => {
-      setAmount(data.allocationTemplateLine.amount.toDecimalPlaces(2).toFixed(2))
-      setBudgetId(data.allocationTemplateLine.budget.id)
-    }
-  })
-
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [updateTemplateLine] = useMutation(UPDATE_TEMPLATE_LINE, {
+  const [createAllocation] = useMutation(CREATE_BUDGET_ALLOCATION, {
     variables: {
-      id: lineId,
       amount: amount,
-      budgetId: budgetId
-    }
+      budgetId: budgetId,
+      transactionId: transactionId,
+    },
+    refetchQueries: [{ query: MAIN_QUERY }, { query: GET_TRANSACTION, variables: { id: transactionId } }]
   })
 
   const saveAndGoBack = () => {
-    updateTemplateLine()
+    createAllocation()
     navigation.goBack()
   }
 
-  useLayoutEffect(() => navigation.setOptions({
-    headerTitle: '',
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" />
+  useLayoutEffect(() => navigation.setOptions({ 
+    headerTitle: '', 
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
   }))
 
   return (
@@ -53,4 +45,4 @@ const EditTemplateLine = () => {
   )
 }
 
-export default EditTemplateLine
+export default CreateBudgetAllocation

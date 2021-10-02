@@ -80,7 +80,7 @@ export const DELETE_BUDGET = gql`
 `
 
 //
-// Allocations
+// Budget Allocations
 //
 export const BUDGET_ALLOCATION_FRAGMENT = gql`
   fragment BudgetAllocationFragment on BudgetAllocation {

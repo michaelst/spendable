@@ -4,37 +4,46 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { CREATE_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
-import { Main } from 'src/graphql/Main'
+import { GET_BUDGET_ALLOCATION, MAIN_QUERY, UPDATE_BUDGET_ALLOCATION } from '../queries'
 import HeaderButton from 'src/components/HeaderButton'
+import { Main } from 'src/graphql/Main'
+import { BudgetAllocation } from 'src/graphql/BudgetAllocation'
 
-const CreateAllocation = () => {
+const EditBudgetAllocation = () => {
   const navigation = useNavigation<NavigationProp>()
-  const { params: { transactionId } } = useRoute<RouteProp<RootStackParamList, 'Create Allocation'>>()
+  const { params: { allocationId } } = useRoute<RouteProp<RootStackParamList, 'Edit Allocation'>>()
 
   const [amount, setAmount] = useState('')
   const [budgetId, setBudgetId] = useState('')
 
+  useQuery<BudgetAllocation>(GET_BUDGET_ALLOCATION, {
+    variables: { id: allocationId },
+    onCompleted: data => {
+      setAmount(data.budgetAllocation.amount.toDecimalPlaces(2).toFixed(2))
+      setBudgetId(data.budgetAllocation.budget.id)
+    }
+  })
+
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [createAllocation] = useMutation(CREATE_ALLOCATION, {
+  const [updateAllocation] = useMutation(UPDATE_BUDGET_ALLOCATION, {
     variables: {
+      id: allocationId,
       amount: amount,
       budgetId: budgetId,
-      transactionId: transactionId,
     },
-    refetchQueries: [{ query: MAIN_QUERY }, { query: GET_TRANSACTION, variables: { id: transactionId } }]
+    refetchQueries: [{ query: MAIN_QUERY }]
   })
 
   const saveAndGoBack = () => {
-    createAllocation()
+    updateAllocation()
     navigation.goBack()
   }
 
-  useLayoutEffect(() => navigation.setOptions({ 
-    headerTitle: '', 
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
+  useLayoutEffect(() => navigation.setOptions({
+    headerTitle: '',
+    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" />
   }))
 
   return (
@@ -45,4 +54,4 @@ const CreateAllocation = () => {
   )
 }
 
-export default CreateAllocation
+export default EditBudgetAllocation

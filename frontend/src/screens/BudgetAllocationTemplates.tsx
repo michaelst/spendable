@@ -5,31 +5,29 @@ import { FlatList } from 'react-native-gesture-handler'
 import { useQuery } from '@apollo/client'
 import TemplateRow, { TemplateRowItem } from '../components/TemplateRow'
 import Decimal from 'decimal.js-light'
-import useAppStyles from 'src/utils/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
-import { ListAllocationTemplates } from 'src/graphql/ListAllocationTemplates'
-import { LIST_TEMPLATES } from 'src/queries'
+import { LIST_BUDGET_ALLOCATION_TEMPLATES } from 'src/queries'
+import { ListBudgetAllocationTemplates } from 'src/graphql/ListBudgetAllocationTemplates'
 
-const Templates = () => {
+const BudgetAllocationTemplates = () => {
   const navigation = useNavigation<NavigationProp>()
-  const { styles, colors } = useAppStyles()
 
   const navigateToCreateTemplate = () => navigation.navigate('Create Template')
   const headerRight = () => <HeaderButton title="Add" onPress={navigateToCreateTemplate} />
   useLayoutEffect(() => navigation.setOptions({ headerRight: headerRight }))
 
-  const { data, loading, refetch } = useQuery<ListAllocationTemplates>(LIST_TEMPLATES)
+  const { data, loading, refetch } = useQuery<ListBudgetAllocationTemplates>(LIST_BUDGET_ALLOCATION_TEMPLATES)
 
   const templates: TemplateRowItem[] =
-    [...data?.allocationTemplates ?? []]
+    [...data?.budgetAllocationTemplates ?? []]
       .sort((a, b) => {
-        const aAllocated = a.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
-        const bAllocated = b.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
+        const aAllocated = a.budgetAllocationTemplateLines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
+        const bAllocated = b.budgetAllocationTemplateLines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
 
         return bAllocated.comparedTo(aAllocated)
       })
       .map(template => {
-        const allocated = template.lines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
+        const allocated = template.budgetAllocationTemplateLines.reduce((acc, line) => acc.add(line.amount), new Decimal('0'))
         
         return {
           key: template.id,
@@ -50,4 +48,4 @@ const Templates = () => {
   )
 }
 
-export default Templates
+export default BudgetAllocationTemplates

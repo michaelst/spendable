@@ -24,7 +24,7 @@ defmodule Spendable.Plug.Auth do
   defp build_context(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {:ok, %User{} = user, _claims} <- Guardian.resource_from_token(token) do
-      {:ok, %{current_user: user, actor: user}}
+      {:ok, %{actor: user}}
     end
   end
 end

@@ -23,14 +23,12 @@ const EditBudget = () => {
 
   const [name, setName] = useState(data?.budget.name || '')
   const [balance, setBalance] = useState(data?.budget.balance.toDecimalPlaces(2).toFixed(2) || '')
-  const [goal, setGoal] = useState(data?.budget.goal?.toDecimalPlaces(2).toFixed(2) || '')
 
   const [updateBudget] = useMutation(UPDATE_BUDGET, {
     variables: {
       id: budgetId,
       name: name,
-      balance: balance,
-      goal: goal === '' ? null : goal
+      balance: balance
     },
     refetchQueries: [{ query: MAIN_QUERY }]
   })
@@ -64,13 +62,6 @@ const EditBudget = () => {
         placeholder: 'Balance',
         value: balance,
         setValue: setBalance,
-        keyboardType: 'decimal-pad'
-      },
-      {
-        key: 'goal',
-        placeholder: 'Goal',
-        value: goal,
-        setValue: setGoal,
         keyboardType: 'decimal-pad'
       }
     ]

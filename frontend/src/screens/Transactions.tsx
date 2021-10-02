@@ -22,7 +22,7 @@ const Transactions = () => {
   if (loading && !data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const transactions: TransactionRowItem[] =
-  [...data?.transactions ?? []]
+  [...data?.transactions?.results ?? []]
     .sort((a, b) => b.date - a.date)
     .map(transaction => ({
       key: transaction.id,

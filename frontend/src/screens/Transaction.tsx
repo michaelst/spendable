@@ -14,6 +14,7 @@ import TemplateSelect from '../components/TemplateSelect'
 import HeaderButton from 'src/components/HeaderButton'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { DateTime } from 'luxon'
 
 const Transaction = () => {
   const { styles, colors, fontSize, baseUnit } = useAppStyles()
@@ -77,11 +78,13 @@ const Transaction = () => {
     updateTransaction({
       variables: {
         id: transactionId,
-        amount: amount,
-        date: date,
-        name: name,
-        note: note,
-        reviewed: reviewed
+        input: {
+          amount: amount,
+          date: DateTime.fromJSDate(date).toISODate(),
+          name: name,
+          note: note,
+          reviewed: reviewed
+        }
       }
     })
     navigation.goBack()

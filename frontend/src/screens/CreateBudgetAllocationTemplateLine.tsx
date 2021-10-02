@@ -4,12 +4,12 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
-import { CREATE_TEMPLATE_LINE, GET_TEMPLATE, MAIN_QUERY } from 'src/queries'
+import { CREATE_BUDGET_ALLOCATION_TEMPLATE_LINE, GET_BUDGET_ALLOCATION_TEMPLATE, MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import HeaderButton from 'src/components/HeaderButton'
-import { GetAllocationTemplate } from 'src/graphql/GetAllocationTemplate'
+import { GetBudgetAllocationTemplate } from 'src/graphql/GetBudgetAllocationTemplate'
 
-const CreateTemplateLine = () => {
+const CreateBudgetAllocationTemplateLine = () => {
   const navigation = useNavigation<NavigationProp>()
   const { params: { templateId } } = useRoute<RouteProp<RootStackParamList, 'Create Template Line'>>()
 
@@ -19,19 +19,19 @@ const CreateTemplateLine = () => {
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [createTemplateLine] = useMutation(CREATE_TEMPLATE_LINE, {
+  const [createTemplateLine] = useMutation(CREATE_BUDGET_ALLOCATION_TEMPLATE_LINE, {
     variables: {
       budgetAllocationTemplateId: templateId,
       amount: amount,
       budgetId: budgetId
     },
     update(cache, { data: { createAllocationTemplateLine } }) {
-      const data = cache.readQuery<GetAllocationTemplate | null>({ query: GET_TEMPLATE, variables: { id: templateId } })
-      const lines = data?.allocationTemplate.lines.concat([createAllocationTemplateLine])
+      const data = cache.readQuery<GetBudgetAllocationTemplate | null>({ query: GET_BUDGET_ALLOCATION_TEMPLATE, variables: { id: templateId } })
+      const lines = data?.budgetAllocationTemplate.budgetAllocationTemplateLines.concat([createAllocationTemplateLine])
 
       cache.writeQuery({
-        query: GET_TEMPLATE,
-        data: { allocationTemplate: { ...data?.allocationTemplate, ...{ lines: lines } } }
+        query: GET_BUDGET_ALLOCATION_TEMPLATE,
+        data: { budgetAllocationTemplate: { ...data?.budgetAllocationTemplate, ...{ budgetAllocationTemplateLines: lines } } }
       })
     }
   })
@@ -54,4 +54,4 @@ const CreateTemplateLine = () => {
   )
 }
 
-export default CreateTemplateLine
+export default CreateBudgetAllocationTemplateLine

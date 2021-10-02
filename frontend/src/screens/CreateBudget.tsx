@@ -18,13 +18,13 @@ const CreateBudget = () => {
 
   const [name, setName] = useState('')
   const [balance, setBalance] = useState('0.00')
-  const [goal, setGoal] = useState('')
 
   const [createBudget] = useMutation(CREATE_BUDGET, {
     variables: {
-      name: name,
-      balance: balance,
-      goal: goal === '' ? null : goal
+      input: {
+        name: name,
+        balance: balance
+      }
     },
     refetchQueries: [{ query: MAIN_QUERY }]
   })
@@ -58,13 +58,6 @@ const CreateBudget = () => {
         placeholder: 'Balance',
         value: balance,
         setValue: setBalance,
-        keyboardType: 'decimal-pad'
-      },
-      {
-        key: 'goal',
-        placeholder: 'Goal',
-        value: goal,
-        setValue: setGoal,
         keyboardType: 'decimal-pad'
       }
     ]

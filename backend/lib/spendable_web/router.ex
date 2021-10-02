@@ -46,6 +46,6 @@ defmodule Spendable.Web.Router do
     forward "/graphql", Absinthe.Plug,
       schema: Spendable.Web.Schema,
       analyze_complexity: true,
-      max_complexity: 500
+      max_complexity: 1000
   end
 end

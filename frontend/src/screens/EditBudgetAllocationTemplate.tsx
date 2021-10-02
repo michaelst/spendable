@@ -2,24 +2,22 @@ import React, { useLayoutEffect, useState } from 'react'
 import { View, } from 'react-native'
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
-import useAppStyles from 'src/utils/useAppStyles'
 import FormInput from 'src/components/FormInput'
 import HeaderButton from 'src/components/HeaderButton'
-import { GetAllocationTemplate } from 'src/graphql/GetAllocationTemplate'
-import { GET_TEMPLATE, UPDATE_TEMPLATE } from 'src/queries'
+import { GET_BUDGET_ALLOCATION_TEMPLATE, UPDATE_BUDGET_ALLOCATION_TEMPLATE } from 'src/queries'
+import { GetBudgetAllocationTemplate } from 'src/graphql/GetBudgetAllocationTemplate'
 
-const EditTemplate = () => {
-  const { styles } = useAppStyles()
+const EditBudgetAllocationTemplate = () => {
 
   const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Edit Template'>>()
   const { templateId } = route.params
 
-  const { data } = useQuery<GetAllocationTemplate>(GET_TEMPLATE, { variables: { id: templateId } })
+  const { data } = useQuery<GetBudgetAllocationTemplate>(GET_BUDGET_ALLOCATION_TEMPLATE, { variables: { id: templateId } })
 
-  const [name, setName] = useState(data?.allocationTemplate.name || '')
+  const [name, setName] = useState(data?.budgetAllocationTemplate.name || '')
 
-  const [updateTemplate] = useMutation(UPDATE_TEMPLATE, {
+  const [updateTemplate] = useMutation(UPDATE_BUDGET_ALLOCATION_TEMPLATE, {
     variables: {
       id: templateId,
       name: name
@@ -43,4 +41,4 @@ const EditTemplate = () => {
   )
 }
 
-export default EditTemplate
+export default EditBudgetAllocationTemplate

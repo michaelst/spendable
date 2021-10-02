@@ -1,12 +1,12 @@
 import Decimal from "decimal.js-light";
-import { GetTransaction_transaction, GetTransaction_transaction_allocations } from "../screens/transactions/graphql/GetTransaction";
+import { GetTransaction_transaction, GetTransaction_transaction_budgetAllocations } from "src/graphql/GetTransaction";
 
 const getAllocations = (transaction: GetTransaction_transaction) => {
-  const sortedAllocations = [...transaction.allocations].sort((a, b) => b.amount.comparedTo(a.amount))
-  const allocated = transaction.allocations.reduce((acc, allocation) => acc.add(allocation.amount), new Decimal('0'))
+  const sortedAllocations = [...transaction.budgetAllocations].sort((a, b) => b.amount.comparedTo(a.amount))
+  const allocated = transaction.budgetAllocations.reduce((acc, allocation) => acc.add(allocation.amount), new Decimal('0'))
 
-  const spendable: GetTransaction_transaction_allocations = {
-    __typename: 'Allocation',
+  const spendable: GetTransaction_transaction_budgetAllocations = {
+    __typename: 'BudgetAllocation',
     id: 'spendable',
     amount: transaction.amount.sub(allocated),
     budget: {

@@ -69,9 +69,9 @@ defmodule Spendable.Tranasction.GraphQLTests do
           results {
             id
             name
-            note
             amount
             date
+            reviewed
           }
         }
       }
@@ -87,7 +87,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
                       "date" => "#{expense.date}",
                       "id" => "#{expense.id}",
                       "name" => "test",
-                      "note" => "some notes"
+                      "reviewed" => false
                     }
                   ]
                 }

@@ -4,24 +4,24 @@ import { useMutation } from '@apollo/client'
 import { useNavigation } from '@react-navigation/native'
 import FormInput from 'src/components/FormInput'
 import HeaderButton from 'src/components/HeaderButton'
-import { ListAllocationTemplates } from 'src/graphql/ListAllocationTemplates'
-import { CREATE_TEMPLATE, LIST_TEMPLATES } from 'src/queries'
+import { CREATE_BUDGET_ALLOCATION_TEMPLATE, LIST_BUDGET_ALLOCATION_TEMPLATES } from 'src/queries'
+import { ListBudgetAllocationTemplates } from 'src/graphql/ListBudgetAllocationTemplates'
 
-const CreateTemplate = () => {
+const CreateBudgetAllocationTemplate = () => {
   const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')
 
-  const [createTemplate] = useMutation(CREATE_TEMPLATE, {
+  const [createTemplate] = useMutation(CREATE_BUDGET_ALLOCATION_TEMPLATE, {
     variables: {
       name: name
     },
     update(cache, { data: { createAllocationTemplate } }) {
-      const data = cache.readQuery<ListAllocationTemplates | null>({ query: LIST_TEMPLATES })
+      const data = cache.readQuery<ListBudgetAllocationTemplates | null>({ query: LIST_BUDGET_ALLOCATION_TEMPLATES })
 
       cache.writeQuery({
-        query: LIST_TEMPLATES,
-        data: { allocationTemplates: data?.allocationTemplates.concat([createAllocationTemplate]) }
+        query: LIST_BUDGET_ALLOCATION_TEMPLATES,
+        data: { allocationTemplates: data?.budgetAllocationTemplates.concat([createAllocationTemplate]) }
       })
     }
   })
@@ -43,4 +43,4 @@ const CreateTemplate = () => {
   )
 }
 
-export default CreateTemplate
+export default CreateBudgetAllocationTemplate
