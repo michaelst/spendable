@@ -15,7 +15,10 @@ defmodule Spendable.BankMember.Changes.CreateBankMember do
     Ash.Changeset.before_action(changeset, fn changeset ->
       case get_bank_member(public_token, user) do
         {:ok, bank_member_data} ->
-          Ash.Changeset.force_change_attributes(changeset, bank_member_data)
+          changeset
+          |> Ash.Changeset.force_change_attributes(bank_member_data)
+          |> Ash.Changeset.select(:plaid_token)
+
 
         {:error, error} ->
           Ash.Changeset.add_error(changeset, error)
