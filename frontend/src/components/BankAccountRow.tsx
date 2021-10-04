@@ -31,7 +31,9 @@ const BankAccountRow = ({ bankAccount }: Props) => {
       <View style={{ flexDirection: "row", marginLeft: 18 }}>
         <Switch
           value={bankAccount.sync}
-          onValueChange={value => updateBankAccount({ variables: { id: bankAccount.id, sync: value } })}
+          onValueChange={value => {
+            updateBankAccount({ variables: { id: bankAccount.id, input: { sync: value } } })
+          }}
         />
       </View>
     </View>
