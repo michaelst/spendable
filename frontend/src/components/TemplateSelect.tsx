@@ -20,7 +20,7 @@ import { ListBudgetAllocationTemplates, ListBudgetAllocationTemplates_budgetAllo
 type BudgetAllocationInputObject = {
   amount: Decimal
   budget: {
-    id: string
+    id: number
   }
 }
 
@@ -92,7 +92,7 @@ const TemplateSelectModal = ({ modalVisible, setModalVisible, setValue }: Templa
               <TouchableHighlight onPress={() => {
                 const allocations = item.budgetAllocationTemplateLines.map(line => ({
                   amount: line.amount,
-                  budget: { id: line.budget.id }
+                  budget: { id: parseInt(line.budget.id) }
                 }))
 
                 setValue(allocations)

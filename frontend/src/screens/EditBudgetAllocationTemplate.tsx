@@ -1,15 +1,13 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, } from 'react-native'
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { RouteProp, useRoute } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
-import HeaderButton from 'src/components/HeaderButton'
 import { GET_BUDGET_ALLOCATION_TEMPLATE, UPDATE_BUDGET_ALLOCATION_TEMPLATE } from 'src/queries'
 import { GetBudgetAllocationTemplate } from 'src/graphql/GetBudgetAllocationTemplate'
+import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
 
 const EditBudgetAllocationTemplate = () => {
-
-  const navigation = useNavigation()
   const route = useRoute<RouteProp<RootStackParamList, 'Edit Template'>>()
   const { templateId } = route.params
 
@@ -20,19 +18,13 @@ const EditBudgetAllocationTemplate = () => {
   const [updateTemplate] = useMutation(UPDATE_BUDGET_ALLOCATION_TEMPLATE, {
     variables: {
       id: templateId,
-      name: name
+      input: {
+        name: name
+      }
     }
   })
 
-  const saveAndGoBack = () => {
-    updateTemplate()
-    navigation.goBack()
-  }
-
-  useLayoutEffect(() => navigation.setOptions({ 
-    headerTitle: '', 
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
-  }))
+  useSaveAndGoBack({ mutation: updateTemplate, action: "update template" })
 
   return (
     <View>

@@ -12,6 +12,7 @@ import { UpdateBudgetAllocationTemplateLineInput } from "./globalTypes";
 export interface UpdateBudgetAllocationTemplateLine_updateBudgetAllocationTemplateLine_result_budget {
   __typename: "Budget";
   id: string;
+  name: string;
 }
 
 export interface UpdateBudgetAllocationTemplateLine_updateBudgetAllocationTemplateLine_result_budgetAllocationTemplate {

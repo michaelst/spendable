@@ -10,13 +10,14 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
-import { GetTransaction_transaction_allocations } from 'src/graphql/GetTransaction'
-import { DELETE_ALLOCATION } from 'src/queries'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { GetTransaction_transaction_budgetAllocations } from 'src/graphql/GetTransaction'
+import { DELETE_BUDGET_ALLOCATION } from 'src/queries'
+import { DeleteBudgetAllocation } from 'src/graphql/DeleteBudgetAllocation'
 
 type Props = {
-  allocation: GetTransaction_transaction_allocations
+  allocation: GetTransaction_transaction_budgetAllocations
 }
 
 const TransactionAllocationRow = ({ allocation }: Props) => {
@@ -25,10 +26,11 @@ const TransactionAllocationRow = ({ allocation }: Props) => {
 
   const navigateToEdit = () => navigation.navigate('Edit Allocation', { allocationId: allocation.id })
 
-  const [deleteAllocation] = useMutation(DELETE_ALLOCATION, {
+  const [deleteAllocation] = useMutation(DELETE_BUDGET_ALLOCATION, {
     variables: { id: allocation.id },
-    update(cache, { data: { deleteAllocation } }) {
-      cache.evict({ id: 'Allocation:' + deleteAllocation.id })
+    update(cache, { data }) {
+      const { deleteBudgetAllocation }: DeleteBudgetAllocation = data
+      cache.evict({ id: 'BudgetAllocation:' + deleteBudgetAllocation?.result?.id })
       cache.gc()
     }
   })

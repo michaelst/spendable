@@ -1,16 +1,15 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, } from 'react-native'
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { RouteProp, useRoute } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
 import { GET_BUDGET_ALLOCATION, MAIN_QUERY, UPDATE_BUDGET_ALLOCATION } from '../queries'
-import HeaderButton from 'src/components/HeaderButton'
 import { Main } from 'src/graphql/Main'
 import { BudgetAllocation } from 'src/graphql/BudgetAllocation'
+import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
 
 const EditBudgetAllocation = () => {
-  const navigation = useNavigation<NavigationProp>()
   const { params: { allocationId } } = useRoute<RouteProp<RootStackParamList, 'Edit Allocation'>>()
 
   const [amount, setAmount] = useState('')
@@ -30,21 +29,15 @@ const EditBudgetAllocation = () => {
   const [updateAllocation] = useMutation(UPDATE_BUDGET_ALLOCATION, {
     variables: {
       id: allocationId,
-      amount: amount,
-      budgetId: budgetId,
+      input: {
+        amount: amount,
+        budget: { id: parseInt(budgetId) },
+      }
     },
     refetchQueries: [{ query: MAIN_QUERY }]
   })
 
-  const saveAndGoBack = () => {
-    updateAllocation()
-    navigation.goBack()
-  }
-
-  useLayoutEffect(() => navigation.setOptions({
-    headerTitle: '',
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" />
-  }))
+  useSaveAndGoBack({ mutation: updateAllocation, action: "edit expense" })
 
   return (
     <View>

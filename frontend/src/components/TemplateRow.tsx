@@ -35,7 +35,7 @@ const TemplateRow = ({ item }: TemplateRowProps) => {
     variables: { id: item.templateId },
     update(cache, { data }) {
       const { deleteBudgetAllocationTemplate }: DeleteBudgetAllocationTemplate = data
-      cache.evict({ id: 'AllocationTemplate:' + deleteBudgetAllocationTemplate?.result?.id })
+      cache.evict({ id: 'BudgetAllocationTemplate:' + deleteBudgetAllocationTemplate?.result?.id })
       cache.gc()
     }
   })

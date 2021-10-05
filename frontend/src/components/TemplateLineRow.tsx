@@ -10,13 +10,14 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { RectButton } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
-import { GetAllocationTemplate_allocationTemplate_lines } from 'src/graphql/GetAllocationTemplate'
-import { DELETE_TEMPLATE_LINE } from 'src/queries'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { GetBudgetAllocationTemplate_budgetAllocationTemplate_budgetAllocationTemplateLines } from 'src/graphql/GetBudgetAllocationTemplate'
+import { DELETE_BUDGET_ALLOCATION_TEMPLATE_LINE } from 'src/queries'
+import { DeleteBudgetAllocationTemplateLine } from 'src/graphql/DeleteBudgetAllocationTemplateLine'
 
 type Props = {
-  line: GetAllocationTemplate_allocationTemplate_lines,
+  line: GetBudgetAllocationTemplate_budgetAllocationTemplate_budgetAllocationTemplateLines,
 }
 
 const TemplateLineRow = ({ line }: Props) => {
@@ -25,10 +26,11 @@ const TemplateLineRow = ({ line }: Props) => {
 
   const navigateToEdit = () => navigation.navigate('Edit Template Line', { lineId: line.id })
 
-  const [deleteAllocationTemplateLine] = useMutation(DELETE_TEMPLATE_LINE, {
+  const [deleteAllocationTemplateLine] = useMutation(DELETE_BUDGET_ALLOCATION_TEMPLATE_LINE, {
     variables: { id: line.id },
-    update(cache, { data: { deleteAllocationTemplateLine } }) {
-      cache.evict({ id: 'AllocationTemplateLine:' + deleteAllocationTemplateLine.id })
+    update(cache, { data }) {
+      const { deleteBudgetAllocationTemplateLine }: DeleteBudgetAllocationTemplateLine = data
+      cache.evict({ id: 'BudgetAllocationTemplateLine:' + deleteBudgetAllocationTemplateLine?.result?.id })
       cache.gc()
     }
   })

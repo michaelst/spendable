@@ -5,10 +5,8 @@ import {
   View,
   KeyboardType,
   InputAccessoryView,
-  Button
 } from 'react-native'
 import useAppStyles from 'src/utils/useAppStyles'
-import { useTheme } from '@react-navigation/native'
 import Decimal from 'decimal.js-light'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 

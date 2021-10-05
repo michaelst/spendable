@@ -1,15 +1,14 @@
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, } from 'react-native'
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native'
+import { RouteProp, useRoute } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
 import { CREATE_BUDGET_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
 import { Main } from 'src/graphql/Main'
-import HeaderButton from 'src/components/HeaderButton'
+import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
 
 const CreateBudgetAllocation = () => {
-  const navigation = useNavigation<NavigationProp>()
   const { params: { transactionId } } = useRoute<RouteProp<RootStackParamList, 'Create Allocation'>>()
 
   const [amount, setAmount] = useState('')
@@ -18,24 +17,18 @@ const CreateBudgetAllocation = () => {
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [createAllocation] = useMutation(CREATE_BUDGET_ALLOCATION, {
+  const [createBudgetAllocation] = useMutation(CREATE_BUDGET_ALLOCATION, {
     variables: {
-      amount: amount,
-      budgetId: budgetId,
-      transactionId: transactionId,
+      input: {
+        amount: amount,
+        budget: { id: parseInt(budgetId) },
+        transaction: { id: parseInt(transactionId) }
+      }
     },
     refetchQueries: [{ query: MAIN_QUERY }, { query: GET_TRANSACTION, variables: { id: transactionId } }]
   })
 
-  const saveAndGoBack = () => {
-    createAllocation()
-    navigation.goBack()
-  }
-
-  useLayoutEffect(() => navigation.setOptions({ 
-    headerTitle: '', 
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
-  }))
+  useSaveAndGoBack({ mutation: createBudgetAllocation, action: "add expense to transaction" })
 
   return (
     <View>

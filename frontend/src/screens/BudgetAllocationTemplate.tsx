@@ -1,5 +1,6 @@
 import React, { useLayoutEffect } from 'react'
 import {
+  ActivityIndicator,
   Text,
   View,
 } from 'react-native'
@@ -27,7 +28,7 @@ const BudgetAllocationTemplate = () => {
 
   useLayoutEffect(() => navigation.setOptions({ headerTitle: data?.budgetAllocationTemplate.name, headerRight: headerRight }))
 
-  if (!data) return null
+  if (!data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
   
   const lines = [...data.budgetAllocationTemplate.budgetAllocationTemplateLines].sort((a, b) => b.amount.comparedTo(a.amount))
 
@@ -38,7 +39,7 @@ const BudgetAllocationTemplate = () => {
       ListFooterComponent={() => (
         <TouchableHighlight onPress={navigateToCreate}>
           <View style={styles.footer}>
-            <Text style={{ color: colors.primary }}>Add Expense/Goal</Text>
+            <Text style={{ color: colors.primary }}>Add Expense</Text>
           </View>
         </TouchableHighlight>
       )}

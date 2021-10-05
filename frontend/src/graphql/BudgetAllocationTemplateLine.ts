@@ -10,6 +10,7 @@
 export interface BudgetAllocationTemplateLine_budgetAllocationTemplateLine_budget {
   __typename: "Budget";
   id: string;
+  name: string;
 }
 
 export interface BudgetAllocationTemplateLine_budgetAllocationTemplateLine_budgetAllocationTemplate {

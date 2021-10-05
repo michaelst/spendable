@@ -381,6 +381,7 @@ export const BUDGET_ALLOCATION_TEMPLATE_LINE_FRAGMENT = gql`
     amount
     budget {
       id
+      name
     }
     budgetAllocationTemplate {
       id
@@ -402,7 +403,7 @@ export const CREATE_BUDGET_ALLOCATION_TEMPLATE_LINE = gql`
   mutation CreateBudgetAllocationTemplateLine($input: CreateBudgetAllocationTemplateLineInput) {
     createBudgetAllocationTemplateLine(input: $input) {
       result {
-      ...BudgetAllocationTemplateLineFragment
+        ...BudgetAllocationTemplateLineFragment
       }
     }
   }
