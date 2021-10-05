@@ -10,9 +10,10 @@ import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/utils/useAppStyles'
-import { DELETE_TEMPLATE } from 'src/queries'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { DeleteBudgetAllocationTemplate } from 'src/graphql/DeleteBudgetAllocationTemplate'
+import { DELETE_BUDGET_ALLOCATION_TEMPLATE } from 'src/queries'
 
 export type TemplateRowItem = {
   key: string
@@ -30,10 +31,11 @@ type TemplateRowProps = {
 const TemplateRow = ({ item }: TemplateRowProps) => {
   const { styles } = useAppStyles()
 
-  const [deleteAllocationTemplate] = useMutation(DELETE_TEMPLATE, {
+  const [deleteAllocationTemplate] = useMutation(DELETE_BUDGET_ALLOCATION_TEMPLATE, {
     variables: { id: item.templateId },
-    update(cache, { data: { deleteAllocationTemplate } }) {
-      cache.evict({ id: 'AllocationTemplate:' + deleteAllocationTemplate.id })
+    update(cache, { data }) {
+      const { deleteBudgetAllocationTemplate }: DeleteBudgetAllocationTemplate = data
+      cache.evict({ id: 'AllocationTemplate:' + deleteBudgetAllocationTemplate?.result?.id })
       cache.gc()
     }
   })

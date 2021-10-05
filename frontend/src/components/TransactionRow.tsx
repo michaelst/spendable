@@ -16,6 +16,7 @@ import useAppStyles from 'src/utils/useAppStyles'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { DeleteTransaction } from 'src/graphql/DeleteTransaction'
 
 export type TransactionRowItem = {
   key: string
@@ -41,8 +42,9 @@ const TransactionRow = ({ item }: TransactionRowProps) => {
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
     variables: { id: item.transactionId },
     refetchQueries: [{ query: MAIN_QUERY }],
-    update(cache, { data: { deleteTransaction } }) {
-      cache.evict({ id: 'Transaction:' + deleteTransaction.id })
+    update(cache, { data }) {
+      const { deleteTransaction }: DeleteTransaction = data
+      cache.evict({ id: 'Transaction:' + deleteTransaction?.result?.id })
       cache.gc()
     }
   })

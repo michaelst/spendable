@@ -12,8 +12,6 @@ import { CreateBudgetInput } from "./globalTypes";
 export interface CreateBudget_createBudget_result {
   __typename: "Budget";
   id: string;
-  name: string;
-  balance: Decimal;
 }
 
 export interface CreateBudget_createBudget {

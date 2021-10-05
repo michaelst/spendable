@@ -21,7 +21,10 @@ const Budget = () => {
   const navigateToEdit = () => navigation.navigate('Edit Budget', { budgetId: budgetId })
   const headerRight = () => <HeaderButton title="Edit" onPress={navigateToEdit} />
 
-  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId }, fetchPolicy: 'cache-and-network' })
+  const { data } = useQuery<GetBudget>(GET_BUDGET, { 
+    variables: { id: budgetId }, 
+    fetchPolicy: 'cache-and-network' 
+  })
 
   useLayoutEffect(() => navigation.setOptions({ headerTitle: data?.budget.name, headerRight: headerRight }))
 

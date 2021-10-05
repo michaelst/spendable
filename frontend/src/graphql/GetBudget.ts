@@ -39,6 +39,7 @@ export interface GetBudget_budget {
   __typename: "Budget";
   id: string;
   name: string;
+  adjustment: Decimal;
   balance: Decimal;
   budgetAllocations: GetBudget_budget_budgetAllocations[];
   budgetAllocationTemplateLines: GetBudget_budget_budgetAllocationTemplateLines[];

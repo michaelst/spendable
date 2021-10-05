@@ -48,9 +48,7 @@ const Transaction = () => {
     refetchQueries: [{ query: MAIN_QUERY }]
   })
 
-  if (!data?.transaction) {
-    return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
-  }
+  if (!data?.transaction) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const allocations = getAllocations(data.transaction)
 
@@ -60,14 +58,17 @@ const Transaction = () => {
 
   const setSpendFrom = (budgetId: string) => {
     if (budgetId === 'spendable') {
-      updateTransaction({ variables: { id: transactionId, allocations: [] } })
+      updateTransaction({ variables: { id: transactionId, input: { budgetAllocations: [] } } })
     } else {
       updateTransaction({
         variables: {
-          id: transactionId, allocations: [{
-            amount: amount,
-            budgetId: budgetId
-          }]
+          id: transactionId,
+          input: {
+            budgetAllocations: [{
+              amount: amount,
+              budget: { id: parseInt(budgetId) }
+            }]
+          }
         }
       })
     }
@@ -148,7 +149,7 @@ const Transaction = () => {
           </TouchableHighlight>
         </View>
         <View style={{ flexDirection: "row", justifyContent: 'flex-end', width: '50%' }}>
-          <TemplateSelect setValue={allocations => updateTransaction({ variables: { id: transactionId, allocations: allocations } })} />
+          <TemplateSelect setValue={allocations => updateTransaction({ variables: { id: transactionId, input: { budgetAllocations: allocations } } })} />
         </View>
       </View>
     </View>

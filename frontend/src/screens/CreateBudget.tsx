@@ -19,7 +19,7 @@ const CreateBudget = () => {
     refetchQueries: [{ query: MAIN_QUERY }]
   })
 
-  useSaveAndGoBack({ mutation: createBudget, action: "create budget" })
+  useSaveAndGoBack({ mutation: createBudget, action: "create expense" })
 
   return (
     <View style={{ flex: 1 }}>

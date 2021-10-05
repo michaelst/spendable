@@ -73,7 +73,7 @@ const BudgetSelect = ({ title, value, setValue }: FormField) => {
         style={styles.modal}>
         <SafeAreaView style={styles.scrollableModal}>
           <TouchableHighlight onPress={() => setModalVisible(false)} style={styles.close}>
-            <FontAwesomeIcon icon={faWindowClose} size={32} color={colors.text} />
+            <FontAwesomeIcon icon={faWindowClose} size={fontSize * 1.5} color={colors.text} />
           </TouchableHighlight>
           <FlatList
             data={budgetListData}

@@ -31,12 +31,6 @@ const createApolloClient = () => {
               return new Decimal(balance)
             }
           },
-          goal: {
-            read(goal) {
-              if (goal)  return new Decimal(goal)
-              return null
-            }
-          },
         },
       },
       User: {
@@ -57,7 +51,7 @@ const createApolloClient = () => {
           }
         }
       },
-      Allocation: {
+      BudgetAllocation: {
         fields: {
           amount: {
             read(amount) {
@@ -66,7 +60,7 @@ const createApolloClient = () => {
           }
         }
       },
-      AllocationTemplateLine: {
+      BudgetAllocationTemplateLine: {
         fields: {
           amount: {
             read(amount) {
