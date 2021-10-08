@@ -86,13 +86,14 @@ const notificationsRow = () => {
     onCompleted: data => {
       setId(data.notificationSettings.id)
       setEnabled(data.notificationSettings.enabled)
-    }
+    },
+    onError: error => console.log(error)
   })
 
   const [updateNotificationSettings] = useMutation<UpdateNotificationSettings>(UPDATE_NOTIFICATION_SETTINGS)
 
   const toggleSwitch = () => {
-    updateNotificationSettings({ variables: { id: id, enabled: !enabled } })
+    updateNotificationSettings({ variables: { id: id, input: { enabled: !enabled } } })
     setEnabled(!enabled)
   }
 

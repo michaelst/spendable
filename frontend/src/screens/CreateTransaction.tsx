@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Text, View, } from 'react-native'
 import { Switch } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
-import { CREATE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
+import { CREATE_TRANSACTION, LIST_TRANSACTIONS, MAIN_QUERY } from '../queries'
 import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
 import { ListTransactions } from '../graphql/ListTransactions'
@@ -30,6 +30,7 @@ const CreateTransaction = () => {
         reviewed: reviewed
       }
     },
+    refetchQueries: [{ query: MAIN_QUERY }],
     update(cache, { data }) {
       const { createTransaction }: CreateTransactionData = data
 

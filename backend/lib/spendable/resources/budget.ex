@@ -30,9 +30,15 @@ defmodule Spendable.Budget do
   end
 
   calculations do
-    calculate :balance, :decimal, Spendable.Budget.Calculations.Balance,
-      allow_nil?: false,
-      select: [:adjustment]
+    calculate :balance, :decimal, Spendable.Budget.Calculations.Balance do
+      allow_nil? false
+      select [:adjustment]
+    end
+
+    calculate :spent, :decimal, Spendable.Budget.Calculations.Spent do
+      argument :month, :string
+      allow_nil? false
+    end
   end
 
   actions do

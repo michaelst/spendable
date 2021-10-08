@@ -5,7 +5,7 @@ import Decimal from 'decimal.js-light'
 import auth from '@react-native-firebase/auth'
 
 const createApolloClient = () => {
-  const httpLink = new HttpLink({ uri: 'https://114c-205-204-35-189.ngrok.io/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://49cc-205-204-35-189.ngrok.io/graphql' })
 
   const authLink = setContext(async (_, { headers }) => {
     const user = auth().currentUser
@@ -31,6 +31,12 @@ const createApolloClient = () => {
               return new Decimal(balance)
             }
           },
+          spent: {
+            keyArgs: false,
+            read(spent) {
+              return new Decimal(spent)
+            }
+          },
         },
       },
       User: {
@@ -38,6 +44,15 @@ const createApolloClient = () => {
           spendable: {
             read(spendable) {
               return new Decimal(spendable)
+            }
+          }
+        }
+      },
+      MonthSpend: {
+        fields: {
+          spent: {
+            read(spent) {
+              return new Decimal(spent)
             }
           }
         }

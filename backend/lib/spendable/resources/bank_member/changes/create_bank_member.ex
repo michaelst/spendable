@@ -19,7 +19,6 @@ defmodule Spendable.BankMember.Changes.CreateBankMember do
           |> Ash.Changeset.force_change_attributes(bank_member_data)
           |> Ash.Changeset.select(:plaid_token)
 
-
         {:error, error} ->
           Ash.Changeset.add_error(changeset, error)
       end

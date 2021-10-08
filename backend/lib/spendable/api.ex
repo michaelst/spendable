@@ -3,16 +3,7 @@ defmodule Spendable.Api do
     extensions: [AshGraphql.Api]
 
   resources do
-    resource Spendable.BankAccount
-    resource Spendable.BankMember
-    resource Spendable.BankTransaction
-    resource Spendable.Budget
-    resource Spendable.BudgetAllocation
-    resource Spendable.BudgetAllocationTemplate
-    resource Spendable.BudgetAllocationTemplateLine
-    resource Spendable.NotificationSettings
-    resource Spendable.Transaction
-    resource Spendable.User
+    registry Spendable.Api.Registry
   end
 
   graphql do

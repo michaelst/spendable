@@ -28,7 +28,7 @@ export interface CreateBudgetAllocationTemplateBudgetAllocationTemplateLinesInpu
 }
 
 export interface CreateBudgetAllocationTemplateInput {
-  budgetAllocationTemplateLines?: (CreateBudgetAllocationTemplateBudgetAllocationTemplateLinesInput | null)[] | null;
+  budgetAllocationTemplateLines?: CreateBudgetAllocationTemplateBudgetAllocationTemplateLinesInput[] | null;
   name: string;
 }
 
@@ -63,7 +63,7 @@ export interface CreateTransactionBudgetAllocationsInput {
 
 export interface CreateTransactionInput {
   amount: Decimal;
-  budgetAllocations?: (CreateTransactionBudgetAllocationsInput | null)[] | null;
+  budgetAllocations?: CreateTransactionBudgetAllocationsInput[] | null;
   date: Date;
   name: string;
   note?: string | null;
@@ -90,7 +90,7 @@ export interface UpdateBudgetAllocationTemplateBudgetAllocationTemplateLinesInpu
 }
 
 export interface UpdateBudgetAllocationTemplateInput {
-  budgetAllocationTemplateLines?: (UpdateBudgetAllocationTemplateBudgetAllocationTemplateLinesInput | null)[] | null;
+  budgetAllocationTemplateLines?: UpdateBudgetAllocationTemplateBudgetAllocationTemplateLinesInput[] | null;
   name?: string | null;
 }
 
@@ -125,7 +125,7 @@ export interface UpdateTransactionBudgetAllocationsInput {
 
 export interface UpdateTransactionInput {
   amount?: Decimal | null;
-  budgetAllocations?: (UpdateTransactionBudgetAllocationsInput | null)[] | null;
+  budgetAllocations?: UpdateTransactionBudgetAllocationsInput[] | null;
   date?: Date | null;
   name?: string | null;
   note?: string | null;

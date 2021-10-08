@@ -1,15 +1,20 @@
 import { gql } from '@apollo/client'
 
 export const MAIN_QUERY = gql`
-  query Main {
+  query Main($month: String!) {
     currentUser {
       id
       spendable
+      spentByMonth {
+        month
+        spent
+      }
     }
     budgets {
       id
       name
       balance
+      spent(month: $month)
     }
   }
 `
