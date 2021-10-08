@@ -11,6 +11,9 @@ defmodule Spendable.Budget.GraphQLTests do
     query {
       budget(id: "#{budget.id}") {
         id
+        adjustment
+        balance
+        spent(month: "Oct 2021")
       }
     }
     """
@@ -19,7 +22,10 @@ defmodule Spendable.Budget.GraphQLTests do
             %{
               data: %{
                 "budget" => %{
-                  "id" => "#{budget.id}"
+                  "id" => "#{budget.id}",
+                  "adjustment" => "0",
+                  "balance" => "0",
+                  "spent" => "0"
                 }
               }
             }} ==

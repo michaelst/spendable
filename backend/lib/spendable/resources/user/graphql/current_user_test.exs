@@ -8,6 +8,10 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
       query {
         currentUser {
           bankLimit
+          spentByMonth {
+            month
+            spent
+          }
         }
       }
     """
@@ -16,7 +20,8 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
             %{
               data: %{
                 "currentUser" => %{
-                  "bankLimit" => 10
+                  "bankLimit" => 10,
+                  "spentByMonth" => []
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
