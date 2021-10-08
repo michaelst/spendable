@@ -39,17 +39,17 @@ jobs:
         uses: actions/cache@master
         with:
           path: backend/deps
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-cachev2-
 
       - name: Cache Backend Build
         uses: actions/cache@master
         with:
           path: backend/_build
-          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-build-cachev2-
 
       - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
       - run: mix coveralls.json
@@ -80,17 +80,17 @@ jobs:
         uses: actions/cache@master
         with:
           path: backend/deps
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-mix-
+            ${{ runner.os }}-mix-cachev2-
 
       - name: Cache Backend Build
         uses: actions/cache@master
         with:
           path: backend/_build
-          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-build-
+            ${{ runner.os }}-build-cachev2-
 
       - run: mix do deps.get, compile --warnings-as-errors
       - run: mix credo
