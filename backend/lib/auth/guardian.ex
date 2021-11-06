@@ -24,7 +24,7 @@ defmodule Spendable.Auth.Guardian do
 
   defp maybe_create_user(nil, firebase_id) do
     User
-    |> Ash.Changeset.for_create(:create, %{firebase_id: firebase_id})
+    |> Ash.Changeset.for_create(:create)
     |> Ash.Changeset.force_change_attribute(:firebase_id, firebase_id)
     |> Api.create()
   end

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableWithoutFeedback, StatusBar, SafeAreaView, TouchableHighlight } from 'react-native'
+import React, { Dispatch, SetStateAction, useState } from 'react'
+import { View, Text, StyleSheet, TouchableWithoutFeedback, StatusBar, SafeAreaView, TouchableHighlight, RefreshControl } from 'react-native'
 import { NativeModules } from 'react-native'
-import { useQuery } from '@apollo/client'
+import { ApolloQueryResult, OperationVariables, useQuery } from '@apollo/client'
 import { FlatList } from 'react-native-gesture-handler'
 import { DateTime } from 'luxon'
 import { MAIN_QUERY } from 'src/queries'
@@ -12,10 +12,11 @@ import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import Decimal from 'decimal.js-light'
 
 type monthListDataItem = {
   month: string
-  spent: string
+  spent: Decimal | null
 }
 
 const Main = () => {
@@ -30,31 +31,36 @@ const Main = () => {
 }
 
 const Budgets = () => {
+  const currentMonth = DateTime.now().toFormat('MMM yyyy')
   const navigation = useNavigation<NavigationProp>()
   const { styles, colors } = useAppStyles()
+  const [activeMonth, setActiveMonth] = useState(currentMonth)
 
-  const { data } = useQuery<Data>(MAIN_QUERY, {
+  const { data, loading, refetch } = useQuery<Data>(MAIN_QUERY, {
+    variables: { month: activeMonth },
     onCompleted: (data) => {
       NativeModules.RNUserDefaults.setSpendable(formatCurrency(data.currentUser.spendable))
     }
   })
 
-  if (!data) return null
+  const spentThisMonth = data?.currentUser.spentByMonth.find(s => s.month === activeMonth)?.spent || new Decimal(0)
+  const spentFromBudgetsThisMonth = [...data?.budgets || []].reduce((total, budget) => total.add(budget.spent), new Decimal(0))
+  const spentFromSpendableThisMonth = spentThisMonth.minus(spentFromBudgetsThisMonth)
 
   const budgetListData: BudgetRowItem[] = [
     {
       id: 'spendable',
       title: "Spendable",
-      amount: data.currentUser.spendable,
-      subText: "AVAILABLE",
+      amount: (currentMonth === activeMonth ? data?.currentUser.spendable : spentFromSpendableThisMonth) || new Decimal(0),
+      subText: currentMonth === activeMonth ? "AVAILABLE" : "SPENT",
       hideDelete: true,
       onPress: () => navigation.navigate('Budget', { budgetId: 'spendabe' })
     },
-    ...data.budgets.map(budget => ({
+    ...(data?.budgets || []).map(budget => ({
       id: budget.id,
       title: budget.name,
-      amount: budget.balance,
-      subText: "REMAINING",
+      amount: currentMonth === activeMonth ? budget.balance : budget.spent,
+      subText: currentMonth === activeMonth ? "REMAINING" : "SPENT",
       onPress: () => navigation.navigate('Budget', { budgetId: budget.id })
     }))
   ]
@@ -64,7 +70,14 @@ const Budgets = () => {
       data={budgetListData}
       keyExtractor={item => item.id}
       renderItem={({ item }) => <BudgetRow item={item} />}
-      ListHeaderComponent={< Header />}
+      ListHeaderComponent={(
+        <Header
+          spentByMonth={data?.currentUser.spentByMonth || []}
+          activeMonth={activeMonth}
+          setActiveMonth={setActiveMonth}
+          refetch={refetch}
+        />
+      )}
       ListFooterComponent={() => (
         <TouchableHighlight onPress={() => navigation.navigate('Create Budget')}>
           <View style={styles.footer}>
@@ -73,40 +86,28 @@ const Budgets = () => {
         </TouchableHighlight>
       )}
       showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     />
   )
 }
 
-const Header = () => {
+type HeaderProps = {
+  spentByMonth: monthListDataItem[]
+  activeMonth: String
+  setActiveMonth: Dispatch<SetStateAction<string>>
+  refetch: (variables?: Partial<OperationVariables> | undefined) => Promise<ApolloQueryResult<Data>>
+}
+
+const Header = ({ spentByMonth, activeMonth, setActiveMonth, refetch }: HeaderProps) => {
   const navigation = useNavigation<NavigationProp>()
   const { styles, colors, fontSize } = useStyles()
-  const [activeMonth, setActiveMonth] = useState(DateTime.now().toFormat('MMM yyyy'))
 
   const monthListData: monthListDataItem[] = [
-    {
-      month: 'Sep 2021',
-      spent: '$10,550.74'
-    },
-    {
-      month: 'Aug 2021',
-      spent: '$10,550.74'
-    },
-    {
-      month: 'Jul 2021',
-      spent: '$10,550.74'
-    },
-    {
-      month: 'Jun 2021',
-      spent: '$10,550.74'
-    },
-    {
-      month: 'May 2021',
-      spent: '$10,550.74'
-    },
+    ...spentByMonth,
     // add an empty space at the end
     {
       month: '',
-      spent: ''
+      spent: null
     }
   ]
 
@@ -121,7 +122,10 @@ const Header = () => {
         renderItem={({ item }) => <MonthItem
           item={item}
           active={item.month === activeMonth}
-          onPress={() => setActiveMonth(item.month)}
+          onPress={() => {
+            setActiveMonth(item.month)
+            refetch({ month: item.month })
+          }}
         />}
       />
       <View>
@@ -175,7 +179,7 @@ const MonthItem = ({ item: { month, spent }, active, onPress }: MonthItemProps) 
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={active ? styles.activeMonthDetails : styles.monthDetails}>
           <Text style={styles.monthDetailText}>{month}</Text>
-          <Text style={styles.secondaryText}>{spent}</Text>
+          <Text style={styles.secondaryText}>{spent && formatCurrency(spent)}</Text>
         </View>
       </TouchableWithoutFeedback>
     </View>

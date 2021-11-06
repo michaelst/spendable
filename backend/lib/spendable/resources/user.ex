@@ -1,9 +1,10 @@
 defmodule Spendable.User do
   use Ash.Resource,
+    authorizers: [AshPolicyAuthorizer.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    extensions: [
-      AshGraphql.Resource
-    ]
+    extensions: [AshGraphql.Resource]
+
+  alias Spendable.User.SpentByMonth
 
   postgres do
     repo(Spendable.Repo)
@@ -26,12 +27,15 @@ defmodule Spendable.User do
   calculations do
     calculate :plaid_link_token, :string, Spendable.User.Calculations.PlaidLinkToken, allow_nil?: false
     calculate :spendable, :decimal, Spendable.User.Calculations.Spendable, allow_nil?: false
+    calculate :spent_by_month, {:array, SpentByMonth}, Spendable.User.Calculations.SpentByMonth, allow_nil?: false
   end
 
   actions do
     read :current_user do
       filter id: actor(:id)
     end
+
+    read :read, primary?: true
   end
 
   graphql do
@@ -39,6 +43,12 @@ defmodule Spendable.User do
 
     queries do
       read_one :current_user, :current_user, allow_nil?: false
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if attribute(:id, actor(:id))
     end
   end
 end

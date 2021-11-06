@@ -14,6 +14,7 @@ import TemplateSelect from '../components/TemplateSelect'
 import HeaderButton from 'src/components/HeaderButton'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { DateTime } from 'luxon'
 
 const Transaction = () => {
   const { styles, colors, fontSize, baseUnit } = useAppStyles()
@@ -47,9 +48,7 @@ const Transaction = () => {
     refetchQueries: [{ query: MAIN_QUERY }]
   })
 
-  if (!data?.transaction) {
-    return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
-  }
+  if (!data?.transaction) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
   const allocations = getAllocations(data.transaction)
 
@@ -59,14 +58,17 @@ const Transaction = () => {
 
   const setSpendFrom = (budgetId: string) => {
     if (budgetId === 'spendable') {
-      updateTransaction({ variables: { id: transactionId, allocations: [] } })
+      updateTransaction({ variables: { id: transactionId, input: { budgetAllocations: [] } } })
     } else {
       updateTransaction({
         variables: {
-          id: transactionId, allocations: [{
-            amount: amount,
-            budgetId: budgetId
-          }]
+          id: transactionId,
+          input: {
+            budgetAllocations: [{
+              amount: amount,
+              budget: { id: parseInt(budgetId) }
+            }]
+          }
         }
       })
     }
@@ -77,11 +79,13 @@ const Transaction = () => {
     updateTransaction({
       variables: {
         id: transactionId,
-        amount: amount,
-        date: date,
-        name: name,
-        note: note,
-        reviewed: reviewed
+        input: {
+          amount: amount,
+          date: DateTime.fromJSDate(date).toISODate(),
+          name: name,
+          note: note,
+          reviewed: reviewed
+        }
       }
     })
     navigation.goBack()
@@ -145,7 +149,7 @@ const Transaction = () => {
           </TouchableHighlight>
         </View>
         <View style={{ flexDirection: "row", justifyContent: 'flex-end', width: '50%' }}>
-          <TemplateSelect setValue={allocations => updateTransaction({ variables: { id: transactionId, allocations: allocations } })} />
+          <TemplateSelect setValue={allocations => updateTransaction({ variables: { id: transactionId, input: { budgetAllocations: allocations } } })} />
         </View>
       </View>
     </View>

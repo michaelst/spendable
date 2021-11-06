@@ -1,6 +1,6 @@
 defmodule Spendable.Web.Controllers.PlaidTest do
   use Spendable.Web.ConnCase, async: false
-  import Spendable.Factory
+
   import Mock
 
   alias Google.PubSub
@@ -20,13 +20,13 @@ defmodule Spendable.Web.Controllers.PlaidTest do
   end
 
   test "webhook", %{conn: conn} do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     conn
     |> post("/plaid/webhook", %{"item_id" => "bogus"})
     |> response(:not_found)
 
-    member = insert(:bank_member, user: user, external_id: "webhook_test")
+    member = insert(:bank_member, user_id: user.id, external_id: "webhook_test")
 
     conn
     |> post("/plaid/webhook", %{"item_id" => "webhook_test"})

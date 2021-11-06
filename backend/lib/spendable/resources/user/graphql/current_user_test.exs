@@ -2,12 +2,16 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
   use Spendable.DataCase, async: true
 
   test "current user" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     query = """
       query {
         currentUser {
           bankLimit
+          spentByMonth {
+            month
+            spent
+          }
         }
       }
     """
@@ -16,7 +20,13 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
             %{
               data: %{
                 "currentUser" => %{
-                  "bankLimit" => 10
+                  "bankLimit" => 10,
+                  "spentByMonth" => [
+                    %{
+                      "month" => Calendar.strftime(Date.utc_today(), "%b %Y"),
+                      "spent" => "0"
+                    }
+                  ]
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})

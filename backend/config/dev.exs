@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :spendable, Spendable.Repo, database: "spendable_dev"

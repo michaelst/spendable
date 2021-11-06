@@ -1,10 +1,7 @@
 module.exports = {
   client: {
     service: {
-      url: 'https://spendable.money/graphql',
-      headers: {
-        authorization: `Bearer ${process.env.API_TOKEN}`
-      }
+      url: 'http://localhost:4000/graphql'
     },
     includes: ['./src/queries.ts']
   }

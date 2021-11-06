@@ -1,18 +1,18 @@
-import React, { useLayoutEffect, useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import React, { useState } from 'react'
 import { Text, View, } from 'react-native'
 import { Switch } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
-import { CREATE_TRANSACTION, LIST_TRANSACTIONS } from '../queries'
+import { CREATE_TRANSACTION, LIST_TRANSACTIONS, MAIN_QUERY } from '../queries'
 import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
 import { ListTransactions } from '../graphql/ListTransactions'
 import useAppStyles from 'src/utils/useAppStyles'
-import HeaderButton from 'src/components/HeaderButton'
+import { DateTime } from 'luxon'
+import { CreateTransaction as CreateTransactionData } from 'src/graphql/CreateTransaction'
+import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
 
 const CreateTransaction = () => {
   const { styles } = useAppStyles()
-  const navigation = useNavigation<NavigationProp>()
 
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
@@ -20,33 +20,39 @@ const CreateTransaction = () => {
   const [note, setNote] = useState('')
   const [reviewed, setReviewed] = useState(true)
 
-  useLayoutEffect(() => navigation.setOptions({ 
-    headerTitle: '', 
-    headerRight: () => <HeaderButton onPress={saveAndGoBack} title="Save" /> 
-  }))
-
   const [createTransaction] = useMutation(CREATE_TRANSACTION, {
     variables: {
-      amount: amount,
-      date: date,
-      name: name,
-      note: note,
-      reviewed: reviewed
+      input: {
+        amount: amount,
+        date: DateTime.fromJSDate(date).toISODate(),
+        name: name,
+        note: note,
+        reviewed: reviewed
+      }
     },
-    update(cache, { data: { createTransaction } }) {
-      const data = cache.readQuery<ListTransactions | null>({ query: LIST_TRANSACTIONS })
+    refetchQueries: [{ query: MAIN_QUERY }],
+    update(cache, { data }) {
+      const { createTransaction }: CreateTransactionData = data
 
-      cache.writeQuery({
-        query: LIST_TRANSACTIONS,
-        data: { transactions: (data?.transactions ?? []).concat([createTransaction]) }
-      })
+      if (createTransaction?.result) {
+        const cacheData = cache.readQuery<ListTransactions | null>({ query: LIST_TRANSACTIONS })
+        const newCacheData = {
+          ...cacheData,
+          transactions: {
+            ...cacheData?.transactions,
+            results: [...cacheData?.transactions?.results ?? []].concat([createTransaction.result])
+          }
+        }
+
+        cache.writeQuery({
+          query: LIST_TRANSACTIONS,
+          data: newCacheData
+        })
+      }
     }
   })
 
-  const saveAndGoBack = () => {
-    createTransaction()
-    navigation.goBack()
-  }
+  useSaveAndGoBack({ mutation: createTransaction, action: "create tranasction" })
 
   return (
     <View style={{ flex: 1 }}>

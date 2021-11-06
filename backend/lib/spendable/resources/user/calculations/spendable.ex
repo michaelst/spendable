@@ -3,21 +3,20 @@ defmodule Spendable.User.Calculations.Spendable do
 
   import Ecto.Query
 
-  alias Spendable.Banks.Account
-  alias Spendable.Budgets.Allocation
-  alias Spendable.Budgets.Budget
+  alias Spendable.BankAccount
+  alias Spendable.Budget
+  alias Spendable.BudgetAllocation
   alias Spendable.Repo
 
   @impl Ash.Calculation
   def calculate([user], _opts, _resolution) do
     balance =
-      from(ba in Account,
+      from(ba in BankAccount,
         select:
           fragment(
-            "SUM(CASE WHEN ? = 'credit' THEN -? ELSE COALESCE(?, ?) END)",
+            "SUM(CASE WHEN ? = 'credit' THEN -? ELSE ? END)",
             ba.type,
             ba.balance,
-            ba.available_balance,
             ba.balance
           ),
         where: ba.user_id == ^user.id and ba.sync
@@ -26,7 +25,7 @@ defmodule Spendable.User.Calculations.Spendable do
       |> Kernel.||("0.00")
 
     allocations_query =
-      from(a in Allocation,
+      from(a in BudgetAllocation,
         where: a.user_id == ^user.id,
         select: %{
           budget_id: a.budget_id,

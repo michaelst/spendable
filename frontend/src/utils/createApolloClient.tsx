@@ -3,10 +3,9 @@ import { setContext } from '@apollo/client/link/context'
 import { offsetLimitPagination } from '@apollo/client/utilities'
 import Decimal from 'decimal.js-light'
 import auth from '@react-native-firebase/auth'
-import { DateTime } from 'luxon'
 
 const createApolloClient = () => {
-  const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://49cc-205-204-35-189.ngrok.io/graphql' })
 
   const authLink = setContext(async (_, { headers }) => {
     const user = auth().currentUser
@@ -25,11 +24,6 @@ const createApolloClient = () => {
 
   const cache = new InMemoryCache({
     typePolicies: {
-      Query: {
-        fields: {
-          transactions: offsetLimitPagination()
-        }
-      },
       Budget: {
         fields: {
           balance: {
@@ -37,10 +31,10 @@ const createApolloClient = () => {
               return new Decimal(balance)
             }
           },
-          goal: {
-            read(goal) {
-              if (goal)  return new Decimal(goal)
-              return null
+          spent: {
+            keyArgs: false,
+            read(spent) {
+              return new Decimal(spent)
             }
           },
         },
@@ -54,6 +48,15 @@ const createApolloClient = () => {
           }
         }
       },
+      MonthSpend: {
+        fields: {
+          spent: {
+            read(spent) {
+              return new Decimal(spent)
+            }
+          }
+        }
+      },
       BankAccount: {
         fields: {
           balance: {
@@ -63,7 +66,7 @@ const createApolloClient = () => {
           }
         }
       },
-      Allocation: {
+      BudgetAllocation: {
         fields: {
           amount: {
             read(amount) {
@@ -72,7 +75,7 @@ const createApolloClient = () => {
           }
         }
       },
-      AllocationTemplateLine: {
+      BudgetAllocationTemplateLine: {
         fields: {
           amount: {
             read(amount) {

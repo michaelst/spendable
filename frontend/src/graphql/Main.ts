@@ -7,10 +7,17 @@
 // GraphQL query operation: Main
 // ====================================================
 
+export interface Main_currentUser_spentByMonth {
+  __typename: "MonthSpend";
+  month: string;
+  spent: Decimal;
+}
+
 export interface Main_currentUser {
   __typename: "User";
   id: string;
   spendable: Decimal;
+  spentByMonth: Main_currentUser_spentByMonth[];
 }
 
 export interface Main_budgets {
@@ -18,9 +25,14 @@ export interface Main_budgets {
   id: string;
   name: string;
   balance: Decimal;
+  spent: Decimal;
 }
 
 export interface Main {
   currentUser: Main_currentUser;
   budgets: Main_budgets[];
+}
+
+export interface MainVariables {
+  month: string;
 }

@@ -6,30 +6,30 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import * as Sentry from "@sentry/react-native"
 import { TokenContext } from 'src/components/TokenContext'
-import Main from 'src/screens/Main'
+import { BlurEffectTypes } from 'react-native-screens'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AuthScreen from './src/screens/AuthScreen'
-import createApolloClient from 'src/utils/createApolloClient'
-import useAppStyles, { SpendableTheme } from 'src/utils/useAppStyles'
 import BankMember from 'src/screens/BankMember'
 import BankMembers from 'src/screens/BankMembers'
 import Budget from 'src/screens/Budget'
-import CreateAllocation from 'src/screens/CreateAllocation'
+import BudgetAllocationTemplate from 'src/screens/BudgetAllocationTemplate'
+import BudgetAllocationTemplates from 'src/screens/BudgetAllocationTemplates'
+import createApolloClient from 'src/utils/createApolloClient'
 import CreateBudget from 'src/screens/CreateBudget'
-import CreateTemplate from 'src/screens/CreateTemplate'
-import CreateTemplatLine from 'src/screens/CreateTemplateLine'
+import CreateBudgetAllocation from 'src/screens/CreateBudgetAllocation'
+import CreateBudgetAllocationTemplate from 'src/screens/CreateBudgetAllocationTemplate'
+import CreateBudgetAllocationTemplatLine from 'src/screens/CreateBudgetAllocationTemplateLine'
 import CreateTransaction from 'src/screens/CreateTransaction'
-import EditAllocation from 'src/screens/EditAllocation'
 import EditBudget from 'src/screens/EditBudget'
-import EditTemplate from 'src/screens/EditTemplate'
-import EditTemplateLine from 'src/screens/EditTemplateLine'
+import EditBudgetAllocation from 'src/screens/EditBudgetAllocation'
+import EditBudgetAllocationTemplate from 'src/screens/EditBudgetAllocationTemplate'
+import EditBudgetAllocationTemplateLine from 'src/screens/EditBudgetAllocationTemplateLine'
+import Main from 'src/screens/Main'
 import Settings from 'src/screens/Settings'
 import SpendFrom from 'src/screens/SpendFrom'
-import Template from 'src/screens/Template'
-import Templates from 'src/screens/Templates'
 import Transaction from 'src/screens/Transaction'
 import Transactions from 'src/screens/Transactions'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { BlurEffectTypes } from 'react-native-screens'
+import useAppStyles, { SpendableTheme } from 'src/utils/useAppStyles'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -108,17 +108,17 @@ const StackNavigator = () => {
       <Stack.Screen name="Transaction" component={Transaction} options={smallHeaderOptions} />
       <Stack.Screen name="Create Transaction" component={CreateTransaction} options={smallHeaderOptions} />
       <Stack.Screen name="Spend From" component={SpendFrom} options={options} />
-      <Stack.Screen name="Create Allocation" component={CreateAllocation} options={smallHeaderOptions} />
-      <Stack.Screen name="Edit Allocation" component={EditAllocation} options={smallHeaderOptions} />
+      <Stack.Screen name="Create Allocation" component={CreateBudgetAllocation} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Allocation" component={EditBudgetAllocation} options={smallHeaderOptions} />
       <Stack.Screen name="Settings" component={Settings} options={options} />
       <Stack.Screen name="Banks" component={BankMembers} options={options} />
       <Stack.Screen name="Bank" component={BankMember} options={options} />
-      <Stack.Screen name="Templates" component={Templates} options={options} />
-      <Stack.Screen name="Template" component={Template} options={options} />
-      <Stack.Screen name="Create Template" component={CreateTemplate} options={smallHeaderOptions} />
-      <Stack.Screen name="Edit Template" component={EditTemplate} options={smallHeaderOptions} />
-      <Stack.Screen name="Create Template Line" component={CreateTemplatLine} options={smallHeaderOptions} />
-      <Stack.Screen name="Edit Template Line" component={EditTemplateLine} options={smallHeaderOptions} />
+      <Stack.Screen name="Templates" component={BudgetAllocationTemplates} options={options} />
+      <Stack.Screen name="Template" component={BudgetAllocationTemplate} options={options} />
+      <Stack.Screen name="Create Template" component={CreateBudgetAllocationTemplate} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Template" component={EditBudgetAllocationTemplate} options={smallHeaderOptions} />
+      <Stack.Screen name="Create Template Line" component={CreateBudgetAllocationTemplatLine} options={smallHeaderOptions} />
+      <Stack.Screen name="Edit Template Line" component={EditBudgetAllocationTemplateLine} options={smallHeaderOptions} />
     </Stack.Navigator>
   )
 }

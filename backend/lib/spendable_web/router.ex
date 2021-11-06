@@ -1,14 +1,14 @@
 defmodule Spendable.Web.Router do
   use Spendable.Web, :router
 
-  pipeline(:api) do
+  pipeline :api do
     plug :accepts, [:urlencoded, :multipart, :json]
     plug Spendable.Plug.Auth
     plug :put_secure_browser_headers
     plug Plug.Logger
   end
 
-  pipeline(:public) do
+  pipeline :public do
     plug :accepts, ["json"]
     plug :put_secure_browser_headers
     plug Plug.Logger
@@ -46,7 +46,6 @@ defmodule Spendable.Web.Router do
     forward "/graphql", Absinthe.Plug,
       schema: Spendable.Web.Schema,
       analyze_complexity: true,
-      max_complexity: 500,
-      pipeline: {Spendable.Web.Schema, :pipeline}
+      max_complexity: 1000
   end
 end

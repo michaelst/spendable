@@ -1,15 +1,20 @@
 defmodule Spendable.Broadway.SyncMember do
   use Broadway
-  import Ecto.Query, only: [from: 2]
+
+  import Ecto.Query
 
   alias Broadway.Message
-  alias Spendable.Banks.Account
-  alias Spendable.Banks.Member
-  alias Spendable.Banks.Providers.Plaid.Adapter
-  alias Spendable.Banks.Transaction, as: BankTransaction
+  alias Spendable.Api
+  alias Spendable.BankAccount
+  alias Spendable.BankMember
+  alias Spendable.BankTransaction
+  alias Spendable.Plaid.Adapter
   alias Spendable.Publishers.SendNotificationRequest
   alias Spendable.Repo
   alias Spendable.Transaction
+
+  require Application
+  require Ash.Query
 
   @producer if Application.compile_env(:spendable, :env) == :prod,
               do:
@@ -46,35 +51,51 @@ defmodule Spendable.Broadway.SyncMember do
   defp process_data(data) do
     %SyncMemberRequest{member_id: member_id} = SyncMemberRequest.decode(data)
 
-    Repo.get(Member, member_id)
+    BankMember
+    |> Api.get(member_id, load: [:user])
     |> sync_member()
     |> sync_accounts()
     |> Enum.filter(& &1.sync)
     |> Enum.each(&sync_transactions/1)
   end
 
-  defp sync_member(member) when is_struct(member) do
+  defp sync_member({:ok, member}) do
     {:ok, %{body: details}} = Plaid.item(member.plaid_token)
 
+    formatted_data = Adapter.bank_member(details)
+
     member
-    |> Member.changeset(Adapter.format(details, member.user_id, :member))
-    |> Repo.update!()
+    |> Ash.Changeset.for_update(:update)
+    |> Ash.Changeset.force_change_attributes(formatted_data)
+    |> Api.update!()
   end
 
-  defp sync_member(nil), do: :ok
+  defp sync_member(_result), do: :ok
 
   def sync_accounts(member) do
     case Plaid.accounts(member.plaid_token) do
       {:ok, %{body: %{"accounts" => accounts_details}}} ->
         Enum.map(accounts_details, fn account_details ->
-          Repo.get_by(Account, user_id: member.user_id, external_id: account_details["account_id"])
+          formatted_data = Adapter.bank_account(account_details)
+
+          Api.get(BankAccount, user_id: member.user.id, external_id: account_details["account_id"])
           |> case do
-            nil -> struct(Account)
-            account -> account
+            {:error, %Ash.Error.Query.NotFound{}} ->
+              BankAccount
+              |> Ash.Changeset.for_create(:create, formatted_data)
+              |> Ash.Changeset.force_change_attributes(formatted_data)
+              |> Ash.Changeset.replace_relationship(:bank_member, member)
+              |> Ash.Changeset.replace_relationship(:user, member.user)
+              |> Api.create!()
+
+            {:ok, bank_account} ->
+              bank_account
+              |> Ash.Changeset.for_update(:update)
+              |> Ash.Changeset.force_change_attributes(formatted_data)
+              |> Ash.Changeset.replace_relationship(:bank_member, member)
+              |> Ash.Changeset.replace_relationship(:user, member.user)
+              |> Api.update!()
           end
-          |> Account.changeset(Adapter.format(account_details, member.id, member.user_id, :account))
-          |> Repo.insert_or_update!()
-          |> Map.put(:bank_member, member)
         end)
 
       {:ok, %{body: %{"error_code" => "ITEM_LOGIN_REQUIRED"}}} ->
@@ -102,19 +123,25 @@ defmodule Spendable.Broadway.SyncMember do
 
   defp sync_transaction(details, account) do
     Repo.transaction(fn ->
-      %BankTransaction{}
-      |> BankTransaction.changeset(Adapter.format(details, account.id, account.user_id, :bank_transaction))
-      |> Repo.insert()
-      |> case do
-        {:ok, bank_transaction} ->
-          %Transaction{}
-          |> Transaction.changeset(Adapter.format(bank_transaction, :transaction))
-          |> Repo.insert!()
-          |> reassign_pending(details)
+      formatted_data = Adapter.bank_transaction(details)
 
-        {:error, error} ->
-          Repo.rollback(error)
-      end
+      bank_transaction =
+        BankTransaction
+        |> Ash.Changeset.for_create(:create, formatted_data)
+        |> Ash.Changeset.replace_relationship(:bank_account, account)
+        |> Ash.Changeset.replace_relationship(:user, account.user)
+        |> Ash.Changeset.force_change_attributes(formatted_data)
+        |> Api.create!()
+
+      formatted_data = Adapter.transaction(bank_transaction)
+
+      Transaction
+      |> Ash.Changeset.for_create(:private_create, formatted_data)
+      |> Ash.Changeset.replace_relationship(:bank_transaction, bank_transaction)
+      |> Ash.Changeset.replace_relationship(:user, account.user)
+      |> Ash.Changeset.force_change_attributes(formatted_data)
+      |> Api.create!()
+      |> reassign_pending(details)
     end)
     |> case do
       {:ok, transaction} = response ->
@@ -136,11 +163,13 @@ defmodule Spendable.Broadway.SyncMember do
   end
 
   defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id}) when is_binary(pending_id) do
-    Repo.get_by(BankTransaction, external_id: pending_id, pending: true)
-    |> Repo.preload(:transaction)
+    BankTransaction
+    |> Ash.Query.filter(external_id: pending_id, pending: true)
+    |> Ash.Query.load(:transaction)
+    |> Api.read_one()
     |> case do
-      %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction ->
-        from(Spendable.Budgets.Allocation, where: [transaction_id: ^pending_transasction_id])
+      {:ok, %{transaction: %{id: pending_transasction_id}} = pending_bank_transaction} ->
+        from(Spendable.BudgetAllocation, where: [transaction_id: ^pending_transasction_id])
         |> Repo.update_all(set: [transaction_id: transaction.id])
 
         Repo.delete!(pending_bank_transaction.transaction)
@@ -148,7 +177,7 @@ defmodule Spendable.Broadway.SyncMember do
 
         transaction
 
-      _nil_or_bank_transaction ->
+      _not_found_or_bank_transaction ->
         transaction
     end
   end

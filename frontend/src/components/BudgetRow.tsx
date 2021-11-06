@@ -10,6 +10,7 @@ import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
 import useAppStyles from 'src/utils/useAppStyles'
 import { DELETE_BUDGET } from 'src/queries'
+import { DeleteBudget } from 'src/graphql/DeleteBudget'
 
 export type BudgetRowItem = {
   id: string
@@ -29,8 +30,9 @@ const BudgetRow = ({item}: BudgetRowProps) => {
 
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
     variables: { id: item.id },
-    update(cache, { data: { deleteBudget } }) {
-      cache.evict({ id: 'Budget:' + deleteBudget.id })
+    update(cache, { data }) {
+      const { deleteBudget }: DeleteBudget = data
+      cache.evict({ id: 'Budget:' + deleteBudget?.result?.id })
       cache.gc()
     }
   })

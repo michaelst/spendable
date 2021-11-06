@@ -1,19 +1,20 @@
 defmodule Spendable.Broadway.SyncMemberTest do
   use Spendable.DataCase, async: false
+
+  import Ash.Query
+  import Ecto.Query
   import Mock
   import Tesla.Mock
-  import Ecto.Query
 
   alias Google.PubSub
-  alias Spendable.Banks.Account
-  alias Spendable.Banks.Category
-  alias Spendable.Banks.Member
-  alias Spendable.Banks.Providers.Plaid.Adapter
-  alias Spendable.Banks.Transaction
+  alias Spendable.Api
+  alias Spendable.BankAccount
+  alias Spendable.BankTransaction
   alias Spendable.Broadway.SyncMember
   alias Spendable.Broadway.SyncMemberTest.TestData
   alias Spendable.Repo
   alias Spendable.TestUtils
+  alias Spendable.Transaction
 
   setup do
     mock_global(fn
@@ -42,21 +43,15 @@ defmodule Spendable.Broadway.SyncMemberTest do
   end
 
   test "sync member" do
-    user = Spendable.TestUtils.create_user()
-    token = "access-sandbox-97a66034-85df-4510-8eb5-020cc7997134"
-    {:ok, %{body: details}} = Plaid.item(token)
-
-    member =
-      %Member{plaid_token: token}
-      |> Member.changeset(Adapter.format(details, user.id, :member))
-      |> Repo.insert!()
+    user = insert(:user)
+    member = insert(:bank_member, user_id: user.id)
 
     data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
 
     ref = Broadway.test_message(SyncMember, data)
     assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
 
-    bank_accounts = from(Account, where: [bank_member_id: ^member.id], order_by: :id) |> Repo.all()
+    bank_accounts = from(BankAccount, where: [bank_member_id: ^member.id], order_by: :id) |> Repo.all()
 
     assert [
              %{sync: false},
@@ -69,28 +64,22 @@ defmodule Spendable.Broadway.SyncMemberTest do
              %{sync: false}
            ] = bank_accounts
 
-    account = Enum.find(bank_accounts, &(&1.external_id == "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
+    bank_account = Enum.find(bank_accounts, &(&1.external_id == "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
 
     assert %{
              id: account_id,
              external_id: "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP",
              balance: balance,
-             available_balance: available_balance,
              name: "Plaid Gold Standard 0% Interest Checking",
              number: "0000",
              sub_type: "checking",
              sync: false,
              type: "depository"
-           } = account
+           } = bank_account
 
-    assert "110" |> Decimal.new() |> Decimal.equal?(balance)
-    assert "100" |> Decimal.new() |> Decimal.equal?(available_balance)
+    assert "100" |> Decimal.new() |> Decimal.equal?(balance)
 
-    assert 0 == from(Transaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
-
-    account
-    |> Account.changeset(%{sync: true})
-    |> Repo.update!()
+    assert 0 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
     test_pid = self()
 
@@ -102,13 +91,16 @@ defmodule Spendable.Broadway.SyncMemberTest do
         {:ok, %{status: 200}}
       end
     ) do
+      bank_account
+      |> Ash.Changeset.for_update(:update, %{sync: true})
+      |> Api.update!()
+
       ref = Broadway.test_message(SyncMember, data)
       assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
     end
 
-    assert 7 == from(Transaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
-
-    category_id = Repo.get_by!(Category, external_id: "22006001").id
+    # there are 8 transactions in test data but one is a pending that gets replaced
+    assert 7 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
     today = Date.utc_today()
 
@@ -123,18 +115,19 @@ defmodule Spendable.Broadway.SyncMemberTest do
                amount: amount,
                name: "Uber 072515 SF**POOL**",
                date: ^today,
-               category_id: ^category_id,
                bank_transaction: %{
                  external_id: "gjwAb9wKgytqA9dKR4Xmc3rwN8WN5nigoEkrB",
-                 category_id: ^category_id,
                  bank_account_id: ^account_id,
                  name: "Uber 072515 SF**POOL**",
                  pending: false
                }
              }
            ] =
-             from(Spendable.Transaction, where: [user_id: ^user.id], order_by: :date, preload: [:bank_transaction])
-             |> Repo.all()
+             Transaction
+             |> filter(user_id: user.id)
+             |> sort([:date])
+             |> load(:bank_transaction)
+             |> Api.read!()
 
     assert "-6.33" |> Decimal.new() |> Decimal.equal?(amount)
 

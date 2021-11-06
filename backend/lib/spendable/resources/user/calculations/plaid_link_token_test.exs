@@ -4,7 +4,7 @@ defmodule Spendable.User.Calculations.PlaidLinkTokenTest do
   alias Spendable.User.Calculations.PlaidLinkToken
 
   test "calculate plaid link token" do
-    user = Spendable.TestUtils.create_user()
+    user = insert(:user)
 
     token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
 

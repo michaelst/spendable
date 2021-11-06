@@ -1,15 +1,20 @@
 import { gql } from '@apollo/client'
 
 export const MAIN_QUERY = gql`
-  query Main {
+  query Main($month: String!) {
     currentUser {
       id
       spendable
+      spentByMonth {
+        month
+        spent
+      }
     }
     budgets {
       id
       name
       balance
+      spent(month: $month)
     }
   }
 `
@@ -22,9 +27,9 @@ export const GET_BUDGET = gql`
     budget(id: $id) {
       id
       name
+      adjustment
       balance
-      goal
-      recentAllocations {
+      budgetAllocations(limit: 100) {
         id
         amount
         transaction {
@@ -34,10 +39,10 @@ export const GET_BUDGET = gql`
           reviewed
         }
       }
-      allocationTemplateLines {
+      budgetAllocationTemplateLines {
         id
         amount
-        allocationTemplate {
+        budgetAllocationTemplate {
           id
           name
         }
@@ -47,23 +52,23 @@ export const GET_BUDGET = gql`
 `
 
 export const CREATE_BUDGET = gql`
-mutation CreateBudget($name: String!, $balance: Decimal!, $goal: Decimal) {
-  createBudget(name: $name, balance: $balance, goal: $goal) {
-    id
-    name
-    balance
-    goal
+mutation CreateBudget($input: CreateBudgetInput) {
+  createBudget(input: $input) {
+    result {
+      id
+    }
   }
 }
 `
 
 export const UPDATE_BUDGET = gql`
-  mutation UpdateBudget($id: ID!, $name: String!, $balance: Decimal!, $goal: Decimal) {
-    updateBudget(id: $id, name: $name, balance: $balance, goal: $goal) {
-      id
-      name
-      balance
-      goal
+  mutation UpdateBudget($id: ID!, $input: UpdateBudgetInput) {
+    updateBudget(id: $id, input: $input) {
+      result {
+        id
+        name
+        balance
+      }
     }
   }
 `
@@ -71,16 +76,18 @@ export const UPDATE_BUDGET = gql`
 export const DELETE_BUDGET = gql`
   mutation DeleteBudget($id: ID!) {
     deleteBudget(id: $id) {
-      id
+      result {
+        id
+      }
     }
   }
 `
 
 //
-// Allocations
+// Budget Allocations
 //
-export const ALLOCATION_FRAGMENT = gql`
-  fragment AllocationFragment on Allocation {
+export const BUDGET_ALLOCATION_FRAGMENT = gql`
+  fragment BudgetAllocationFragment on BudgetAllocation {
     id
     amount
     budget {
@@ -90,37 +97,43 @@ export const ALLOCATION_FRAGMENT = gql`
   }
 `
 
-export const GET_ALLOCATION = gql`
-  ${ALLOCATION_FRAGMENT}
-  query Allocation($id: ID!) {
-    allocation(id: $id) {
-      ...AllocationFragment
+export const GET_BUDGET_ALLOCATION = gql`
+  ${BUDGET_ALLOCATION_FRAGMENT}
+  query BudgetAllocation($id: ID!) {
+    budgetAllocation(id: $id) {
+      ...BudgetAllocationFragment
     }
   }
 `
 
-export const CREATE_ALLOCATION = gql`
-  ${ALLOCATION_FRAGMENT}
-  mutation CreateAllocation($transactionId: ID!, $amount: Decimal!, $budgetId: ID!) {
-    createAllocation(transactionId: $transactionId, amount: $amount, budgetId: $budgetId) {
-      ...AllocationFragment
+export const CREATE_BUDGET_ALLOCATION = gql`
+  ${BUDGET_ALLOCATION_FRAGMENT}
+  mutation CreateBudgetAllocation($input: CreateBudgetAllocationInput) {
+    createBudgetAllocation(input: $input) {
+      result {
+        ...BudgetAllocationFragment
+      }
     }
   }
 `
 
-export const UPDATE_ALLOCATION = gql`
-  ${ALLOCATION_FRAGMENT}
-  mutation UpdateAllocation($id: ID!, $amount: Decimal, $budgetId: ID) {
-    updateAllocation(id: $id, amount: $amount, budgetId: $budgetId) {
-      ...AllocationFragment
+export const UPDATE_BUDGET_ALLOCATION = gql`
+  ${BUDGET_ALLOCATION_FRAGMENT}
+  mutation UpdateBudgetAllocation($id: ID!, $input: UpdateBudgetAllocationInput) {
+    updateBudgetAllocation(id: $id, input: $input) {
+      result {
+        ...BudgetAllocationFragment
+      }
     }
   }
 `
 
-export const DELETE_ALLOCATION = gql`
-  mutation DeleteAllocation($id: ID!) {
-    deleteAllocation(id: $id) {
-      id
+export const DELETE_BUDGET_ALLOCATION = gql`
+  mutation DeleteBudgetAllocation($id: ID!) {
+    deleteBudgetAllocation(id: $id) {
+      result {
+        id
+      }
     }
   }
 `
@@ -129,28 +142,30 @@ export const DELETE_ALLOCATION = gql`
 // Transasctions
 //
 export const TRANSACTION_FRAGMENT = gql`
-${ALLOCATION_FRAGMENT}
-fragment TransactionFragment on Transaction {
-  id
-  name
-  note
-  amount
-  date
-  reviewed
-  allocations {
-    ...AllocationFragment
+  ${BUDGET_ALLOCATION_FRAGMENT}
+  fragment TransactionFragment on Transaction {
+    id
+    name
+    note
+    amount
+    date
+    reviewed
+    budgetAllocations {
+      ...BudgetAllocationFragment
+    }
   }
-}
 `
 
 export const LIST_TRANSACTIONS = gql`
   query ListTransactions($offset: Int){
-    transactions(offset: $offset) {
-      id
-      name
-      amount
-      date
-      reviewed
+    transactions(limit: 100, offset: $offset) {
+      results {
+        id
+        name
+        amount
+        date
+        reviewed
+      }
     }
   }
 `
@@ -169,34 +184,22 @@ export const GET_TRANSACTION = gql`
 
 export const CREATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation CreateTransaction($amount: String!, $name: String, $date: String!, $note: String, $reviewed: Boolean!, $categoryId: ID, $allocations: [AllocationInputObject!]) {
-    createTransaction(
-      amount: $amount
-      name: $name
-      date: $date
-      note: $note
-      reviewed: $reviewed
-      categoryId: $categoryId
-      allocations: $allocations
-    ) {
-      ...TransactionFragment
+  mutation CreateTransaction($input: CreateTransactionInput) {
+    createTransaction(input: $input) {
+      result {
+        ...TransactionFragment
+      }
     }
   }
 `
 
 export const UPDATE_TRANSACTION = gql`
   ${TRANSACTION_FRAGMENT}
-  mutation UpdateTransaction($id: ID!, $amount: String, $name: String, $date: String, $note: String, $reviewed: Boolean, $allocations: [AllocationInputObject!]) {
-    updateTransaction(
-      id: $id
-      amount: $amount
-      name: $name
-      date: $date
-      note: $note
-      reviewed: $reviewed
-      allocations: $allocations
-    ) {
-      ...TransactionFragment
+  mutation UpdateTransaction($id: ID!, $input: UpdateTransactionInput) {
+    updateTransaction(id: $id, input: $input) {
+      result {
+        ...TransactionFragment
+      }
     }
   }
 `
@@ -204,7 +207,9 @@ export const UPDATE_TRANSACTION = gql`
 export const DELETE_TRANSACTION = gql`
   mutation DeleteTransaction($id: ID!) {
     deleteTransaction(id: $id) {
-      id
+      result {
+        id
+      }
     }
   }
 `
@@ -258,21 +263,25 @@ export const GET_BANK_MEMBER = gql`
 `
 
 export const CREATE_BANK_MEMBER = gql`
-  mutation CreateBankMember($publicToken: String!) {
-    createBankMember(publicToken: $publicToken) {
-      id
-      name
-      status
-      logo
+  mutation CreateBankMember($input: CreateBankMemberInput) {
+    createBankMember(input: $input) {
+      result {
+        id
+        name
+        status
+        logo
+      }
     }
   }
 `
 
 export const UPDATE_BANK_ACCOUNT = gql`
-  mutation UpdateBankAccount($id: ID!, $sync: Boolean!) {
-    updateBankAccount(id: $id, sync: $sync) {
-      id
-      sync
+  mutation UpdateBankAccount($id: ID!, $input: UpdateBankAccountInput) {
+    updateBankAccount(id: $id, input: $input) {
+      result {
+        id
+        sync
+      }
     }
   }
 `
@@ -281,151 +290,158 @@ export const UPDATE_BANK_ACCOUNT = gql`
 // Notifications
 //
 export const GET_NOTIFICATION_SETTINGS = gql`
-query GetNotificationSettings($deviceToken: String!) {
-  notificationSettings(deviceToken: $deviceToken) {
-    id
-    enabled
+  query GetNotificationSettings($deviceToken: String!) {
+    notificationSettings(deviceToken: $deviceToken) {
+      id
+      enabled
+    }
   }
-}
+`
+
+export const REGISTER_DEVICE_TOKEN = gql`
+  mutation RegisterDeviceToken($input: RegisterDeviceTokenInput) {
+    registerDeviceToken(input: $input) {
+      result {
+        id
+        enabled
+      }
+    }
+  }
 `
 
 export const UPDATE_NOTIFICATION_SETTINGS = gql`
-mutation UpdateNotificationSettings($id: ID!, $enabled: Boolean!) {
-  updateNotificationSettings(id: $id, enabled: $enabled) {
+  mutation UpdateNotificationSettings($id: ID!, $input: UpdateNotificationSettingsInput) {
+    updateNotificationSettings(id: $id, input: $input) {
+      result {
+        id
+        enabled
+      }
+    }
+  }
+`
+
+//
+// Budget Allocation Templates
+//
+export const BUDGET_ALLOCATION_TEMPLATE_FRAGMENT = gql`
+  fragment BudgetAllocationTemplateFragment on BudgetAllocationTemplate {
     id
-    enabled
-  }
-}
-`
-
-//
-// Templates
-//
-export const LIST_TEMPLATES = gql`
-  query ListAllocationTemplates{
-    allocationTemplates {
-      id
-      name
-      lines {
-        amount
-        budget {
-          id
-        }
-      }
-    }
-  }
-`
-
-export const GET_TEMPLATE = gql`
-  query GetAllocationTemplate($id: ID!) {
-    allocationTemplate(id: $id) {
-      id
-      name
-      lines {
-        id
-        amount
-        budget {
-          id
-          name
-          goal
-        }
-      }
-    }
-  }
-`
-
-export const CREATE_TEMPLATE = gql`
-  mutation CreateAllocationTemplate($name: String!, $lines: [AllocationTemplateLineInputObject]) {
-    createAllocationTemplate(name: $name, lines: $lines) {
-      id
-      name
-      lines {
-          id
-          amount
-          budget {
-              id
-          }
-      }
-    }
-  }
-`
-
-export const UPDATE_TEMPLATE = gql`
-  mutation UpdateAllocationTemplate($id: ID!, $name: String!, $lines: [AllocationTemplateLineInputObject]) {
-    updateAllocationTemplate(id: $id, name: $name, lines: $lines) {
-      id
-      name
-      lines {
-          id
-          amount
-          budget {
-            id
-          }
-      }
-    }
-  }
-`
-
-export const DELETE_TEMPLATE = gql`
-  mutation DeleteAllocationTemplate($id: ID!) {
-    deleteAllocationTemplate(id: $id) {
-      id
-    }
-  }
-`
-
-//
-// Template Lines
-//
-export const GET_TEMPLATE_LINE = gql`
-  query AllocationTemplateLine($id: ID!) {
-    allocationTemplateLine(id: $id) {
+    name
+    budgetAllocationTemplateLines {
       id
       amount
       budget {
         id
+        name
       }
-      allocationTemplate {
+    }
+  }
+`
+
+export const LIST_BUDGET_ALLOCATION_TEMPLATES = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_FRAGMENT}
+  query ListBudgetAllocationTemplates{
+    budgetAllocationTemplates {
+      ...BudgetAllocationTemplateFragment
+    }
+  }
+`
+
+export const GET_BUDGET_ALLOCATION_TEMPLATE = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_FRAGMENT}
+  query GetBudgetAllocationTemplate($id: ID!) {
+    budgetAllocationTemplate(id: $id) {
+      ...BudgetAllocationTemplateFragment
+    }
+  }
+`
+
+export const CREATE_BUDGET_ALLOCATION_TEMPLATE = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_FRAGMENT}
+  mutation CreateBudgetAllocationTemplate($input: CreateBudgetAllocationTemplateInput) {
+    createBudgetAllocationTemplate(input: $input) {
+      result {
+        ...BudgetAllocationTemplateFragment
+      }
+    }
+  }
+`
+
+export const UPDATE_BUDGET_ALLOCATION_TEMPLATE = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_FRAGMENT}
+  mutation UpdateBudgetAllocationTemplate($id: ID!, $input: UpdateBudgetAllocationTemplateInput) {
+    updateBudgetAllocationTemplate(id: $id, input: $input) {
+      result {
+        ...BudgetAllocationTemplateFragment
+      }
+    }
+  }
+`
+
+export const DELETE_BUDGET_ALLOCATION_TEMPLATE = gql`
+  mutation DeleteBudgetAllocationTemplate($id: ID!) {
+    deleteBudgetAllocationTemplate(id: $id) {
+      result {
         id
       }
     }
   }
 `
 
-export const CREATE_TEMPLATE_LINE = gql`
-  mutation CreateAllocationTemplateLine($budgetAllocationTemplateId: ID!, $amount: Decimal!, $budgetId: ID!) {
-    createAllocationTemplateLine(budgetAllocationTemplateId: $budgetAllocationTemplateId, amount: $amount, budgetId: $budgetId) {
+//
+// Budget Allocation Template Lines
+//
+export const BUDGET_ALLOCATION_TEMPLATE_LINE_FRAGMENT = gql`
+  fragment BudgetAllocationTemplateLineFragment on BudgetAllocationTemplateLine {
+    id
+    amount
+    budget {
       id
-      amount
-      budget {
-        id
-      }
-      allocationTemplate {
-        id
+      name
+    }
+    budgetAllocationTemplate {
+      id
+    }
+  }
+`
+
+export const GET_BUDGET_ALLOCATION_TEMPLATE_LINE = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_LINE_FRAGMENT}
+  query BudgetAllocationTemplateLine($id: ID!) {
+    budgetAllocationTemplateLine(id: $id) {
+      ...BudgetAllocationTemplateLineFragment
+    }
+  }
+`
+
+export const CREATE_BUDGET_ALLOCATION_TEMPLATE_LINE = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_LINE_FRAGMENT}
+  mutation CreateBudgetAllocationTemplateLine($input: CreateBudgetAllocationTemplateLineInput) {
+    createBudgetAllocationTemplateLine(input: $input) {
+      result {
+        ...BudgetAllocationTemplateLineFragment
       }
     }
   }
 `
 
-export const UPDATE_TEMPLATE_LINE = gql`
-  mutation UpdateAllocationTemplateLine($id: ID!, $budgetAllocationTemplateId: ID, $amount: Decimal, $budgetId: ID) {
-    updateAllocationTemplateLine(id: $id, budgetAllocationTemplateId: $budgetAllocationTemplateId, amount: $amount, budgetId: $budgetId) {
-      id
-      amount
-      budget {
-        id
-      }
-      allocationTemplate {
-        id
+export const UPDATE_BUDGET_ALLOCATION_TEMPLATE_LINE = gql`
+  ${BUDGET_ALLOCATION_TEMPLATE_LINE_FRAGMENT}
+  mutation UpdateBudgetAllocationTemplateLine($id: ID!, $input: UpdateBudgetAllocationTemplateLineInput) {
+    updateBudgetAllocationTemplateLine(id: $id, input: $input) {
+      result {
+        ...BudgetAllocationTemplateLineFragment
       }
     }
   }
 `
 
-export const DELETE_TEMPLATE_LINE = gql`
-  mutation DeleteAllocationTemplateLine($id: ID!) {
-    deleteAllocationTemplateLine(id: $id) {
-      id
+export const DELETE_BUDGET_ALLOCATION_TEMPLATE_LINE = gql`
+  mutation DeleteBudgetAllocationTemplateLine($id: ID!) {
+    deleteBudgetAllocationTemplateLine(id: $id) {
+      result {
+        id
+      }
     }
   }
 `

@@ -4,12 +4,10 @@ import { useQuery } from '@apollo/client'
 import { FlatList } from 'react-native-gesture-handler'
 import BankAccountRow from '../components/BankAccountRow'
 import { RefreshControl } from 'react-native'
-import useAppStyles from 'src/utils/useAppStyles'
 import { GET_BANK_MEMBER } from 'src/queries'
 import { GetBankMember } from 'src/graphql/GetBankMember'
 
 const BankMember = () => {
-  const { styles } = useAppStyles()
   const navigation = useNavigation<NavigationProp>()
   const { params: { bankMemberId } } = useRoute<RouteProp<RootStackParamList, 'Bank'>>()
 
