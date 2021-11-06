@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :spendable, Spendable.Web.Endpoint,
   url: [host: "spendable.money", port: 80],

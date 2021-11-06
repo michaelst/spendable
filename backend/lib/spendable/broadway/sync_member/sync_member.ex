@@ -13,6 +13,7 @@ defmodule Spendable.Broadway.SyncMember do
   alias Spendable.Repo
   alias Spendable.Transaction
 
+  require Application
   require Ash.Query
 
   @producer if Application.compile_env(:spendable, :env) == :prod,

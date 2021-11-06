@@ -1,9 +1,7 @@
-# Mix.env() can be used inside config files
-# credo:disable-for-this-file Credo.Check.Warning.MixEnv
-use Mix.Config
+import Config
 
 config :spendable,
-  env: Mix.env(),
+  env: config_env(),
   ecto_repos: [Spendable.Repo],
   ash_apis: [Spendable.Api]
 
@@ -27,7 +25,7 @@ config :cors_plug, max_age: 86400
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
-  environment_name: Mix.env(),
+  environment_name: config_env(),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),
   tags: %{
@@ -50,4 +48,4 @@ config :goth, project_id: "cloud-57"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"
