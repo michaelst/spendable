@@ -3,8 +3,8 @@ on: push
 env:
   MIX_ENV: test
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  OTP_VERSION: 23.2.7
-  ELIXIR_VERSION: 1.11.4
+  OTP_VERSION: 24.1.4
+  ELIXIR_VERSION: 1.12.3
 
 jobs:
   backend:
@@ -29,11 +29,10 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - uses: actions/setup-elixir@master
+      - uses: erlef/setup-beam@v1.7.2
         with:
           otp-version: ${{ env.OTP_VERSION }}
           elixir-version: ${{ env.ELIXIR_VERSION }}
-          experimental-otp: true
 
       - name: Cache Backend Deps
         uses: actions/cache@master
@@ -70,11 +69,10 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - uses: actions/setup-elixir@master
+      - uses: erlef/setup-beam@v1.7.2
         with:
           otp-version: ${{ env.OTP_VERSION }}
           elixir-version: ${{ env.ELIXIR_VERSION }}
-          experimental-otp: true
 
       - name: Cache Backend Deps
         uses: actions/cache@master
