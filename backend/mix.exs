@@ -36,9 +36,9 @@ defmodule Spendable.MixProject do
   defp deps do
     [
       {:ash_graphql, github: "ash-project/ash_graphql"},
-      {:ash_policy_authorizer, github: "ash-project/ash_policy_authorizer"},
-      {:ash_postgres, github: "ash-project/ash_postgres"},
-      {:ash, github: "ash-project/ash", override: true},
+      {:ash_policy_authorizer, "~> 0.16"},
+      {:ash_postgres, "~> 0.41"},
+      {:ash, "~> 1.49"},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
       {:castore, "~> 0.1.0"},
@@ -63,7 +63,7 @@ defmodule Spendable.MixProject do
       {:pigeon, "~> 1.6"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
-      {:protobuf, "~> 0.7.1"},
+      {:protobuf, "~> 0.8"},
       {:sentry, "~> 8.0"},
       {:tesla, "~> 1.4"}
     ]

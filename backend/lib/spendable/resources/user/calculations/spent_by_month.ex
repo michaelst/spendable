@@ -19,7 +19,16 @@ defmodule Spendable.User.Calculations.SpentByMonth do
         group_by: [fragment("TO_CHAR(?, 'Mon YYYY')", t.date), fragment("TO_CHAR(?, 'YYYY-MM')", t.date)],
         order_by: [desc: fragment("TO_CHAR(?, 'YYYY-MM')", t.date)]
 
-    months = Repo.all(query)
+    current_month = Calendar.strftime(Date.utc_today(), "%b %Y")
+
+    months =
+      case Repo.all(query) do
+        [%{month: ^current_month} | _rest] = months ->
+          months
+
+        months ->
+          [%{month: current_month, spent: Decimal.new(0)} | months]
+      end
 
     {:ok, [months]}
   end

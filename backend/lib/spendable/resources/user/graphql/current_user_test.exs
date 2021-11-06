@@ -21,7 +21,12 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
               data: %{
                 "currentUser" => %{
                   "bankLimit" => 10,
-                  "spentByMonth" => []
+                  "spentByMonth" => [
+                    %{
+                      "month" => Calendar.strftime(Date.utc_today(), "%b %Y"),
+                      "spent" => "0"
+                    }
+                  ]
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})

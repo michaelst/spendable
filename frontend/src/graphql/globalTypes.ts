@@ -7,6 +7,10 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum NotificationProvider {
+  APNS = "APNS",
+}
+
 export interface CreateBankMemberInput {
   publicToken: string;
 }
@@ -68,6 +72,12 @@ export interface CreateTransactionInput {
   name: string;
   note?: string | null;
   reviewed: boolean;
+}
+
+export interface RegisterDeviceTokenInput {
+  deviceToken?: string | null;
+  enabled?: boolean | null;
+  provider?: NotificationProvider | null;
 }
 
 export interface UpdateBankAccountInput {

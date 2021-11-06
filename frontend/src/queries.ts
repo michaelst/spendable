@@ -298,6 +298,17 @@ export const GET_NOTIFICATION_SETTINGS = gql`
   }
 `
 
+export const REGISTER_DEVICE_TOKEN = gql`
+  mutation RegisterDeviceToken($input: RegisterDeviceTokenInput) {
+    registerDeviceToken(input: $input) {
+      result {
+        id
+        enabled
+      }
+    }
+  }
+`
+
 export const UPDATE_NOTIFICATION_SETTINGS = gql`
   mutation UpdateNotificationSettings($id: ID!, $input: UpdateNotificationSettingsInput) {
     updateNotificationSettings(id: $id, input: $input) {

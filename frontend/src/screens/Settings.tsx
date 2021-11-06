@@ -9,14 +9,16 @@ import { useNavigation } from '@react-navigation/native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
-import { useMutation, useQuery } from '@apollo/client'
+import { ApolloError, useMutation, useQuery } from '@apollo/client'
 import { TokenContext } from 'src/components/TokenContext'
 import useAppStyles from 'src/utils/useAppStyles'
-import { GET_NOTIFICATION_SETTINGS, UPDATE_NOTIFICATION_SETTINGS } from 'src/queries'
+import { GET_NOTIFICATION_SETTINGS, REGISTER_DEVICE_TOKEN, UPDATE_NOTIFICATION_SETTINGS } from 'src/queries'
 import { GetNotificationSettings } from 'src/graphql/GetNotificationSettings'
 import { UpdateNotificationSettings } from 'src/graphql/UpdateNotificationSettings'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { NotificationProvider } from 'src/graphql/globalTypes'
+import { RegisterDeviceToken } from 'src/graphql/RegisterDeviceToken'
 
 const Settings = () => {
   const { styles } = useAppStyles()
@@ -75,11 +77,21 @@ const templatesRow = () => {
 
 const notificationsRow = () => {
   const { styles, baseUnit } = useAppStyles()
-  const [id, setId] = useState<string | null>(null)
+  const [id, setId] = useState<string | null>()
   const [enabled, setEnabled] = useState(false)
   const { deviceToken } = useContext(TokenContext)
 
   PushNotificationIOS.requestPermissions()
+
+  const [registerDeviceToken] = useMutation<RegisterDeviceToken>(REGISTER_DEVICE_TOKEN, {
+    variables: {
+      input: {
+        deviceToken: deviceToken,
+        provider: NotificationProvider.APNS,
+        enabled: false
+      }
+    }
+  })
 
   useQuery<GetNotificationSettings>(GET_NOTIFICATION_SETTINGS, {
     variables: { deviceToken: deviceToken },
@@ -87,7 +99,16 @@ const notificationsRow = () => {
       setId(data.notificationSettings.id)
       setEnabled(data.notificationSettings.enabled)
     },
-    onError: error => console.log(error)
+    onError: (error) => {
+      if (error.message === 'could not be found') {
+        registerDeviceToken().then(({ data }) => {
+          setId(data?.registerDeviceToken?.result?.id)
+          setEnabled(data?.registerDeviceToken?.result?.enabled || false)
+        })
+      } else {
+        console.log(error)
+      }
+    }
   })
 
   const [updateNotificationSettings] = useMutation<UpdateNotificationSettings>(UPDATE_NOTIFICATION_SETTINGS)
