@@ -4,7 +4,7 @@ ENV MIX_ENV=prod \
     LANG=C.UTF-8
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential software-properties-common \
+  && apt-get install -y --no-install-recommends build-essential software-properties-common git \
   && rm -rf /var/lib/apt/lists/* \
   && mix local.hex --force \
   && mix local.rebar --force
