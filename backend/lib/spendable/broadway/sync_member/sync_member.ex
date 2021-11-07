@@ -123,25 +123,29 @@ defmodule Spendable.Broadway.SyncMember do
 
   defp sync_transaction(details, account) do
     Repo.transaction(fn ->
-      formatted_data = Adapter.bank_transaction(details)
+      formatted_bank_transaction_data = Adapter.bank_transaction(details)
 
-      bank_transaction =
-        BankTransaction
-        |> Ash.Changeset.for_create(:create, formatted_data)
-        |> Ash.Changeset.replace_relationship(:bank_account, account)
-        |> Ash.Changeset.replace_relationship(:user, account.user)
-        |> Ash.Changeset.force_change_attributes(formatted_data)
-        |> Api.create!()
-
-      formatted_data = Adapter.transaction(bank_transaction)
-
-      Transaction
-      |> Ash.Changeset.for_create(:private_create, formatted_data)
-      |> Ash.Changeset.replace_relationship(:bank_transaction, bank_transaction)
+      BankTransaction
+      |> Ash.Changeset.for_create(:create, formatted_bank_transaction_data)
+      |> Ash.Changeset.replace_relationship(:bank_account, account)
       |> Ash.Changeset.replace_relationship(:user, account.user)
-      |> Ash.Changeset.force_change_attributes(formatted_data)
-      |> Api.create!()
-      |> reassign_pending(details)
+      |> Ash.Changeset.force_change_attributes(formatted_bank_transaction_data)
+      |> Api.create()
+      |> case do
+        {:ok, bank_transaction} ->
+          formatted_transaction_data = Adapter.transaction(bank_transaction)
+
+          Transaction
+          |> Ash.Changeset.for_create(:private_create, formatted_transaction_data)
+          |> Ash.Changeset.replace_relationship(:bank_transaction, bank_transaction)
+          |> Ash.Changeset.replace_relationship(:user, account.user)
+          |> Ash.Changeset.force_change_attributes(formatted_transaction_data)
+          |> Api.create!()
+          |> reassign_pending(details)
+
+        error ->
+          Repo.rollback(error)
+      end
     end)
     |> case do
       {:ok, transaction} = response ->

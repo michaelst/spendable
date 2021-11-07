@@ -1,24 +1,6 @@
 defmodule Spendable.BanksAccount.GraphQLTests do
   use Spendable.Web.ConnCase, async: true
 
-  import Mock
-
-  alias Google.PubSub
-  alias Spendable.TestUtils
-
-  setup_with_mocks([
-    {
-      PubSub,
-      [],
-      publish: fn data, _topic ->
-        send(self(), data)
-        {:ok, %{status: 200}}
-      end
-    }
-  ]) do
-    :ok
-  end
-
   test "get bank account" do
     user = insert(:user)
     other_user = insert(:user)
@@ -115,8 +97,6 @@ defmodule Spendable.BanksAccount.GraphQLTests do
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
-
-    TestUtils.assert_published(%SyncMemberRequest{member_id: member.id})
 
     # can't update another user's bank account
     assert {
