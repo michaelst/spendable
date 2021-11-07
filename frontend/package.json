@@ -1,9 +1,12 @@
 {
+  "name": "spendable",
+  "version": "1.1.0",
   "scripts": {
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "codegen": "apollo client:codegen --target typescript graphql --passthroughCustomScalars --globalTypesFile=src/graphql/globalTypes.ts"
+    "codegen": "apollo client:codegen --target typescript graphql --passthroughCustomScalars --globalTypesFile=src/graphql/globalTypes.ts",
+    "codepush:ios": "appcenter codepush release-react -a michaelst/spendable-ios -d Production"
   },
   "dependencies": {
     "@apollo/client": "^3.4.10",
@@ -21,12 +24,17 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
     "@sentry/react-native": "^3.0.1",
+    "appcenter": "4.3.0",
+    "appcenter-analytics": "4.3.0",
+    "appcenter-crashes": "4.3.0",
     "decimal.js-light": "^2.5.1",
     "graphql": "^15.5.2",
     "luxon": "^2.0.2",
     "react": "17.0.2",
     "react-dom": "^17.0.2",
     "react-native": "^0.64.2",
+    "react-native-code-push": "^7.0.4",
+    "react-native-device-info": "^8.4.5",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-modal": "^13.0.0",
     "react-native-modal-datetime-picker": "^11.0.0",

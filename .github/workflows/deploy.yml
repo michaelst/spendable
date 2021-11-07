@@ -25,7 +25,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          ccache-from: type=gha
+          cache-from: type=gha
           cache-to: type=gha,mode=max
           context: backend
           file: backend/.devops/Dockerfile
@@ -49,7 +49,7 @@ jobs:
           -f .devops/helm/values.yaml \
           --version v1.0.2 \
           --namespace backend \
-          --set image.repository=us.gcr.io/cloud-57/spendable-api \
+          --set image.repository=ghcr.io/michaelst/spendable \
           --set image.tag=${GITHUB_SHA} \
           --atomic \
           --debug

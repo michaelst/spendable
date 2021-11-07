@@ -7,16 +7,6 @@ defmodule Spendable.Notifiers.SyncMember do
   require Logger
 
   def notify(%Ash.Notifier.Notification{
-        resource: Spendable.BankAccount,
-        action: %{type: :update},
-        data: %{sync: true},
-        changeset: %{data: %{bank_member_id: bank_member_id}}
-      }) do
-    Logger.info("publishing sync member request for member: #{bank_member_id}")
-    SyncMemberRequest.publish(bank_member_id)
-  end
-
-  def notify(%Ash.Notifier.Notification{
         resource: Spendable.BankMember,
         action: %{name: :create_from_public_token},
         data: %{id: bank_member_id} = member

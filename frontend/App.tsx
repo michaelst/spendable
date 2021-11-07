@@ -8,6 +8,7 @@ import * as Sentry from "@sentry/react-native"
 import { TokenContext } from 'src/components/TokenContext'
 import { BlurEffectTypes } from 'react-native-screens'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import CodePush from 'react-native-code-push'
 import AuthScreen from './src/screens/AuthScreen'
 import BankMember from 'src/screens/BankMember'
 import BankMembers from 'src/screens/BankMembers'
@@ -123,4 +124,8 @@ const StackNavigator = () => {
   )
 }
 
-export default App
+export default CodePush({
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  installMode: CodePush.InstallMode.ON_NEXT_SUSPEND,
+  minimumBackgroundDuration: 60,
+})(App)
