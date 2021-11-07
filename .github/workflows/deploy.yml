@@ -49,7 +49,7 @@ jobs:
           -f .devops/helm/values.yaml \
           --version v1.0.2 \
           --namespace backend \
-          --set image.repository=us.gcr.io/cloud-57/spendable-api \
+          --set image.repository=ghcr.io/michaelst/spendable \
           --set image.tag=${GITHUB_SHA} \
           --atomic \
           --debug

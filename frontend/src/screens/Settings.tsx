@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
-import { ApolloError, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { TokenContext } from 'src/components/TokenContext'
 import useAppStyles from 'src/utils/useAppStyles'
 import { GET_NOTIFICATION_SETTINGS, REGISTER_DEVICE_TOKEN, UPDATE_NOTIFICATION_SETTINGS } from 'src/queries'
@@ -19,6 +19,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { NotificationProvider } from 'src/graphql/globalTypes'
 import { RegisterDeviceToken } from 'src/graphql/RegisterDeviceToken'
+import { useOTAVersion } from '../utils/getOTAVersion'
 
 const Settings = () => {
   const { styles } = useAppStyles()
@@ -137,18 +138,24 @@ const notificationsRow = () => {
 }
 
 const logoutRow = () => {
-  const { styles } = useAppStyles()
+  const { styles, baseUnit } = useAppStyles()
+  const appVersion = useOTAVersion()
 
   return (
-    <TouchableHighlight onPress={() => auth().signOut()}>
-      <View style={styles.inputRow}>
-        <View style={styles.flex}>
-          <Text style={styles.dangerText}>
-            Logout
-          </Text>
+    <View>
+      <TouchableHighlight onPress={() => auth().signOut()}>
+        <View style={styles.inputRow}>
+          <View style={styles.flex}>
+            <Text style={styles.dangerText}>
+              Logout
+            </Text>
+          </View>
         </View>
-      </View>
-    </TouchableHighlight>
+      </TouchableHighlight>
+      <Text style={{ ...styles.text, textAlign: 'center', marginTop: baseUnit * 2 }}>
+        {appVersion}
+      </Text>
+    </View>
   )
 }
 

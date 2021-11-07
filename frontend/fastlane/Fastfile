@@ -1,0 +1,21 @@
+fastlane_version '2.53.1'
+
+desc "Bump version number"
+  lane :bump_version do
+    package = load_json(json_path: "./package.json")
+    increment_version_number(xcodeproj: "./ios/Spendable.xcodeproj", version_number: package['version'])
+    build_number = ((Time.new.strftime("%Y").to_i - 2020 ).to_s + Time.new.strftime("%m%d%H%M")).to_i
+    increment_build_number(xcodeproj: './ios/Spendable.xcodeproj', build_number: build_number)
+  end
+
+platform :ios do
+  desc 'Ship to Testflight.'
+    lane :publish do
+      cocoapods(podfile: './ios/Podfile', use_bundle_exec: true, deployment: true, repo_update: true)
+      build_number = ((Time.new.strftime("%Y").to_i - 2020 ).to_s + Time.new.strftime("%m%d%H%M")).to_i
+      increment_build_number(xcodeproj: './ios/Spendable.xcodeproj', build_number: build_number)
+      build_app(scheme: 'Spendable', workspace: './ios/Spendable.xcworkspace')
+      #pilot(apple_id: '1497836303', skip_waiting_for_build_processing: true)
+      #clean_build_artifacts
+    end
+end
