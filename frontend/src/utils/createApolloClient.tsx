@@ -92,7 +92,7 @@ const createApolloClient = () => {
           },
           date: {
             read(date) {
-              return new Date(date)
+              return new Date(date + "T12:00:00")
             }
           }
         }

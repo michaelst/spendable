@@ -126,6 +126,5 @@ const StackNavigator = () => {
 
 export default CodePush({
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-  installMode: CodePush.InstallMode.ON_NEXT_SUSPEND,
-  minimumBackgroundDuration: 60,
+  installMode: CodePush.InstallMode.IMMEDIATE
 })(App)

@@ -94,7 +94,7 @@ const Row = ({ item: { title, amount, transactionDate, transactionReviewed, onPr
             {title}
           </Text>
           <Text style={styles.secondaryText}>
-            {DateTime.fromJSDate(transactionDate, { zone: 'UTC' }).toLocaleString(DateTime.DATE_MED)}
+            {DateTime.fromJSDate(transactionDate).toLocaleString(DateTime.DATE_MED)}
           </Text>
         </View>
 

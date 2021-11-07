@@ -10,7 +10,7 @@ export const MAIN_QUERY = gql`
         spent
       }
     }
-    budgets {
+    budgets(sort: [{ field: NAME }]) {
       id
       name
       balance
@@ -158,7 +158,7 @@ export const TRANSACTION_FRAGMENT = gql`
 
 export const LIST_TRANSACTIONS = gql`
   query ListTransactions($offset: Int){
-    transactions(limit: 100, offset: $offset) {
+    transactions(limit: 100, offset: $offset, sort: [{ field: DATE, order: DESC }]) {
       results {
         id
         name
