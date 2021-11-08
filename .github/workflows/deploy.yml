@@ -1,13 +1,15 @@
 name: Deploy
-on: workflow_dispatch
+on:
+   push:
+     branches:
+       - main
+     paths:
+     - 'backend/**'
 
 jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
-
-    env:
-      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
     steps:
       - uses: actions/checkout@v2
@@ -31,26 +33,4 @@ jobs:
           file: backend/.devops/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
-
-      - name: Setup kube config
-        run: |
-          mkdir $HOME/.kube
-          touch $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          echo "$KUBE_CONFIG" > $HOME/.kube/config
-
-      - name: Setup Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-      - name: Rollout Deploy
-        run: |
-          helm upgrade spendable cloud-57/cloud-57 \
-          -f .devops/helm/values.yaml \
-          --version v1.0.2 \
-          --namespace backend \
-          --set image.repository=ghcr.io/michaelst/spendable \
-          --set image.tag=${GITHUB_SHA} \
-          --atomic \
-          --debug
 

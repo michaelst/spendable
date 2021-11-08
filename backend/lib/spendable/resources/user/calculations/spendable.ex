@@ -39,7 +39,9 @@ defmodule Spendable.User.Calculations.Spendable do
         full_join: b in Budget,
         on: a.budget_id == b.id,
         select: fragment("SUM(ABS(COALESCE(?, 0) + ?))", a.allocated, b.adjustment),
-        where: b.user_id == ^user.id
+        where: b.user_id == ^user.id,
+        # ignore budgets that are only used to track spending
+        where: b.track_spending_only == false
       )
       |> Repo.one()
       |> Kernel.||("0.00")
