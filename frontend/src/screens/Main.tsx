@@ -59,8 +59,8 @@ const Budgets = () => {
     ...(data?.budgets || []).map(budget => ({
       id: budget.id,
       title: budget.name,
-      amount: currentMonth === activeMonth ? budget.balance : budget.spent,
-      subText: currentMonth === activeMonth ? "REMAINING" : "SPENT",
+      amount: currentMonth === activeMonth && !budget.trackSpendingOnly ? budget.balance : budget.spent,
+      subText: currentMonth === activeMonth && !budget.trackSpendingOnly ? "REMAINING" : "SPENT",
       onPress: () => navigation.navigate('Budget', { budgetId: budget.id })
     }))
   ]

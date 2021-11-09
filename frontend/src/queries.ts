@@ -14,6 +14,7 @@ export const MAIN_QUERY = gql`
       id
       name
       balance
+      trackSpendingOnly
       spent(month: $month)
     }
   }
@@ -29,6 +30,7 @@ export const GET_BUDGET = gql`
       name
       adjustment
       balance
+      trackSpendingOnly
       budgetAllocations(limit: 100) {
         id
         amount
@@ -68,6 +70,7 @@ export const UPDATE_BUDGET = gql`
         id
         name
         balance
+        trackSpendingOnly
       }
     }
   }

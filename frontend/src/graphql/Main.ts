@@ -25,6 +25,7 @@ export interface Main_budgets {
   id: string;
   name: string;
   balance: Decimal;
+  trackSpendingOnly: boolean;
   spent: Decimal;
 }
 

@@ -41,6 +41,7 @@ export interface GetBudget_budget {
   name: string;
   adjustment: Decimal;
   balance: Decimal;
+  trackSpendingOnly: boolean;
   budgetAllocations: GetBudget_budget_budgetAllocations[];
   budgetAllocationTemplateLines: GetBudget_budget_budgetAllocationTemplateLines[];
 }

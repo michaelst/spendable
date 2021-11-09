@@ -41,7 +41,7 @@ const BudgetSelect = ({ title, value, setValue }: FormField) => {
       id: budget.id,
       title: budget.name,
       amount: budget.balance,
-      subText: "REMAINING",
+      subText: budget.trackSpendingOnly ? "SPENT" : "REMAINING",
       onPress: () => {
         setValue(budget.id)
         setModalVisible(false)

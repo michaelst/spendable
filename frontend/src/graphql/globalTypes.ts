@@ -57,6 +57,7 @@ export interface CreateBudgetAllocationTransactionInput {
 export interface CreateBudgetInput {
   adjustment?: Decimal | null;
   name: string;
+  trackSpendingOnly?: boolean | null;
 }
 
 export interface CreateTransactionBudgetAllocationsInput {
@@ -121,6 +122,7 @@ export interface UpdateBudgetAllocationTemplateLineInput {
 export interface UpdateBudgetInput {
   adjustment?: Decimal | null;
   name?: string | null;
+  trackSpendingOnly?: boolean | null;
 }
 
 export interface UpdateNotificationSettingsInput {

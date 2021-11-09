@@ -53,7 +53,7 @@ const BankMemberRow = ({ bankMember }: Props) => {
           {bankMember.status != "CONNECTED" && plaidData && (
             <PlaidLink
               tokenConfig={{ token: plaidData.bankMember.plaidLinkToken, }}
-              onSuccess={() => console.log(success)}
+              onSuccess={success => console.log(success)}
             >
               <FontAwesomeIcon
                 icon={faExclamationCircle}

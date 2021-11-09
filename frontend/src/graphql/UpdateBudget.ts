@@ -14,6 +14,7 @@ export interface UpdateBudget_updateBudget_result {
   id: string;
   name: string;
   balance: Decimal;
+  trackSpendingOnly: boolean;
 }
 
 export interface UpdateBudget_updateBudget {
