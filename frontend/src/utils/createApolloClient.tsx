@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apol
 import { setContext } from '@apollo/client/link/context'
 import Decimal from 'decimal.js-light'
 import auth from '@react-native-firebase/auth'
+import { DateTime } from 'luxon'
 
 const createApolloClient = () => {
   const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
@@ -49,6 +50,11 @@ const createApolloClient = () => {
       },
       MonthSpend: {
         fields: {
+          month: {
+            read(month) {
+              return new Date(month + "T12:00:00")
+            }
+          },
           spent: {
             read(spent) {
               return new Decimal(spent)

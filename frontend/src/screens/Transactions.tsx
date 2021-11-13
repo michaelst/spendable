@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 import { FlatList } from 'react-native-gesture-handler'
 import { LIST_TRANSACTIONS } from '../queries'
 import { ListTransactions } from '../graphql/ListTransactions'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import HeaderButton from 'src/components/HeaderButton'
 
 const Transactions = () => {

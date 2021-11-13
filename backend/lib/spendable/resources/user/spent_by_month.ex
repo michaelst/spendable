@@ -8,7 +8,7 @@ defmodule Spendable.User.SpentByMonth do
   end
 
   attributes do
-    attribute :month, :string, allow_nil?: false
+    attribute :month, :date, allow_nil?: false
     attribute :spent, :decimal, allow_nil?: false
   end
 end

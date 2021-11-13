@@ -8,7 +8,7 @@ import { RectButton } from 'react-native-gesture-handler'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { DELETE_BUDGET } from 'src/queries'
 import { DeleteBudget } from 'src/graphql/DeleteBudget'
 

@@ -37,7 +37,7 @@ defmodule Spendable.Budget do
     end
 
     calculate :spent, :decimal, Spendable.Budget.Calculations.Spent do
-      argument :month, :string
+      argument :month, :date
       allow_nil? false
     end
   end

@@ -7,7 +7,7 @@ import BudgetSelect from 'src/components/BudgetSelect'
 import { CREATE_BUDGET_ALLOCATION_TEMPLATE_LINE, GET_BUDGET_ALLOCATION_TEMPLATE, MAIN_QUERY } from 'src/queries'
 import { Main } from 'src/graphql/Main'
 import { GetBudgetAllocationTemplate } from 'src/graphql/GetBudgetAllocationTemplate'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 import { CreateBudgetAllocationTemplateLine as CreateBudgetAllocationTemplateLineData } from 'src/graphql/CreateBudgetAllocationTemplateLine'
 
 const CreateBudgetAllocationTemplateLine = () => {

@@ -5,9 +5,9 @@ import { useQuery, useMutation } from '@apollo/client'
 import { GET_BUDGET, MAIN_QUERY, UPDATE_BUDGET } from 'src/queries'
 import { GetBudget } from 'src/graphql/GetBudget'
 import FormInput from 'src/components/FormInput'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 import Decimal from 'decimal.js-light'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { Switch } from 'react-native-gesture-handler'
 
 const EditBudget = () => {

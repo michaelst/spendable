@@ -13,7 +13,7 @@ defmodule Spendable.Budget.GraphQLTests do
         id
         adjustment
         balance
-        spent(month: "Oct 2021")
+        spent(month: "2021-10-01")
       }
     }
     """

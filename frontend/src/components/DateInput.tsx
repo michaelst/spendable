@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Text, View } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker"
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { DateTime } from 'luxon'
 

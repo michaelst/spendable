@@ -23,7 +23,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
                   "bankLimit" => 10,
                   "spentByMonth" => [
                     %{
-                      "month" => Calendar.strftime(Date.utc_today(), "%b %Y"),
+                      "month" => Date.utc_today() |> Timex.beginning_of_month() |> to_string(),
                       "spent" => "0"
                     }
                   ]

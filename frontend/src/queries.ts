@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const MAIN_QUERY = gql`
-  query Main($month: String!) {
+  query Main($month: Date!) {
     currentUser {
       id
       spendable
@@ -24,14 +24,25 @@ export const MAIN_QUERY = gql`
 // BUDGETS
 //
 export const GET_BUDGET = gql`
-  query GetBudget($id: ID!) {
+  query GetBudget($id: ID!, $startDate: Date!, $endDate: Date!) {
     budget(id: $id) {
       id
       name
       adjustment
       balance
       trackSpendingOnly
-      budgetAllocations(limit: 100) {
+      spent(month: $startDate)
+      budgetAllocations(
+        limit: 100
+        filter: {
+          transaction: {
+            and: [
+              { date: { greaterThanOrEqual: $startDate } }
+              { date: { lessThanOrEqual: $endDate } }
+            ]
+          }
+        }
+      ) {
         id
         amount
         transaction {
