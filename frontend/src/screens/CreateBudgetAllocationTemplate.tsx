@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import { CREATE_BUDGET_ALLOCATION_TEMPLATE, LIST_BUDGET_ALLOCATION_TEMPLATES } from 'src/queries'
 import { ListBudgetAllocationTemplates } from 'src/graphql/ListBudgetAllocationTemplates'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 import { CreateBudgetAllocationTemplate as CreateBudgetAllocationTemplateData } from 'src/graphql/CreateBudgetAllocationTemplate'
 
 const CreateBudgetAllocationTemplate = () => {

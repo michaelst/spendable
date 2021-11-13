@@ -8,7 +8,7 @@ import {
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal'
 import { useQuery } from '@apollo/client'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import Decimal from 'decimal.js-light'
 import formatCurrency from 'src/utils/formatCurrency'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'

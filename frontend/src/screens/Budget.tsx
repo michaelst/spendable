@@ -11,7 +11,8 @@ import HeaderButton from 'src/components/HeaderButton'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
 import { GetBudget } from 'src/graphql/GetBudget'
 import { GET_BUDGET } from 'src/queries'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
+import formatCurrency from 'src/utils/formatCurrency'
 
 const Budget = () => {
   const { styles } = useAppStyles()
@@ -26,7 +27,9 @@ const Budget = () => {
     fetchPolicy: 'cache-and-network' 
   })
 
-  useLayoutEffect(() => navigation.setOptions({ headerTitle: data?.budget.name, headerRight: headerRight }))
+  const headerTitle = data && data.budget.name + ' - ' + formatCurrency(data.budget.balance)
+
+  useLayoutEffect(() => navigation.setOptions({ headerTitle: headerTitle, headerRight: headerRight }))
 
   if (!data) return null
 

@@ -6,10 +6,10 @@ import { CREATE_TRANSACTION, LIST_TRANSACTIONS, MAIN_QUERY } from '../queries'
 import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
 import { ListTransactions } from '../graphql/ListTransactions'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { DateTime } from 'luxon'
 import { CreateTransaction as CreateTransactionData } from 'src/graphql/CreateTransaction'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 
 const CreateTransaction = () => {
   const { styles } = useAppStyles()

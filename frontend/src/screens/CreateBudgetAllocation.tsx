@@ -6,7 +6,7 @@ import FormInput from 'src/components/FormInput'
 import BudgetSelect from 'src/components/BudgetSelect'
 import { CREATE_BUDGET_ALLOCATION, GET_TRANSACTION, MAIN_QUERY } from '../queries'
 import { Main } from 'src/graphql/Main'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 
 const CreateBudgetAllocation = () => {
   const { params: { transactionId } } = useRoute<RouteProp<RootStackParamList, 'Create Allocation'>>()

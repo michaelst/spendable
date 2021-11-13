@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useQuery } from '@apollo/client'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { PlaidLink } from 'react-native-plaid-link-sdk'
 import { ListBankMembers_bankMembers } from 'src/graphql/ListBankMembers'
 import { GetBankMemberPlaidLinkToken } from 'src/graphql/GetBankMemberPlaidLinkToken'

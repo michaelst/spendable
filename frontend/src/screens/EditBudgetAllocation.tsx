@@ -7,7 +7,7 @@ import BudgetSelect from 'src/components/BudgetSelect'
 import { GET_BUDGET_ALLOCATION, MAIN_QUERY, UPDATE_BUDGET_ALLOCATION } from '../queries'
 import { Main } from 'src/graphql/Main'
 import { BudgetAllocation } from 'src/graphql/BudgetAllocation'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 
 const EditBudgetAllocation = () => {
   const { params: { allocationId } } = useRoute<RouteProp<RootStackParamList, 'Edit Allocation'>>()

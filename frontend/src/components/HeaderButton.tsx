@@ -1,5 +1,5 @@
 import React from 'react'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { Text } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 

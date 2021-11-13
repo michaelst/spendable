@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { View } from 'react-native'
 import { useMutation } from '@apollo/client'
 import { CREATE_BUDGET, MAIN_QUERY } from 'src/queries'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 import FormInput from 'src/components/FormInput'
 
 const CreateBudget = () => {

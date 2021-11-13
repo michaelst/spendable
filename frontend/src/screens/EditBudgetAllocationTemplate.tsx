@@ -5,7 +5,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import FormInput from 'src/components/FormInput'
 import { GET_BUDGET_ALLOCATION_TEMPLATE, UPDATE_BUDGET_ALLOCATION_TEMPLATE } from 'src/queries'
 import { GetBudgetAllocationTemplate } from 'src/graphql/GetBudgetAllocationTemplate'
-import useSaveAndGoBack from 'src/utils/useSaveAndGoBack'
+import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 
 const EditBudgetAllocationTemplate = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'Edit Template'>>()

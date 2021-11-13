@@ -6,7 +6,7 @@ import {
   KeyboardType,
   InputAccessoryView,
 } from 'react-native'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import Decimal from 'decimal.js-light'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 
