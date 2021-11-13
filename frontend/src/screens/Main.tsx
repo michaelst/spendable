@@ -30,7 +30,7 @@ const Main = () => {
     </SafeAreaView>
   )
 }
-//.toFormat('MMM yyyy')
+
 const Budgets = () => {
   const { activeMonth } = useContext(SettingsContext)
   const currentMonth = DateTime.now().startOf('month')
@@ -48,7 +48,7 @@ const Budgets = () => {
     return { ...s, month: DateTime.fromJSDate(s.month).startOf('month') }
   }) || []
 
-  const spentThisMonth = spentByMonth.find(s => s.month === activeMonth)?.spent || new Decimal(0)
+  const spentThisMonth = spentByMonth.find(s => s.month.equals(activeMonth))?.spent || new Decimal(0)
   const spentFromBudgetsThisMonth = [...data?.budgets || []].reduce((total, budget) => total.add(budget.spent), new Decimal(0))
   const spentFromSpendableThisMonth = spentThisMonth.minus(spentFromBudgetsThisMonth)
 

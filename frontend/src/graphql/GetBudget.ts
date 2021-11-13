@@ -42,6 +42,7 @@ export interface GetBudget_budget {
   adjustment: Decimal;
   balance: Decimal;
   trackSpendingOnly: boolean;
+  spent: Decimal;
   budgetAllocations: GetBudget_budget_budgetAllocations[];
   budgetAllocationTemplateLines: GetBudget_budget_budgetAllocationTemplateLines[];
 }
@@ -52,4 +53,5 @@ export interface GetBudget {
 
 export interface GetBudgetVariables {
   id: string;
+  month: Date;
 }

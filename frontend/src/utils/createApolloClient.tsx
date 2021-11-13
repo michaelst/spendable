@@ -5,7 +5,7 @@ import auth from '@react-native-firebase/auth'
 import { DateTime } from 'luxon'
 
 const createApolloClient = () => {
-  const httpLink = new HttpLink({ uri: 'https://70f1-205-204-35-189.ngrok.io/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
 
   const authLink = setContext(async (_, { headers }) => {
     const user = auth().currentUser
