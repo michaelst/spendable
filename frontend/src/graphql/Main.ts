@@ -9,7 +9,7 @@
 
 export interface Main_currentUser_spentByMonth {
   __typename: "MonthSpend";
-  month: string;
+  month: Date;
   spent: Decimal;
 }
 
@@ -35,5 +35,5 @@ export interface Main {
 }
 
 export interface MainVariables {
-  month: string;
+  month: Date;
 }

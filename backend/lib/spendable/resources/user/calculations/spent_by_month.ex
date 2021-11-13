@@ -11,15 +11,15 @@ defmodule Spendable.User.Calculations.SpentByMonth do
     query =
       from t in Transaction,
         select: %{
-          month: fragment("TO_CHAR(?, 'Mon YYYY')", t.date),
+          month: fragment("TO_CHAR(?, 'YYYY-MM-01')::date", t.date),
           spent: sum(t.amount) |> coalesce(^Decimal.new(0))
         },
         where: t.user_id == ^user.id,
         where: t.amount < 0,
-        group_by: [fragment("TO_CHAR(?, 'Mon YYYY')", t.date), fragment("TO_CHAR(?, 'YYYY-MM')", t.date)],
-        order_by: [desc: fragment("TO_CHAR(?, 'YYYY-MM')", t.date)]
+        group_by: fragment("TO_CHAR(?, 'YYYY-MM-01')", t.date),
+        order_by: [desc: fragment("TO_CHAR(?, 'YYYY-MM-01')", t.date)]
 
-    current_month = Calendar.strftime(Date.utc_today(), "%b %Y")
+    current_month = Date.utc_today() |> Timex.beginning_of_month()
 
     months =
       case Repo.all(query) do

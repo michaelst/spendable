@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const MAIN_QUERY = gql`
-  query Main($month: String!) {
+  query Main($month: Date!) {
     currentUser {
       id
       spendable

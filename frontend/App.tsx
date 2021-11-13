@@ -5,7 +5,6 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import * as Sentry from "@sentry/react-native"
-import { TokenContext } from 'src/components/TokenContext'
 import { BlurEffectTypes } from 'react-native-screens'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import CodePush from 'react-native-code-push'
@@ -30,7 +29,9 @@ import Settings from 'src/screens/Settings'
 import SpendFrom from 'src/screens/SpendFrom'
 import Transaction from 'src/screens/Transaction'
 import Transactions from 'src/screens/Transactions'
-import useAppStyles, { SpendableTheme } from 'src/utils/useAppStyles'
+import useAppStyles, { SpendableTheme } from 'src/hooks/useAppStyles'
+import { SettingsProvider } from 'src/context/Settings'
+import { DateTime } from 'luxon'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -38,7 +39,7 @@ const App = () => {
   const [initializing, setInitializing] = useState(true)
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>()
   const [deviceToken, setDeviceToken] = useState<string | null>(null)
-  const context = { deviceToken: deviceToken }
+  const [activeMonth, setActiveMonth] = useState(DateTime.now().startOf('month'))
 
   const baseTheme = useColorScheme() === 'dark' ? DarkTheme : DefaultTheme
 
@@ -72,11 +73,11 @@ const App = () => {
 
   return (
     <NavigationContainer theme={theme}>
-      <TokenContext.Provider value={context}>
+      <SettingsProvider settings={{activeMonth, setActiveMonth, deviceToken, setDeviceToken}}>
         <ApolloProvider client={createApolloClient()}>
           <StackNavigator />
         </ApolloProvider>
-      </TokenContext.Provider>
+      </SettingsProvider>
     </NavigationContainer>
   )
 }

@@ -2,9 +2,10 @@ import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apol
 import { setContext } from '@apollo/client/link/context'
 import Decimal from 'decimal.js-light'
 import auth from '@react-native-firebase/auth'
+import { DateTime } from 'luxon'
 
 const createApolloClient = () => {
-  const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://70f1-205-204-35-189.ngrok.io/graphql' })
 
   const authLink = setContext(async (_, { headers }) => {
     const user = auth().currentUser
@@ -49,6 +50,11 @@ const createApolloClient = () => {
       },
       MonthSpend: {
         fields: {
+          month: {
+            read(month) {
+              return new Date(month + "T12:00:00")
+            }
+          },
           spent: {
             read(spent) {
               return new Decimal(spent)

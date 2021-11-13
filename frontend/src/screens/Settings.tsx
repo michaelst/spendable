@@ -10,8 +10,7 @@ import { TouchableHighlight } from 'react-native-gesture-handler'
 import auth from '@react-native-firebase/auth'
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { useMutation, useQuery } from '@apollo/client'
-import { TokenContext } from 'src/components/TokenContext'
-import useAppStyles from 'src/utils/useAppStyles'
+import useAppStyles from 'src/hooks/useAppStyles'
 import { GET_NOTIFICATION_SETTINGS, REGISTER_DEVICE_TOKEN, UPDATE_NOTIFICATION_SETTINGS } from 'src/queries'
 import { GetNotificationSettings } from 'src/graphql/GetNotificationSettings'
 import { UpdateNotificationSettings } from 'src/graphql/UpdateNotificationSettings'
@@ -20,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { NotificationProvider } from 'src/graphql/globalTypes'
 import { RegisterDeviceToken } from 'src/graphql/RegisterDeviceToken'
 import { useOTAVersion } from '../utils/getOTAVersion'
+import SettingsContext from 'src/context/Settings'
 
 const Settings = () => {
   const { styles } = useAppStyles()
@@ -80,7 +80,7 @@ const notificationsRow = () => {
   const { styles, baseUnit } = useAppStyles()
   const [id, setId] = useState<string | null>()
   const [enabled, setEnabled] = useState(false)
-  const { deviceToken } = useContext(TokenContext)
+  const { deviceToken } = useContext(SettingsContext)
 
   PushNotificationIOS.requestPermissions()
 

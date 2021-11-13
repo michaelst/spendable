@@ -9,7 +9,7 @@ defmodule Spendable.Budget.Calculations.Spent do
 
   @impl Ash.Calculation
   def calculate(budgets, _opts, %{month: month}) do
-    start_date = month |> Timex.parse!("{Mshort} {YYYY}") |> Timex.to_date()
+    start_date = Timex.beginning_of_month(month)
     end_date = Timex.end_of_month(start_date)
     budget_ids = Enum.map(budgets, & &1.id)
 
