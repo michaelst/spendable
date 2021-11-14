@@ -2,10 +2,10 @@ defmodule Spendable.Budget.GraphQLTests do
   use Spendable.DataCase, async: true
 
   test "get budget" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    budget = insert(:budget, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     query = """
     query {
@@ -49,12 +49,12 @@ defmodule Spendable.Budget.GraphQLTests do
   end
 
   test "list budgets" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    budget1 = insert(:budget, user_id: user.id, name: "first")
-    budget2 = insert(:budget, user_id: user.id, name: "second")
-    insert(:budget, user_id: other_user.id)
+    budget1 = Factory.insert(Spendable.Budget, user_id: user.id, name: "first")
+    budget2 = Factory.insert(Spendable.Budget, user_id: user.id, name: "second")
+    Factory.insert(Spendable.Budget, user_id: other_user.id)
 
     query = """
       query {
@@ -80,7 +80,7 @@ defmodule Spendable.Budget.GraphQLTests do
   end
 
   test "create budget" do
-    user = insert(:user)
+    user = Factory.insert(Spendable.User)
 
     query = """
       mutation {
@@ -107,11 +107,13 @@ defmodule Spendable.Budget.GraphQLTests do
   end
 
   test "update budget" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    budget = insert(:budget, user_id: user.id)
-    insert(:budget_allocation, user_id: user.id, budget_id: budget.id, amount: 10)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
+
+    Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id, amount: 10)
 
     doc = """
       mutation {
@@ -206,10 +208,10 @@ defmodule Spendable.Budget.GraphQLTests do
   end
 
   test "delete budget" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    budget = insert(:budget, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     query = """
     mutation {

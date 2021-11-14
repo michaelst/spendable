@@ -56,7 +56,7 @@ const Budget = () => {
 
   const detailLines: RowProps[] = []
 
-  if (activeMonthIsCurrentMonth) detailLines.push(balance)
+  if (activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly) detailLines.push(balance)
   detailLines.push(spent)
 
   const allocationTemplateLines: TemplateRowItem[] =
@@ -96,7 +96,7 @@ const Budget = () => {
       renderItem: ({ item }: { item: TemplateRowItem }) => <TemplateRow item={item} />
     },
     {
-      title: 'Recent Transactions',
+      title: 'Transactions',
       data: recentAllocations,
       renderItem: ({ item }: { item: TransactionRowItem }) => <TransactionRow item={item} />
     },

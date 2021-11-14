@@ -2,10 +2,10 @@ defmodule Spendable.BanksAccount.GraphQLTests do
   use Spendable.Web.ConnCase, async: true
 
   test "get bank account" do
-    user = insert(:user)
-    other_user = insert(:user)
-    bank_member = insert(:bank_member, user_id: user.id)
-    bank_account = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
+    bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
+    bank_account = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id)
 
     doc = """
     query {
@@ -42,12 +42,12 @@ defmodule Spendable.BanksAccount.GraphQLTests do
   end
 
   test "list bank accounts" do
-    user = insert(:user)
-    other_user = insert(:user)
-    bank_member = insert(:bank_member, user_id: user.id)
-    bank_account_1 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id, name: "Checking")
-    bank_account_2 = insert(:bank_account, user_id: user.id, bank_member_id: bank_member.id, name: "Savings")
-    insert(:bank_account, user_id: other_user.id, bank_member_id: bank_member.id)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
+    bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
+    bank_account_1 = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Checking")
+    bank_account_2 = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Savings")
+    Factory.insert(Spendable.BankAccount, user_id: other_user.id, bank_member_id: bank_member.id)
 
     doc = """
     query {
@@ -69,11 +69,11 @@ defmodule Spendable.BanksAccount.GraphQLTests do
   end
 
   test "update" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    member = insert(:bank_member, user_id: user.id)
-    account = insert(:bank_account, user_id: user.id, bank_member_id: member.id, sync: false)
+    member = Factory.insert(Spendable.BankMember, user_id: user.id)
+    account = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: member.id, sync: false)
 
     query = """
       mutation {

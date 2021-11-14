@@ -2,11 +2,11 @@ defmodule Spendable.BudgetAllocationTemplateLine.GraphQLTest do
   use Spendable.DataCase, async: false
 
   test "create/update budget allocation template line" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    allocation_template = insert(:budget_allocation_template, user_id: user.id)
-    budget = insert(:budget, user_id: user.id)
+    allocation_template = Factory.insert(Spendable.BudgetAllocationTemplate, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     query = """
     mutation {
@@ -87,14 +87,14 @@ defmodule Spendable.BudgetAllocationTemplateLine.GraphQLTest do
   end
 
   test "delete budget allocation template line" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    template = insert(:budget_allocation_template, user_id: user.id)
-    budget = insert(:budget, user_id: user.id)
+    template = Factory.insert(Spendable.BudgetAllocationTemplate, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     line =
-      insert(:budget_allocation_template_line,
+      Factory.insert(Spendable.BudgetAllocationTemplateLine,
         user_id: user.id,
         budget_id: budget.id,
         budget_allocation_template_id: template.id

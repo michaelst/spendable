@@ -20,13 +20,13 @@ defmodule Spendable.Web.Controllers.PlaidTest do
   end
 
   test "webhook", %{conn: conn} do
-    user = insert(:user)
+    user = Factory.insert(Spendable.User)
 
     conn
     |> post("/plaid/webhook", %{"item_id" => "bogus"})
     |> response(:not_found)
 
-    member = insert(:bank_member, user_id: user.id, external_id: "webhook_test")
+    member = Factory.insert(Spendable.BankMember, user_id: user.id, external_id: "webhook_test")
 
     conn
     |> post("/plaid/webhook", %{"item_id" => "webhook_test"})

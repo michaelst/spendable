@@ -2,10 +2,10 @@ defmodule Spendable.Tranasction.GraphQLTests do
   use Spendable.DataCase, async: false
 
   test "get transaction" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    transaction = insert(:transaction, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
     query = """
     query {
@@ -52,12 +52,12 @@ defmodule Spendable.Tranasction.GraphQLTests do
   end
 
   test "list transactions" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    expense = insert(:transaction, user_id: user.id, amount: -20.24)
+    expense = Factory.insert(Spendable.Transaction, user_id: user.id, amount: -20.24)
 
-    insert(:transaction,
+    Factory.insert(Spendable.Transaction,
       user_id: other_user.id,
       amount: 3314.89,
       date: Date.utc_today()
@@ -96,8 +96,8 @@ defmodule Spendable.Tranasction.GraphQLTests do
   end
 
   test "create transaction" do
-    user = insert(:user)
-    budget = insert(:budget, user_id: user.id)
+    user = Factory.insert(Spendable.User)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     query = """
       mutation {
@@ -161,14 +161,14 @@ defmodule Spendable.Tranasction.GraphQLTests do
   end
 
   test "update transaction" do
-    user = insert(:user)
-    other_user = insert(:user)
-    budget = insert(:budget, user_id: user.id)
-    transaction = insert(:transaction, user_id: user.id)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
-    insert(:budget_allocation,
-      transaction: transaction,
-      budget: budget,
+    Factory.insert(Spendable.BudgetAllocation,
+      transaction_id: transaction.id,
+      budget_id: budget.id,
       amount: 25.24,
       user_id: user.id
     )
@@ -252,10 +252,10 @@ defmodule Spendable.Tranasction.GraphQLTests do
   end
 
   test "delete transaction" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    transaction = insert(:transaction, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
     query = """
     mutation {

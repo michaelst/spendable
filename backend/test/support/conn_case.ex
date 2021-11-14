@@ -22,7 +22,6 @@ defmodule Spendable.Web.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import Spendable.Factory
 
       alias Spendable.Web.Router.Helpers, as: Routes
 

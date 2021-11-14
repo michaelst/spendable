@@ -12,7 +12,7 @@ defmodule Spendable.MixProject do
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
-      test_paths: ["test", "lib"]
+      test_paths: ["lib"]
     ]
   end
 
@@ -46,7 +46,6 @@ defmodule Spendable.MixProject do
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.7"},
-      {:ex_machina, "~> 2.7", only: :test},
       {:excoveralls, ">= 0.0.0", only: :test},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},

@@ -2,8 +2,8 @@ defmodule Spendable.NotificationSettings.GraphQLTests do
   use Spendable.DataCase, async: true
 
   test "get existing APNS device token" do
-    user = insert(:user)
-    insert(:notification_settings, user_id: user.id, device_token: "test-device-token", enabled: true)
+    user = Factory.insert(Spendable.User)
+    Factory.insert(Spendable.NotificationSettings, user_id: user.id, device_token: "test-device-token", enabled: true)
 
     query = """
       query {
@@ -24,7 +24,7 @@ defmodule Spendable.NotificationSettings.GraphQLTests do
   end
 
   test "register APNS device token" do
-    user = insert(:user)
+    user = Factory.insert(Spendable.User)
 
     query = """
       mutation {
@@ -49,10 +49,10 @@ defmodule Spendable.NotificationSettings.GraphQLTests do
   end
 
   test "update device token" do
-    user = insert(:user)
+    user = Factory.insert(Spendable.User)
 
     notification_settings =
-      insert(:notification_settings, user_id: user.id, device_token: "test-device-token", enabled: false)
+      Factory.insert(Spendable.NotificationSettings, user_id: user.id, device_token: "test-device-token", enabled: false)
 
     query = """
       mutation {

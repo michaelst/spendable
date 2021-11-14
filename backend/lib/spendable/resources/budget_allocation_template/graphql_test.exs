@@ -2,12 +2,12 @@ defmodule Spendable.BudgetAllocationTemplate.GraphQLTests do
   use Spendable.DataCase, async: false
 
   test "budget allocation templates" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    insert(:budget_allocation_template, user_id: user.id, name: "Paycheck")
-    insert(:budget_allocation_template, user_id: user.id, name: "Taxes")
-    insert(:budget_allocation_template, user_id: other_user.id)
+    Factory.insert(Spendable.BudgetAllocationTemplate, user_id: user.id, name: "Paycheck")
+    Factory.insert(Spendable.BudgetAllocationTemplate, user_id: user.id, name: "Taxes")
+    Factory.insert(Spendable.BudgetAllocationTemplate, user_id: other_user.id)
 
     query = """
       query {
@@ -33,9 +33,9 @@ defmodule Spendable.BudgetAllocationTemplate.GraphQLTests do
   end
 
   test "create budget allocation template" do
-    user = insert(:user)
+    user = Factory.insert(Spendable.User)
 
-    budget = insert(:budget, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     query = """
     mutation {
@@ -81,11 +81,11 @@ defmodule Spendable.BudgetAllocationTemplate.GraphQLTests do
   end
 
   test "update budget allocation template" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    budget = insert(:budget, user_id: user.id)
-    template = insert(:budget_allocation_template, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
+    template = Factory.insert(Spendable.BudgetAllocationTemplate, user_id: user.id)
 
     query = """
       mutation {
@@ -160,10 +160,10 @@ defmodule Spendable.BudgetAllocationTemplate.GraphQLTests do
   end
 
   test "delete budget" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    template = insert(:budget_allocation_template, user_id: user.id)
+    template = Factory.insert(Spendable.BudgetAllocationTemplate, user_id: user.id)
 
     query = """
     mutation {

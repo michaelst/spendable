@@ -24,7 +24,6 @@ defmodule Spendable.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Spendable.DataCase
-      import Spendable.Factory
     end
   end
 

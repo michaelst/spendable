@@ -10,9 +10,9 @@ defmodule Spendable.Broadway.SendNotificationTest do
   alias Spendable.Repo
 
   test "send notification" do
-    user = insert(:user)
-    bad_settings = insert(:notification_settings, user_id: user.id, device_token: "bad-device-token-1", enabled: false)
-    insert(:notification_settings, user_id: user.id, device_token: "test-device-token-1", enabled: true)
+    user = Factory.insert(Spendable.User)
+    bad_settings = Factory.insert(Spendable.NotificationSettings, user_id: user.id, device_token: "bad-device-token-1", enabled: false)
+    Factory.insert(Spendable.NotificationSettings, user_id: user.id, device_token: "test-device-token-1", enabled: true)
 
     with_mock Pigeon.APNS, [:passthrough],
       push: fn

@@ -43,8 +43,8 @@ defmodule Spendable.Broadway.SyncMemberTest do
   end
 
   test "sync member" do
-    user = insert(:user)
-    member = insert(:bank_member, user_id: user.id)
+    user = Factory.insert(Spendable.User)
+    member = Factory.insert(Spendable.BankMember, user_id: user.id)
 
     data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
 

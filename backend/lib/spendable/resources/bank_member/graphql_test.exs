@@ -10,9 +10,9 @@ defmodule Spendable.BankMember.GraphQLTests do
 
   describe "member" do
     test "get member" do
-      user = insert(:user)
-      other_user = insert(:user)
-      member = insert(:bank_member, user_id: user.id)
+      user = Factory.insert(Spendable.User)
+      other_user = Factory.insert(Spendable.User)
+      member = Factory.insert(Spendable.BankMember, user_id: user.id)
 
       doc = """
       query {
@@ -50,11 +50,11 @@ defmodule Spendable.BankMember.GraphQLTests do
   end
 
   test "list members" do
-    user = insert(:user)
-    member = insert(:bank_member, user_id: user.id)
+    user = Factory.insert(Spendable.User)
+    member = Factory.insert(Spendable.BankMember, user_id: user.id)
     # this one shouldn't be returned
-    other_user = insert(:user)
-    insert(:bank_member, user_id: other_user.id)
+    other_user = Factory.insert(Spendable.User)
+    Factory.insert(Spendable.BankMember, user_id: other_user.id)
 
     query = """
     query {
@@ -181,7 +181,7 @@ defmodule Spendable.BankMember.GraphQLTests do
     end
 
     test "create member from plaid public token" do
-      user = insert(:user)
+      user = Factory.insert(Spendable.User)
 
       query = """
         mutation {

@@ -2,11 +2,11 @@ defmodule Spendable.BudgetAllocation.GraphQLTests do
   use Spendable.DataCase, async: false
 
   test "create and update allocation" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    transaction = insert(:transaction, user_id: user.id)
-    budget = insert(:budget, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
     query = """
     mutation {
@@ -87,10 +87,13 @@ defmodule Spendable.BudgetAllocation.GraphQLTests do
   end
 
   test "delete allocation" do
-    user = insert(:user)
-    other_user = insert(:user)
+    user = Factory.insert(Spendable.User)
+    other_user = Factory.insert(Spendable.User)
 
-    %{id: id} = insert(:budget_allocation, user_id: user.id)
+    budget = Factory.insert(Spendable.Budget, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
+
+    %{id: id} = Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id)
 
     query = """
     mutation {

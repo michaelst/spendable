@@ -33,9 +33,10 @@ const Main = () => {
 
 const Budgets = () => {
   const { activeMonth } = useContext(SettingsContext)
-  const currentMonth = DateTime.now().startOf('month')
   const navigation = useNavigation<NavigationProp>()
   const { styles, colors } = useAppStyles()
+
+  const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
   const { data, loading, refetch } = useQuery<Data>(MAIN_QUERY, {
     variables: { month: activeMonth.toFormat('yyyy-MM-dd') },
@@ -56,16 +57,16 @@ const Budgets = () => {
     {
       id: 'spendable',
       title: "Spendable",
-      amount: (currentMonth === activeMonth ? data?.currentUser.spendable : spentFromSpendableThisMonth) || new Decimal(0),
-      subText: currentMonth === activeMonth ? "AVAILABLE" : "SPENT",
+      amount: (activeMonthIsCurrentMonth ? data?.currentUser.spendable : spentFromSpendableThisMonth) || new Decimal(0),
+      subText: activeMonthIsCurrentMonth ? "AVAILABLE" : "SPENT",
       hideDelete: true,
       onPress: () => navigation.navigate('Budget', { budgetId: 'spendabe' })
     },
     ...(data?.budgets || []).map(budget => ({
       id: budget.id,
       title: budget.name,
-      amount: currentMonth === activeMonth && !budget.trackSpendingOnly ? budget.balance : budget.spent,
-      subText: currentMonth === activeMonth && !budget.trackSpendingOnly ? "REMAINING" : "SPENT",
+      amount: activeMonthIsCurrentMonth && !budget.trackSpendingOnly ? budget.balance : budget.spent,
+      subText: activeMonthIsCurrentMonth && !budget.trackSpendingOnly ? "REMAINING" : "SPENT",
       onPress: () => navigation.navigate('Budget', { budgetId: budget.id })
     }))
   ]
