@@ -73,7 +73,7 @@ const App = () => {
 
   return (
     <NavigationContainer theme={theme}>
-      <SettingsProvider settings={{activeMonth, setActiveMonth, deviceToken, setDeviceToken}}>
+      <SettingsProvider settings={{ activeMonth, setActiveMonth, deviceToken, setDeviceToken }}>
         <ApolloProvider client={createApolloClient()}>
           <StackNavigator />
         </ApolloProvider>
