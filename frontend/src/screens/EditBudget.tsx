@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useQuery, useMutation } from '@apollo/client'
@@ -9,12 +9,20 @@ import useSaveAndGoBack from 'src/hooks/useSaveAndGoBack'
 import Decimal from 'decimal.js-light'
 import useAppStyles from 'src/hooks/useAppStyles'
 import { Switch } from 'react-native-gesture-handler'
+import SettingsContext from 'src/context/Settings'
 
 const EditBudget = () => {
+  const { activeMonth } = useContext(SettingsContext)
   const { styles, colors, baseUnit } = useAppStyles()
   const { params: { budgetId } } = useRoute<RouteProp<RootStackParamList, 'Edit Budget'>>()
 
-  const { data } = useQuery<GetBudget>(GET_BUDGET, { variables: { id: budgetId } })
+  const { data } = useQuery<GetBudget>(GET_BUDGET, {
+    variables: {
+      id: budgetId,
+      startDate: activeMonth.toFormat('yyyy-MM-dd'),
+      endDate: activeMonth.endOf('month').toFormat('yyyy-MM-dd')
+    }
+  })
 
   if (!data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
