@@ -6,8 +6,6 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import formatCurrency from 'src/utils/formatCurrency'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
-import { RectButton } from 'react-native-gesture-handler'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/hooks/useAppStyles'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
@@ -15,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { GetTransaction_transaction_budgetAllocations } from 'src/graphql/GetTransaction'
 import { DELETE_BUDGET_ALLOCATION } from 'src/queries'
 import { DeleteBudgetAllocation } from 'src/graphql/DeleteBudgetAllocation'
+import SwipeableRow from './SwipeableRow'
 
 type Props = {
   allocation: GetTransaction_transaction_budgetAllocations
@@ -34,14 +33,6 @@ const TransactionAllocationRow = ({ allocation }: Props) => {
       cache.gc()
     }
   })
-
-  const renderRightActions = () => {
-    return (
-      <RectButton style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </RectButton>
-    )
-  }
 
   if (allocation.id === 'spendable') {
     return (
@@ -63,10 +54,7 @@ const TransactionAllocationRow = ({ allocation }: Props) => {
 
   return (
     <TouchableHighlight onPress={navigateToEdit}>
-      <Swipeable
-        renderRightActions={renderRightActions}
-        onSwipeableOpen={deleteAllocation}
-      >
+      <SwipeableRow onPress={deleteAllocation}>
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <Text style={styles.text}>
@@ -81,7 +69,7 @@ const TransactionAllocationRow = ({ allocation }: Props) => {
             <FontAwesomeIcon icon={faChevronRight} size={fontSize} color={colors.secondary} />
           </View>
         </View>
-      </Swipeable>
+      </SwipeableRow>
     </TouchableHighlight>
   )
 }

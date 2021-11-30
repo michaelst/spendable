@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { View, Text, StyleSheet, TouchableWithoutFeedback, StatusBar, SafeAreaView, TouchableHighlight, RefreshControl } from 'react-native'
 import { NativeModules } from 'react-native'
 import { ApolloQueryResult, OperationVariables, useQuery } from '@apollo/client'

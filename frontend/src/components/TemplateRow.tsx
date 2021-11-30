@@ -6,14 +6,13 @@ import {
 } from 'react-native'
 import Decimal from 'decimal.js-light'
 import formatCurrency from 'src/utils/formatCurrency'
-import { RectButton } from 'react-native-gesture-handler'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import useAppStyles from 'src/hooks/useAppStyles'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { DeleteBudgetAllocationTemplate } from 'src/graphql/DeleteBudgetAllocationTemplate'
 import { DELETE_BUDGET_ALLOCATION_TEMPLATE } from 'src/queries'
+import SwipeableRow from './SwipeableRow'
 
 export type TemplateRowItem = {
   key: string
@@ -29,8 +28,6 @@ type TemplateRowProps = {
 }
 
 const TemplateRow = ({ item }: TemplateRowProps) => {
-  const { styles } = useAppStyles()
-
   const [deleteAllocationTemplate] = useMutation(DELETE_BUDGET_ALLOCATION_TEMPLATE, {
     variables: { id: item.templateId },
     update(cache, { data }) {
@@ -42,21 +39,10 @@ const TemplateRow = ({ item }: TemplateRowProps) => {
 
   if (item.hideDelete) return <Row item={item} />
 
-  const renderRightActions = () => {
-    return (
-      <RectButton style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </RectButton>
-    )
-  }
-
   return (
-    <Swipeable
-      renderRightActions={renderRightActions}
-      onSwipeableOpen={deleteAllocationTemplate}
-    >
+    <SwipeableRow onPress={deleteAllocationTemplate} >
       <Row item={item} />
-    </Swipeable>
+    </SwipeableRow>
   )
 }
 

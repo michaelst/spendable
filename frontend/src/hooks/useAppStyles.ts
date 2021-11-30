@@ -84,19 +84,6 @@ const useAppStyles = () => {
     sectionHeaderText: {
       color: colors.secondary
     },
-    deleteButtonText: {
-      color: 'white',
-      fontSize: fontSize,
-      padding: baseUnit,
-      fontWeight: 'bold'
-    },
-    deleteButton: {
-      alignItems: 'center',
-      flex: 1,
-      flexDirection: 'row',
-      backgroundColor: '#dd2c00',
-      justifyContent: 'flex-end'
-    },
     flex: {
       flex: 1
     },

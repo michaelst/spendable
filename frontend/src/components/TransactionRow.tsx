@@ -6,8 +6,6 @@ import {
   View
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { RectButton } from 'react-native-gesture-handler'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
 import { DELETE_TRANSACTION, MAIN_QUERY } from '../queries'
@@ -17,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { DeleteTransaction } from 'src/graphql/DeleteTransaction'
+import SwipeableRow from './SwipeableRow'
 
 export type TransactionRowItem = {
   key: string
@@ -35,7 +34,6 @@ type TransactionRowProps = {
 
 const TransactionRow = ({ item }: TransactionRowProps) => {
   const navigation = useNavigation<NavigationProp>()
-  const { styles } = useAppStyles()
 
   const navigateToTransaction = () => navigation.navigate('Transaction', { transactionId: item.transactionId })
 
@@ -51,22 +49,11 @@ const TransactionRow = ({ item }: TransactionRowProps) => {
 
   if (item.hideDelete) return <Row item={item} />
 
-  const renderRightActions = () => {
-    return (
-      <RectButton style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </RectButton>
-    )
-  }
-
   return (
     <TouchableHighlight onPress={navigateToTransaction}>
-      <Swipeable
-        renderRightActions={renderRightActions}
-        onSwipeableOpen={deleteTransaction}
-      >
+      <SwipeableRow onPress={deleteTransaction}>
         <Row item={item} />
-      </Swipeable>
+      </SwipeableRow>
     </TouchableHighlight>
   )
 }

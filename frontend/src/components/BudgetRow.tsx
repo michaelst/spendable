@@ -4,13 +4,12 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import { RectButton } from 'react-native-gesture-handler'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
 import useAppStyles from 'src/hooks/useAppStyles'
 import { DELETE_BUDGET } from 'src/queries'
 import { DeleteBudget } from 'src/graphql/DeleteBudget'
+import SwipeableRow from './SwipeableRow'
 
 export type BudgetRowItem = {
   id: string
@@ -26,8 +25,6 @@ type BudgetRowProps = {
 }
 
 const BudgetRow = ({item}: BudgetRowProps) => {
-  const { styles } = useAppStyles()
-
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
     variables: { id: item.id },
     update(cache, { data }) {
@@ -39,21 +36,10 @@ const BudgetRow = ({item}: BudgetRowProps) => {
 
   if (item.hideDelete) return <Row item={item} />
 
-  const renderRightActions = () => {
-    return (
-      <RectButton style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </RectButton>
-    )
-  }
-
   return (
-    <Swipeable
-      renderRightActions={renderRightActions}
-      onSwipeableOpen={deleteBudget}
-    >
+    <SwipeableRow onPress={deleteBudget}>
       <Row item={item} />
-    </Swipeable>
+    </SwipeableRow>
   )
 }
 
