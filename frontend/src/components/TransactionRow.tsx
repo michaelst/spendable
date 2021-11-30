@@ -5,7 +5,6 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
 import { useMutation } from '@apollo/client'
 import formatCurrency from 'src/utils/formatCurrency'
 import { DELETE_TRANSACTION, MAIN_QUERY } from '../queries'
@@ -33,10 +32,6 @@ type TransactionRowProps = {
 }
 
 const TransactionRow = ({ item }: TransactionRowProps) => {
-  const navigation = useNavigation<NavigationProp>()
-
-  const navigateToTransaction = () => navigation.navigate('Transaction', { transactionId: item.transactionId })
-
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
     variables: { id: item.transactionId },
     refetchQueries: [{ query: MAIN_QUERY }],
@@ -50,11 +45,9 @@ const TransactionRow = ({ item }: TransactionRowProps) => {
   if (item.hideDelete) return <Row item={item} />
 
   return (
-    <TouchableHighlight onPress={navigateToTransaction}>
-      <SwipeableRow onPress={deleteTransaction}>
-        <Row item={item} />
-      </SwipeableRow>
-    </TouchableHighlight>
+    <SwipeableRow onPress={deleteTransaction}>
+      <Row item={item} />
+    </SwipeableRow>
   )
 }
 
