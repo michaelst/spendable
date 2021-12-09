@@ -15,11 +15,17 @@ export interface CreateBudgetAllocation_createBudgetAllocation_result_budget {
   name: string;
 }
 
+export interface CreateBudgetAllocation_createBudgetAllocation_result_transaction {
+  __typename: "Transaction";
+  id: string;
+}
+
 export interface CreateBudgetAllocation_createBudgetAllocation_result {
   __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
   budget: CreateBudgetAllocation_createBudgetAllocation_result_budget;
+  transaction: CreateBudgetAllocation_createBudgetAllocation_result_transaction;
 }
 
 export interface CreateBudgetAllocation_createBudgetAllocation {

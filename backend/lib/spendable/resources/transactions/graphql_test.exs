@@ -164,7 +164,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
     user = Factory.insert(Spendable.User)
     other_user = Factory.insert(Spendable.User)
     budget = Factory.insert(Spendable.Budget, user_id: user.id)
-    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id, amount: 126.25)
 
     Factory.insert(Spendable.BudgetAllocation,
       transaction_id: transaction.id,
