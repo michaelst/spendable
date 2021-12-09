@@ -53,5 +53,6 @@ export interface GetBudget {
 
 export interface GetBudgetVariables {
   id: string;
-  month: Date;
+  startDate: Date;
+  endDate: Date;
 }
