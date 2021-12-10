@@ -3,6 +3,6 @@ defmodule Spendable.Preparations.Select do
 
   @impl Ash.Resource.Preparation
   def prepare(query, opts, _context) do
-    Ash.Query.select(query, opts[:fields])
+    Ash.Query.ensure_selected(query, opts[:fields])
   end
 end

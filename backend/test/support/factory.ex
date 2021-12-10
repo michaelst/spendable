@@ -15,7 +15,7 @@ defmodule Factory do
   end
 
   defp build_params(model, overrides, opts) do
-    factory = Module.concat([model, Factory])
+    factory = Module.safe_concat([model, Factory])
 
     factory_name = opts[:factory_name] || :default
 

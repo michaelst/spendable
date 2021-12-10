@@ -4,7 +4,7 @@ defmodule Spendable.Budget.Preparations.Sort do
   @impl Ash.Resource.Preparation
   def prepare(query, _opts, _context) do
     query
-    |> Ash.Query.select(:name)
+    |> Ash.Query.ensure_selected([:name])
     |> Ash.Query.after_action(fn _query, results ->
       {:ok,
        Enum.sort(results, fn a, b ->
