@@ -32,8 +32,6 @@ defmodule Spendable.Repo.Migrations.MigrateResources9 do
       modify :updated_at, :utc_datetime, default: nil
     end
 
-    drop_if_exists index(:notification_settings, ["user_id"],
-                     name: "notification_settings_user_id_index"
-                   )
+    drop_if_exists index(:notification_settings, ["user_id"], name: "notification_settings_user_id_index")
   end
 end

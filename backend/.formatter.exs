@@ -1,6 +1,6 @@
 [
-  import_deps: [:ash, :ash_graphql, :ash_policy_authorizer, :ecto, :phoenix],
+  import_deps: [:ash, :ash_graphql, :ash_policy_authorizer, :ecto, :phoenix, :ecto_sql],
   line_length: 120,
-  inputs: ["*.{ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{ex,exs}"],
+  inputs: ["*.{ex,exs}", "{config,lib,test,priv}/**/*.{ex,exs}"],
   subdirectories: ["priv/*/migrations"]
 ]

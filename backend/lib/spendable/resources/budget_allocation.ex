@@ -32,6 +32,7 @@ defmodule Spendable.BudgetAllocation do
   actions do
     read :read do
       primary? true
+      prepare {Spendable.Preparations.Select, [fields: [:transaction_id]]}
       prepare Spendable.BudgetAllocation.Preparations.Sort
     end
 

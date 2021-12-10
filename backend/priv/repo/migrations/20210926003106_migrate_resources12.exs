@@ -8,20 +8,14 @@ defmodule Spendable.Repo.Migrations.MigrateResources12 do
   use Ecto.Migration
 
   def up do
-    drop_if_exists unique_index(:bank_members, [:external_id, :user_id],
-                     name: "bank_members_external_id_index"
-                   )
+    drop_if_exists unique_index(:bank_members, [:external_id, :user_id], name: "bank_members_external_id_index")
 
     create unique_index(:bank_members, [:external_id], name: "bank_members_external_id_index")
   end
 
   def down do
-    drop_if_exists unique_index(:bank_members, [:external_id],
-                     name: "bank_members_external_id_index"
-                   )
+    drop_if_exists unique_index(:bank_members, [:external_id], name: "bank_members_external_id_index")
 
-    create unique_index(:bank_members, [:external_id, :user_id],
-             name: "bank_members_external_id_index"
-           )
+    create unique_index(:bank_members, [:external_id, :user_id], name: "bank_members_external_id_index")
   end
 end

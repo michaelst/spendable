@@ -16,7 +16,7 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
 
   defp add_spendable_allocation(changeset, amount, budget_allocations, user) when is_list(budget_allocations) do
     spendable_id = get_spendable_id(user)
-    allocations = Enum.reject(budget_allocations, &(&1.budget_id == spendable_id))
+    allocations = Enum.reject(budget_allocations, &(&1.budget.id == spendable_id))
 
     allocated = Enum.reduce(allocations, Decimal.new(0), &Decimal.add(&1.amount, &2))
     unallocated = Decimal.sub(amount, allocated)

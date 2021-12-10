@@ -5,7 +5,9 @@ defmodule Spendable.BudgetAllocation.Preparations.Sort do
 
   @impl Ash.Resource.Preparation
   def prepare(query, _opts, _context) do
-    Ash.Query.after_action(query, fn _query, results ->
+    query
+    |> Ash.Query.select(:name)
+    |> Ash.Query.after_action(fn _query, results ->
       sorted_results =
         results
         |> Api.load!(:budget)

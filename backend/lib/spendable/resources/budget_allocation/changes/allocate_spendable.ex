@@ -6,28 +6,26 @@ defmodule Spendable.BudgetAllocation.Changes.AllocateSpendable do
   require Logger
 
   def change(changeset, _opts, %{actor: user}) do
-    Ash.Changeset.after_action(
-      changeset,
-      fn
-        _changeset, %{budget: %{name: "Spendable"}} = allocation ->
-          {:ok, allocation}
+    Ash.Changeset.after_action(changeset, fn
+      _changeset, %{budget: %{name: "Spendable"}} = allocation ->
+        {:ok, allocation}
 
-        changeset, allocation ->
-          %{transaction: transaction} = Api.load!(allocation, transaction: :budget_allocations)
-          allocated = Enum.reduce(transaction.budget_allocations, Decimal.new(0), &Decimal.add(&1.amount, &2))
+      changeset, allocation ->
+        %{transaction: transaction} = Api.load!(allocation, transaction: :budget_allocations)
 
-          amount_changing? = Ash.Changeset.changing_attribute?(changeset, :amount)
-          not_allocated? = not Decimal.eq?(transaction.amount, allocated)
-          deleting? = changeset.action.type == :destroy
+        allocated = Enum.reduce(transaction.budget_allocations, Decimal.new(0), &Decimal.add(&1.amount, &2))
 
-          if (amount_changing? or deleting?) and not_allocated? do
-            transaction
-            |> Ash.Changeset.for_update(:update, %{budget_allocations: transaction.budget_allocations}, actor: user)
-            |> Api.update!()
-          end
+        amount_changing? = Ash.Changeset.changing_attribute?(changeset, :amount)
+        not_allocated? = not Decimal.eq?(transaction.amount, allocated)
+        deleting? = changeset.action.type == :destroy
 
-          {:ok, allocation}
-      end
-    )
+        if (amount_changing? or deleting?) and not_allocated? do
+          transaction
+          |> Ash.Changeset.for_update(:update, %{budget_allocations: transaction.budget_allocations}, actor: user)
+          |> Api.update!()
+        end
+
+        {:ok, allocation}
+    end)
   end
 end
