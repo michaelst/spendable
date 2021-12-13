@@ -23,7 +23,7 @@
     "@react-native-firebase/auth": "^12.7.5",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
-    "@sentry/react-native": "^3.0.1",
+    "@sentry/react-native": "^3.2.8",
     "appcenter": "4.3.0",
     "appcenter-analytics": "4.3.0",
     "appcenter-crashes": "4.3.0",
