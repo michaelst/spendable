@@ -38,7 +38,7 @@ defmodule Spendable.MixProject do
       {:ash_graphql, "~> 0.17.0"},
       {:ash_policy_authorizer, "~> 0.16.3"},
       {:ash_postgres, "~> 0.41.3"},
-      {:ash, "~> 1.50.2"},
+      {:ash, "~> 1.51.1"},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
       {:castore, "~> 0.1.0"},
