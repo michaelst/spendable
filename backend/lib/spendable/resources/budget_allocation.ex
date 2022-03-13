@@ -30,6 +30,12 @@ defmodule Spendable.BudgetAllocation do
   end
 
   actions do
+    read :read do
+      primary? true
+      prepare {Spendable.Preparations.Select, [fields: [:transaction_id]]}
+      prepare Spendable.BudgetAllocation.Preparations.Sort
+    end
+
     create :create do
       primary? true
       change relate_actor(:user)
@@ -37,12 +43,19 @@ defmodule Spendable.BudgetAllocation do
       argument :transaction, :map
       change manage_relationship(:budget, type: :replace)
       change manage_relationship(:transaction, type: :replace)
+      change Spendable.BudgetAllocation.Changes.AllocateSpendable
     end
 
     update :update do
       primary? true
       argument :budget, :map
       change manage_relationship(:budget, type: :replace)
+      change Spendable.BudgetAllocation.Changes.AllocateSpendable
+    end
+
+    destroy :destroy do
+      primary? true
+      change Spendable.BudgetAllocation.Changes.AllocateSpendable
     end
   end
 

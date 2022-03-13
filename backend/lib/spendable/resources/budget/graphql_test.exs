@@ -54,6 +54,8 @@ defmodule Spendable.Budget.GraphQLTests do
 
     budget1 = Factory.insert(Spendable.Budget, user_id: user.id, name: "first")
     budget2 = Factory.insert(Spendable.Budget, user_id: user.id, name: "second")
+    spendable = Factory.insert(Spendable.Budget, user_id: user.id, name: "Spendable")
+
     Factory.insert(Spendable.Budget, user_id: other_user.id)
 
     query = """
@@ -68,6 +70,9 @@ defmodule Spendable.Budget.GraphQLTests do
             %{
               data: %{
                 "budgets" => [
+                  %{
+                    "id" => "#{spendable.id}"
+                  },
                   %{
                     "id" => "#{budget1.id}"
                   },
@@ -113,7 +118,12 @@ defmodule Spendable.Budget.GraphQLTests do
     budget = Factory.insert(Spendable.Budget, user_id: user.id)
     transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
-    Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id, amount: 10)
+    Factory.insert(Spendable.BudgetAllocation,
+      user_id: user.id,
+      budget_id: budget.id,
+      transaction_id: transaction.id,
+      amount: 10
+    )
 
     doc = """
       mutation {

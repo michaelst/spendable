@@ -43,6 +43,11 @@ defmodule Spendable.Budget do
   end
 
   actions do
+    read :read do
+      primary? true
+      prepare Spendable.Budget.Preparations.Sort
+    end
+
     create :create do
       primary? true
       change relate_actor(:user)

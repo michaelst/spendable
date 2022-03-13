@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import Decimal from 'decimal.js-light'
 import SettingsContext from 'src/context/Settings'
+import { amount, subText } from 'src/utils/budgetUtils'
 
 type monthListDataItem = {
   month: DateTime | null
@@ -49,27 +50,16 @@ const Budgets = () => {
     return { ...s, month: DateTime.fromJSDate(s.month).startOf('month') }
   }) || []
 
-  const spentThisMonth = spentByMonth.find(s => s.month.equals(activeMonth))?.spent || new Decimal(0)
-  const spentFromBudgetsThisMonth = [...data?.budgets || []].reduce((total, budget) => total.add(budget.spent), new Decimal(0))
-  const spentFromSpendableThisMonth = spentThisMonth.minus(spentFromBudgetsThisMonth)
-
-  const budgetListData: BudgetRowItem[] = [
-    {
-      id: 'spendable',
-      title: "Spendable",
-      amount: (activeMonthIsCurrentMonth ? data?.currentUser.spendable : spentFromSpendableThisMonth) || new Decimal(0),
-      subText: activeMonthIsCurrentMonth ? "AVAILABLE" : "SPENT",
-      hideDelete: true,
-      onPress: () => navigation.navigate('Budget', { budgetId: 'spendabe' })
-    },
-    ...(data?.budgets || []).map(budget => ({
+  const budgetListData: BudgetRowItem[] = (data?.budgets || []).map(budget => {
+    return {
       id: budget.id,
       title: budget.name,
-      amount: activeMonthIsCurrentMonth && !budget.trackSpendingOnly ? budget.balance : budget.spent,
-      subText: activeMonthIsCurrentMonth && !budget.trackSpendingOnly ? "REMAINING" : "SPENT",
+      amount: amount(activeMonthIsCurrentMonth, budget, data?.currentUser.spendable || new Decimal(0)),
+      subText: subText(activeMonthIsCurrentMonth, budget),
+      hideDelete: budget.name === "Spendable",
       onPress: () => navigation.navigate('Budget', { budgetId: budget.id })
-    }))
-  ]
+    }
+  })
 
   return (
     <FlatList
@@ -122,7 +112,7 @@ const Header = ({ spentByMonth, refetch }: HeaderProps) => {
         horizontal={true}
         keyExtractor={item => item.month}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }: {item: monthListDataItem}) => <MonthItem
+        renderItem={({ item }: { item: monthListDataItem }) => <MonthItem
           item={item}
           active={item.month?.equals(activeMonth) || false}
           onPress={() => {

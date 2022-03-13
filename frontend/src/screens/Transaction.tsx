@@ -9,7 +9,6 @@ import useAppStyles from 'src/hooks/useAppStyles'
 import BudgetSelect from 'src/components/BudgetSelect'
 import DateInput from 'src/components/DateInput'
 import FormInput from 'src/components/FormInput'
-import getAllocations from '../utils/getAllocations'
 import TemplateSelect from '../components/TemplateSelect'
 import HeaderButton from 'src/components/HeaderButton'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
@@ -50,28 +49,22 @@ const Transaction = () => {
 
   if (!data?.transaction) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
-  const allocations = getAllocations(data.transaction)
+  const allocations = data.transaction.budgetAllocations
 
-  const spendFromValue = allocations.length > 0
-    ? allocations.map(a => a.budget.name).join(', ')
-    : 'Spendable'
+  const spendFromValue = allocations.map(a => a.budget.name).join(', ')
 
   const setSpendFrom = (budgetId: string) => {
-    if (budgetId === 'spendable') {
-      updateTransaction({ variables: { id: transactionId, input: { budgetAllocations: [] } } })
-    } else {
-      updateTransaction({
-        variables: {
-          id: transactionId,
-          input: {
-            budgetAllocations: [{
-              amount: amount,
-              budget: { id: parseInt(budgetId) }
-            }]
-          }
+    updateTransaction({
+      variables: {
+        id: transactionId,
+        input: {
+          budgetAllocations: [{
+            amount: amount,
+            budget: { id: parseInt(budgetId) }
+          }]
         }
-      })
-    }
+      }
+    })
   }
 
   const navigateToSpendFrom = () => navigation.navigate('Spend From', { transactionId: transactionId })

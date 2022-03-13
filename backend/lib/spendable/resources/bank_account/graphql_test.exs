@@ -45,8 +45,13 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     user = Factory.insert(Spendable.User)
     other_user = Factory.insert(Spendable.User)
     bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
-    bank_account_1 = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Checking")
-    bank_account_2 = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Savings")
+
+    bank_account_1 =
+      Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Checking")
+
+    bank_account_2 =
+      Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Savings")
+
     Factory.insert(Spendable.BankAccount, user_id: other_user.id, bank_member_id: bank_member.id)
 
     doc = """

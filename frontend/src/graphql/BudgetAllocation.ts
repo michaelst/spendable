@@ -13,11 +13,17 @@ export interface BudgetAllocation_budgetAllocation_budget {
   name: string;
 }
 
+export interface BudgetAllocation_budgetAllocation_transaction {
+  __typename: "Transaction";
+  id: string;
+}
+
 export interface BudgetAllocation_budgetAllocation {
   __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
   budget: BudgetAllocation_budgetAllocation_budget;
+  transaction: BudgetAllocation_budgetAllocation_transaction;
 }
 
 export interface BudgetAllocation {

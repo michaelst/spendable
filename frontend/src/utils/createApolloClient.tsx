@@ -1,8 +1,7 @@
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
+import { ApolloClient, InMemoryCache, HttpLink, concat } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 import Decimal from 'decimal.js-light'
 import auth from '@react-native-firebase/auth'
-import { DateTime } from 'luxon'
 
 const createApolloClient = () => {
   const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })

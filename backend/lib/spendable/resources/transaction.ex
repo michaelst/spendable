@@ -43,6 +43,7 @@ defmodule Spendable.Transaction do
       primary? true
       change relate_actor(:user)
       argument :budget_allocations, {:array, :map}
+      change Spendable.Transaction.Changes.AllocateSpendable
       change manage_relationship(:budget_allocations, type: :direct_control)
     end
 
@@ -51,6 +52,7 @@ defmodule Spendable.Transaction do
     update :update do
       primary? true
       argument :budget_allocations, {:array, :map}
+      change Spendable.Transaction.Changes.AllocateSpendable
       change manage_relationship(:budget_allocations, type: :direct_control)
     end
   end

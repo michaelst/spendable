@@ -7,7 +7,6 @@ import { GetTransaction } from '../graphql/GetTransaction'
 import useAppStyles from 'src/hooks/useAppStyles'
 import { FlatList } from 'react-native-gesture-handler'
 import TransactionAllocationRow from '../components/TransactionAllocationRow'
-import getAllocations from '../utils/getAllocations'
 import HeaderButton from 'src/components/HeaderButton'
 
 const SpendFrom = () => {
@@ -26,11 +25,9 @@ const SpendFrom = () => {
 
   if (!data) return <ActivityIndicator color={colors.text} style={styles.activityIndicator} />
 
-  const allocations = getAllocations(data.transaction)
-
   return (
     <FlatList
-      data={allocations}
+      data={data.transaction.budgetAllocations}
       renderItem={({ item }) => <TransactionAllocationRow allocation={item} />}
       contentInsetAdjustmentBehavior="automatic"
     />

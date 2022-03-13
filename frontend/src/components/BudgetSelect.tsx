@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,8 +16,14 @@ import BudgetRow, { BudgetRowItem } from 'src/components/BudgetRow'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faWindowClose } from '@fortawesome/free-regular-svg-icons'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import SettingsContext from 'src/context/Settings'
+import { DateTime } from 'luxon'
+import { amount, subText } from 'src/utils/budgetUtils'
 
 const BudgetSelect = ({ title, value, setValue }: FormField) => {
+  const { activeMonth } = useContext(SettingsContext)
+  const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
+
   const { colors, fontSize, styles } = useStyles()
   const [modalVisible, setModalVisible] = useState(false)
 
@@ -25,29 +31,20 @@ const BudgetSelect = ({ title, value, setValue }: FormField) => {
 
   if (!data) return null
 
-  const budgetListData: BudgetRowItem[] = [
-    {
-      id: 'spendable',
-      title: "Spendable",
-      amount: data.currentUser.spendable,
-      subText: "AVAILABLE",
-      hideDelete: true,
-      onPress: () => {
-        setValue('spendable')
-        setModalVisible(false)
+  const budgetListData: BudgetRowItem[] = data.budgets
+    .filter(budget => budget.name !== 'Spendable')
+    .map(budget => {
+      return {
+        id: budget.id,
+        title: budget.name,
+        amount: amount(activeMonthIsCurrentMonth, budget, data.currentUser.spendable),
+        subText: subText(activeMonthIsCurrentMonth, budget),
+        onPress: () => {
+          setValue(budget.id)
+          setModalVisible(false)
+        }
       }
-    },
-    ...data.budgets.map(budget => ({
-      id: budget.id,
-      title: budget.name,
-      amount: budget.balance,
-      subText: budget.trackSpendingOnly ? "SPENT" : "REMAINING",
-      onPress: () => {
-        setValue(budget.id)
-        setModalVisible(false)
-      }
-    }))
-  ]
+    })
 
   return (
     <>

@@ -11,14 +11,32 @@ defmodule Spendable.User.Calculations.SpendableTest do
     transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
     budget = Factory.insert(Spendable.Budget, user_id: user.id)
-    Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id, amount: -25.55)
+
+    Factory.insert(Spendable.BudgetAllocation,
+      user_id: user.id,
+      budget_id: budget.id,
+      transaction_id: transaction.id,
+      amount: -25.55
+    )
 
     budget = Factory.insert(Spendable.Budget, user_id: user.id, adjustment: Decimal.new("0.01"))
-    Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id, amount: 10)
+
+    Factory.insert(Spendable.BudgetAllocation,
+      user_id: user.id,
+      budget_id: budget.id,
+      transaction_id: transaction.id,
+      amount: 10
+    )
 
     # budget that only tracks spending should be ignored
     budget = Factory.insert(Spendable.Budget, user_id: user.id, track_spending_only: true)
-    Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id, amount: 10)
+
+    Factory.insert(Spendable.BudgetAllocation,
+      user_id: user.id,
+      budget_id: budget.id,
+      transaction_id: transaction.id,
+      amount: 10
+    )
 
     expected_spendable = Decimal.new("64.44")
     {:ok, [calculation]} = Calculation.calculate([user], [], %{})

@@ -149,22 +149,25 @@ defmodule Spendable.Broadway.SyncMember do
     end)
     |> case do
       {:ok, transaction} = response ->
-        # if pending transaction id is set that means we have already sent a notification for the pending transaction
-        if is_nil(details["pending_transaction_id"]) do
-          {:ok, %{status: 200}} =
-            SendNotificationRequest.publish(
-              account.user_id,
-              transaction.name,
-              "$#{Decimal.abs(transaction.amount)}"
-            )
-        end
-
+        maybe_send_notification(details, account.user_id, transaction)
         response
 
       response ->
         response
     end
   end
+
+  # if pending transaction id is set that means we have already sent a notification for the pending transaction
+  defp maybe_send_notification(%{"pending_transaction_id" => nil}, user_id, transaction) do
+    {:ok, %{status: 200}} =
+      SendNotificationRequest.publish(
+        user_id,
+        transaction.name,
+        "$#{Decimal.abs(transaction.amount)}"
+      )
+  end
+
+  defp maybe_send_notification(_details, _user_id, _transaction), do: :ok
 
   defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id}) when is_binary(pending_id) do
     BankTransaction
