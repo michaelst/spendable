@@ -3,8 +3,8 @@ on: push
 env:
   MIX_ENV: test
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  OTP_VERSION: 24.1.4
-  ELIXIR_VERSION: 1.12.3
+  OTP_VERSION: 24.3
+  ELIXIR_VERSION: 1.13.3
 
 jobs:
   backend:
