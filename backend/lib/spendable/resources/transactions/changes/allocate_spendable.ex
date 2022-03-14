@@ -25,7 +25,7 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
       if Decimal.eq?(unallocated, 0) do
         allocations
       else
-        [%{amount: unallocated, budget: %{id: get_spendable_id(user)}} | allocations]
+        [%{amount: unallocated, budget: %{id: spendable_id}} | allocations]
       end
 
     Ash.Changeset.set_argument(changeset, :budget_allocations, new_allocations)

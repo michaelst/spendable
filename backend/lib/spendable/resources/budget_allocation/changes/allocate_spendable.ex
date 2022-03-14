@@ -10,6 +10,9 @@ defmodule Spendable.BudgetAllocation.Changes.AllocateSpendable do
       _changeset, %{budget: %{name: "Spendable"}} = allocation ->
         {:ok, allocation}
 
+      %{context: %{manage_relationship_source: _source}}, allocation ->
+        {:ok, allocation}
+
       changeset, allocation ->
         %{transaction: transaction} = Api.load!(allocation, transaction: :budget_allocations)
 

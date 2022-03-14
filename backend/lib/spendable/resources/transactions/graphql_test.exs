@@ -163,13 +163,14 @@ defmodule Spendable.Tranasction.GraphQLTests do
   test "update transaction" do
     user = Factory.insert(Spendable.User)
     other_user = Factory.insert(Spendable.User)
+    spendable = Factory.insert(Spendable.Budget, user_id: user.id, name: "Spendable")
     budget = Factory.insert(Spendable.Budget, user_id: user.id)
     transaction = Factory.insert(Spendable.Transaction, user_id: user.id, amount: 126.25)
 
     Factory.insert(Spendable.BudgetAllocation,
       transaction_id: transaction.id,
-      budget_id: budget.id,
-      amount: 25.24,
+      budget_id: spendable.id,
+      amount: 126.25,
       user_id: user.id
     )
 
@@ -183,10 +184,6 @@ defmodule Spendable.Tranasction.GraphQLTests do
             budgetAllocations: [
               {
                 amount: "26.25"
-                budget: { id: #{budget.id} }
-              }
-              {
-                amount: "100"
                 budget: { id: #{budget.id} }
               }
             ]
@@ -219,7 +216,7 @@ defmodule Spendable.Tranasction.GraphQLTests do
                       %{
                         "amount" => "100.00",
                         "budget" => %{
-                          "id" => "#{budget.id}"
+                          "id" => "#{spendable.id}"
                         }
                       },
                       %{

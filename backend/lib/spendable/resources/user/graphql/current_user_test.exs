@@ -7,6 +7,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
     query = """
       query {
         currentUser {
+          id
           bankLimit
           spentByMonth {
             month
@@ -20,6 +21,7 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
             %{
               data: %{
                 "currentUser" => %{
+                  "id" => "#{user.id}",
                   "bankLimit" => 10,
                   "spentByMonth" => [
                     %{
@@ -30,23 +32,5 @@ defmodule Spendable.User.Resolver.CurrentUserTest do
                 }
               }
             }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
-  end
-
-  test "unauthenticated" do
-    doc = """
-      query {
-        currentUser {
-          plaidLinkToken
-        }
-      }
-    """
-
-    assert {:ok,
-            %{
-              data: nil,
-              errors: [
-                %{locations: [%{column: 5, line: 2}], message: "Forbidden", path: ["currentUser"], code: "forbidden"}
-              ]
-            }} == Absinthe.run(doc, Spendable.Web.Schema)
   end
 end
