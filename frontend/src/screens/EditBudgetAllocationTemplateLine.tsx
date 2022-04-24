@@ -27,16 +27,18 @@ const EditBudgetAllocationTemplateLine = () => {
   const { data } = useQuery<Main>(MAIN_QUERY)
   const budgetName = data?.budgets.find(b => b.id === budgetId)?.name ?? ''
 
-  const [updateTemplateLine] = useMutation(UPDATE_BUDGET_ALLOCATION_TEMPLATE_LINE, {
-    variables: {
-      id: lineId,
-      amount: amount,
-      budgetId: budgetId
-    }
-  })
+  const [updateTemplateLine] = useMutation(UPDATE_BUDGET_ALLOCATION_TEMPLATE_LINE)
 
   const saveAndGoBack = () => {
-    updateTemplateLine()
+    updateTemplateLine({
+      variables: {
+        id: lineId,
+        input: {
+          amount: amount,
+          budget: {id: parseInt(budgetId)}
+        }
+      }
+    })
     navigation.goBack()
   }
 

@@ -33,8 +33,7 @@ const Budget = () => {
       id: budgetId, 
       startDate: activeMonth.toFormat('yyyy-MM-dd') ,
       endDate: activeMonth.endOf('month').toFormat('yyyy-MM-dd') 
-    },
-    fetchPolicy: 'cache-and-network'
+    }
   })
 
   useLayoutEffect(() => navigation.setOptions({ headerTitle: data?.budget.name, headerRight: headerRight }))
