@@ -3,3 +3,5 @@ GoogleService-Info.plist
 AppCenter-Config.plist
 sentry.properties
 ios/Pods/
+
+public/build/
