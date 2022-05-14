@@ -19,6 +19,7 @@
     "decimal.js-light": "^2.5.1",
     "firebase": "^9.8.1",
     "graphql": "^16.5.0",
+    "luxon": "^2.4.0",
     "react": "^18.1.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.1.0",
@@ -53,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@types/luxon": "^2.3.2",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.13",
     "tailwindcss": "^3.0.24"

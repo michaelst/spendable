@@ -9,7 +9,7 @@ import { MAIN_QUERY } from '../queries';
 import BudgetRow from '../components/BudgetRow';
 import { amount, subText } from '../utils/budgetUtils';
 
-function Budgets() {
+function Budget() {
   const [activeMonth, setActiveMonth] = useState(DateTime.now().startOf('month'))
   const navigate = useNavigate()
 
@@ -39,4 +39,4 @@ function Budgets() {
   return <div>{budgets}</div>
 }
 
-export default Budgets;
+export default Budget;

@@ -7,5 +7,5 @@ export default function formatCurrency(decimal: Decimal) {
     minimumFractionDigits: 2,
   })
 
-  return formatter.format(decimal)
+  return formatter.format(decimal.toNumber())
 }

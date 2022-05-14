@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Sidebar from './components/Sidebar';
 import Transactions from './pages/Transactions';
 import Banks from './pages/Banks';
+import Budget from './pages/Budget';
 
 function App() {
   const [user, loading] = useAuthState(auth);
@@ -31,6 +32,7 @@ function App() {
       <Sidebar />
       <Routes>
         <Route path="/" element={<Budgets />} />
+        <Route path="/budget/:id" element={<Budget />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/banks" element={<Banks />} />
       </Routes>

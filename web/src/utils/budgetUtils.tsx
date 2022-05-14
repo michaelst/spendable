@@ -1,4 +1,4 @@
-import { Main_budgets } from "src/graphql/Main";
+import { Main_budgets } from "../graphql/Main"
 
 export function subText(activeMonthIsCurrentMonth: Boolean, budget: Main_budgets) {
   if (budget.name === "Spendable") {
