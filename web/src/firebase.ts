@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { OAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB69wETyOgdy8QhX2k3wLZ4FVVE0o5F1Fs",
+  apiKey: "AIzaSyAMwiKd9_-gpYAZVSbA6Dmgrqo6rjtV3kw",
   authDomain: "cloud-57.firebaseapp.com",
   databaseURL: "https://cloud-57.firebaseio.com",
   projectId: "cloud-57",
