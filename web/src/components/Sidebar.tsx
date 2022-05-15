@@ -10,7 +10,7 @@ import { faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 
 const Sidebar = () => (
-  <div className="w-20 h-full shadow-md bg-white px-1 absolute flex flex-col justify-between">
+  <div className="w-20 h-full shadow-md bg-white px-1 fixed flex flex-col justify-between">
     <div className="flex flex-col items-center">
       <Link to="/" className="pt-5 pb-5">
         <FontAwesomeIcon icon={faHouse} size="2x" />

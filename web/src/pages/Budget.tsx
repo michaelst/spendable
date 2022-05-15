@@ -11,6 +11,8 @@ import { amount, subText } from '../utils/budgetUtils';
 import { GetBudget } from '../graphql/GetBudget';
 import formatCurrency from '../utils/formatCurrency';
 import Row, { RowProps } from '../components/Row';
+import TemplateRow, { TemplateRowItem } from '../components/TemplateRow';
+import TransactionRow, { TransactionRowItem } from '../components/TransactionRow';
 
 function Budget() {
   const { id } = useParams()
@@ -20,10 +22,10 @@ function Budget() {
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
   const { data } = useQuery<GetBudget>(GET_BUDGET, {
-    variables: { 
-      id: id, 
-      startDate: activeMonth.toFormat('yyyy-MM-dd') ,
-      endDate: activeMonth.endOf('month').toFormat('yyyy-MM-dd') 
+    variables: {
+      id: id,
+      startDate: activeMonth.toFormat('yyyy-MM-dd'),
+      endDate: activeMonth.endOf('month').toFormat('yyyy-MM-dd')
     }
   })
 
@@ -46,12 +48,46 @@ function Budget() {
   if (activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly) detailLines.push(balance)
   detailLines.push(spent)
 
-  
+  const allocationTemplateLines: TemplateRowItem[] =
+    [...data.budget.budgetAllocationTemplateLines]
+      .sort((a, b) => b.amount.comparedTo(a.amount))
+      .map(line => ({
+        key: line.id,
+        id: line.budgetAllocationTemplate.id,
+        name: line.budgetAllocationTemplate.name,
+        amount: line.amount,
+        hideDelete: true,
+        onClick: () => navigate(`/templates/${line.budgetAllocationTemplate.id}`)
+      }))
+
+  const recentAllocations: TransactionRowItem[] =
+    [...data.budget.budgetAllocations]
+      .sort((a, b) => b.transaction.date.getTime() - a.transaction.date.getTime())
+      .map(allocation => ({
+        key: allocation.id,
+        id: allocation.transaction.id,
+        title: allocation.transaction.name,
+        amount: allocation.amount,
+        transactionDate: allocation.transaction.date,
+        transactionReviewed: allocation.transaction.reviewed,
+        onClick: () => navigate(`/transactions/${allocation.transaction.id}`)
+      }))
+
 
   return (
-    <div className="flex flex-col items-center pt-16">
-      {detailLines.map(line => <Row {...line} />)}
-    </div>
+    <>
+      <div className="flex flex-col items-center pt-16">
+        {detailLines.map(line => <Row {...line} />)}
+      </div>
+
+      <div className="flex flex-col items-center pt-16">
+        {allocationTemplateLines.map(template => <TemplateRow {...template} />)}
+      </div>
+
+      <div className="flex flex-col items-center pt-16">
+        {recentAllocations.map(transaction => <TransactionRow {...transaction} />)}
+      </div>
+    </>
   )
 }
 

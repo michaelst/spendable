@@ -4,7 +4,7 @@ import Decimal from 'decimal.js-light'
 import { auth } from '../firebase'
 
 const createApolloClient = () => {
-  const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' })
+  const httpLink = new HttpLink({ uri: 'https://spendable.money/graphql' })
 
   const authLink = setContext(async (_, { headers }) => {
     const user = auth.currentUser

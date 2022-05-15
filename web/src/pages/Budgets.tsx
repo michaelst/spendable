@@ -30,14 +30,14 @@ function Budgets() {
       amount: amount(activeMonthIsCurrentMonth, budget, data?.currentUser.spendable || new Decimal(0)),
       subText: subText(activeMonthIsCurrentMonth, budget),
       hideDelete: budget.name === "Spendable",
-      onPress: () => navigate(`/budget/${budget.id}`)
+      onClick: () => navigate(`/budgets/${budget.id}`)
     }
 
     return <BudgetRow budget={item} />
   })
 
   return (
-    <div className="flex flex-col items-center pt-16">
+    <div className="flex flex-col items-center py-16 overflow-scroll">
       {budgets}
     </div>
   )

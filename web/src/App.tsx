@@ -28,7 +28,7 @@ function App() {
   if (needsToLogin) return null
 
   return (
-    <div className="App bg-slate-100 h-screen">
+    <div className="App bg-slate-100 min-h-screen">
       <Sidebar />
       <Routes>
         <Route path="/" element={<Budgets />} />

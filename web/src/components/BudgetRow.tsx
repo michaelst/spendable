@@ -5,7 +5,6 @@ import { DELETE_BUDGET } from '../queries'
 import { DeleteBudget } from '../graphql/DeleteBudget'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
-import { Link } from 'react-router-dom'
 
 export type BudgetRowItem = {
   id: string
@@ -13,7 +12,7 @@ export type BudgetRowItem = {
   amount: Decimal
   subText: string
   hideDelete?: boolean
-  onPress: () => void
+  onClick: () => void
 }
 
 type BudgetRowProps = {
@@ -37,25 +36,23 @@ const BudgetRow = ({ budget }: BudgetRowProps) => {
   )
 }
 
-const Row = ({ budget: { id, title, amount, subText, onPress } }: BudgetRowProps) => {
+const Row = ({ budget: { title, amount, subText, onClick } }: BudgetRowProps) => {
   // const border = amount.isNegative() ? 'border border-red-500' : ''
 
   return (
-    <div className="border-b bg-white p-8 w-1/2">
-      <Link to={`/budgets/${id}`} >
-        <div className="flex flex-row justify-between">
-          <div className="flex items-center">
-            <p>{title}</p>
-          </div>
-          <div className="flex items-center">
-            <div className="flex flex-col items-end mr-4">
-              <div className="font-bold">{formatCurrency(amount)}</div>
-              <div className="text-xs">{subText}</div>
-            </div>
-            <FontAwesomeIcon icon={faAngleRight} />
-          </div>
+    <div className="border-b bg-white p-8 w-1/2 cursor-pointer" onClick={onClick}>
+      <div className="flex flex-row justify-between">
+        <div className="flex items-center">
+          <p>{title}</p>
         </div>
-      </Link>
+        <div className="flex items-center">
+          <div className="flex flex-col items-end mr-4">
+            <div>{formatCurrency(amount)}</div>
+            <div className="text-xs">{subText}</div>
+          </div>
+          <FontAwesomeIcon icon={faAngleRight} />
+        </div>
+      </div>
     </div>
   )
 }
