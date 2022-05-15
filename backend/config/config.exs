@@ -22,7 +22,9 @@ config :logger, :console,
   metadata: [:request_id, :trace_id, :span_id],
   level: :info
 
-config :cors_plug, max_age: 86400
+config :cors_plug,
+  origin: ["http://localhost:3000"],
+  max_age: 86400
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),

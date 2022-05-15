@@ -36,7 +36,11 @@ function Budgets() {
     return <BudgetRow budget={item} />
   })
 
-  return <div>{budgets}</div>
+  return (
+    <div className="flex flex-col items-center pt-16">
+      {budgets}
+    </div>
+  )
 }
 
 export default Budgets;

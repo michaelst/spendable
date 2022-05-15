@@ -32,7 +32,7 @@ function App() {
       <Sidebar />
       <Routes>
         <Route path="/" element={<Budgets />} />
-        <Route path="/budget/:id" element={<Budget />} />
+        <Route path="/budgets/:id" element={<Budget />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/banks" element={<Banks />} />
       </Routes>

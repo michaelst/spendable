@@ -2,41 +2,57 @@ import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { DateTime } from 'luxon'
 import Decimal from 'decimal.js-light'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Main as Data } from '../graphql/Main';
-import { MAIN_QUERY } from '../queries';
+import { GET_BUDGET, MAIN_QUERY } from '../queries';
 import BudgetRow from '../components/BudgetRow';
 import { amount, subText } from '../utils/budgetUtils';
+import { GetBudget } from '../graphql/GetBudget';
+import formatCurrency from '../utils/formatCurrency';
+import Row, { RowProps } from '../components/Row';
 
 function Budget() {
+  const { id } = useParams()
   const [activeMonth, setActiveMonth] = useState(DateTime.now().startOf('month'))
   const navigate = useNavigate()
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
-  const { data, loading, refetch } = useQuery<Data>(MAIN_QUERY, {
-    variables: { month: activeMonth.toFormat('yyyy-MM-dd') }
-  })
-
-  const spentByMonth = data?.currentUser.spentByMonth.map(s => {
-    return { ...s, month: DateTime.fromJSDate(s.month).startOf('month') }
-  }) || []
-
-  const budgets = (data?.budgets || []).map(budget => {
-    const item = {
-      id: budget.id,
-      title: budget.name,
-      amount: amount(activeMonthIsCurrentMonth, budget, data?.currentUser.spendable || new Decimal(0)),
-      subText: subText(activeMonthIsCurrentMonth, budget),
-      hideDelete: budget.name === "Spendable",
-      onPress: () => navigate(`/budget/${budget.id}`)
+  const { data } = useQuery<GetBudget>(GET_BUDGET, {
+    variables: { 
+      id: id, 
+      startDate: activeMonth.toFormat('yyyy-MM-dd') ,
+      endDate: activeMonth.endOf('month').toFormat('yyyy-MM-dd') 
     }
-
-    return <BudgetRow budget={item} />
   })
 
-  return <div>{budgets}</div>
+  if (!data) return null
+
+  const balance = {
+    key: 'balance',
+    leftSide: 'Balance',
+    rightSide: formatCurrency(data.budget.balance)
+  }
+
+  const spent = {
+    key: 'spent',
+    leftSide: 'Spent',
+    rightSide: formatCurrency(data.budget.spent)
+  }
+
+  const detailLines: RowProps[] = []
+
+  if (activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly) detailLines.push(balance)
+  detailLines.push(spent)
+
+  
+
+  return (
+    <div className="flex flex-col items-center pt-16">
+      {detailLines.map(line => <Row {...line} />)}
+    </div>
+  )
 }
 
 export default Budget;
