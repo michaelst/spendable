@@ -19,7 +19,7 @@ config :logger,
   level: :info
 
 config :cors_plug,
-  origin: ["https://spendable.money"],
+  origin: ["https://spendable.money", "http://localhost:3000"],
   max_age: 86400
 
 config :spendable, Plaid, base_url: "https://development.plaid.com"
