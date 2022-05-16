@@ -10,7 +10,6 @@ defmodule Spendable.Application do
     children = [
       Spendable.Repo,
       Spendable.Web.Endpoint,
-      Spendable.Broadway.SendNotification,
       Spendable.Broadway.SyncMember,
       Spendable.Services.HealthCheck,
       Spendable.Auth.Guardian.KeyServer
