@@ -41,9 +41,9 @@ const Row = ({ title, amount, transactionDate, transactionReviewed, onClick }: T
   return (
     <div className="border-b bg-white p-8 w-1/2" onClick={onClick}>
       <div className="flex flex-row justify-between">
-        <div className="flex items-center">
+        <div className="flex flex-col items-start">
           <div>{title}</div>
-          <div>{DateTime.fromJSDate(transactionDate).toLocaleString(DateTime.DATE_MED)}</div>
+          <div className="text-xs text-slate-500">{DateTime.fromJSDate(transactionDate).toLocaleString(DateTime.DATE_MED)}</div>
         </div>
 
         <div className="flex items-center">
@@ -51,7 +51,7 @@ const Row = ({ title, amount, transactionDate, transactionReviewed, onClick }: T
             <div>{formatCurrency(amount)}</div>
           </div>
           {transactionReviewed && <FontAwesomeIcon icon={faCheckCircle} />}
-          <FontAwesomeIcon icon={faAngleRight} />
+          <FontAwesomeIcon icon={faAngleRight} className="text-slate-500" />
         </div>
       </div>
     </div>

@@ -73,18 +73,17 @@ function Budget() {
         onClick: () => navigate(`/transactions/${allocation.transaction.id}`)
       }))
 
-
   return (
     <>
-      <div className="flex flex-col items-center pt-16">
+      <div className="flex flex-col items-center py-16">
         {detailLines.map(line => <Row {...line} />)}
       </div>
 
-      <div className="flex flex-col items-center pt-16">
+      <div className="flex flex-col items-center">
         {allocationTemplateLines.map(template => <TemplateRow {...template} />)}
       </div>
 
-      <div className="flex flex-col items-center pt-16">
+      <div className="flex flex-col items-center py-16">
         {recentAllocations.map(transaction => <TransactionRow {...transaction} />)}
       </div>
     </>
