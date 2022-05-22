@@ -9,12 +9,12 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
 
   def change(changeset, _opts, %{actor: user}) do
     amount = Ash.Changeset.get_attribute(changeset, :amount)
-    budget_allocations = Ash.Changeset.get_argument(changeset, :budget_allocations)
+    budget_allocations = Ash.Changeset.get_argument(changeset, :budget_allocations) || []
 
     add_spendable_allocation(changeset, amount, budget_allocations, user)
   end
 
-  defp add_spendable_allocation(changeset, amount, budget_allocations, user) when is_list(budget_allocations) do
+  defp add_spendable_allocation(changeset, amount, budget_allocations, user) do
     spendable_id = get_spendable_id(user)
     allocations = Enum.reject(budget_allocations, &(&1.budget.id == spendable_id))
 
@@ -29,10 +29,6 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
       end
 
     Ash.Changeset.set_argument(changeset, :budget_allocations, new_allocations)
-  end
-
-  defp add_spendable_allocation(changeset, _amount, _budget_allocations, _user) do
-    changeset
   end
 
   defp get_spendable_id(user) do
