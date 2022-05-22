@@ -101,6 +101,17 @@ const createApolloClient = () => {
             }
           }
         }
+      },
+      Query: {
+        fields: {
+          transactions: {
+            keyArgs: false,
+            merge(existing = {}, incoming) {
+              const results = [...existing?.results ?? [], ...incoming.results]
+              return {...incoming, results};
+            },
+          }
+        }
       }
     },
   })

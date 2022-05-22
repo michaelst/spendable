@@ -175,7 +175,7 @@ export const TRANSACTION_FRAGMENT = gql`
 
 export const LIST_TRANSACTIONS = gql`
   query ListTransactions($offset: Int){
-    transactions(limit: 100, offset: $offset, sort: [{ field: DATE, order: DESC }]) {
+    transactions(limit: 100, offset: $offset, sort: [{ field: DATE, order: DESC }, { field: ID, order: DESC}]) {
       results {
         id
         name

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/client'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
 import { LIST_TRANSACTIONS } from '../queries'
@@ -8,7 +8,12 @@ import { useNavigate } from 'react-router-dom'
 const Transactions = () => {
   const navigate = useNavigate()
 
-  const { data } = useQuery<ListTransactions>(LIST_TRANSACTIONS)
+  const { data, fetchMore } = useQuery<ListTransactions>(LIST_TRANSACTIONS, {
+    variables: {
+      offset: 0
+    }
+  })
+  
 
   const transactions: TransactionRowItem[] =
     [...data?.transactions?.results ?? []]
@@ -27,6 +32,7 @@ const Transactions = () => {
   return (
     <div className="flex flex-col items-center py-16">
       {transactions.map(transaction => <TransactionRow {...transaction} />)}
+      <button onClick={() => fetchMore({variables: {offset: data?.transactions?.results?.length}})}>Load More</button>
     </div>
   )
 }
