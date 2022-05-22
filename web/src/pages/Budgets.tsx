@@ -33,7 +33,7 @@ function Budgets() {
       onClick: () => navigate(`/budgets/${budget.id}`)
     }
 
-    return <BudgetRow budget={item} />
+    return <BudgetRow key={budget.id} budget={item} />
   })
 
   return (

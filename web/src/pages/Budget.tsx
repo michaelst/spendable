@@ -66,11 +66,10 @@ function Budget() {
       .map(allocation => ({
         key: allocation.id,
         id: allocation.transaction.id,
-        title: allocation.transaction.name,
+        name: allocation.transaction.name,
         amount: allocation.amount,
-        transactionDate: allocation.transaction.date,
-        transactionReviewed: allocation.transaction.reviewed,
-        onClick: () => navigate(`/transactions/${allocation.transaction.id}`)
+        date: allocation.transaction.date,
+        reviewed: allocation.transaction.reviewed,
       }))
 
   return (

@@ -23,6 +23,15 @@ export const MAIN_QUERY = gql`
 // 
 // BUDGETS
 //
+export const LIST_BUDGETS = gql`
+  query ListBudgets {
+    budgets(sort: [{ field: NAME }]) {
+      id
+      name
+    }
+  }
+`
+
 export const GET_BUDGET = gql`
   query GetBudget($id: ID!, $startDate: Date!, $endDate: Date!) {
     budget(id: $id) {
