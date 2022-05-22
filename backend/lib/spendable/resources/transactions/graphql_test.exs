@@ -97,7 +97,53 @@ defmodule Spendable.Tranasction.GraphQLTests do
 
   test "create transaction" do
     user = Factory.insert(Spendable.User)
+    spendable = Factory.insert(Spendable.Budget, user_id: user.id, name: "Spendable")
     budget = Factory.insert(Spendable.Budget, user_id: user.id)
+
+    # creates spendable allocation
+    query = """
+      mutation {
+        createTransaction(
+          input: {
+            name: "new name"
+            amount: "126.25"
+            date: "#{Date.utc_today()}"
+            reviewed: true
+          }
+        ) {
+          result {
+            name
+            reviewed
+            budgetAllocations {
+              amount
+              budget {
+                id
+              }
+            }
+          }
+        }
+      }
+    """
+
+    assert {:ok,
+            %{
+              data: %{
+                "createTransaction" => %{
+                  "result" => %{
+                    "name" => "new name",
+                    "reviewed" => true,
+                    "budgetAllocations" => [
+                      %{
+                        "amount" => "126.25",
+                        "budget" => %{
+                          "id" => "#{spendable.id}"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
 
     query = """
       mutation {
@@ -175,51 +221,6 @@ defmodule Spendable.Tranasction.GraphQLTests do
           input: {
             name: "new name"
             reviewed: true
-          }
-        ) {
-          result {
-            id
-            name
-            reviewed
-            budgetAllocations {
-              amount
-              budget {
-                id
-              }
-            }
-          }
-        }
-      }
-    """
-
-    assert {:ok,
-            %{
-              data: %{
-                "updateTransaction" => %{
-                  "result" => %{
-                    "id" => "#{transaction.id}",
-                    "name" => "new name",
-                    "reviewed" => true,
-                    "budgetAllocations" => [
-                      %{
-                        "amount" => "126.25",
-                        "budget" => %{
-                          "id" => "#{spendable.id}"
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
-
-    query = """
-      mutation {
-        updateTransaction(
-          id: #{transaction.id}
-          input: {
-            name: "new name"
-            reviewed: true
             budgetAllocations: [
               {
                 amount: "26.25"
@@ -243,32 +244,61 @@ defmodule Spendable.Tranasction.GraphQLTests do
       }
     """
 
-    assert {:ok,
-            %{
-              data: %{
-                "updateTransaction" => %{
-                  "result" => %{
-                    "id" => "#{transaction.id}",
-                    "name" => "new name",
-                    "reviewed" => true,
-                    "budgetAllocations" => [
-                      %{
-                        "amount" => "100.00",
-                        "budget" => %{
-                          "id" => "#{spendable.id}"
-                        }
-                      },
-                      %{
-                        "amount" => "26.25",
-                        "budget" => %{
-                          "id" => "#{budget.id}"
-                        }
-                      }
-                    ]
-                  }
+    data = {:ok,
+    %{
+      data: %{
+        "updateTransaction" => %{
+          "result" => %{
+            "id" => "#{transaction.id}",
+            "name" => "new name",
+            "reviewed" => true,
+            "budgetAllocations" => [
+              %{
+                "amount" => "100.00",
+                "budget" => %{
+                  "id" => "#{spendable.id}"
+                }
+              },
+              %{
+                "amount" => "26.25",
+                "budget" => %{
+                  "id" => "#{budget.id}"
                 }
               }
-            }} == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+            ]
+          }
+        }
+      }
+    }}
+
+    assert data == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
+
+    # updating without allocations doesn't change allocations
+    query = """
+      mutation {
+        updateTransaction(
+          id: #{transaction.id}
+          input: {
+            name: "new name"
+            reviewed: true
+          }
+        ) {
+          result {
+            id
+            name
+            reviewed
+            budgetAllocations {
+              amount
+              budget {
+                id
+              }
+            }
+          }
+        }
+      }
+    """
+
+    assert data == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
 
     assert {:ok,
             %{
