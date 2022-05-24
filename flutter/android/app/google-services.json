@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "973501356954",
+    "firebase_url": "https://cloud-57.firebaseio.com",
+    "project_id": "cloud-57",
+    "storage_bucket": "cloud-57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973501356954:android:86e189505e5c889bb4f823",
+        "android_client_info": {
+          "package_name": "media.fiftyseven.spendable"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTkjIw6m4aoksPcLQ-9uBKwcOpUZ39pY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973501356954-17frms1h292f2aaa5eb4kvetlfda9q09.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "973501356954-0hkqmce5bt483bjh34pasmma93vtvcve.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "fiftysevenmedia.SpendableDev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
