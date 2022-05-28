@@ -2,7 +2,7 @@ defmodule Spendable.Web.Endpoint do
   use Sentry.PlugCapture
   use Phoenix.Endpoint, otp_app: :spendable
 
-  plug Spandex.Plug.StartTrace
+  plug Spandex.Plug.StartTrace, tracer: Spendable.Tracer
 
   plug(CORSPlug)
 
@@ -58,6 +58,6 @@ defmodule Spendable.Web.Endpoint do
 
   plug(Spendable.Web.Router)
 
-  plug Spandex.Plug.AddContext
-  plug Spandex.Plug.EndTrace
+  plug Spandex.Plug.AddContext, tracer: Spendable.Tracer
+  plug Spandex.Plug.EndTrace, tracer: Spendable.Tracer
 end

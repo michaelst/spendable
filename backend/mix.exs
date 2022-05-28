@@ -67,7 +67,7 @@ defmodule Spendable.MixProject do
       {:protobuf, "~> 0.8"},
       {:sentry, "~> 8.0"},
       {:spandex_ecto, "~> 0.7"},
-      {:spandex_otlp, "~> 0.1.0-rc.2"},
+      {:spandex_otlp, "~> 0.1.0-rc.2", github: "michaelst/spandex_otlp"},
       {:spandex_phoenix, "~> 1.0"},
       {:spandex, "~> 3.1"},
       {:tesla, "~> 1.4"}
