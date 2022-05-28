@@ -1,29 +1,14 @@
 defmodule SyncMemberRequest do
   @moduledoc false
-  use Protobuf, syntax: :proto3
+  use Protobuf, protoc_gen_elixir_version: "0.10.0", syntax: :proto3
 
-  @type t :: %__MODULE__{
-          member_id: integer
-        }
-
-  defstruct [:member_id]
-
-  field :member_id, 1, type: :int64
+  field :member_id, 1, type: :int64, json_name: "memberId"
 end
-
 defmodule SendNotificationRequest do
   @moduledoc false
-  use Protobuf, syntax: :proto3
+  use Protobuf, protoc_gen_elixir_version: "0.10.0", syntax: :proto3
 
-  @type t :: %__MODULE__{
-          user_id: integer,
-          title: String.t(),
-          body: String.t()
-        }
-
-  defstruct [:user_id, :title, :body]
-
-  field :user_id, 1, type: :int64
+  field :user_id, 1, type: :int64, json_name: "userId"
   field :title, 2, type: :string
   field :body, 3, type: :string
 end
