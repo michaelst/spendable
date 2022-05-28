@@ -59,7 +59,7 @@ config :spandex_ecto, SpandexEcto.EctoLogger, tracer: Spendable.Tracer
 
 config :spandex_otlp, SpandexOTLP,
   otp_app: :spendable,
-  endpoint: "tempo:4317",
+  endpoint: "tempo.grafana.svc.cluster.local:4317",
   headers: %{},
   resources: %{
     "service.name" => "Spendable",
