@@ -2,7 +2,7 @@ defmodule Spendable.Web.Endpoint do
   use Sentry.PlugCapture
   use Phoenix.Endpoint, otp_app: :spendable
 
-  plug Spandex.Plug.StartTrace, tracer: Spendable.Tracer
+  plug Spandex.Plug.StartTrace, tracer: Spendable.Tracer, ignored_routes: ["/_health"]
 
   plug(CORSPlug)
 
