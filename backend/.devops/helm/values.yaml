@@ -30,18 +30,15 @@ ingressroute:
   domain: spendable.money
   path: "/"
 
-imagePullSecrets:
-  - name: "gcr-json-key"
-
 resources:
   requests:
-    cpu: 50m
-    memory: 64M
+    cpu: 250m
+    memory: 512M
   limits:
-    cpu: "1"
-    memory: 256M
+    cpu: "2"
+    memory: 1024M
 
 envVars:
-  DB_HOSTNAME: 10.122.112.3
+  DB_HOSTNAME: postgres-postgresql.postgres.svc.cluster.local
   DB_USERNAME: postgres
 

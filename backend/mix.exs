@@ -43,6 +43,8 @@ defmodule Spendable.MixProject do
       {:broadway, "~> 1.0"},
       {:castore, "~> 0.1.0"},
       {:cors_plug, "~> 3.0"},
+      {:cowboy, "~> 2.9.0", override: true},
+      {:cowlib, "~> 2.11.0", override: true},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.7"},
@@ -64,6 +66,10 @@ defmodule Spendable.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:protobuf, "~> 0.8"},
       {:sentry, "~> 8.0"},
+      {:spandex_ecto, "~> 0.7"},
+      {:spandex_otlp, github: "michaelst/spandex_otlp"},
+      {:spandex_phoenix, "~> 1.0"},
+      {:spandex, "~> 3.1"},
       {:tesla, "~> 1.4"}
     ]
   end

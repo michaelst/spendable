@@ -9,6 +9,7 @@ defmodule Spendable.Broadway.SendNotificationTest do
   alias Spendable.NotificationSettings
   alias Spendable.Repo
 
+  @tag :skip
   test "send notification" do
     user = Factory.insert(Spendable.User)
 
