@@ -244,32 +244,33 @@ defmodule Spendable.Tranasction.GraphQLTests do
       }
     """
 
-    data = {:ok,
-    %{
-      data: %{
-        "updateTransaction" => %{
-          "result" => %{
-            "id" => "#{transaction.id}",
-            "name" => "new name",
-            "reviewed" => true,
-            "budgetAllocations" => [
-              %{
-                "amount" => "100.00",
-                "budget" => %{
-                  "id" => "#{spendable.id}"
-                }
-              },
-              %{
-                "amount" => "26.25",
-                "budget" => %{
-                  "id" => "#{budget.id}"
-                }
-              }
-            ]
-          }
-        }
-      }
-    }}
+    data =
+      {:ok,
+       %{
+         data: %{
+           "updateTransaction" => %{
+             "result" => %{
+               "id" => "#{transaction.id}",
+               "name" => "new name",
+               "reviewed" => true,
+               "budgetAllocations" => [
+                 %{
+                   "amount" => "100.00",
+                   "budget" => %{
+                     "id" => "#{spendable.id}"
+                   }
+                 },
+                 %{
+                   "amount" => "26.25",
+                   "budget" => %{
+                     "id" => "#{budget.id}"
+                   }
+                 }
+               ]
+             }
+           }
+         }
+       }}
 
     assert data == Absinthe.run(query, Spendable.Web.Schema, context: %{actor: user})
 

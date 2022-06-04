@@ -104,32 +104,43 @@ defmodule Spendable.Broadway.SyncMemberTest do
 
     today = Date.utc_today()
 
-    assert [
-             %{},
-             %{},
-             %{},
-             %{},
-             %{},
-             %{},
-             %{
-               amount: amount,
-               name: "Uber 072515 SF**POOL**",
-               date: ^today,
-               bank_transaction: %{
-                 external_id: "gjwAb9wKgytqA9dKR4Xmc3rwN8WN5nigoEkrB",
-                 bank_account_id: ^account_id,
-                 name: "Uber 072515 SF**POOL**",
-                 pending: false
-               }
-             }
-           ] =
-             Transaction
-             |> filter(user_id: user.id)
-             |> sort([:date])
-             |> load(:bank_transaction)
-             |> Api.read!()
+    [
+      %{},
+      %{},
+      %{},
+      %{},
+      %{},
+      %{},
+      transaction
+    ] =
+      Transaction
+      |> filter(user_id: user.id)
+      |> sort([:date])
+      |> load([:bank_transaction, budget_allocations: :budget])
+      |> Api.read!()
 
-    assert "-6.33" |> Decimal.new() |> Decimal.equal?(amount)
+    assert %{
+             amount: amount,
+             name: "Uber 072515 SF**POOL**",
+             date: ^today,
+             bank_transaction: %{
+               external_id: "gjwAb9wKgytqA9dKR4Xmc3rwN8WN5nigoEkrB",
+               bank_account_id: ^account_id,
+               name: "Uber 072515 SF**POOL**",
+               pending: false
+             },
+             budget_allocations: [
+               %{
+                 amount: allocation_amount,
+                 budget: %{
+                   name: "Spendable"
+                 }
+               }
+             ]
+           } = transaction
+
+    assert Decimal.equal?("-6.33", amount)
+    assert Decimal.equal?("-6.33", allocation_amount)
 
     TestUtils.assert_published([
       %SendNotificationRequest{

@@ -136,10 +136,8 @@ defmodule Spendable.Broadway.SyncMember do
           formatted_transaction_data = Adapter.transaction(bank_transaction)
 
           Transaction
-          |> Ash.Changeset.for_create(:private_create, formatted_transaction_data)
+          |> Ash.Changeset.for_create(:create, formatted_transaction_data, actor: account.user)
           |> Ash.Changeset.replace_relationship(:bank_transaction, bank_transaction)
-          |> Ash.Changeset.replace_relationship(:user, account.user)
-          |> Ash.Changeset.force_change_attributes(formatted_transaction_data)
           |> Api.create!()
           |> reassign_pending(details)
 

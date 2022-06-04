@@ -1,9 +1,7 @@
 defmodule Spendable.Transaction.Changes.AllocateSpendable do
   use Ash.Resource.Change
 
-  alias Spendable.Api
-  alias Spendable.Budget
-  alias Spendable.Repo
+  alias Spendable.Utils
 
   require Logger
 
@@ -30,7 +28,7 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
   end
 
   defp handle_add_spendable_allocation(changeset, amount, budget_allocations, user) do
-    spendable_id = get_spendable_id(user)
+    spendable_id = Utils.get_spendable_id(user)
     allocations = Enum.reject(budget_allocations, &(&1.budget.id == spendable_id))
 
     allocated = Enum.reduce(allocations, Decimal.new(0), &Decimal.add(&1.amount, &2))
@@ -44,28 +42,5 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
       end
 
     Ash.Changeset.set_argument(changeset, :budget_allocations, new_allocations)
-  end
-
-  defp get_spendable_id(user) do
-    budget =
-      Repo.get_by(Budget, user_id: user.id, name: "Spendable")
-      |> case do
-        nil ->
-          Budget
-          |> Ash.Changeset.for_create(
-            :create,
-            %{
-              name: "Spendable",
-              track_spending_only: true
-            },
-            actor: user
-          )
-          |> Api.create!()
-
-        budget ->
-          budget
-      end
-
-    budget.id
   end
 end

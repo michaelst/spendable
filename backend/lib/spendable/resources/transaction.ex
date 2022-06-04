@@ -47,8 +47,6 @@ defmodule Spendable.Transaction do
       change manage_relationship(:budget_allocations, type: :direct_control)
     end
 
-    create :private_create
-
     update :update do
       primary? true
       argument :budget_allocations, {:array, :map}
