@@ -21,7 +21,7 @@ defmodule Spendable.Utils.Enum do
   """
 
   defmacro __using__(opts) do
-    values = Enum.map(opts[:values] || [], fn {_, _, list} -> list end)
+    values = Enum.map(opts[:values] || [], fn {_first, _middle, list} -> list end)
 
     quote do
       use EctoEnum, unquote(Enum.map(values, &{&1[:name], &1[:db_value] || "#{&1[:name]}"}))
