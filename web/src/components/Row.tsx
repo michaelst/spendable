@@ -10,11 +10,11 @@ const Row = ({ leftSide, rightSide }: RowProps) => {
   return (
     <div className="flex flex-row justify-between">
       <div className="flex items-center">
-        <p>{leftSide}</p>
+        {leftSide}
       </div>
       <div className="flex items-center">
         <div className="flex flex-col items-end">
-          <p>{rightSide}</p>
+          {rightSide}
         </div>
       </div>
     </div>

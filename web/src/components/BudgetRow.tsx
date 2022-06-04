@@ -43,7 +43,7 @@ const Row = ({ budget: { title, amount, subText, onClick } }: BudgetRowProps) =>
     <div className="border-b bg-white p-8 w-1/2 cursor-pointer" onClick={onClick}>
       <div className="flex flex-row justify-between">
         <div className="flex items-center">
-          <p>{title}</p>
+          {title}
         </div>
         <div className="flex items-center">
           <div className="flex flex-col items-end mr-4">
