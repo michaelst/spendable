@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'pages/login.dart';
+import 'routes.dart';
 
 void main() async {
   await Firebase.initializeApp(
@@ -26,10 +27,6 @@ class App extends StatelessWidget {
       home: const HomePage(),
     );
   }
-}
-
-Future<void> _signOut() async {
-  await FirebaseAuth.instance.signOut();
 }
 
 class HomePage extends StatefulWidget {
@@ -59,32 +56,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     if (_isSignedIn) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  _signOut();
-                },
-                child: Container(
-                  height: 50.0,
-                  padding: const EdgeInsets.all(8.0),
-                  margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: Colors.lightGreen[500],
-                  ),
-                  child: const Center(
-                    child: Text('Logout'),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
+      return const Routes();
     } else {
       return const LoginPage();
     }
