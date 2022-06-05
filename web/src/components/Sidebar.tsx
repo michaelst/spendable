@@ -9,26 +9,28 @@ import { faBuildingColumns } from '@fortawesome/free-solid-svg-icons'
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 
-const Sidebar = () => (
-  <div className="w-20 h-full shadow-md bg-white px-1 fixed flex flex-col justify-between">
-    <div className="flex flex-col items-center">
-      <Link to="/" className="pt-4 pb-4">
-        <FontAwesomeIcon icon={faHouse} size="2x" />
-      </Link>
-      <Link to="/transactions" className="pb-4">
-        <FontAwesomeIcon icon={faDollarSign} size="2x" />
-      </Link>
-      <Link to="/banks" className="pb-4">
-        <FontAwesomeIcon icon={faBuildingColumns} size="2x" />
-      </Link>
+const Sidebar = () => {
+  return (
+    <div className="w-20 h-full shadow-md bg-white px-1 fixed flex flex-col justify-between">
+      <div className="flex flex-col items-center">
+        <Link to="/" className="pt-4 pb-4">
+          <FontAwesomeIcon icon={faHouse} size="2x" />
+        </Link>
+        <Link to="/transactions" className="pb-4">
+          <FontAwesomeIcon icon={faDollarSign} size="2x" />
+        </Link>
+        <Link to="/banks" className="pb-4">
+          <FontAwesomeIcon icon={faBuildingColumns} size="2x" />
+        </Link>
+      </div>
+      <div className="flex flex-col items-center pb-4">
+        <OverlayTrigger trigger='click' rootClose placement="right" overlay={popover}>
+          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" />
+        </OverlayTrigger>
+      </div>
     </div>
-    <div className="flex flex-col items-center pb-4">
-      <OverlayTrigger trigger='click' rootClose placement="right" overlay={popover}>
-        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" />
-      </OverlayTrigger>
-    </div>
-  </div>
-)
+  )
+}
 
 const popover = (
   <Popover>

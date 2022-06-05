@@ -3,14 +3,15 @@ import { useMutation, useQuery } from '@apollo/client'
 import { DELETE_TRANSACTION, GET_TRANSACTION, LIST_BUDGETS, LIST_BUDGET_ALLOCATION_TEMPLATES, MAIN_QUERY, UPDATE_TRANSACTION } from '../queries'
 import { DateTime } from 'luxon'
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { faAngleRight, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { DeleteTransaction } from '../graphql/DeleteTransaction'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import formatCurrency from '../utils/formatCurrency'
 import { Form, Offcanvas } from 'react-bootstrap'
-import { GetTransaction, GetTransaction_transaction, GetTransaction_transaction_budgetAllocations } from '../graphql/GetTransaction'
+import { GetTransaction, GetTransaction_transaction } from '../graphql/GetTransaction'
 import { ListBudgets } from '../graphql/ListBudgets'
 import { ListBudgetAllocationTemplates } from '../graphql/ListBudgetAllocationTemplates'
+import Decimal from 'decimal.js-light'
 
 export type TransactionRowItem = {
   id: string
@@ -19,6 +20,13 @@ export type TransactionRowItem = {
   date: Date
   reviewed: boolean
   hideDelete?: boolean
+}
+
+type BudgetAllocationInput = {
+  amount: string
+  budget: {
+    id: number
+  }
 }
 
 const TransactionRow = (transaction: TransactionRowItem) => {
@@ -66,6 +74,9 @@ const TransactionForm = ({ id, setShow }: { id: string, setShow: Dispatch<SetSta
   const [date, setDate] = useState('')
   const [note, setNote] = useState('')
   const [reviewed, setReviewed] = useState(false)
+  const [allocations, setAllocations] = useState<BudgetAllocationInput[]>([])
+
+  const budgets = useQuery<ListBudgets>(LIST_BUDGETS)
 
   const { data } = useQuery<GetTransaction>(GET_TRANSACTION, {
     variables: { id: id },
@@ -75,29 +86,29 @@ const TransactionForm = ({ id, setShow }: { id: string, setShow: Dispatch<SetSta
       setDate(DateTime.fromJSDate(data.transaction.date).toISODate())
       setNote(data.transaction.note ?? '')
       setReviewed(data.transaction.reviewed)
+      setAllocations(data.transaction.budgetAllocations.map(a => ({ amount: a.amount.toDecimalPlaces(2).toFixed(2), budget: { id: parseInt(a.budget.id) } })))
     }
   })
 
   const [updateTransaction] = useMutation(UPDATE_TRANSACTION)
 
   if (!data) return null
+  if (!budgets.data) return null
 
-  const allocations = data.transaction.budgetAllocations
+  const spendableId = budgets.data.budgets.find(b => b.name === "Spendable")!.id
 
-  const spendFromValue = allocations.map(a => a.budget.name).join(', ')
+  const split = () => {
+    const allocatedAmount = allocations.reduce((acc, allocation) => acc.plus(allocation.amount), new Decimal(0))
 
-  const setSpendFrom = (budgetId: string) => {
-    updateTransaction({
-      variables: {
-        id: id,
-        input: {
-          budgetAllocations: [{
-            amount: amount,
-            budget: { id: parseInt(budgetId) }
-          }]
-        }
+    const newAllocations = [
+      ...allocations,
+      {
+        amount: new Decimal(amount).minus(allocatedAmount).toDecimalPlaces(2).toFixed(2),
+        budget: { id: parseInt(spendableId) }
       }
-    })
+    ]
+
+    setAllocations(newAllocations)
   }
 
   const saveAndClose = () => {
@@ -109,7 +120,8 @@ const TransactionForm = ({ id, setShow }: { id: string, setShow: Dispatch<SetSta
           date: date,
           name: name,
           note: note,
-          reviewed: reviewed
+          reviewed: reviewed,
+          budgetAllocations: allocations
         }
       }
     }).then(() => {
@@ -156,12 +168,12 @@ const TransactionForm = ({ id, setShow }: { id: string, setShow: Dispatch<SetSta
 
           <Form.Group className="mb-3">
             {allocations.length <= 1
-              ? <BudgetSelect transaction={data.transaction} setSpendFrom={setSpendFrom} />
-              : <MultiBudgetSelect allocations={allocations} />
+              ? <BudgetSelect allocations={allocations} setAllocations={setAllocations} />
+              : <MultiBudgetSelect allocations={allocations} setAllocations={setAllocations} />
             }
             <div className="flex justify-between relative">
-              <button>Split</button>
-              <TemplateSelect transaction={data.transaction} setSpendFrom={setSpendFrom} />
+              <button onClick={split}>Split</button>
+              <TemplateSelect transaction={data.transaction} />
             </div>
           </Form.Group>
 
@@ -190,14 +202,22 @@ const TransactionForm = ({ id, setShow }: { id: string, setShow: Dispatch<SetSta
   )
 }
 
-const BudgetSelect = ({ transaction, setSpendFrom }: { transaction: GetTransaction_transaction, setSpendFrom: (budgetId: string) => void }) => {
+const BudgetSelect = ({ allocations, setAllocations }: { allocations: BudgetAllocationInput[], setAllocations: Dispatch<SetStateAction<BudgetAllocationInput[]>> }) => {
   const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
-  const activeBudgetId = transaction.budgetAllocations[0].budget.id
+
+  const setSpendFrom = (budgetId: string) => {
+    setAllocations([
+      {
+        ...allocations[0],
+        budget: { id: parseInt(budgetId) }
+      }
+    ])
+  }
 
   return (
     <>
       <Form.Label>Spend From</Form.Label>
-      <Form.Select value={activeBudgetId} onChange={event => setSpendFrom(event.target.value)}>
+      <Form.Select value={allocations[0].budget.id} onChange={event => setSpendFrom(event.target.value)}>
         {data?.budgets.map(budget => (
           <option key={budget.id} value={budget.id}>
             {budget.name}
@@ -208,7 +228,7 @@ const BudgetSelect = ({ transaction, setSpendFrom }: { transaction: GetTransacti
   )
 }
 
-const TemplateSelect = ({ transaction, setSpendFrom }: { transaction: GetTransaction_transaction, setSpendFrom: (budgetId: string) => void }) => {
+const TemplateSelect = ({ transaction }: { transaction: GetTransaction_transaction }) => {
   const { data } = useQuery<ListBudgetAllocationTemplates>(LIST_BUDGET_ALLOCATION_TEMPLATES)
   const [show, setShow] = useState(false)
   const [templateId, setTemplateId] = useState(data?.budgetAllocationTemplates[0].id)
@@ -269,8 +289,43 @@ const TemplateSelect = ({ transaction, setSpendFrom }: { transaction: GetTransac
   )
 }
 
-const MultiBudgetSelect = ({ allocations }: { allocations: GetTransaction_transaction_budgetAllocations[] }) => {
+const MultiBudgetSelect = ({ allocations, setAllocations }: { allocations: BudgetAllocationInput[], setAllocations: Dispatch<SetStateAction<BudgetAllocationInput[]>> }) => {
   const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
+
+  const updateAllocationBudgetId = (value: string, atIndex: number) => {
+    const newAllocations = allocations.map((allocation, index) => {
+      if (index === atIndex) {
+        return {
+          ...allocation,
+          budget: { id: parseInt(value) }
+        }
+      }
+
+      return allocation
+    })
+
+    setAllocations(newAllocations)
+  }
+
+  const updateAllocationAmount = (value: string, atIndex: number) => {
+    const newAllocations = allocations.map((allocation, index) => {
+      if (index === atIndex) {
+        return {
+          ...allocation,
+          amount: value
+        }
+      }
+
+      return allocation
+    })
+
+    setAllocations(newAllocations)
+  }
+
+  const removeAllocation = (atIndex: number) => {
+    const newAllocations = allocations.filter((_allocation, index) => index !== atIndex)
+    setAllocations(newAllocations)
+  }
 
   return (
     <>
@@ -282,15 +337,18 @@ const MultiBudgetSelect = ({ allocations }: { allocations: GetTransaction_transa
           <Form.Label>Amount</Form.Label>
         </div>
       </div>
-      {allocations.map(allocation => (
-        <div key={allocation.id} className="flex mb-2">
+      {allocations.map((allocation, index) => (
+        <div key={index} className="flex mb-2">
           <div className="w-2/3 mr-2">
-            <Form.Select value={allocation.budget.id} onChange={() => null}>
+            <Form.Select value={allocation.budget.id} onChange={event => updateAllocationBudgetId(event.target.value, index)}>
               {data?.budgets.map(budget => <option key={budget.id} value={budget.id}>{budget.name}</option>)}
             </Form.Select>
           </div>
-          <div className="w-1/3">
-            <Form.Control defaultValue={allocation.amount.toDecimalPlaces(2).toFixed(2)} />
+          <div className="w-1/3 flex items-center">
+            <Form.Control
+              value={allocation.amount}
+              onChange={event => updateAllocationAmount(event.target.value, index)} />
+            <FontAwesomeIcon icon={faCircleXmark} className="text-slate-500 ml-2" onClick={() => removeAllocation(index)} />
           </div>
         </div>
       ))}

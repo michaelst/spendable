@@ -117,9 +117,6 @@ export const BUDGET_ALLOCATION_FRAGMENT = gql`
       id
       name
     }
-    transaction {
-      id
-    }
   }
 `
 

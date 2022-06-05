@@ -13,15 +13,9 @@ export interface BudgetAllocationFragment_budget {
   name: string;
 }
 
-export interface BudgetAllocationFragment_transaction {
-  __typename: "Transaction";
-  id: string;
-}
-
 export interface BudgetAllocationFragment {
   __typename: "BudgetAllocation";
   id: string;
   amount: Decimal;
   budget: BudgetAllocationFragment_budget;
-  transaction: BudgetAllocationFragment_transaction;
 }
