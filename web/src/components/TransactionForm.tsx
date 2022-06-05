@@ -154,11 +154,11 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
   return (
     <Offcanvas.Body className="h-screen flex flex-col justify-between">
       <div>
-        {data?.transaction.bankTransaction ? (
+        {data?.transaction.bankTransaction && (
           <p>
             Bank Memo: {data?.transaction.bankTransaction?.name}
           </p>
-        ) : null}
+        )}
 
         <Form.Group className="mb-3">
           <Form.Label>Name</Form.Label>
@@ -219,7 +219,7 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
           reviewed: reviewed,
           budgetAllocations: allocations
         })}>Save</button>
-        {id ? <DeleteModal id={id} /> : null}
+        {id && <DeleteModal id={id} />}
       </div>
     </Offcanvas.Body>
   )

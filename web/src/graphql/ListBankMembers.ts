@@ -7,12 +7,21 @@
 // GraphQL query operation: ListBankMembers
 // ====================================================
 
+export interface ListBankMembers_bankMembers_bankAccounts {
+  __typename: "BankAccount";
+  id: string;
+  name: string;
+  sync: boolean;
+  balance: Decimal;
+}
+
 export interface ListBankMembers_bankMembers {
   __typename: "BankMember";
   id: string;
   name: string;
   status: string | null;
   logo: string | null;
+  bankAccounts: ListBankMembers_bankMembers_bankAccounts[];
 }
 
 export interface ListBankMembers {

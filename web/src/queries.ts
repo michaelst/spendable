@@ -259,18 +259,7 @@ export const GET_BANK_MEMBER_PLAID_LINK_TOKEN = gql`
 `
 export const LIST_BANK_MEMBERS = gql`
   query ListBankMembers{
-    bankMembers {
-      id
-      name
-      status
-      logo
-    }
-  }
-`
-
-export const GET_BANK_MEMBER = gql`
-  query GetBankMember($id: ID!) {
-    bankMember(id: $id) {
+    bankMembers(sort: [{ field: NAME, order: ASC }]) {
       id
       name
       status

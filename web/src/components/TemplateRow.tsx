@@ -35,7 +35,7 @@ const TemplateRow = (template: TemplateRowItem) => {
 
 const Row = ({ name, amount, onClick}: TemplateRowItem) => {
   return (
-    <div className="border-b bg-white p-8 w-1/2" onClick={onClick}>
+    <div className="border-b bg-white p-8" onClick={onClick}>
       <div className="flex flex-row justify-between">
         <div className="flex items-center">
           {name}

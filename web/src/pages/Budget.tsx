@@ -71,19 +71,19 @@ function Budget() {
       }))
 
   return (
-    <>
-      <div className="flex flex-col items-center py-16">
+    <div className="flex flex-col items-center py-16">
+      <div className="flex flex-col w-1/2">
         {detailLines.map(line => <Row {...line} />)}
       </div>
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col w-1/2">
         {allocationTemplateLines.map(template => <TemplateRow {...template} />)}
       </div>
 
-      <div className="flex flex-col items-center py-16">
+      <div className="flex flex-col w-1/2 py-16">
         {recentAllocations.map(transaction => <TransactionRow {...transaction} />)}
       </div>
-    </>
+    </div>
   )
 }
 
