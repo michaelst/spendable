@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { auth } from '../firebase';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBuildingColumns } from '@fortawesome/free-solid-svg-icons'
+import { faBuildingColumns, faMoneyCheckDollar, faUser } from '@fortawesome/free-solid-svg-icons'
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 
@@ -14,18 +14,20 @@ const Sidebar = () => {
     <div className="w-20 h-full shadow-md bg-white px-1 fixed flex flex-col justify-between">
       <div className="flex flex-col items-center">
         <Link to="/" className="pt-4 pb-4">
-          <FontAwesomeIcon icon={faHouse} size="2x" />
+          <FontAwesomeIcon icon={faHouse} size="2x" className="text-sky-500" />
         </Link>
         <Link to="/transactions" className="pb-4">
-          <FontAwesomeIcon icon={faDollarSign} size="2x" />
+          <FontAwesomeIcon icon={faMoneyCheckDollar} size="2x" className="text-sky-500" />
         </Link>
         <Link to="/banks" className="pb-4">
-          <FontAwesomeIcon icon={faBuildingColumns} size="2x" />
+          <FontAwesomeIcon icon={faBuildingColumns} size="2x" className="text-sky-500" />
         </Link>
       </div>
       <div className="flex flex-col items-center pb-4">
         <OverlayTrigger trigger='click' rootClose placement="right" overlay={popover}>
-          <img src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp" className="rounded-full w-10" alt="Avatar" />
+          <div>
+            <FontAwesomeIcon icon={faUser} size="2x" className="text-sky-500" />
+          </div>
         </OverlayTrigger>
       </div>
     </div>
@@ -35,11 +37,9 @@ const Sidebar = () => {
 const popover = (
   <Popover>
     <Popover.Body>
-      <ul className="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-        <li className="w-full px-4 py-2 hover:bg-gray-500 cursor-pointer border-b border-gray-200 rounded-t-lg dark:border-gray-600">Profile</li>
-        <li className="w-full px-4 py-2 hover:bg-gray-500 cursor-pointer border-b border-gray-200 dark:border-gray-600">Settings</li>
-        <li className="w-full px-4 py-2 hover:bg-gray-500 cursor-pointer border-b border-gray-200 dark:border-gray-600">Messages</li>
-        <li className="w-full px-4 py-2 hover:bg-gray-500 cursor-pointer rounded-b-lg">
+      <ul className="p-0 m-0 text-center">
+        <li className="pb-2 px-2 cursor-pointer border-b border-gray-200 dark:border-gray-600">Settings</li>
+        <li className="pt-2 px-2 cursor-pointer">
           <button onClick={() => signOut(auth)}>Logout</button>
         </li>
       </ul>

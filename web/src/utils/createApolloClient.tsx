@@ -97,7 +97,7 @@ const createApolloClient = () => {
           },
           date: {
             read(date) {
-              return new Date(date + "T12:00:00")
+              return date instanceof Date ? date : new Date(date + "T12:00:00")
             }
           }
         }
