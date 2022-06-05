@@ -40,7 +40,7 @@ const Row = ({ budget: { title, amount, subText, onClick } }: BudgetRowProps) =>
   // const border = amount.isNegative() ? 'border border-red-500' : ''
 
   return (
-    <div className="border-b bg-white p-8 w-1/2 cursor-pointer" onClick={onClick}>
+    <div className="border-b bg-white p-8 w-100 cursor-pointer" onClick={onClick}>
       <div className="flex flex-row justify-between">
         <div className="flex items-center">
           {title}
