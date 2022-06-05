@@ -1,7 +1,7 @@
 import React from 'react'
 import Decimal from 'decimal.js-light'
 import { useMutation } from '@apollo/client'
-import { faAngleRight, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { DELETE_BUDGET_ALLOCATION_TEMPLATE } from '../queries'
 import { DeleteBudgetAllocationTemplate } from '../graphql/DeleteBudgetAllocationTemplate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

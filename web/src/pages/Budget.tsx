@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/client';
 import { DateTime } from 'luxon'
-import Decimal from 'decimal.js-light'
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { Main as Data } from '../graphql/Main';
-import { GET_BUDGET, MAIN_QUERY } from '../queries';
-import BudgetRow from '../components/BudgetRow';
-import { amount, subText } from '../utils/budgetUtils';
+import { GET_BUDGET } from '../queries';
 import { GetBudget } from '../graphql/GetBudget';
 import formatCurrency from '../utils/formatCurrency';
 import Row, { RowProps } from '../components/Row';
@@ -16,7 +12,9 @@ import TransactionRow, { TransactionRowItem } from '../components/TransactionRow
 
 function Budget() {
   const { id } = useParams()
-  const [activeMonth, setActiveMonth] = useState(DateTime.now().startOf('month'))
+  const [searchParams] = useSearchParams()
+  const monthFromSearchParams = searchParams.get("month")
+  const activeMonth = monthFromSearchParams ? DateTime.fromFormat(monthFromSearchParams, 'yyyy-MM-dd') : DateTime.now().startOf('month')
   const navigate = useNavigate()
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)

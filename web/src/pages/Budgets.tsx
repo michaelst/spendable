@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { DateTime } from 'luxon'
 import Decimal from 'decimal.js-light'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Main as Data } from '../graphql/Main';
 import { MAIN_QUERY } from '../queries';
@@ -11,7 +11,10 @@ import { amount, subText } from '../utils/budgetUtils';
 import formatCurrency from '../utils/formatCurrency';
 
 function Budgets() {
-  const [activeMonth, setActiveMonth] = useState(DateTime.now().startOf('month'))
+  const [searchParams, setSearchParams] = useSearchParams()
+  const monthFromSearchParams = searchParams.get("month")
+  const monthForState = monthFromSearchParams ? DateTime.fromFormat(monthFromSearchParams, 'yyyy-MM-dd') : DateTime.now().startOf('month')
+  const [activeMonth, setActiveMonth] = useState(monthForState)
   const navigate = useNavigate()
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
@@ -31,7 +34,7 @@ function Budgets() {
       amount: amount(activeMonthIsCurrentMonth, budget, data?.currentUser.spendable || new Decimal(0)),
       subText: subText(activeMonthIsCurrentMonth, budget),
       hideDelete: budget.name === "Spendable",
-      onClick: () => navigate(`/budgets/${budget.id}`)
+      onClick: () => navigate(`/budgets/${budget.id}?month=${activeMonth.toFormat('yyyy-MM-dd')}`)
     }
 
     return <BudgetRow key={budget.id} budget={item} />
@@ -48,6 +51,7 @@ function Budgets() {
               onClick={() => {
                 if (!item.month) return
                 setActiveMonth(item.month)
+                setSearchParams({ month: item.month.toFormat('yyyy-MM-dd') })
                 refetch({ month: item.month.toFormat('yyyy-MM-dd') })
               }}>
               <div className="whitespace-nowrap">{item.month?.toFormat('MMM yyyy')}</div>
