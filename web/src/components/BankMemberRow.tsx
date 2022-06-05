@@ -1,5 +1,5 @@
 import React from 'react'
-import { faAngleRight, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ListBankMembers_bankMembers, ListBankMembers_bankMembers_bankAccounts } from '../graphql/ListBankMembers'
 import formatCurrency from '../utils/formatCurrency'
@@ -17,7 +17,7 @@ const BankMemberRow = (bankMember: ListBankMembers_bankMembers) => {
           {bankMember.name}
         </div>
         <div className="flex items-center">
-          {bankMember.status != "CONNECTED" && (
+          {bankMember.status !== "CONNECTED" && (
             <div className="text-red-500">
               Reconnect
               <FontAwesomeIcon icon={faExclamationCircle} className="ml-2" />

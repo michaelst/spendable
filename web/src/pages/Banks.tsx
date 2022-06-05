@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 function Banks() {
-  const { data, loading, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
+  const { data, refetch } = useQuery<ListBankMembers>(LIST_BANK_MEMBERS)
   //const { data: plaidData } = useQuery<GetPlaidLinkToken>(GET_PLAID_LINK_TOKEN, { fetchPolicy: 'no-cache' })
 
   const [createBankMember] = useMutation(CREATE_BANK_MEMBER, {
