@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ListBankMembers_bankMembers, ListBankMembers_bankMembers_bankAccounts } from '../graphql/ListBankMembers'
 import formatCurrency from '../utils/formatCurrency'
 import { Form } from 'react-bootstrap'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { UpdateBankAccount } from '../graphql/UpdateBankAccount'
-import { UPDATE_BANK_ACCOUNT } from '../queries'
+import { GET_BANK_MEMBER_PLAID_LINK_TOKEN, UPDATE_BANK_ACCOUNT } from '../queries'
+import { GetBankMemberPlaidLinkToken } from '../graphql/GetBankMemberPlaidLinkToken'
+import { usePlaidLink, PlaidLinkOnSuccess, PlaidLinkOptions } from 'react-plaid-link'
 
 const BankMemberRow = (bankMember: ListBankMembers_bankMembers) => {
   return (
@@ -18,10 +20,7 @@ const BankMemberRow = (bankMember: ListBankMembers_bankMembers) => {
         </div>
         <div className="flex items-center">
           {bankMember.status !== "CONNECTED" && (
-            <div className="text-red-500">
-              Reconnect
-              <FontAwesomeIcon icon={faExclamationCircle} className="ml-2" />
-            </div>
+            <PlaidLinkWithOAuth id={bankMember.id} />
           )}
         </div>
       </div>
@@ -52,6 +51,62 @@ const BankAccountRow = (bankAccount: ListBankMembers_bankMembers_bankAccounts) =
         />
       </div>
     </div>
+  )
+}
+
+const PlaidLinkWithOAuth = ({ id }: { id: string }) => {
+  const [token, setToken] = useState<string | null>(null)
+  const isOAuthRedirect = window.location.href.includes('?oauth_state_id=')
+
+  const [loadToken] = useLazyQuery<GetBankMemberPlaidLinkToken>(GET_BANK_MEMBER_PLAID_LINK_TOKEN, {
+    variables: { id: id },
+    fetchPolicy: 'no-cache'
+  })
+
+  React.useEffect(() => {
+    if (isOAuthRedirect) {
+      setToken(localStorage.getItem('link_token'))
+      return
+    }
+
+    const createLinkToken = async () => {
+      loadToken().then(({ data }) => {
+        if (data) {
+          setToken(data.bankMember.plaidLinkToken)
+          localStorage.setItem('link_token', data.bankMember.plaidLinkToken)
+        }
+      })
+    }
+
+    createLinkToken()
+  }, [isOAuthRedirect, loadToken])
+
+  const onSuccess = useCallback<PlaidLinkOnSuccess>((publicToken, metadata) => {
+    console.log(publicToken, metadata)
+  }, [])
+
+  const config: PlaidLinkOptions = {
+    token,
+    onSuccess,
+  }
+
+  if (isOAuthRedirect) {
+    config.receivedRedirectUri = window.location.href
+  }
+
+  const { open, ready } = usePlaidLink(config)
+
+  React.useEffect(() => {
+    if (isOAuthRedirect && ready) {
+      open()
+    }
+  }, [ready, open, isOAuthRedirect])
+
+  return (
+    <button className="text-red-500" onClick={() => open()}>
+      Reconnect
+      <FontAwesomeIcon icon={faExclamationCircle} className="ml-2" />
+    </button>
   )
 }
 
