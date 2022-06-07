@@ -9,6 +9,7 @@ import { GetTransaction } from '../graphql/GetTransaction'
 import { ListBudgets } from '../graphql/ListBudgets'
 import { ListBudgetAllocationTemplates } from '../graphql/ListBudgetAllocationTemplates'
 import Decimal from 'decimal.js-light'
+import TemplateSelect from './TemplateSelect'
 
 type TransactionFormProps = {
   id?: string | null
@@ -16,7 +17,7 @@ type TransactionFormProps = {
   setShow: Dispatch<SetStateAction<boolean>>
 }
 
-type BudgetAllocationInput = {
+export type BudgetAllocationInput = {
   amount: string
   budget: {
     id: string
@@ -189,7 +190,7 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
           }
           <div className="flex justify-between relative">
             <button onClick={split}>Split</button>
-            <TemplateSelect allocations={allocations} setAllocations={setAllocations} />
+            <TemplateSelect setAllocations={setAllocations} />
           </div>
         </Form.Group>
 
@@ -260,54 +261,6 @@ const DeleteModal = ({ id }: { id: string }) => {
 type AllocationSelectProps = {
   allocations: BudgetAllocationInput[]
   setAllocations: Dispatch<SetStateAction<BudgetAllocationInput[]>>
-}
-
-const TemplateSelect = ({ setAllocations }: AllocationSelectProps) => {
-  const { data } = useQuery<ListBudgetAllocationTemplates>(LIST_BUDGET_ALLOCATION_TEMPLATES)
-  const [show, setShow] = useState(false)
-  const [templateId, setTemplateId] = useState(data?.budgetAllocationTemplates[0].id)
-
-  const templateAllocations = data?.budgetAllocationTemplates
-    .find(template => template.id === templateId)
-    ?.budgetAllocationTemplateLines
-    .map(line => ({
-      amount: line.amount.toDecimalPlaces(2).toFixed(2),
-      budget: { id: line.budget.id }
-    })) ?? []
-
-  const updateAndClose = () => {
-    setAllocations(templateAllocations)
-    setShow(false)
-  }
-
-  return (
-    <>
-      <button onClick={() => setShow(true)}>Apply Template</button>
-
-      <Offcanvas show={show} onHide={() => setShow(false)} placement="end">
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Apply Template</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body className="h-screen flex flex-col justify-between">
-          <div>
-            <Form.Group className="mb-2">
-              <Form.Select onChange={event => setTemplateId(event.target.value)}>
-                {data?.budgetAllocationTemplates.map(template => (
-                  <option key={template.id} value={template.id}>
-                    {template.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </div>
-          <div>
-            <button className="w-full bg-sky-600 text-white font-bold text-lg hover:bg-gray-700 p-2" onClick={updateAndClose}>Apply</button>
-            <button className="w-full font-bold text-lg p-2" onClick={() => setShow(false)}>Cancel</button>
-          </div>
-        </Offcanvas.Body>
-      </Offcanvas>
-    </>
-  )
 }
 
 const BudgetSelect = ({ allocations, setAllocations }: AllocationSelectProps) => {

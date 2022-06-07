@@ -1,7 +1,6 @@
 import React from 'react'
 
 export type RowProps = {
-  key: string
   leftSide: string
   rightSide: string
 }

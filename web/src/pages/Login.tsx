@@ -1,5 +1,5 @@
 import React from 'react';
-import { signInWithApple } from '../firebase';
+import { signInWithApple, signInWithGoogle } from '../firebase';
 
 function Home() {
   return (
@@ -11,7 +11,8 @@ function Home() {
         <div className="flex flex-col justify-center md:justify-start my-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32">
           <p className="text-center text-3xl">Welcome.</p>
 
-          <button className="bg-sky-600 text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8" onClick={signInWithApple}>Login</button>
+          <button className="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8" onClick={signInWithApple}>Sign In With Apple</button>
+          <button className="bg-[#4285F4] text-white font-bold text-lg hover:bg-gray-700 p-2 mt-3" onClick={signInWithGoogle}>Sign In With Google</button>
         </div>
       </div>
 

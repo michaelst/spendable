@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { OAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { OAuthProvider, getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAMwiKd9_-gpYAZVSbA6Dmgrqo6rjtV3kw",
@@ -14,9 +14,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-const provider = new OAuthProvider('apple.com');
+
 
 const signInWithApple = async () => {
+  const provider = new OAuthProvider('apple.com');
+
+  try {
+    signInWithPopup(auth, provider);
+  } catch (err) {
+    console.error(err);
+  }
+};
+const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+
   try {
     signInWithPopup(auth, provider);
   } catch (err) {
@@ -26,5 +37,6 @@ const signInWithApple = async () => {
 
 export {
   auth,
-  signInWithApple
+  signInWithApple,
+  signInWithGoogle
 }
