@@ -6,15 +6,21 @@ import { ListBudgetAllocationTemplates } from '../graphql/ListBudgetAllocationTe
 import { BudgetAllocationInput } from './TransactionForm'
 import Row from './Row'
 import formatCurrency from '../utils/formatCurrency'
+import TemplateForm from './TemplateForm'
 
 type Props = {
   setAllocations: Dispatch<SetStateAction<BudgetAllocationInput[]>>
 }
 
 const TemplateSelect = ({ setAllocations }: Props) => {
-  const { data } = useQuery<ListBudgetAllocationTemplates>(LIST_BUDGET_ALLOCATION_TEMPLATES)
   const [show, setShow] = useState(false)
-  const [templateId, setTemplateId] = useState(data?.budgetAllocationTemplates[0].id)
+  const [showNewTemplate, setShowNewTemplate] = useState(false)
+  const [showEditTemplate, setShowEditTemplate] = useState(false)
+  const [templateId, setTemplateId] = useState<string>()
+
+  const { data } = useQuery<ListBudgetAllocationTemplates>(LIST_BUDGET_ALLOCATION_TEMPLATES, {
+    onCompleted: data => setTemplateId(data.budgetAllocationTemplates[0].id)
+  })
 
   const templateAllocations = data?.budgetAllocationTemplates
     .find(template => template.id === templateId)
@@ -42,7 +48,7 @@ const TemplateSelect = ({ setAllocations }: Props) => {
         <Offcanvas.Body className="h-screen flex flex-col justify-between">
           <div>
             <Form.Group className="mb-2">
-              <Form.Select onChange={event => setTemplateId(event.target.value)}>
+              <Form.Select value={templateId} onChange={event => setTemplateId(event.target.value)}>
                 {data?.budgetAllocationTemplates.map(template => (
                   <option key={template.id} value={template.id}>
                     {template.name}
@@ -53,11 +59,13 @@ const TemplateSelect = ({ setAllocations }: Props) => {
 
             <div className="flex flex-row justify-between mx-1">
               <div className="flex items-center">
-                <button onClick={() => setShow(true)} className="text-right w-100 mb-4 text-sky-600">New Template</button>
+                <button onClick={() => setShowNewTemplate(true)} className="text-right w-100 mb-4 text-sky-600">New Template</button>
+                <TemplateForm show={showNewTemplate} setShow={setShowNewTemplate} />
               </div>
               <div className="flex items-center">
                 <div className="flex flex-col items-end">
-                  <button onClick={() => setShow(true)} className="text-right w-100 mb-4 text-sky-600">Edit Template</button>
+                  <button onClick={() => setShowEditTemplate(true)} className="text-right w-100 mb-4 text-sky-600">Edit Template</button>
+                  <TemplateForm id={templateId} show={showEditTemplate} setShow={setShowEditTemplate} />
                 </div>
               </div>
             </div>
@@ -67,8 +75,8 @@ const TemplateSelect = ({ setAllocations }: Props) => {
                 <Row leftSide="Budget" rightSide="Amount" />
               </div>
               {activeTemplate && [...activeTemplate.budgetAllocationTemplateLines].sort((a, b) => b.amount.comparedTo(a.amount)).map(line => (
-                <div className="mb-1">
-                  <Row key={line.id} leftSide={line.budget.name} rightSide={formatCurrency(line.amount)} />
+                <div key={line.id} className="mb-1">
+                  <Row leftSide={line.budget.name} rightSide={formatCurrency(line.amount)} />
                 </div>
               ))}
             </div>

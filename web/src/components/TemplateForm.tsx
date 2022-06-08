@@ -1,52 +1,48 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_TRANSACTION, DELETE_TRANSACTION, GET_TRANSACTION, LIST_BUDGETS, UPDATE_TRANSACTION } from '../queries'
-import { DateTime } from 'luxon'
+import { CREATE_BUDGET_ALLOCATION_TEMPLATE, DELETE_BUDGET_ALLOCATION_TEMPLATE, GET_BUDGET_ALLOCATION_TEMPLATE, LIST_BUDGETS, LIST_BUDGET_ALLOCATION_TEMPLATES, UPDATE_BUDGET_ALLOCATION_TEMPLATE } from '../queries'
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Form, Modal, Offcanvas } from 'react-bootstrap'
-import { GetTransaction } from '../graphql/GetTransaction'
 import { ListBudgets } from '../graphql/ListBudgets'
-import Decimal from 'decimal.js-light'
 import TemplateSelect from './TemplateSelect'
+import { GetBudgetAllocationTemplate } from '../graphql/GetBudgetAllocationTemplate'
+import { CreateBudgetAllocationBudgetInput, UpdateBudgetAllocationTemplateInput } from '../graphql/globalTypes'
+import Decimal from 'decimal.js-light'
 
-type TransactionFormProps = {
+type TemplateFormProps = {
   id?: string | null
   show: boolean
   setShow: Dispatch<SetStateAction<boolean>>
 }
 
-export type BudgetAllocationInput = {
+export type LineInput = {
   amount: string
   budget: {
     id: string
   }
 }
 
-type TransactionInput = {
-  amount: string
-  budgetAllocations: BudgetAllocationInput[]
-  date: string
+type TemplateInput = {
+  budgetAllocationTemplateLines: LineInput[]
   name: string
-  note?: string | null
-  reviewed: boolean
 }
 
-const TransactionForm = ({ id, show, setShow }: TransactionFormProps) => {
+const TemplateForm = ({ id, show, setShow }: TemplateFormProps) => {
   return id ?
-    <UpdateTransactionForm id={id} show={show} setShow={setShow} />
-    : <CreateTransactionForm show={show} setShow={setShow} />
+    <UpdateTemplateForm id={id} show={show} setShow={setShow} />
+    : <CreateTemplateForm show={show} setShow={setShow} />
 }
 
-const CreateTransactionForm = ({ show, setShow }: TransactionFormProps) => {
-  const [createTransaction] = useMutation(CREATE_TRANSACTION)
+const CreateTemplateForm = ({ show, setShow }: TemplateFormProps) => {
+  const [createTemplate] = useMutation(CREATE_BUDGET_ALLOCATION_TEMPLATE)
 
-  const saveAndClose = (input: TransactionInput) => {
-    createTransaction({
+  const saveAndClose = (input: TemplateInput) => {
+    createTemplate({
       variables: {
         input: prepareInput(input)
       },
-      refetchQueries: ['ListTransactions']
+      refetchQueries: [{ query: LIST_BUDGET_ALLOCATION_TEMPLATES }]
     })
       .then(() => {
         setShow(false)
@@ -58,18 +54,18 @@ const CreateTransactionForm = ({ show, setShow }: TransactionFormProps) => {
   return (
     <Offcanvas show={show} onHide={() => setShow(false)} placement="end">
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title>Create Transaction</Offcanvas.Title>
+        <Offcanvas.Title>Create Template</Offcanvas.Title>
       </Offcanvas.Header>
       <FormBody saveAndClose={saveAndClose} />
     </Offcanvas>
   )
 }
 
-const UpdateTransactionForm = ({ id, show, setShow }: TransactionFormProps) => {
-  const [updateTransaction] = useMutation(UPDATE_TRANSACTION)
+const UpdateTemplateForm = ({ id, show, setShow }: TemplateFormProps) => {
+  const [updateTemplate] = useMutation(UPDATE_BUDGET_ALLOCATION_TEMPLATE)
 
-  const saveAndClose = (input: TransactionInput) => {
-    updateTransaction({
+  const saveAndClose = (input: TemplateInput) => {
+    updateTemplate({
       variables: {
         id: id,
         input: prepareInput(input)
@@ -85,45 +81,35 @@ const UpdateTransactionForm = ({ id, show, setShow }: TransactionFormProps) => {
   return (
     <Offcanvas show={show} onHide={() => setShow(false)} placement="end">
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title>Edit Transaction</Offcanvas.Title>
+        <Offcanvas.Title>Edit Template</Offcanvas.Title>
       </Offcanvas.Header>
       <FormBody id={id} saveAndClose={saveAndClose} />
     </Offcanvas>
   )
 }
 
-const prepareInput = (input: TransactionInput) => {
+const prepareInput = (input: TemplateInput): CreateBudgetAllocationBudgetInput | UpdateBudgetAllocationTemplateInput => {
   return {
     ...input,
-    budgetAllocations: input.budgetAllocations?.map(a => ({
-      // if there is only a single allocation we should make sure to update the amount
-      // to match the transaction amount before saving
-      amount: input.budgetAllocations.length === 1 ? input.amount : a.amount,
+    budgetAllocationTemplateLines: input.budgetAllocationTemplateLines?.map(a => ({
+      amount: new Decimal(a.amount),
       budget: { id: parseInt(a.budget.id) }
     }))
   }
 }
 
 
-const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (input: TransactionInput) => void }) => {
+const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (input: TemplateInput) => void }) => {
   const [name, setName] = useState('')
-  const [amount, setAmount] = useState('')
-  const [date, setDate] = useState('')
-  const [note, setNote] = useState('')
-  const [reviewed, setReviewed] = useState(false)
-  const [allocations, setAllocations] = useState<BudgetAllocationInput[]>([])
+  const [allocations, setAllocations] = useState<LineInput[]>([])
 
   const budgets = useQuery<ListBudgets>(LIST_BUDGETS)
 
-  const { data } = useQuery<GetTransaction>(GET_TRANSACTION, {
+  const { data } = useQuery<GetBudgetAllocationTemplate>(GET_BUDGET_ALLOCATION_TEMPLATE, {
     variables: { id: id },
     onCompleted: data => {
-      setName(data.transaction.name ?? '')
-      setAmount(data.transaction.amount.toDecimalPlaces(2).toFixed(2))
-      setDate(DateTime.fromJSDate(data.transaction.date).toISODate())
-      setNote(data.transaction.note ?? '')
-      setReviewed(data.transaction.reviewed)
-      setAllocations(data.transaction.budgetAllocations.map(a => ({ ...a, amount: a.amount.toDecimalPlaces(2).toFixed(2) })))
+      setName(data.budgetAllocationTemplate.name ?? '')
+      setAllocations(data.budgetAllocationTemplate.budgetAllocationTemplateLines.map(l => ({ ...l, amount: l.amount.toDecimalPlaces(2).toFixed(2) })))
     }
   })
 
@@ -134,16 +120,14 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
   const spendableId = budgets.data.budgets.find(b => b.name === "Spendable")!.id
 
   if (!id && allocations.length === 0) {
-    setAllocations([{ amount: amount, budget: { id: spendableId } }])
+    setAllocations([{ amount: '0', budget: { id: spendableId } }])
   }
 
   const split = () => {
-    const allocatedAmount = allocations.reduce((acc, allocation) => acc.plus(allocation.amount), new Decimal(0))
-
     const newAllocations = [
       ...allocations,
       {
-        amount: new Decimal(amount).minus(allocatedAmount).toDecimalPlaces(2).toFixed(2),
+        amount: '0',
         budget: { id: spendableId }
       }
     ]
@@ -154,12 +138,6 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
   return (
     <Offcanvas.Body className="h-screen flex flex-col justify-between">
       <div>
-        {data?.transaction.bankTransaction && (
-          <p>
-            Bank Memo: {data?.transaction.bankTransaction?.name}
-          </p>
-        )}
-
         <Form.Group className="mb-3">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -168,56 +146,16 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Amount</Form.Label>
-          <Form.Control
-            defaultValue={amount}
-            onChange={event => setAmount(event.target.value)} />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Date</Form.Label>
-          <Form.Control
-            defaultValue={date}
-            type="date"
-            onChange={event => setDate(event.target.value)} />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          {allocations.length <= 1
-            ? <BudgetSelect allocations={allocations} setAllocations={setAllocations} />
-            : <MultiBudgetSelect allocations={allocations} setAllocations={setAllocations} />
-          }
+          <MultiBudgetSelect allocations={allocations} setAllocations={setAllocations} />
           <div className="flex justify-between relative">
             <button onClick={split}>Split</button>
-            <TemplateSelect setAllocations={setAllocations} />
           </div>
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Note</Form.Label>
-          <Form.Control
-            defaultValue={note}
-            as="textarea"
-            rows={3}
-            onChange={event => setNote(event.target.value)} />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Check
-            type="checkbox"
-            label="Reviewed"
-            defaultChecked={reviewed}
-            onClick={() => setReviewed(!reviewed)} />
         </Form.Group>
       </div>
       <div>
         <button className="w-full bg-sky-600 text-white font-bold text-lg hover:bg-gray-700 p-2" onClick={() => saveAndClose({
-          amount: amount,
-          date: date,
           name: name,
-          note: note,
-          reviewed: reviewed,
-          budgetAllocations: allocations
+          budgetAllocationTemplateLines: allocations
         })}>Save</button>
         {id && <DeleteModal id={id} />}
       </div>
@@ -228,9 +166,9 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
 const DeleteModal = ({ id }: { id: string }) => {
   const [show, setShow] = useState(false)
 
-  const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
+  const [deleteTemplate] = useMutation(DELETE_BUDGET_ALLOCATION_TEMPLATE, {
     variables: { id: id },
-    refetchQueries: ['ListTransactions']
+    refetchQueries: [{ query: LIST_BUDGET_ALLOCATION_TEMPLATES }]
   })
 
   return (
@@ -243,12 +181,12 @@ const DeleteModal = ({ id }: { id: string }) => {
         <Modal.Header closeButton>
           <Modal.Title>Are you sure?</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this transaction?</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this template?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShow(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={() => deleteTransaction()}>
+          <Button variant="danger" onClick={() => deleteTemplate()}>
             Delete
           </Button>
         </Modal.Footer>
@@ -258,34 +196,8 @@ const DeleteModal = ({ id }: { id: string }) => {
 }
 
 type AllocationSelectProps = {
-  allocations: BudgetAllocationInput[]
-  setAllocations: Dispatch<SetStateAction<BudgetAllocationInput[]>>
-}
-
-const BudgetSelect = ({ allocations, setAllocations }: AllocationSelectProps) => {
-  const { data } = useQuery<ListBudgets>(LIST_BUDGETS)
-
-  const setSpendFrom = (budgetId: string) => {
-    setAllocations([
-      {
-        ...allocations[0],
-        budget: { id: budgetId }
-      }
-    ])
-  }
-
-  return (
-    <>
-      <Form.Label>Spend From</Form.Label>
-      <Form.Select value={allocations[0].budget.id} onChange={event => setSpendFrom(event.target.value)}>
-        {data?.budgets.map(budget => (
-          <option key={budget.id} value={budget.id}>
-            {budget.name}
-          </option>
-        ))}
-      </Form.Select>
-    </>
-  )
+  allocations: LineInput[]
+  setAllocations: Dispatch<SetStateAction<LineInput[]>>
 }
 
 const MultiBudgetSelect = ({ allocations, setAllocations }: AllocationSelectProps) => {
@@ -355,4 +267,4 @@ const MultiBudgetSelect = ({ allocations, setAllocations }: AllocationSelectProp
   )
 }
 
-export default TransactionForm
+export default TemplateForm
