@@ -5,13 +5,13 @@ defmodule Spendable.BudgetAllocationTemplateLine do
     extensions: [AshGraphql.Resource]
 
   postgres do
-    repo(Spendable.Repo)
+    repo Spendable.Repo
     table "budget_allocation_template_lines"
 
     custom_indexes do
-      index(["budget_id"])
-      index(["budget_allocation_template_id"])
-      index(["user_id"])
+      index ["budget_id"]
+      index ["budget_allocation_template_id"]
+      index ["user_id"]
     end
 
     references do

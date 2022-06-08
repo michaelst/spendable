@@ -17,4 +17,10 @@ defmodule Spendable.User.Calculations.PlaidLinkTokenTest do
 
     assert token == calculated_token
   end
+
+  test "can't get token if at bank limit" do
+    user = Factory.insert(Spendable.User, bank_limit: 0)
+
+    {:error, [:no_connections_available]} = PlaidLinkToken.calculate([user], [], %{})
+  end
 end
