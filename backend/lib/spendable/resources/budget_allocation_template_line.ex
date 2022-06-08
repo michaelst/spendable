@@ -13,6 +13,10 @@ defmodule Spendable.BudgetAllocationTemplateLine do
       index(["budget_allocation_template_id"])
       index(["user_id"])
     end
+
+    references do
+      reference :budget_allocation_template, on_delete: :delete
+    end
   end
 
   attributes do
