@@ -1,4 +1,4 @@
-nameOverride: spendable
+nameOverride: spendable-api
 replicaCount: 3
 
 service:
