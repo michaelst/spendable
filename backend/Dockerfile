@@ -12,15 +12,18 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY mix.exs mix.lock ./
-COPY config/config.exs config/prod.exs ./config/
-RUN mix do deps.get --only prod, deps.compile
+COPY config/config.exs config/prod.exs config/releases.exs ./config/
 
 COPY lib lib
 COPY priv priv
-RUN mix compile
+COPY rel rel
 
-COPY config/releases.exs ./config/
-RUN mix release
+RUN --mount=type=cache,target=/app/deps \
+    --mount=type=cache,target=/app/_build/prod \
+      rm -rf /app/_build/prod/rel && \
+      mix do deps.get --only prod, release && \
+      # copy out of the cache so it is available
+      cp -r /app/_build/prod/rel/spendable ./release
 
 FROM ubuntu:20.04 AS app
 
@@ -36,6 +39,6 @@ RUN set -xe \
 USER app
 WORKDIR /home/app
 
-COPY --from=build --chown=app:app /app/_build/prod/rel/spendable ./
+COPY --from=build --chown=app:app /app/release ./
 COPY --chown=app:app .devops/entrypoint.sh .
 CMD ["./entrypoint.sh"]
