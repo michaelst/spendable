@@ -1,26 +1,40 @@
 {
   "name": "spendable",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.6.2",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.0",
-    "@types/node": "^16.11.33",
+    "@types/jest": "^27.5.1",
+    "@types/node": "^16.11.35",
     "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.3",
+    "@types/react-dom": "^18.0.4",
+    "bootstrap": "^5.1.3",
+    "decimal.js-light": "^2.5.1",
+    "firebase": "^9.8.1",
+    "graphql": "^16.5.0",
+    "luxon": "^2.4.0",
     "react": "^18.1.0",
+    "react-bootstrap": "^2.4.0",
     "react-dom": "^18.1.0",
+    "react-firebase-hooks": "^5.0.3",
+    "react-plaid-link": "^3.3.2",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "typescript": "^4.6.4",
-    "web-vitals": "^2.1.4"
+    "typescript": "^4.6.4"
   },
   "scripts": {
-    "start": "node scripts/start",
-    "build": "NODE_ENV=production node scripts/build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "codegen": "apollo client:codegen --target typescript graphql --passthroughCustomScalars --globalTypesFile=src/graphql/globalTypes.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -41,8 +55,9 @@
     ]
   },
   "devDependencies": {
-    "chokidar": "^3.5.3",
-    "esbuild": "^0.14.38",
-    "live-server": "^1.2.2"
+    "@types/luxon": "^2.3.2",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.13",
+    "tailwindcss": "^3.0.24"
   }
 }
