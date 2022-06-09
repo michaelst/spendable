@@ -48,7 +48,7 @@ const Row = ({ budget: { title, amount, subText, onClick } }: BudgetRowProps) =>
         <div className="flex items-center">
           <div className="flex flex-col items-end mr-4">
             <div>{formatCurrency(amount)}</div>
-            <div className="text-xs text-slate-500">{subText}</div>
+            <div className="text-xs text-slate-500 font-light">{subText}</div>
           </div>
           <FontAwesomeIcon icon={faAngleRight} className="text-slate-500" />
         </div>

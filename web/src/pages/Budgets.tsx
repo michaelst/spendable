@@ -56,7 +56,7 @@ function Budgets() {
                   refetch({ month: item.month.toFormat('yyyy-MM-dd') })
                 }}>
                 <div className="whitespace-nowrap">{item.month?.toFormat('MMM yyyy')}</div>
-                <div className="text-xs text-slate-500">{item.spent && formatCurrency(item.spent)}</div>
+                <div className="text-xs text-slate-500 font-light">{item.spent && formatCurrency(item.spent)}</div>
               </div>
             )
           })}

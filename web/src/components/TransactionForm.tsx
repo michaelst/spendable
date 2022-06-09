@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_TRANSACTION, DELETE_TRANSACTION, GET_TRANSACTION, LIST_BUDGETS, UPDATE_TRANSACTION } from '../queries'
+import { CREATE_TRANSACTION, DELETE_TRANSACTION, GET_TRANSACTION, LIST_BUDGETS, LIST_TRANSACTIONS, UPDATE_TRANSACTION } from '../queries'
 import { DateTime } from 'luxon'
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -46,7 +46,7 @@ const CreateTransactionForm = ({ show, setShow }: TransactionFormProps) => {
       variables: {
         input: prepareInput(input)
       },
-      refetchQueries: ['ListTransactions']
+      refetchQueries: [{query: LIST_TRANSACTIONS}]
     })
       .then(() => {
         setShow(false)
@@ -230,7 +230,7 @@ const DeleteModal = ({ id }: { id: string }) => {
 
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
     variables: { id: id },
-    refetchQueries: ['ListTransactions']
+    refetchQueries: [{query: LIST_TRANSACTIONS}]
   })
 
   return (
@@ -248,7 +248,7 @@ const DeleteModal = ({ id }: { id: string }) => {
           <Button variant="secondary" onClick={() => setShow(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={() => deleteTransaction()}>
+          <Button variant="danger" onClick={() => deleteTransaction().then(() => setShow(false))}>
             Delete
           </Button>
         </Modal.Footer>

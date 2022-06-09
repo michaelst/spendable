@@ -17,6 +17,7 @@ import { GetBudget } from '../graphql/GetBudget'
 import formatCurrency from '../utils/formatCurrency'
 import TemplateRow, { TemplateRowItem } from '../components/TemplateRow'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
+import Decimal from 'decimal.js-light'
 
 
 
@@ -30,7 +31,7 @@ function Budget() {
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
-  const { data } = useQuery<GetBudget>(GET_BUDGET, {
+  const { data: currentData, previousData } = useQuery<GetBudget>(GET_BUDGET, {
     variables: {
       id: id,
       startDate: activeMonth.toFormat('yyyy-MM-dd'),
@@ -38,33 +39,30 @@ function Budget() {
     }
   })
 
-  var onLabelClick = (clickedMonth: DateTime) => {
-    const id = window.location.pathname.split("/").pop()
-    navigate(`/budgets/${id}?month=${clickedMonth.toFormat('yyyy-MM-dd')}`)
-  }
-
-  const LabelClick = {
-    id: 'LabelClick',
-    beforeEvent: function (chartInstance: ChartJS, { event }: { event: ChartEvent }) {
-      const xAxis = chartInstance.scales.x
-
-      const x = event.x
-      const y = event.y
-      const index = x && xAxis.getValueForPixel(x)
-      const labels = chartInstance.data.labels
-
-      if (event.type === 'click' && x && y && labels &&
-        x <= xAxis.right && x >= xAxis.left &&
-        y <= xAxis.bottom && y >= xAxis.top) {
-        const label: string = labels[index!] as string
-
-        const id = window.location.pathname.split("/").pop()
-        navigate(`/budgets/${id}?month=${DateTime.fromFormat(label, 'MMM yyyy').toFormat('yyyy-MM-dd')}`)
-      }
-    }
-  }
+  const data = currentData ?? previousData
 
   useEffect(() => {
+    const LabelClick = {
+      id: 'LabelClick',
+      beforeEvent: function (chartInstance: ChartJS, { event }: { event: ChartEvent }) {
+        const xAxis = chartInstance.scales.x
+
+        const x = event.x
+        const y = event.y
+        const index = x && xAxis.getValueForPixel(x)
+        const labels = chartInstance.data.labels
+
+        if (event.type === 'click' && x && y && labels &&
+          x <= xAxis.right && x >= xAxis.left &&
+          y <= xAxis.bottom && y >= xAxis.top) {
+          const label: string = labels[index!] as string
+
+          const id = window.location.pathname.split("/").pop()
+          navigate(`/budgets/${id}?month=${ DateTime.fromFormat(label, 'MMM yyyy').toFormat('yyyy-MM-dd')}`)
+        }
+      }
+    }
+
     ChartJS.register(
       CategoryScale,
       LinearScale,
@@ -74,7 +72,7 @@ function Budget() {
     )
 
     return ChartJS.unregister()
-  }, [])
+  }, [navigate])
 
   if (!data) return null
 
@@ -114,13 +112,13 @@ function Budget() {
               <div className="flex flex-col items-end">
                 {activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly ? (
                   <>
-                    <div className="font-bold">{formatCurrency(data.budget.balance)}</div>
-                    <div className="text-xs text-slate-500">Balance</div>
+                    <div>{formatCurrency(data.budget.balance)}</div>
+                    <div className="text-xs text-slate-500 font-light">Balance</div>
                   </>
                 ) : (
                   <>
-                    <div className="font-bold">{formatCurrency(data.budget.spent.abs())}</div>
-                    <div className="text-xs text-slate-500">Spent</div>
+                    <div>{formatCurrency(data.budget.spent.abs())}</div>
+                    <div className="text-xs text-slate-500 font-light">Spent</div>
                   </>
                 )}
               </div>
@@ -137,15 +135,24 @@ function Budget() {
                   grid: { display: false, drawBorder: false },
                   ticks: {
                     maxRotation: 0,
-                    color: c => c.tick.label == activeMonth.toFormat('MMM yyyy') ? "rgb(75, 145, 215)" : "#666",
+                    color: c => c.tick.label === activeMonth.toFormat('MMM yyyy') ? "rgb(75, 145, 215)" : "#666",
                     font: {
-                      weight: c => c.tick.label == activeMonth.toFormat('MMM yyyy') ? "bold" : "normal"
+                      family: "Oxygen",
+                      weight: c => c.tick.label === activeMonth.toFormat('MMM yyyy') ? "700" : "300"
                     }
                   }
                 },
                 y: {
                   grid: { display: false, drawBorder: false },
-                  ticks: { callback: value => "$" + value }
+                  ticks: {
+                    maxTicksLimit: 6,
+                    callback: value => formatCurrency(new Decimal(value), 0),
+                    maxRotation: 0,
+                    font: {
+                      family: "Oxygen",
+                      weight: "300"
+                    }
+                  }
                 }
               },
               datasets: {

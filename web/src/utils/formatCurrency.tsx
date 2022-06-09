@@ -1,10 +1,10 @@
 import Decimal from "decimal.js-light"
 
-export default function formatCurrency(decimal: Decimal) {
+export default function formatCurrency(decimal: Decimal, digits: number = 2) {
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
+    minimumFractionDigits: digits,
   })
 
   return formatter.format(decimal.toNumber())
