@@ -135,7 +135,6 @@ function Budget() {
                     maxRotation: 0,
                     color: c => c.tick.label == activeMonth.toFormat('MMM yyyy') ? "rgb(75, 145, 215)" : "#666",
                     font: {
-                      size: 14,
                       weight: c => c.tick.label == activeMonth.toFormat('MMM yyyy') ? "bold" : "normal"
                     }
                   }

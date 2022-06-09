@@ -30,12 +30,14 @@ function App() {
   return (
     <div className="App bg-slate-100 min-h-screen">
       <Sidebar />
-      <Routes>
-        <Route path="/" element={<Budgets />} />
-        <Route path="/budgets/:id" element={<Budget />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/banks" element={<Banks />} />
-      </Routes>
+      <div className="ml-20">
+        <Routes>
+          <Route path="/" element={<Budgets />} />
+          <Route path="/budgets/:id" element={<Budget />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/banks" element={<Banks />} />
+        </Routes>
+      </div>
     </div>
   );
 }
