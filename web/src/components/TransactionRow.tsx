@@ -23,8 +23,8 @@ const TransactionRow = (transaction: TransactionRowItem) => {
     <>
       <div className="border-b bg-white p-8" onClick={() => setShow(true)}>
         <div className="flex flex-row justify-between">
-          <div className="flex flex-col items-start">
-            <div>{transaction.name}</div>
+          <div className="flex flex-col items-start w-[70%]">
+            <div className="whitespace-nowrap truncate w-full text-left">{transaction.name}</div>
             <div className="text-xs text-slate-500">{DateTime.fromJSDate(transaction.date).toLocaleString(DateTime.DATE_MED)}</div>
           </div>
 
