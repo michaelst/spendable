@@ -4,6 +4,8 @@ defmodule Spendable.Budget do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
+  alias Spendable.Budget.SpentByMonth
+
   postgres do
     repo(Spendable.Repo)
     table "budgets"
@@ -40,6 +42,8 @@ defmodule Spendable.Budget do
       argument :month, :date
       allow_nil? false
     end
+
+    calculate :spent_by_month, {:array, SpentByMonth}, Spendable.Budget.Calculations.SpentByMonth, allow_nil?: false
   end
 
   actions do
