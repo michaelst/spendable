@@ -15,6 +15,7 @@ export const MAIN_QUERY = gql`
       name
       balance
       trackSpendingOnly
+      archivedAt
       spent(month: $month)
     }
   }
@@ -28,6 +29,7 @@ export const LIST_BUDGETS = gql`
     budgets(sort: [{ field: NAME }]) {
       id
       name
+      archivedAt
     }
   }
 `
@@ -40,6 +42,7 @@ export const GET_BUDGET = gql`
       adjustment
       balance
       trackSpendingOnly
+      archivedAt
       spent(month: $startDate)
       spentByMonth(numberOfMonths: 13) {
         month
@@ -95,6 +98,7 @@ export const UPDATE_BUDGET = gql`
         name
         balance
         trackSpendingOnly
+        archivedAt
       }
     }
   }

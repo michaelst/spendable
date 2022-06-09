@@ -11,6 +11,7 @@ export interface ListBudgets_budgets {
   __typename: "Budget";
   id: string;
   name: string;
+  archivedAt: NaiveDateTime | null;
 }
 
 export interface ListBudgets {

@@ -15,6 +15,7 @@ export interface UpdateBudget_updateBudget_result {
   name: string;
   balance: Decimal;
   trackSpendingOnly: boolean;
+  archivedAt: NaiveDateTime | null;
 }
 
 export interface UpdateBudget_updateBudget {

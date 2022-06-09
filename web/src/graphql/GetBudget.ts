@@ -48,6 +48,7 @@ export interface GetBudget_budget {
   adjustment: Decimal;
   balance: Decimal;
   trackSpendingOnly: boolean;
+  archivedAt: NaiveDateTime | null;
   spent: Decimal;
   spentByMonth: GetBudget_budget_spentByMonth[];
   budgetAllocations: GetBudget_budget_budgetAllocations[];

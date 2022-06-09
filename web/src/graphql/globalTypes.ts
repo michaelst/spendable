@@ -56,6 +56,7 @@ export interface CreateBudgetAllocationTransactionInput {
 
 export interface CreateBudgetInput {
   adjustment?: Decimal | null;
+  archivedAt?: NaiveDateTime | null;
   name: string;
   trackSpendingOnly?: boolean | null;
 }
@@ -121,6 +122,7 @@ export interface UpdateBudgetAllocationTemplateLineInput {
 
 export interface UpdateBudgetInput {
   adjustment?: Decimal | null;
+  archivedAt?: NaiveDateTime | null;
   name?: string | null;
   trackSpendingOnly?: boolean | null;
 }

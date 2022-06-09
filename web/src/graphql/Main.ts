@@ -26,6 +26,7 @@ export interface Main_budgets {
   name: string;
   balance: Decimal;
   trackSpendingOnly: boolean;
+  archivedAt: NaiveDateTime | null;
   spent: Decimal;
 }
 

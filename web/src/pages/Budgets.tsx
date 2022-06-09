@@ -27,12 +27,15 @@ function Budgets() {
     return { ...s, month: DateTime.fromJSDate(s.month).startOf('month') }
   }) || []
 
-  const budgets = (data?.budgets || []).map(budget => {
+  const budgets = (data?.budgets || [])
+  .filter(budget => !budget.archivedAt || !budget.spent.isZero())
+  .map(budget => {
     const item = {
       id: budget.id,
       title: budget.name,
       amount: amount(activeMonthIsCurrentMonth, budget, data?.currentUser.spendable || new Decimal(0)),
       subText: subText(activeMonthIsCurrentMonth, budget),
+      archivedAt: budget.archivedAt,
       hideDelete: budget.name === "Spendable",
       onClick: () => navigate(`/budgets/${budget.id}?month=${activeMonth.toFormat('yyyy-MM-dd')}`)
     }
