@@ -42,23 +42,25 @@ function Budgets() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-row items-center my-16 p-3 overflow-scroll w-1/2 bg-white">
-        {spentByMonth.map(item => {
-          return (
-            <div
-              key={item.month.toString()}
-              className={"py-3 px-4 cursor-pointer " + (item.month?.equals(activeMonth) ? "bg-blue-50" : "")}
-              onClick={() => {
-                if (!item.month) return
-                setActiveMonth(item.month)
-                setSearchParams({ month: item.month.toFormat('yyyy-MM-dd') })
-                refetch({ month: item.month.toFormat('yyyy-MM-dd') })
-              }}>
-              <div className="whitespace-nowrap">{item.month?.toFormat('MMM yyyy')}</div>
-              <div className="text-xs text-slate-500">{item.spent && formatCurrency(item.spent)}</div>
-            </div>
-          )
-        })}
+      <div className="w-1/2 p-3 my-16 bg-white">
+        <div className="flex flex-row items-center overflow-scroll">
+          {spentByMonth.map(item => {
+            return (
+              <div
+                key={item.month.toString()}
+                className={"py-3 px-4 cursor-pointer " + (item.month?.equals(activeMonth) ? "bg-blue-50" : "")}
+                onClick={() => {
+                  if (!item.month) return
+                  setActiveMonth(item.month)
+                  setSearchParams({ month: item.month.toFormat('yyyy-MM-dd') })
+                  refetch({ month: item.month.toFormat('yyyy-MM-dd') })
+                }}>
+                <div className="whitespace-nowrap">{item.month?.toFormat('MMM yyyy')}</div>
+                <div className="text-xs text-slate-500">{item.spent && formatCurrency(item.spent)}</div>
+              </div>
+            )
+          })}
+        </div>
 
       </div>
       <div className="flex flex-col items-center pb-16 overflow-scroll w-1/2">

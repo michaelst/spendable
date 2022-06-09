@@ -59,7 +59,6 @@ function Budget() {
         setActiveMonth(clickedMonth)
         setSearchParams({ month: clickedMonth.toFormat('yyyy-MM-dd') })
         refetch({
-          id: id,
           startDate: clickedMonth.toFormat('yyyy-MM-dd'),
           endDate: clickedMonth.endOf('month').toFormat('yyyy-MM-dd')
         })
@@ -113,10 +112,15 @@ function Budget() {
             </div>
             <div className="flex items-center">
               <div className="flex flex-col items-end">
-                {activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly && (
+                {activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly ? (
                   <>
                     <div className="font-bold">{formatCurrency(data.budget.balance)}</div>
                     <div className="text-xs text-slate-500">Balance</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="font-bold">{formatCurrency(data.budget.spent.abs())}</div>
+                    <div className="text-xs text-slate-500">Spent</div>
                   </>
                 )}
               </div>
