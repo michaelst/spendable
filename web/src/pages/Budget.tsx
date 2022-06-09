@@ -23,21 +23,25 @@ import TransactionRow, { TransactionRowItem } from '../components/TransactionRow
 
 function Budget() {
   const { id } = useParams()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const monthFromSearchParams = searchParams.get("month")
-  const monthForState = monthFromSearchParams ? DateTime.fromFormat(monthFromSearchParams, 'yyyy-MM-dd') : DateTime.now().startOf('month')
-  const [activeMonth, setActiveMonth] = useState(monthForState)
+  const activeMonth = monthFromSearchParams ? DateTime.fromFormat(monthFromSearchParams, 'yyyy-MM-dd') : DateTime.now().startOf('month')
   const navigate = useNavigate()
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
-  const { data, refetch } = useQuery<GetBudget>(GET_BUDGET, {
+  const { data } = useQuery<GetBudget>(GET_BUDGET, {
     variables: {
       id: id,
       startDate: activeMonth.toFormat('yyyy-MM-dd'),
       endDate: activeMonth.endOf('month').toFormat('yyyy-MM-dd')
     }
   })
+
+  var onLabelClick = (clickedMonth: DateTime) => {
+    const id = window.location.pathname.split("/").pop()
+    navigate(`/budgets/${id}?month=${clickedMonth.toFormat('yyyy-MM-dd')}`)
+  }
 
   const LabelClick = {
     id: 'LabelClick',
@@ -54,14 +58,8 @@ function Budget() {
         y <= xAxis.bottom && y >= xAxis.top) {
         const label: string = labels[index!] as string
 
-        const clickedMonth = DateTime.fromFormat(label, 'MMM yyyy')
-
-        setActiveMonth(clickedMonth)
-        setSearchParams({ month: clickedMonth.toFormat('yyyy-MM-dd') })
-        refetch({
-          startDate: clickedMonth.toFormat('yyyy-MM-dd'),
-          endDate: clickedMonth.endOf('month').toFormat('yyyy-MM-dd')
-        })
+        const id = window.location.pathname.split("/").pop()
+        navigate(`/budgets/${id}?month=${DateTime.fromFormat(label, 'MMM yyyy').toFormat('yyyy-MM-dd')}`)
       }
     }
   }
@@ -74,7 +72,9 @@ function Budget() {
       LineElement,
       LabelClick
     )
-  })
+
+    return ChartJS.unregister()
+  }, [])
 
   if (!data) return null
 
