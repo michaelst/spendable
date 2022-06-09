@@ -43,7 +43,10 @@ defmodule Spendable.Budget do
       allow_nil? false
     end
 
-    calculate :spent_by_month, {:array, SpentByMonth}, Spendable.Budget.Calculations.SpentByMonth, allow_nil?: false
+    calculate :spent_by_month, {:array, SpentByMonth}, Spendable.Budget.Calculations.SpentByMonth do
+      argument :number_of_months, :integer
+      allow_nil? false
+    end
   end
 
   actions do
