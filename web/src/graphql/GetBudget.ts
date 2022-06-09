@@ -7,6 +7,12 @@
 // GraphQL query operation: GetBudget
 // ====================================================
 
+export interface GetBudget_budget_spentByMonth {
+  __typename: "MonthSpend";
+  month: Date;
+  spent: Decimal;
+}
+
 export interface GetBudget_budget_budgetAllocations_transaction {
   __typename: "Transaction";
   id: string;
@@ -43,6 +49,7 @@ export interface GetBudget_budget {
   balance: Decimal;
   trackSpendingOnly: boolean;
   spent: Decimal;
+  spentByMonth: GetBudget_budget_spentByMonth[];
   budgetAllocations: GetBudget_budget_budgetAllocations[];
   budgetAllocationTemplateLines: GetBudget_budget_budgetAllocationTemplateLines[];
 }

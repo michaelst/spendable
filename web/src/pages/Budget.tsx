@@ -1,25 +1,37 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
+import React, { useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
 import { DateTime } from 'luxon'
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
+import { Line } from 'react-chartjs-2'
+import {
+  Chart as ChartJS,
+  ChartEvent,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+} from 'chart.js'
 
-import { GET_BUDGET } from '../queries';
-import { GetBudget } from '../graphql/GetBudget';
-import formatCurrency from '../utils/formatCurrency';
-import Row, { RowProps } from '../components/Row';
-import TemplateRow, { TemplateRowItem } from '../components/TemplateRow';
-import TransactionRow, { TransactionRowItem } from '../components/TransactionRow';
+import { GET_BUDGET } from '../queries'
+import { GetBudget } from '../graphql/GetBudget'
+import formatCurrency from '../utils/formatCurrency'
+import TemplateRow, { TemplateRowItem } from '../components/TemplateRow'
+import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
+
+
+
 
 function Budget() {
   const { id } = useParams()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const monthFromSearchParams = searchParams.get("month")
-  const activeMonth = monthFromSearchParams ? DateTime.fromFormat(monthFromSearchParams, 'yyyy-MM-dd') : DateTime.now().startOf('month')
+  const monthForState = monthFromSearchParams ? DateTime.fromFormat(monthFromSearchParams, 'yyyy-MM-dd') : DateTime.now().startOf('month')
+  const [activeMonth, setActiveMonth] = useState(monthForState)
   const navigate = useNavigate()
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
-  const { data } = useQuery<GetBudget>(GET_BUDGET, {
+  const { data, refetch } = useQuery<GetBudget>(GET_BUDGET, {
     variables: {
       id: id,
       startDate: activeMonth.toFormat('yyyy-MM-dd'),
@@ -27,24 +39,45 @@ function Budget() {
     }
   })
 
+  const LabelClick = {
+    id: 'LabelClick',
+    beforeEvent: function (chartInstance: ChartJS, { event }: { event: ChartEvent }) {
+      const xAxis = chartInstance.scales.x
+
+      const x = event.x
+      const y = event.y
+      const index = x && xAxis.getValueForPixel(x)
+      const labels = chartInstance.data.labels
+
+      if (event.type === 'click' && x && y && labels &&
+        x <= xAxis.right && x >= xAxis.left &&
+        y <= xAxis.bottom && y >= xAxis.top) {
+        const label: string = labels[index!] as string
+
+        const clickedMonth = DateTime.fromFormat(label, 'MMM yyyy')
+
+        setActiveMonth(clickedMonth)
+        setSearchParams({ month: clickedMonth.toFormat('yyyy-MM-dd') })
+        refetch({
+          id: id,
+          startDate: clickedMonth.toFormat('yyyy-MM-dd'),
+          endDate: clickedMonth.endOf('month').toFormat('yyyy-MM-dd')
+        })
+      }
+    }
+  }
+
+  useEffect(() => {
+    ChartJS.register(
+      CategoryScale,
+      LinearScale,
+      PointElement,
+      LineElement,
+      LabelClick
+    )
+  })
+
   if (!data) return null
-
-  const balance = {
-    key: 'balance',
-    leftSide: 'Balance',
-    rightSide: formatCurrency(data.budget.balance)
-  }
-
-  const spent = {
-    key: 'spent',
-    leftSide: 'Spent',
-    rightSide: formatCurrency(data.budget.spent)
-  }
-
-  const detailLines: RowProps[] = []
-
-  if (activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly) detailLines.push(balance)
-  detailLines.push(spent)
 
   const allocationTemplateLines: TemplateRowItem[] =
     [...data.budget.budgetAllocationTemplateLines]
@@ -72,19 +105,73 @@ function Budget() {
 
   return (
     <div className="flex flex-col items-center py-16">
-      <div className="flex flex-col w-1/2">
-        {detailLines.map(line => <Row {...line} />)}
-      </div>
-
-      <div className="flex flex-col w-1/2">
-        {allocationTemplateLines.map(template => <TemplateRow {...template} />)}
-      </div>
-
-      <div className="flex flex-col w-1/2 py-16">
-        {recentAllocations.map(transaction => <TransactionRow {...transaction} />)}
+      <div className="flex flex-col w-[70%] bg-white">
+        <div className="text-left p-4 border-b">
+          <div className="flex flex-row justify-between">
+            <div className="flex items-center font-bold">
+              {data.budget.name}
+            </div>
+            <div className="flex items-center">
+              <div className="flex flex-col items-end">
+                {activeMonthIsCurrentMonth && !data.budget.trackSpendingOnly && (
+                  <>
+                    <div className="font-bold">{formatCurrency(data.budget.balance)}</div>
+                    <div className="text-xs text-slate-500">Balance</div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="p-4">
+          <Line
+            height={200}
+            options={{
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  grid: { display: false, drawBorder: false },
+                  ticks: {
+                    maxRotation: 0,
+                    color: c => c.tick.label == activeMonth.toFormat('MMM yyyy') ? "rgb(75, 145, 215)" : "#666",
+                    font: {
+                      weight: c => c.tick.label == activeMonth.toFormat('MMM yyyy') ? "bold" : "normal"
+                    }
+                  }
+                },
+                y: {
+                  grid: { display: false, drawBorder: false },
+                  ticks: { callback: value => "$" + value }
+                }
+              },
+              datasets: {
+                line: {
+                  tension: 0.4,
+                }
+              }
+            }}
+            data={{
+              labels: data.budget.spentByMonth.map(s => DateTime.fromJSDate(s.month).toFormat('MMM yyyy')),
+              datasets: [{
+                backgroundColor: 'rgb(75, 145, 215)',
+                borderColor: 'rgb(75, 145, 215)',
+                data: data.budget.spentByMonth.map(s => s.spent.abs().toNumber()),
+              }]
+            }} />
+        </div>
+        <div className="flex flex-row max-h-[90vh] border-t">
+          <div className="w-1/2 overflow-scroll">
+            <div className="py-2">Transactions</div>
+            {recentAllocations.map(transaction => <TransactionRow {...transaction} />)}
+          </div>
+          <div className="w-1/2 border-l overflow-scroll pt-2">
+            <div className="py-2">Templates</div>
+            {allocationTemplateLines.map(template => <TemplateRow {...template} />)}
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
-export default Budget;
+export default Budget

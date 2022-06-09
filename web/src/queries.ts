@@ -41,6 +41,10 @@ export const GET_BUDGET = gql`
       balance
       trackSpendingOnly
       spent(month: $startDate)
+      spentByMonth(numberOfMonths: 13) {
+        month
+        spent
+      }
       budgetAllocations(
         limit: 100
         filter: {

@@ -7,6 +7,15 @@ defmodule Spendable.Budget.GraphQLTests do
 
     budget = Factory.insert(Spendable.Budget, user_id: user.id)
 
+    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
+
+    Factory.insert(Spendable.BudgetAllocation,
+      user_id: user.id,
+      budget_id: budget.id,
+      transaction_id: transaction.id,
+      amount: Decimal.new("-100")
+    )
+
     query = """
     query {
       budget(id: "#{budget.id}") {
@@ -14,6 +23,10 @@ defmodule Spendable.Budget.GraphQLTests do
         adjustment
         balance
         spent(month: "2021-10-01")
+        spentByMonth(numberOfMonths: 2) {
+          month
+          spent
+        }
       }
     }
     """
@@ -24,8 +37,18 @@ defmodule Spendable.Budget.GraphQLTests do
                 "budget" => %{
                   "id" => "#{budget.id}",
                   "adjustment" => "0",
-                  "balance" => "0",
-                  "spent" => "0"
+                  "balance" => "-100.00",
+                  "spent" => "0",
+                  "spentByMonth" => [
+                    %{
+                      "month" => "2022-06-01",
+                      "spent" => "-100.00"
+                    },
+                    %{
+                      "month" => "2022-05-01",
+                      "spent" => "0.00"
+                    }
+                  ]
                 }
               }
             }} ==
