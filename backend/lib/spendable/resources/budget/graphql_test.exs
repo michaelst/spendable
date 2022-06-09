@@ -150,11 +150,12 @@ defmodule Spendable.Budget.GraphQLTests do
 
     doc = """
       mutation {
-        updateBudget(id: #{budget.id}, input: { name: "new name" }) {
+        updateBudget(id: #{budget.id}, input: { name: "new name", archivedAt: "2022-01-01T12:00:00" }) {
           result {
             id
             name
             balance
+            archivedAt
           }
         }
       }
@@ -183,7 +184,8 @@ defmodule Spendable.Budget.GraphQLTests do
                   "result" => %{
                     "id" => "#{budget.id}",
                     "name" => "new name",
-                    "balance" => "10.00"
+                    "balance" => "10.00",
+                    "archivedAt" => "2022-01-01T12:00:00"
                   }
                 }
               }

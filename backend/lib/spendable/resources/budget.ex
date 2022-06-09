@@ -21,6 +21,7 @@ defmodule Spendable.Budget do
     attribute :adjustment, :decimal, allow_nil?: false, default: Decimal.new("0.00")
     attribute :name, :string, allow_nil?: false
     attribute :track_spending_only, :boolean, allow_nil?: false, default: false
+    attribute :archived_at, :utc_datetime
 
     timestamps()
   end
