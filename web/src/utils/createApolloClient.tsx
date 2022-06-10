@@ -27,25 +27,16 @@ const createApolloClient = () => {
         fields: {
           balance: {
             read(balance) {
-              return new Decimal(balance)
+              return new Decimal(balance || 0)
             }
           },
           spent: {
             keyArgs: false,
             read(spent) {
-              return new Decimal(spent)
+              return new Decimal(spent || 0)
             }
           },
         },
-      },
-      User: {
-        fields: {
-          spendable: {
-            read(spendable) {
-              return new Decimal(spendable)
-            }
-          }
-        }
       },
       MonthSpend: {
         fields: {

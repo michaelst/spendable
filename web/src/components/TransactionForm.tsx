@@ -46,7 +46,7 @@ const CreateTransactionForm = ({ show, setShow }: TransactionFormProps) => {
       variables: {
         input: prepareInput(input)
       },
-      refetchQueries: [{query: LIST_TRANSACTIONS}]
+      refetchQueries: [{ query: LIST_TRANSACTIONS }, 'GetBudget']
     })
       .then(() => {
         setShow(false)
@@ -60,7 +60,7 @@ const CreateTransactionForm = ({ show, setShow }: TransactionFormProps) => {
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>Create Transaction</Offcanvas.Title>
       </Offcanvas.Header>
-      <FormBody saveAndClose={saveAndClose} />
+      <FormBody saveAndClose={saveAndClose} setShow={setShow} />
     </Offcanvas>
   )
 }
@@ -73,7 +73,8 @@ const UpdateTransactionForm = ({ id, show, setShow }: TransactionFormProps) => {
       variables: {
         id: id,
         input: prepareInput(input)
-      }
+      },
+      refetchQueries: ['GetBudget']
     })
       .then(() => {
         setShow(false)
@@ -87,7 +88,7 @@ const UpdateTransactionForm = ({ id, show, setShow }: TransactionFormProps) => {
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>Edit Transaction</Offcanvas.Title>
       </Offcanvas.Header>
-      <FormBody id={id} saveAndClose={saveAndClose} />
+      <FormBody id={id} saveAndClose={saveAndClose} setShow={setShow} />
     </Offcanvas>
   )
 }
@@ -105,7 +106,11 @@ const prepareInput = (input: TransactionInput) => {
 }
 
 
-const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (input: TransactionInput) => void }) => {
+const FormBody = ({ id, saveAndClose, setShow }: {
+  id?: string | null,
+  saveAndClose: (input: TransactionInput) => void,
+  setShow: Dispatch<SetStateAction<boolean>>
+}) => {
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState('')
@@ -219,19 +224,26 @@ const FormBody = ({ id, saveAndClose }: { id?: string | null, saveAndClose: (inp
           reviewed: reviewed,
           budgetAllocations: allocations
         })}>Save</button>
-        {id && <DeleteModal id={id} />}
+        {id && <DeleteModal id={id} setShowForm={setShow} />}
       </div>
     </Offcanvas.Body>
   )
 }
 
-const DeleteModal = ({ id }: { id: string }) => {
+const DeleteModal = ({ id, setShowForm }: { id: string, setShowForm: Dispatch<SetStateAction<boolean>> }) => {
   const [show, setShow] = useState(false)
 
   const [deleteTransaction] = useMutation(DELETE_TRANSACTION, {
     variables: { id: id },
-    refetchQueries: [{query: LIST_TRANSACTIONS}]
+    refetchQueries: [{ query: LIST_TRANSACTIONS }, 'GetBudget']
   })
+
+  const onConfirm = () => {
+    deleteTransaction().then(() => {
+      setShow(false)
+      setShowForm(false)
+    })
+  }
 
   return (
     <>
@@ -248,7 +260,7 @@ const DeleteModal = ({ id }: { id: string }) => {
           <Button variant="secondary" onClick={() => setShow(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={() => deleteTransaction().then(() => setShow(false))}>
+          <Button variant="danger" onClick={onConfirm}>
             Delete
           </Button>
         </Modal.Footer>
@@ -277,7 +289,7 @@ const BudgetSelect = ({ allocations, setAllocations }: AllocationSelectProps) =>
   return (
     <>
       <Form.Label>Spend From</Form.Label>
-      <Form.Select value={allocations[0].budget.id} onChange={event => setSpendFrom(event.target.value)}>
+      <Form.Select value={allocations[0]?.budget.id} onChange={event => setSpendFrom(event.target.value)}>
         {data?.budgets.map(budget => (
           <option key={budget.id} value={budget.id}>
             {budget.name}
