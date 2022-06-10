@@ -51,7 +51,7 @@ const createApolloClient = () => {
         fields: {
           month: {
             read(month) {
-              return new Date(month + "T12:00:00")
+              return month instanceof Date ? month : new Date(month + "T12:00:00")
             }
           },
           spent: {

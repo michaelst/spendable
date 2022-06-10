@@ -34,6 +34,18 @@ export const LIST_BUDGETS = gql`
   }
 `
 
+export const GET_BUDGET_FOR_EDITING = gql`
+  query GetBudgetForEditing($id: ID!) {
+    budget(id: $id) {
+      id
+      name
+      adjustment
+      balance
+      trackSpendingOnly
+    }
+  }
+`
+
 export const GET_BUDGET = gql`
   query GetBudget($id: ID!, $startDate: Date!, $endDate: Date!) {
     budget(id: $id) {
