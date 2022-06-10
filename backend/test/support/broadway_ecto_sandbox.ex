@@ -1,4 +1,6 @@
 defmodule BroadwayEctoSandbox do
+  alias Ecto.Adapters.SQL.Sandbox
+
   def attach(repo) do
     events = [
       [:broadway, :processor, :start],
@@ -10,7 +12,7 @@ defmodule BroadwayEctoSandbox do
 
   def handle_event(_event_name, _event_measurement, %{messages: messages}, %{repo: repo}) do
     with [%Broadway.Message{metadata: %{test_process: pid}} | _] <- messages do
-      Ecto.Adapters.SQL.Sandbox.allow(repo, pid, self())
+      Sandbox.allow(repo, pid, self())
       Hammox.allow(APNSMock, pid, self())
       Hammox.allow(PubSubMock, pid, self())
       Hammox.allow(TeslaMock, pid, self())

@@ -37,9 +37,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
         url: "https://sandbox.plaid.com/transactions/get"
       },
       _opts ->
-        TeslaHelper.response(
-          body: TestData.account_transactions("zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP")
-        )
+        TeslaHelper.response(body: TestData.account_transactions("zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
     end)
 
     :ok
@@ -54,8 +52,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
     ref = Broadway.test_message(__MODULE__, data, metadata: %{test_process: self()})
     assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
 
-    bank_accounts =
-      from(BankAccount, where: [bank_member_id: ^member.id], order_by: :id) |> Repo.all()
+    bank_accounts = from(BankAccount, where: [bank_member_id: ^member.id], order_by: :id) |> Repo.all()
 
     assert [
              %{sync: false},
@@ -68,8 +65,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
              %{sync: false}
            ] = bank_accounts
 
-    bank_account =
-      Enum.find(bank_accounts, &(&1.external_id == "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
+    bank_account = Enum.find(bank_accounts, &(&1.external_id == "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
 
     assert %{
              id: account_id,
