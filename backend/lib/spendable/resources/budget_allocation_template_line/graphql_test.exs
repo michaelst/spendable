@@ -1,5 +1,5 @@
 defmodule Spendable.BudgetAllocationTemplateLine.GraphQLTest do
-  use Spendable.DataCase, async: false
+  use Spendable.DataCase, async: true
 
   test "create/update budget allocation template line" do
     user = Factory.insert(Spendable.User)

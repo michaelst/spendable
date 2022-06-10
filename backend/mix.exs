@@ -35,10 +35,9 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash_graphql, "~> 0.17.0"},
-      {:ash_policy_authorizer, "~> 0.16.3"},
-      {:ash_postgres, "~> 0.41.3"},
-      {:ash, "~> 1.51"},
+      {:ash_graphql, github: "ash-project/ash_graphql"},
+      {:ash_postgres, "~> 0.42-rc"},
+      {:ash, "~> 1.52-rc", override: true},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
       {:castore, "~> 0.1.0"},
@@ -52,11 +51,11 @@ defmodule Spendable.MixProject do
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.2"},
       {:guardian, "~> 2.0"},
+      {:hammox, "~> 0.6", only: :test},
       {:jason, "~> 1.0"},
       {:kadabra, "~> 0.6"},
       {:logger_json, "~> 5.0"},
       {:mint, "~> 1.0"},
-      {:mock, "~> 0.3", only: :test},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},

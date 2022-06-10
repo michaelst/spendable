@@ -1,7 +1,7 @@
 defmodule Spendable.Web.Schema do
   use Absinthe.Schema
 
-  @apis [Spendable.Api]
+  @apis [{Spendable.Api, Spendable.Api.Registry}]
 
   use AshGraphql, apis: @apis
 

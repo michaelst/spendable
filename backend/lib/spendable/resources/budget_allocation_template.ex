@@ -1,6 +1,6 @@
 defmodule Spendable.BudgetAllocationTemplate do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
@@ -28,6 +28,8 @@ defmodule Spendable.BudgetAllocationTemplate do
   end
 
   actions do
+    defaults [:read, :destroy]
+
     create :create do
       primary? true
       change relate_actor(:user)

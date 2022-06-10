@@ -1,5 +1,5 @@
 defmodule Spendable.Tranasction.GraphQLTests do
-  use Spendable.DataCase, async: false
+  use Spendable.DataCase, async: true
 
   test "get transaction" do
     user = Factory.insert(Spendable.User)

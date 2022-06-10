@@ -1,7 +1,6 @@
 defmodule Spendable.Broadway.SendNotificationTest do
-  use Spendable.DataCase, async: false
+  use Spendable.DataCase, async: true
 
-  import Mock
   import Ecto.Query, only: [from: 2]
 
   alias Spendable.Api
@@ -9,7 +8,12 @@ defmodule Spendable.Broadway.SendNotificationTest do
   alias Spendable.NotificationSettings
   alias Spendable.Repo
 
-  @tag :skip
+  setup do
+    _pid = start_supervised!({SendNotification, name: __MODULE__})
+
+    :ok
+  end
+
   test "send notification" do
     user = Factory.insert(Spendable.User)
 
@@ -22,28 +26,28 @@ defmodule Spendable.Broadway.SendNotificationTest do
 
     Factory.insert(Spendable.NotificationSettings, user_id: user.id, device_token: "test-device-token-1", enabled: true)
 
-    with_mock Pigeon.APNS, [:passthrough],
-      push: fn
-        %{device_token: "bad-device-token-1"} = notification -> %{notification | response: :bad_device_token}
-        notification -> %{notification | response: :success}
-      end do
-      data =
-        %SendNotificationRequest{user_id: user.id, title: "Test", body: "Some message"}
-        |> SendNotificationRequest.encode()
+    APNSMock
+    |> expect(:push, 3, fn
+      %{device_token: "bad-device-token-1"} = notification -> %{notification | response: :bad_device_token}
+      notification -> %{notification | response: :success}
+    end)
 
-      ref = Broadway.test_message(SendNotification, data)
-      assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
+    data =
+      %SendNotificationRequest{user_id: user.id, title: "Test", body: "Some message"}
+      |> SendNotificationRequest.encode()
 
-      assert 2 = from(NotificationSettings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
+    ref = Broadway.test_message(__MODULE__, data, metadata: %{test_process: self()})
+    assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
 
-      bad_settings
-      |> Ash.Changeset.for_update(:update, %{enabled: true})
-      |> Api.update!()
+    assert 2 = from(NotificationSettings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
-      ref = Broadway.test_message(SendNotification, data)
-      assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
+    bad_settings
+    |> Ash.Changeset.for_update(:update, %{enabled: true})
+    |> Api.update!()
 
-      assert 1 = from(NotificationSettings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
-    end
+    ref = Broadway.test_message(__MODULE__, data, metadata: %{test_process: self()})
+    assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
+
+    assert 1 = from(NotificationSettings, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
   end
 end

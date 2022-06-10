@@ -22,9 +22,9 @@ defmodule Spendable.Broadway.SyncMember do
                  subscription: "projects/cloud-57/subscriptions/spendable.sync-member-request"},
               else: {Broadway.DummyProducer, []}
 
-  def start_link(_opts) do
+  def start_link(opts) do
     Broadway.start_link(__MODULE__,
-      name: __MODULE__,
+      name: opts[:name] || __MODULE__,
       producer: [
         module: @producer
       ],
@@ -80,7 +80,7 @@ defmodule Spendable.Broadway.SyncMember do
 
           Api.get(BankAccount, user_id: member.user.id, external_id: account_details["account_id"])
           |> case do
-            {:error, %Ash.Error.Query.NotFound{}} ->
+            {:error, %Ash.Error.Invalid{errors: [%Ash.Error.Query.NotFound{}]}} ->
               BankAccount
               |> Ash.Changeset.for_create(:create, formatted_data)
               |> Ash.Changeset.force_change_attributes(formatted_data)

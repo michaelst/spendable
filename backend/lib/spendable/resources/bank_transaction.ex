@@ -36,6 +36,10 @@ defmodule Spendable.BankTransaction do
     has_one :transaction, Spendable.Transaction
   end
 
+  actions do
+    defaults [:read, :create]
+  end
+
   graphql do
     type :bank_tranasction
   end

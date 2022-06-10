@@ -1,5 +1,5 @@
 defmodule Spendable.BudgetAllocation.GraphQLTests do
-  use Spendable.DataCase, async: false
+  use Spendable.DataCase, async: true
 
   test "create and update allocation" do
     user = Factory.insert(Spendable.User)

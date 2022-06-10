@@ -18,4 +18,6 @@ defmodule Spendable.User.Calculations.PlaidLinkToken do
       {:error, [:no_connections_available]}
     end
   end
+
+  def calculate([], _opts, _resolution), do: {:ok, []}
 end

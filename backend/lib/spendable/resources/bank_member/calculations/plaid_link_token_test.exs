@@ -9,8 +9,9 @@ defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
 
     token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
 
-    Tesla.Mock.mock(fn
-      %{method: :post, url: "https://sandbox.plaid.com/link/token/create", body: body} ->
+    TeslaMock
+    |> expect(:call, fn
+      %{method: :post, url: "https://sandbox.plaid.com/link/token/create", body: body}, _opts ->
         assert {:ok,
                 %{
                   "access_token" => access_token,
@@ -23,7 +24,7 @@ defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
                   "webhook" => "https://spendable.money/plaid/webhook"
                 }} == Jason.decode(body)
 
-        %Tesla.Env{status: 200, body: %{"link_token" => token}}
+        TeslaHelper.response(status: 200, body: %{"link_token" => token})
     end)
 
     {:ok, [calculated_token]} = PlaidLinkToken.calculate([bank_member], [], %{})

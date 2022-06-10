@@ -1,6 +1,6 @@
 defmodule Spendable.BudgetAllocation do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 

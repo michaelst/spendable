@@ -1,6 +1,6 @@
 defmodule Spendable.Transaction do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
@@ -34,6 +34,8 @@ defmodule Spendable.Transaction do
   end
 
   actions do
+    defaults [:destroy]
+
     read :read do
       primary? true
       pagination offset?: true

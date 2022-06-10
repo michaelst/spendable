@@ -1,23 +1,5 @@
 defmodule Spendable.Web.Controllers.PlaidTest do
-  use Spendable.Web.ConnCase, async: false
-
-  import Mock
-
-  alias Google.PubSub
-  alias Spendable.TestUtils
-
-  setup_with_mocks([
-    {
-      PubSub,
-      [],
-      publish: fn data, _topic ->
-        send(self(), data)
-        {:ok, %{status: 200}}
-      end
-    }
-  ]) do
-    :ok
-  end
+  use Spendable.Web.ConnCase, async: true
 
   test "webhook", %{conn: conn} do
     user = Factory.insert(Spendable.User)
@@ -28,11 +10,16 @@ defmodule Spendable.Web.Controllers.PlaidTest do
 
     member = Factory.insert(Spendable.BankMember, user_id: user.id, external_id: "webhook_test")
 
+    data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
+
+    PubSubMock
+    |> expect(:publish, fn ^data, "spendable-dev.sync-member-request" ->
+      TeslaHelper.response(status: 200)
+    end)
+
     conn
     |> post("/plaid/webhook", %{"item_id" => "webhook_test"})
     |> response(:ok)
-
-    TestUtils.assert_published(%SyncMemberRequest{member_id: member.id})
 
     conn
     |> post("/plaid/webhook", %{})

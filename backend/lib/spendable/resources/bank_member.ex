@@ -1,6 +1,6 @@
 defmodule Spendable.BankMember do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource],
     notifiers: [Spendable.Notifiers.SyncMember]
@@ -44,6 +44,8 @@ defmodule Spendable.BankMember do
   end
 
   actions do
+    defaults [:read, :update]
+
     create :create_from_public_token do
       argument :public_token, :string, allow_nil?: false
       accept [:public_token]

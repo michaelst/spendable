@@ -20,13 +20,16 @@ defmodule Spendable.Web.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
-      import Plug.Conn
+      import Hammox
       import Phoenix.ConnTest
+      import Plug.Conn
 
+      alias Spendable.Support.TeslaHelper
       alias Spendable.Web.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint Spendable.Web.Endpoint
+      setup :verify_on_exit!
     end
   end
 

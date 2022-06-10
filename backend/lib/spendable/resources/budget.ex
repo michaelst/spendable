@@ -1,6 +1,6 @@
 defmodule Spendable.Budget do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
@@ -51,6 +51,8 @@ defmodule Spendable.Budget do
   end
 
   actions do
+    defaults [:update, :destroy]
+
     read :read do
       primary? true
       prepare Spendable.Budget.Preparations.Sort

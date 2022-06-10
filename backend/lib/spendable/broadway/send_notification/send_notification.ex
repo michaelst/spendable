@@ -13,9 +13,9 @@ defmodule Spendable.Broadway.SendNotification do
                  subscription: "projects/cloud-57/subscriptions/spendable.send-notification-request"},
               else: {Broadway.DummyProducer, []}
 
-  def start_link(_opts) do
+  def start_link(opts) do
     Broadway.start_link(__MODULE__,
-      name: __MODULE__,
+      name: opts[:name] || __MODULE__,
       producer: [
         module: @producer
       ],
@@ -46,8 +46,8 @@ defmodule Spendable.Broadway.SendNotification do
     |> Repo.all()
     |> Enum.each(fn settings ->
       %{"title" => title, "body" => body}
-      |> Notifications.Provider.new!(settings)
-      |> Notifications.Provider.push!()
+      |> Notifications.Provider.new(settings)
+      |> Notifications.Provider.push()
       |> case do
         :ok -> :ok
         :invalid_token -> Repo.delete!(settings)

@@ -20,7 +20,13 @@ config :spendable, Plaid,
   client_id: "test",
   secret_key: "test"
 
-config :tesla, adapter: Tesla.Mock
+config :tesla, adapter: TeslaMock
 
 config :goth,
   disabled: true
+
+config :mox,
+  apns: APNSMock,
+  pubsub: PubSubMock
+
+config :ash, disable_async?: true

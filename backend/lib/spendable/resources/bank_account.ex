@@ -1,6 +1,6 @@
 defmodule Spendable.BankAccount do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource],
     notifiers: [Spendable.Notifiers.SyncMember]
@@ -39,7 +39,7 @@ defmodule Spendable.BankAccount do
   end
 
   actions do
-    read :read, primary?: true
+    defaults [:read, :create]
 
     update :update do
       primary? true

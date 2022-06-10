@@ -1,6 +1,6 @@
 defmodule Spendable.User do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
@@ -31,11 +31,11 @@ defmodule Spendable.User do
   end
 
   actions do
+    defaults [:read, :create]
+
     read :current_user do
       filter id: actor(:id)
     end
-
-    read :read, primary?: true
   end
 
   graphql do

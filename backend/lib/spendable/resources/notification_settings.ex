@@ -1,6 +1,6 @@
 defmodule Spendable.NotificationSettings do
   use Ash.Resource,
-    authorizers: [AshPolicyAuthorizer.Authorizer],
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
     extensions: [AshGraphql.Resource]
 
@@ -37,7 +37,7 @@ defmodule Spendable.NotificationSettings do
   end
 
   actions do
-    read :read, primary?: true
+    defaults [:read]
 
     read :get_by_device_token do
       argument :device_token, :string, allow_nil?: false

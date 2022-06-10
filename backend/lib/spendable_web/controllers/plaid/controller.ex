@@ -11,7 +11,7 @@ defmodule Spendable.Web.Controllers.Plaid do
 
         send_resp(conn, :ok, "")
 
-      {:error, %Ash.Error.Query.NotFound{}} ->
+      {:error, %Ash.Error.Invalid{errors: [%Ash.Error.Query.NotFound{}]}} ->
         send_resp(conn, :not_found, "")
     end
   end

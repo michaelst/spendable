@@ -1,5 +1,5 @@
 defmodule Spendable.Web.Controllers.WellKnownTest do
-  use Spendable.Web.ConnCase
+  use Spendable.Web.ConnCase, async: true
 
   test "apple app site association", %{conn: conn} do
     response =
