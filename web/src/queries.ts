@@ -1,22 +1,13 @@
 import { gql } from '@apollo/client'
 
-export const MAIN_QUERY = gql`
-  query Main($month: Date!) {
+export const SPENT_BY_MONTH = gql`
+  query SpentByMonth {
     currentUser {
       id
-      spendable
       spentByMonth {
         month
         spent
       }
-    }
-    budgets(sort: [{ field: NAME }]) {
-      id
-      name
-      balance
-      trackSpendingOnly
-      archivedAt
-      spent(month: $month)
     }
   }
 `
@@ -30,6 +21,19 @@ export const LIST_BUDGETS = gql`
       id
       name
       archivedAt
+    }
+  }
+`
+
+export const LIST_BUDGETS_FOR_MONTH = gql`
+  query ListBudgetsForMonth($month: Date!) {
+    budgets(sort: [{ field: NAME }]) {
+      id
+      name
+      balance
+      trackSpendingOnly
+      archivedAt
+      spent(month: $month)
     }
   }
 `

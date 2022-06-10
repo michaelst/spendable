@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { DateTime } from 'luxon'
-import Decimal from 'decimal.js-light'
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { Main as Data } from '../graphql/Main';
-import { MAIN_QUERY } from '../queries';
+import { LIST_BUDGETS_FOR_MONTH, SPENT_BY_MONTH } from '../queries';
 import BudgetRow from '../components/BudgetRow';
 import { amount, subText } from '../utils/budgetUtils';
 import formatCurrency from '../utils/formatCurrency';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faPlus } from '@fortawesome/free-solid-svg-icons';
 import BudgetForm from '../components/BudgetForm';
+import { SpentByMonth } from '../graphql/SpentByMonth';
+import { ListBudgetsForMonth } from '../graphql/ListBudgetsForMonth';
 
 function Budgets() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -23,13 +23,15 @@ function Budgets() {
 
   const activeMonthIsCurrentMonth = DateTime.now().startOf('month').equals(activeMonth)
 
-  const { data, refetch } = useQuery<Data>(MAIN_QUERY, {
+  const { data, refetch } = useQuery<ListBudgetsForMonth>(LIST_BUDGETS_FOR_MONTH, {
     variables: { month: activeMonth.toFormat('yyyy-MM-dd') }
   })
 
-  const spentByMonth = data?.currentUser.spentByMonth.map(s => {
-    return { ...s, month: DateTime.fromJSDate(s.month).startOf('month') }
-  }) || []
+  const selectMonth = (activeMonth: DateTime) => {
+    setSearchParams({ month: activeMonth.toFormat('yyyy-MM-dd') })
+    setActiveMonth(activeMonth)
+    refetch({ month: activeMonth.toFormat('yyyy-MM-dd') })
+  }
 
   const budgets = (data?.budgets || [])
     .filter(budget => !budget.archivedAt || !budget.spent.isZero())
@@ -37,10 +39,9 @@ function Budgets() {
       const item = {
         id: budget.id,
         title: budget.name,
-        amount: amount(activeMonthIsCurrentMonth, budget, data?.currentUser.spendable || new Decimal(0)),
+        amount: amount(activeMonthIsCurrentMonth, budget),
         subText: subText(activeMonthIsCurrentMonth, budget),
         archivedAt: budget.archivedAt,
-        hideDelete: budget.name === "Spendable",
         onClick: () => navigate(`/budgets/${budget.id}?month=${activeMonth.toFormat('yyyy-MM-dd')}`)
       }
 
@@ -50,27 +51,7 @@ function Budgets() {
   return (
     <>
       <div className="flex flex-col items-center">
-        <div className="w-1/2 p-3 mt-16 mb-8 bg-white">
-          <div className="flex flex-row items-center overflow-scroll">
-            {spentByMonth.map(item => {
-              return (
-                <div
-                  key={item.month.toString()}
-                  className={"py-3 px-4 cursor-pointer " + (item.month?.equals(activeMonth) ? "bg-blue-50" : "")}
-                  onClick={() => {
-                    if (!item.month) return
-                    setActiveMonth(item.month)
-                    setSearchParams({ month: item.month.toFormat('yyyy-MM-dd') })
-                    refetch({ month: item.month.toFormat('yyyy-MM-dd') })
-                  }}>
-                  <div className="whitespace-nowrap">{item.month?.toFormat('MMM yyyy')}</div>
-                  <div className="text-xs text-slate-500 font-light">{item.spent && formatCurrency(item.spent)}</div>
-                </div>
-              )
-            })}
-          </div>
-
-        </div>
+        <MonthHeader activeMonth={activeMonth} selectMonth={selectMonth} />
         <div className="flex flex-col items-center pb-16 overflow-scroll w-1/2">
           <div className="mb-2 bg-white ml-auto rounded-full p-2 px-3">
             <button className="mr-3" onClick={() => setShowAddBudget(true)}>
@@ -86,6 +67,35 @@ function Budgets() {
 
       <BudgetForm show={showAddBudget} setShow={setShowAddBudget} />
     </>
+  )
+}
+
+const MonthHeader = ({ activeMonth, selectMonth }: { activeMonth: DateTime, selectMonth: (activeMonth: DateTime) => void }) => {
+  const { data } = useQuery<SpentByMonth>(SPENT_BY_MONTH)
+
+  const spentByMonth = data?.currentUser.spentByMonth.map(s => {
+    return { ...s, month: DateTime.fromJSDate(s.month).startOf('month') }
+  }) || []
+
+  return (
+    <div className="w-1/2 p-3 mt-16 mb-8 bg-white">
+      <div className="flex flex-row items-center overflow-scroll">
+        {spentByMonth.map(item => {
+          return (
+            <div
+              key={item.month.toString()}
+              className={"py-3 px-4 cursor-pointer " + (item.month?.equals(activeMonth) ? "bg-blue-50" : "")}
+              onClick={() => {
+                if (!item.month) return
+                selectMonth(item.month)
+              }}>
+              <div className="whitespace-nowrap">{item.month?.toFormat('MMM yyyy')}</div>
+              <div className="text-xs text-slate-500 font-light">{item.spent && formatCurrency(item.spent)}</div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 

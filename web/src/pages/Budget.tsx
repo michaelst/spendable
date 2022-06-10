@@ -6,7 +6,7 @@ import { Line } from 'react-chartjs-2'
 import { Chart as ChartJS, ChartEvent, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
 import Decimal from 'decimal.js-light'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBoxArchive, faBoxesPacking, faBoxOpen, faPencil } from '@fortawesome/free-solid-svg-icons'
+import { faBoxArchive, faBoxOpen, faPencil } from '@fortawesome/free-solid-svg-icons'
 import { Badge } from 'react-bootstrap'
 
 import { GET_BUDGET, UPDATE_BUDGET } from '../queries'

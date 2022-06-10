@@ -1,6 +1,6 @@
-import { Main_budgets } from "../graphql/Main"
+import { ListBudgetsForMonth_budgets } from "../graphql/ListBudgetsForMonth"
 
-export function subText(activeMonthIsCurrentMonth: Boolean, budget: Main_budgets) {
+export function subText(activeMonthIsCurrentMonth: Boolean, budget: ListBudgetsForMonth_budgets) {
   if (budget.name === "Spendable") {
     return activeMonthIsCurrentMonth ? "AVAILABLE" : "SPENT"
   }
@@ -8,10 +8,6 @@ export function subText(activeMonthIsCurrentMonth: Boolean, budget: Main_budgets
   return activeMonthIsCurrentMonth && !budget.trackSpendingOnly ? "REMAINING" : "SPENT"
 }
 
-export function amount(activeMonthIsCurrentMonth: Boolean, budget: Main_budgets, spendable: Decimal) {
-  if (budget.name === "Spendable") {
-    return activeMonthIsCurrentMonth ? spendable : budget.spent
-  }
-
+export function amount(activeMonthIsCurrentMonth: Boolean, budget: ListBudgetsForMonth_budgets) {
   return activeMonthIsCurrentMonth && !budget.trackSpendingOnly ? budget.balance : budget.spent
 }

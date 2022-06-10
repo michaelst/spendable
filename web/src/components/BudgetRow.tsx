@@ -10,7 +10,6 @@ export type BudgetRowItem = {
   amount: Decimal
   subText: string
   archivedAt: DateTime | null
-  hideDelete?: boolean
   onClick: () => void
 }
 

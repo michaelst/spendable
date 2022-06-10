@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { CREATE_BUDGET, DELETE_BUDGET, GET_BUDGET_FOR_EDITING, LIST_BUDGETS, MAIN_QUERY, UPDATE_BUDGET } from '../queries'
+import { CREATE_BUDGET, DELETE_BUDGET, GET_BUDGET_FOR_EDITING, LIST_BUDGETS, UPDATE_BUDGET } from '../queries'
 import { Button, Form, Modal, Offcanvas } from 'react-bootstrap'
 import { CreateBudgetInput, UpdateBudgetInput } from '../graphql/globalTypes'
 import Decimal from 'decimal.js-light'
@@ -29,7 +29,7 @@ const CreateBudgetForm = ({ show, setShow }: BudgetFormProps) => {
       variables: {
         input: input
       },
-      refetchQueries: [{ query: LIST_BUDGETS }, 'Main']
+      refetchQueries: [{ query: LIST_BUDGETS }]
     })
       .then(() => {
         setShow(false)
@@ -139,7 +139,7 @@ const DeleteModal = ({ id }: { id: string }) => {
 
   const [deleteBudget] = useMutation(DELETE_BUDGET, {
     variables: { id: id },
-    refetchQueries: [{ query: LIST_BUDGETS }, { query: MAIN_QUERY }]
+    refetchQueries: [{ query: LIST_BUDGETS }]
   })
 
   const onConfirm = () => {

@@ -17,26 +17,26 @@ const Transactions = () => {
     }
   })
 
-  const handleScroll = () => {
-    const scrollPosition = window.pageYOffset
-    const documentHeight = document.body.scrollHeight - window.innerHeight
-    if (scrollPosition > documentHeight - 500 && !loading && !loadMore) {
-      setLoadMore(true)
-    }
-  }
-
   useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.pageYOffset
+      const documentHeight = document.body.scrollHeight - window.innerHeight
+      if (scrollPosition > documentHeight - 500 && !loading && !loadMore) {
+        setLoadMore(true)
+      }
+    }
+
     window.removeEventListener('scroll', handleScroll)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
+  }, [loadMore, setLoadMore, loading])
 
   useEffect(() => {
     if (loadMore) {
       fetchMore({ variables: { offset: data!.transactions!.results!.length } })
         .then(() => setLoadMore(false))
     }
-  }, [loadMore])
+  }, [loadMore, data, fetchMore])
 
   const transactions: TransactionRowItem[] =
     [...data?.transactions?.results ?? []]
