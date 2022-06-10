@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import TransactionRow, { TransactionRowItem } from '../components/TransactionRow'
 import { LIST_TRANSACTIONS } from '../queries'
@@ -9,13 +9,34 @@ import TransactionForm from '../components/TransactionForm'
 
 const Transactions = () => {
   const [showAddTransaction, setShowAddTransaction] = useState(false)
+  const [loadMore, setLoadMore] = useState(false)
 
-  const { data, fetchMore, refetch } = useQuery<ListTransactions>(LIST_TRANSACTIONS, {
+  const { data, fetchMore, refetch, loading } = useQuery<ListTransactions>(LIST_TRANSACTIONS, {
     variables: {
       offset: 0
     }
   })
 
+  const handleScroll = () => {
+    const scrollPosition = window.pageYOffset
+    const documentHeight = document.body.scrollHeight - window.innerHeight
+    if (scrollPosition > documentHeight - 500 && !loading && !loadMore) {
+      setLoadMore(true)
+    }
+  }
+
+  useEffect(() => {
+    window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  useEffect(() => {
+    if (loadMore) {
+      fetchMore({ variables: { offset: data!.transactions!.results!.length } })
+        .then(() => setLoadMore(false))
+    }
+  }, [loadMore])
 
   const transactions: TransactionRowItem[] =
     [...data?.transactions?.results ?? []]
@@ -31,25 +52,24 @@ const Transactions = () => {
 
   return (
     <>
-    <div className="flex flex-col items-center py-16">
-      <div className="flex flex-col w-1/2">
-        <div className="mb-2 bg-white ml-auto rounded-full p-2 px-3">
-          <button className="mr-3" onClick={() => setShowAddTransaction(true)}>
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-          <button className="mr-3" onClick={() => refetch()}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-          </button>
-          <button onClick={() => refetch()}>
-            <FontAwesomeIcon icon={faArrowsRotate} />
-          </button>
+      <div className="flex flex-col items-center py-16">
+        <div className="flex flex-col w-1/2">
+          <div className="mb-2 bg-white ml-auto rounded-full p-2 px-3">
+            <button className="mr-3" onClick={() => setShowAddTransaction(true)}>
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+            <button className="mr-3" onClick={() => refetch()}>
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
+            </button>
+            <button onClick={() => refetch()}>
+              <FontAwesomeIcon icon={faArrowsRotate} />
+            </button>
+          </div>
+          {transactions.map(transaction => <TransactionRow key={transaction.id} {...transaction} />)}
         </div>
-        {transactions.map(transaction => <TransactionRow key={transaction.id} {...transaction} />)}
-        <button onClick={() => fetchMore({ variables: { offset: data?.transactions?.results?.length } })}>Load More</button>
       </div>
-    </div>
 
-    <TransactionForm show={showAddTransaction} setShow={setShowAddTransaction} />
+      <TransactionForm show={showAddTransaction} setShow={setShowAddTransaction} />
     </>
   )
 }
