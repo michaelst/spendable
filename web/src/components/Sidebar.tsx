@@ -13,19 +13,22 @@ const Sidebar = () => {
     <div className="w-20 h-full shadow-md bg-white px-1 fixed flex flex-col justify-between">
       <div className="flex flex-col items-center">
         <Link to="/" className="pt-4 pb-4">
-          <FontAwesomeIcon icon={faHouse} size="2x" className="text-sky-500" />
+          <img src="logo.svg" alt="Logo" className="px-3" />
+        </Link>
+        <Link to="/" className="pt-4 pb-4">
+          <FontAwesomeIcon icon={faHouse} size="2x" className="text-black" />
         </Link>
         <Link to="/transactions" className="pb-4">
-          <FontAwesomeIcon icon={faMoneyCheckDollar} size="2x" className="text-sky-500" />
+          <FontAwesomeIcon icon={faMoneyCheckDollar} size="2x" className="text-black" />
         </Link>
         <Link to="/banks" className="pb-4">
-          <FontAwesomeIcon icon={faBuildingColumns} size="2x" className="text-sky-500" />
+          <FontAwesomeIcon icon={faBuildingColumns} size="2x" className="text-black" />
         </Link>
       </div>
       <div className="flex flex-col items-center pb-4">
         <OverlayTrigger trigger='click' rootClose placement="right" overlay={popover}>
           <div>
-            <FontAwesomeIcon icon={faUser} size="2x" className="text-sky-500" />
+            <FontAwesomeIcon icon={faUser} size="2x" className="text-black" />
           </div>
         </OverlayTrigger>
       </div>
