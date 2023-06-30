@@ -28,9 +28,9 @@ defmodule Spendable.BudgetAllocationTemplateLine do
   end
 
   relationships do
-    belongs_to :budget, Spendable.Budget, required?: true, field_type: :integer
-    belongs_to :budget_allocation_template, Spendable.BudgetAllocationTemplate, required?: true, field_type: :integer
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :budget, Spendable.Budget, allow_nil?: false, attribute_type: :integer
+    belongs_to :budget_allocation_template, Spendable.BudgetAllocationTemplate, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
   end
 
   actions do
@@ -41,16 +41,16 @@ defmodule Spendable.BudgetAllocationTemplateLine do
       change relate_actor(:user)
       argument :budget, :map
       argument :budget_allocation_template, :map
-      change manage_relationship(:budget, type: :replace)
-      change manage_relationship(:budget_allocation_template, type: :replace)
+      change manage_relationship(:budget, type: :append_and_remove)
+      change manage_relationship(:budget_allocation_template, type: :append_and_remove)
     end
 
     update :update do
       primary? true
       argument :budget, :map
       argument :budget_allocation_template, :map
-      change manage_relationship(:budget, type: :replace)
-      change manage_relationship(:budget_allocation_template, type: :replace)
+      change manage_relationship(:budget, type: :append_and_remove)
+      change manage_relationship(:budget_allocation_template, type: :append_and_remove)
     end
   end
 
@@ -90,7 +90,7 @@ defmodule Spendable.BudgetAllocationTemplateLine do
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

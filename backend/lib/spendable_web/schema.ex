@@ -1,7 +1,7 @@
 defmodule Spendable.Web.Schema do
   use Absinthe.Schema
 
-  @apis [{Spendable.Api, Spendable.Api.Registry}]
+  @apis [Spendable.Api]
 
   use AshGraphql, apis: @apis
 
@@ -9,10 +9,6 @@ defmodule Spendable.Web.Schema do
   end
 
   mutation do
-  end
-
-  def context(ctx) do
-    AshGraphql.add_context(ctx, @apis)
   end
 
   def plugins() do

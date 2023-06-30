@@ -31,21 +31,34 @@ defmodule Spendable.Budget.GraphQLTests do
     }
     """
 
+    this_month =
+      Timex.now()
+      |> Timex.beginning_of_month()
+      |> Timex.to_date()
+      |> to_string()
+
+    last_month =
+      Timex.now()
+      |> Timex.shift(months: -1)
+      |> Timex.beginning_of_month()
+      |> Timex.to_date()
+      |> to_string()
+
     assert {:ok,
             %{
               data: %{
                 "budget" => %{
                   "id" => "#{budget.id}",
-                  "adjustment" => "0",
+                  "adjustment" => "0.00",
                   "balance" => "-100.00",
                   "spent" => "0",
                   "spentByMonth" => [
                     %{
-                      "month" => "2022-06-01",
+                      "month" => this_month,
                       "spent" => "-100.00"
                     },
                     %{
-                      "month" => "2022-05-01",
+                      "month" => last_month,
                       "spent" => "0.00"
                     }
                   ]

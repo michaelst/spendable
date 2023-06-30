@@ -34,8 +34,8 @@ defmodule Spendable.BankAccount do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true, private?: true, field_type: :integer
-    belongs_to :bank_member, Spendable.BankMember, required?: true, field_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, private?: true, attribute_type: :integer
+    belongs_to :bank_member, Spendable.BankMember, allow_nil?: false, attribute_type: :integer
   end
 
   actions do
@@ -62,7 +62,7 @@ defmodule Spendable.BankAccount do
 
   policies do
     policy always() do
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

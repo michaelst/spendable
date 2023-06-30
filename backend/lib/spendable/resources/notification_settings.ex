@@ -33,7 +33,7 @@ defmodule Spendable.NotificationSettings do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
   end
 
   actions do
@@ -70,7 +70,7 @@ defmodule Spendable.NotificationSettings do
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

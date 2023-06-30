@@ -24,9 +24,9 @@ defmodule Spendable.BudgetAllocation do
   end
 
   relationships do
-    belongs_to :transaction, Spendable.Transaction, required?: true, field_type: :integer
-    belongs_to :budget, Spendable.Budget, required?: true, field_type: :integer
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :transaction, Spendable.Transaction, allow_nil?: false, attribute_type: :integer
+    belongs_to :budget, Spendable.Budget, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
   end
 
   actions do
@@ -41,15 +41,15 @@ defmodule Spendable.BudgetAllocation do
       change relate_actor(:user)
       argument :budget, :map
       argument :transaction, :map
-      change manage_relationship(:budget, type: :replace)
-      change manage_relationship(:transaction, type: :replace)
+      change manage_relationship(:budget, type: :append_and_remove)
+      change manage_relationship(:transaction, type: :append_and_remove)
       change Spendable.BudgetAllocation.Changes.AllocateSpendable
     end
 
     update :update do
       primary? true
       argument :budget, :map
-      change manage_relationship(:budget, type: :replace)
+      change manage_relationship(:budget, type: :append_and_remove)
       change Spendable.BudgetAllocation.Changes.AllocateSpendable
     end
 
@@ -90,7 +90,7 @@ defmodule Spendable.BudgetAllocation do
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

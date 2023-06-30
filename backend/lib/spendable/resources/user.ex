@@ -48,7 +48,7 @@ defmodule Spendable.User do
 
   policies do
     policy always() do
-      authorize_if attribute(:id, actor(:id))
+      authorize_if expr(id == actor(:id))
     end
   end
 end

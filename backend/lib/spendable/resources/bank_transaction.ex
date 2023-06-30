@@ -30,8 +30,8 @@ defmodule Spendable.BankTransaction do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
-    belongs_to :bank_account, Spendable.BankAccount, required?: true, field_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :bank_account, Spendable.BankAccount, allow_nil?: false, attribute_type: :integer
 
     has_one :transaction, Spendable.Transaction
   end

@@ -27,8 +27,8 @@ defmodule Spendable.Transaction do
   end
 
   relationships do
-    belongs_to :bank_transaction, Spendable.BankTransaction, field_type: :integer
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :bank_transaction, Spendable.BankTransaction, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
 
     has_many :budget_allocations, Spendable.BudgetAllocation
   end
@@ -85,7 +85,7 @@ defmodule Spendable.Transaction do
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

@@ -7,7 +7,7 @@ defmodule Spendable.MixProject do
       version: "0.1.1",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -35,15 +35,14 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash_graphql, github: "ash-project/ash_graphql"},
-      {:ash_postgres, "~> 0.42-rc"},
-      {:ash, "~> 1.52-rc", override: true},
+      {:absinthe_plug, "~> 1.5"},
+      {:ash_graphql, "~> 0.25"},
+      {:ash_postgres, "~> 1.1"},
+      {:ash, "~> 2.10"},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
-      {:castore, "~> 0.1.0"},
+      {:castore, "~> 1.0"},
       {:cors_plug, "~> 3.0"},
-      {:cowboy, "~> 2.9.0", override: true},
-      {:cowlib, "~> 2.11.0", override: true},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.7"},
@@ -59,6 +58,7 @@ defmodule Spendable.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_view, "~> 2.0"},
       {:phoenix, "~> 1.5"},
       {:pigeon, "~> 1.6"},
       {:plug_cowboy, "~> 2.5"},
@@ -69,7 +69,8 @@ defmodule Spendable.MixProject do
       {:spandex_otlp, github: "michaelst/spandex_otlp"},
       {:spandex_phoenix, "~> 1.0"},
       {:spandex, "~> 3.1"},
-      {:tesla, "~> 1.4"}
+      {:tesla, "~> 1.4"},
+      {:timex, "~> 3.7"}
     ]
   end
 
