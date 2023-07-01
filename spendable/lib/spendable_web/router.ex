@@ -33,12 +33,16 @@ defmodule SpendableWeb.Router do
 
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
+    post "/:provider/callback", AuthController, :callback
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SpendableWeb do
-  #   pipe_through :api
-  # end
+  live_session :authenticated, on_mount: SpendableWeb.Live.UserAuth do
+    scope "/", SpendableWeb.Live do
+      pipe_through [:browser]
+
+      live "/budgets", Budgets
+    end
+  end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:spendable, :dev_routes) do

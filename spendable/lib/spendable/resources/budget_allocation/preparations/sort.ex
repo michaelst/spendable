@@ -12,7 +12,8 @@ defmodule Spendable.BudgetAllocation.Preparations.Sort do
         results
         |> Api.load!(:budget)
         |> Enum.sort(fn a, b ->
-          b.budget.name != "Spendable" and (a.budget.name == "Spendable" or a.budget.name < b.budget.name)
+          b.budget.name != "Spendable" and
+            (a.budget.name == "Spendable" or a.budget.name < b.budget.name)
         end)
 
       {:ok, sorted_results}

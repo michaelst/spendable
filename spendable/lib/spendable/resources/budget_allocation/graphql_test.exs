@@ -94,7 +94,11 @@ defmodule Spendable.BudgetAllocation.GraphQLTests do
     transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
     %{id: id} =
-      Factory.insert(Spendable.BudgetAllocation, user_id: user.id, budget_id: budget.id, transaction_id: transaction.id)
+      Factory.insert(Spendable.BudgetAllocation,
+        user_id: user.id,
+        budget_id: budget.id,
+        transaction_id: transaction.id
+      )
 
     query = """
     mutation {

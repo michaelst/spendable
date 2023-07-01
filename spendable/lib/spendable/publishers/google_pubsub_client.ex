@@ -3,7 +3,9 @@ defmodule Google.PubSub do
 
   def client() do
     {:ok, project} = Goth.Config.get(:project_id)
-    {:ok, %{type: type, token: token}} = Goth.Token.for_scope("https://www.googleapis.com/auth/pubsub")
+
+    {:ok, %{type: type, token: token}} =
+      Goth.Token.for_scope("https://www.googleapis.com/auth/pubsub")
 
     middleware = [
       {Tesla.Middleware.BaseUrl, "https://pubsub.googleapis.com/v1/projects/#{project}/topics"},

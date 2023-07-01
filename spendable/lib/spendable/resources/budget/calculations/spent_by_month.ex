@@ -13,7 +13,8 @@ defmodule Spendable.Budget.Calculations.SpentByMonth do
   end
 
   defp do_calculate(budget, number_of_months) do
-    start_date = Timex.now() |> Timex.shift(months: -number_of_months + 1) |> Timex.beginning_of_month()
+    start_date =
+      Timex.now() |> Timex.shift(months: -number_of_months + 1) |> Timex.beginning_of_month()
 
     query =
       from ba in BudgetAllocation,

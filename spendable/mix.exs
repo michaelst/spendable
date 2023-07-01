@@ -37,6 +37,7 @@ defmodule Spendable.MixProject do
       {:ash_phoenix, "~> 1.0"},
       {:ash_postgres, "~> 1.0"},
       {:ash, "~> 2.0"},
+      {:bandit, "~> 1.0-pre"},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
@@ -70,7 +71,10 @@ defmodule Spendable.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:tesla, "~> 1.4"},
-      {:ueberauth, "~> 0.10"}
+      {:timex, "~> 3.0"},
+      {:ueberauth_google, "~> 0.10"},
+      {:ueberauth, "~> 0.10"},
+      {:uxid, "~> 0.2"}
     ]
   end
 
@@ -89,7 +93,7 @@ defmodule Spendable.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-      "ash.gen.migrations": ["ash_postgres.generate_migrations"]
+      "ash.gen.migration": ["ash_postgres.generate_migrations"]
     ]
   end
 end

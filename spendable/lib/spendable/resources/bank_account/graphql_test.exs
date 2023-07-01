@@ -5,7 +5,9 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     user = Factory.insert(Spendable.User)
     other_user = Factory.insert(Spendable.User)
     bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
-    bank_account = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id)
+
+    bank_account =
+      Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id)
 
     doc = """
     query {
@@ -47,10 +49,18 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
 
     bank_account_1 =
-      Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Checking")
+      Factory.insert(Spendable.BankAccount,
+        user_id: user.id,
+        bank_member_id: bank_member.id,
+        name: "Checking"
+      )
 
     bank_account_2 =
-      Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, name: "Savings")
+      Factory.insert(Spendable.BankAccount,
+        user_id: user.id,
+        bank_member_id: bank_member.id,
+        name: "Savings"
+      )
 
     Factory.insert(Spendable.BankAccount, user_id: other_user.id, bank_member_id: bank_member.id)
 
@@ -78,7 +88,13 @@ defmodule Spendable.BanksAccount.GraphQLTests do
     other_user = Factory.insert(Spendable.User)
 
     member = Factory.insert(Spendable.BankMember, user_id: user.id)
-    account = Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: member.id, sync: false)
+
+    account =
+      Factory.insert(Spendable.BankAccount,
+        user_id: user.id,
+        bank_member_id: member.id,
+        sync: false
+      )
 
     query = """
       mutation {

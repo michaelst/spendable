@@ -7,7 +7,13 @@ defmodule Spendable.User.Calculations.SpendableTest do
     user = Factory.insert(Spendable.User)
 
     bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
-    Factory.insert(Spendable.BankAccount, user_id: user.id, bank_member_id: bank_member.id, balance: 100)
+
+    Factory.insert(Spendable.BankAccount,
+      user_id: user.id,
+      bank_member_id: bank_member.id,
+      balance: 100
+    )
+
     transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
 
     budget = Factory.insert(Spendable.Budget, user_id: user.id)

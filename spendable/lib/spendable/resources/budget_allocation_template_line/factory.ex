@@ -1,7 +1,8 @@
 defmodule Spendable.BudgetAllocationTemplateLine.Factory do
   def default() do
     %{
-      amount: Spendable.TestUtils.random_decimal(500..100_000)
+      # Spendable.TestUtils.random_decimal(500..100_000)
+      amount: 1
     }
   end
 end

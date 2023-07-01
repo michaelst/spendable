@@ -14,6 +14,7 @@ config :spendable,
 
 # Configures the endpoint
 config :spendable, SpendableWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   render_errors: [
     formats: [html: SpendableWeb.ErrorHTML, json: SpendableWeb.ErrorJSON],
@@ -75,6 +76,11 @@ config :spandex_otlp, SpandexOTLP,
   resources: %{
     "service.name" => "spendable"
   }
+
+config :ueberauth, Ueberauth,
+  providers: [
+    google: {Ueberauth.Strategy.Google, []}
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

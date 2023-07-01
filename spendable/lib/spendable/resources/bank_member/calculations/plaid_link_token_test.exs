@@ -5,7 +5,9 @@ defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
 
   test "calculate plaid link token" do
     user = Factory.insert(Spendable.User)
-    %{plaid_token: access_token} = bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
+
+    %{plaid_token: access_token} =
+      bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
 
     token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
 

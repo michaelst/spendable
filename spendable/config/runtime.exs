@@ -18,14 +18,11 @@ config :spendable, Plaid,
   client_id: Secret.read!("PLAID_CLIENT_ID"),
   secret_key: Secret.read!("PLAID_SECRET_KEY")
 
-if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
-      raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
-      """
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: Secret.read!("GOOGLE_CLIENT_ID"),
+  client_secret: Secret.read!("GOOGLE_CLIENT_SECRET")
 
+if config_env() == :prod do
   config :spendable, Spendable.Repo,
     database: "spendable",
     hostname: System.fetch_env!("DB_HOSTNAME"),
@@ -48,6 +45,6 @@ if config_env() == :prod do
     ],
     secret_key_base: Secret.read!("SECRET_KEY_BASE")
 
-    config :goth,
-      json: File.read!("/etc/secrets/GCP_SA_KEY")
+  config :goth,
+    json: File.read!("/etc/secrets/GCP_SA_KEY")
 end

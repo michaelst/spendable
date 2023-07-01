@@ -13,13 +13,23 @@ defmodule Spendable.Transaction.Changes.AllocateSpendable do
   end
 
   # on update we only want to manage allocations if they are changing them
-  defp add_spendable_allocation(%{action_type: :update} = changeset, amount, budget_allocations, user)
+  defp add_spendable_allocation(
+         %{action_type: :update} = changeset,
+         amount,
+         budget_allocations,
+         user
+       )
        when is_list(budget_allocations) do
     handle_add_spendable_allocation(changeset, amount, budget_allocations, user)
   end
 
   # on create we want to handle the scenario where no allocations are passed in and create a spendable one
-  defp add_spendable_allocation(%{action_type: :create} = changeset, amount, budget_allocations, user) do
+  defp add_spendable_allocation(
+         %{action_type: :create} = changeset,
+         amount,
+         budget_allocations,
+         user
+       ) do
     handle_add_spendable_allocation(changeset, amount, budget_allocations || [], user)
   end
 

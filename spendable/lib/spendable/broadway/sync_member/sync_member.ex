@@ -49,7 +49,7 @@ defmodule Spendable.Broadway.SyncMember do
   end
 
   defp process_data(data) do
-    %Banks.V1.SyncMemberRequest{member_id: member_id} = SyncMemberRequest.decode(data)
+    %Banks.V1.SyncMemberRequest{member_id: member_id} = Banks.V1.SyncMemberRequest.decode(data)
 
     BankMember
     |> Api.get(member_id, load: [:user])
@@ -78,7 +78,10 @@ defmodule Spendable.Broadway.SyncMember do
         Enum.map(accounts_details, fn account_details ->
           formatted_data = Adapter.bank_account(account_details)
 
-          Api.get(BankAccount, user_id: member.user.id, external_id: account_details["account_id"])
+          Api.get(BankAccount,
+            user_id: member.user.id,
+            external_id: account_details["account_id"]
+          )
           |> case do
             {:error, %Ash.Error.Invalid{errors: [%Ash.Error.Query.NotFound{}]}} ->
               BankAccount
@@ -110,7 +113,9 @@ defmodule Spendable.Broadway.SyncMember do
 
     case Plaid.account_transactions(account.bank_member.plaid_token, account.external_id, opts) do
       {:ok, %{body: %{"transactions" => transactions_details} = response}} ->
-        Enum.each(transactions_details, fn transaction_details -> sync_transaction(transaction_details, account) end)
+        Enum.each(transactions_details, fn transaction_details ->
+          sync_transaction(transaction_details, account)
+        end)
 
         with %{"total_transactions" => total} when total > cursor <- response do
           sync_transactions(account, Keyword.merge(opts, offset: cursor))
@@ -147,7 +152,7 @@ defmodule Spendable.Broadway.SyncMember do
     end)
     |> case do
       {:ok, transaction} = response ->
-        maybe_send_notification(details, account.user_id, transaction)
+        # maybe_send_notification(details, account.user_id, transaction)
         response
 
       response ->
@@ -156,18 +161,19 @@ defmodule Spendable.Broadway.SyncMember do
   end
 
   # if pending transaction id is set that means we have already sent a notification for the pending transaction
-  defp maybe_send_notification(%{"pending_transaction_id" => nil}, user_id, transaction) do
-    {:ok, %{status: 200}} =
-      SendNotificationRequest.publish(
-        user_id,
-        transaction.name,
-        "$#{Decimal.abs(transaction.amount)}"
-      )
-  end
+  # defp maybe_send_notification(%{"pending_transaction_id" => nil}, user_id, transaction) do
+  #   {:ok, %{status: 200}} =
+  #     SendNotificationRequest.publish(
+  #       user_id,
+  #       transaction.name,
+  #       "$#{Decimal.abs(transaction.amount)}"
+  #     )
+  # end
 
-  defp maybe_send_notification(_details, _user_id, _transaction), do: :ok
+  # defp maybe_send_notification(_details, _user_id, _transaction), do: :ok
 
-  defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id}) when is_binary(pending_id) do
+  defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id})
+       when is_binary(pending_id) do
     BankTransaction
     |> Ash.Query.filter(external_id: pending_id, pending: true)
     |> Ash.Query.load(:transaction)
