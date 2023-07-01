@@ -49,7 +49,7 @@ defmodule Spendable.Broadway.SyncMember do
   end
 
   defp process_data(data) do
-    %SyncMemberRequest{member_id: member_id} = SyncMemberRequest.decode(data)
+    %Banks.V1.SyncMemberRequest{member_id: member_id} = SyncMemberRequest.decode(data)
 
     BankMember
     |> Api.get(member_id, load: [:user])
@@ -84,16 +84,16 @@ defmodule Spendable.Broadway.SyncMember do
               BankAccount
               |> Ash.Changeset.for_create(:create, formatted_data)
               |> Ash.Changeset.force_change_attributes(formatted_data)
-              |> Ash.Changeset.replace_relationship(:bank_member, member)
-              |> Ash.Changeset.replace_relationship(:user, member.user)
+              |> Ash.Changeset.manage_relationship(:bank_member, member, type: :append_and_remove)
+              |> Ash.Changeset.manage_relationship(:user, member.user, type: :append_and_remove)
               |> Api.create!()
 
             {:ok, bank_account} ->
               bank_account
               |> Ash.Changeset.for_update(:update)
               |> Ash.Changeset.force_change_attributes(formatted_data)
-              |> Ash.Changeset.replace_relationship(:bank_member, member)
-              |> Ash.Changeset.replace_relationship(:user, member.user)
+              |> Ash.Changeset.manage_relationship(:bank_member, member, type: :append_and_remove)
+              |> Ash.Changeset.manage_relationship(:user, member.user, type: :append_and_remove)
               |> Api.update!()
           end
         end)
@@ -127,8 +127,8 @@ defmodule Spendable.Broadway.SyncMember do
 
       BankTransaction
       |> Ash.Changeset.for_create(:create, formatted_bank_transaction_data)
-      |> Ash.Changeset.replace_relationship(:bank_account, account)
-      |> Ash.Changeset.replace_relationship(:user, account.user)
+      |> Ash.Changeset.manage_relationship(:bank_account, account, type: :append_and_remove)
+      |> Ash.Changeset.manage_relationship(:user, account.user, type: :append_and_remove)
       |> Ash.Changeset.force_change_attributes(formatted_bank_transaction_data)
       |> Api.create()
       |> case do
@@ -137,7 +137,7 @@ defmodule Spendable.Broadway.SyncMember do
 
           Transaction
           |> Ash.Changeset.for_create(:create, formatted_transaction_data, actor: account.user)
-          |> Ash.Changeset.replace_relationship(:bank_transaction, bank_transaction)
+          |> Ash.Changeset.manage_relationship(:bank_transaction, bank_transaction, type: :append_and_remove)
           |> Api.create!()
           |> reassign_pending(details)
 

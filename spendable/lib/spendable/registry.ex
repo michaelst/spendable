@@ -13,7 +13,6 @@ defmodule Spendable.Registry do
     entry Spendable.BudgetAllocation
     entry Spendable.BudgetAllocationTemplate
     entry Spendable.BudgetAllocationTemplateLine
-    entry Spendable.NotificationSettings
     entry Spendable.Transaction
     entry Spendable.User
   end

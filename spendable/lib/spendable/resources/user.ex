@@ -1,8 +1,7 @@
 defmodule Spendable.User do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
-    data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource]
+    data_layer: AshPostgres.DataLayer
 
   alias Spendable.User.SpentByMonth
 
@@ -32,23 +31,11 @@ defmodule Spendable.User do
 
   actions do
     defaults [:read, :create]
-
-    read :current_user do
-      filter id: actor(:id)
-    end
-  end
-
-  graphql do
-    type :user
-
-    queries do
-      read_one :current_user, :current_user, allow_nil?: false
-    end
   end
 
   policies do
     policy always() do
-      authorize_if attribute(:id, actor(:id))
+      authorize_if expr(id == actor(:id))
     end
   end
 end

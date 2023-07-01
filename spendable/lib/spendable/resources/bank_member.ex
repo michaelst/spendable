@@ -2,7 +2,6 @@ defmodule Spendable.BankMember do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource],
     notifiers: [Spendable.Notifiers.SyncMember]
 
   postgres do
@@ -33,7 +32,7 @@ defmodule Spendable.BankMember do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
     has_many :bank_accounts, Spendable.BankAccount, sort: :name
   end
 
@@ -55,23 +54,10 @@ defmodule Spendable.BankMember do
     end
   end
 
-  graphql do
-    type :bank_member
-
-    queries do
-      get :bank_member, :read, allow_nil?: false
-      list :bank_members, :read
-    end
-
-    mutations do
-      create :create_bank_member, :create_from_public_token
-    end
-  end
-
   policies do
     policy always() do
       authorize_if action(:create_from_public_token)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

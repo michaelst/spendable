@@ -1,7 +1,6 @@
 defmodule Spendable.BankTransaction do
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource]
+    data_layer: AshPostgres.DataLayer
 
   postgres do
     repo(Spendable.Repo)
@@ -30,17 +29,13 @@ defmodule Spendable.BankTransaction do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
-    belongs_to :bank_account, Spendable.BankAccount, required?: true, field_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :bank_account, Spendable.BankAccount, allow_nil?: false, attribute_type: :integer
 
     has_one :transaction, Spendable.Transaction
   end
 
   actions do
     defaults [:read, :create]
-  end
-
-  graphql do
-    type :bank_tranasction
   end
 end

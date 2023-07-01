@@ -30,7 +30,7 @@ if config_env() == :prod do
     database: "spendable",
     hostname: System.fetch_env!("DB_HOSTNAME"),
     username: System.fetch_env!("DB_USERNAME"),
-    password: Secret.read!("DB_PASSWORD")
+    password: Secret.read!("DB_PASSWORD"),
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
   host = System.get_env("PHX_HOST") || "spendable.money"

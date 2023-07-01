@@ -1,11 +1,6 @@
 defmodule Spendable.Budget.SpentByMonth do
   use Ash.Resource,
-    data_layer: :embedded,
-    extensions: [AshGraphql.Resource]
-
-  graphql do
-    type :month_spend
-  end
+    data_layer: :embedded
 
   attributes do
     attribute :month, :date, allow_nil?: false

@@ -28,6 +28,13 @@ defmodule SpendableWeb.Router do
     post "/plaid/webhook", PlaidController, :webhook
   end
 
+  scope "/auth", SpendableWeb do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", SpendableWeb do
   #   pipe_through :api

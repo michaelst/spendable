@@ -1,8 +1,7 @@
 defmodule Spendable.Transaction do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
-    data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource]
+    data_layer: AshPostgres.DataLayer
 
   postgres do
     repo(Spendable.Repo)
@@ -27,8 +26,8 @@ defmodule Spendable.Transaction do
   end
 
   relationships do
-    belongs_to :bank_transaction, Spendable.BankTransaction, field_type: :integer
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :bank_transaction, Spendable.BankTransaction, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
 
     has_many :budget_allocations, Spendable.BudgetAllocation
   end
@@ -57,35 +56,10 @@ defmodule Spendable.Transaction do
     end
   end
 
-  graphql do
-    type :transaction
-
-    queries do
-      get :transaction, :read, allow_nil?: false
-      list :transactions, :read
-    end
-
-    mutations do
-      create :create_transaction, :create
-      update :update_transaction, :update
-      destroy :delete_transaction, :destroy
-    end
-
-    managed_relationships do
-      managed_relationship :create, :budget_allocations do
-        types budget: :create_budget_allocation_budget_input
-      end
-
-      managed_relationship :update, :budget_allocations do
-        types budget: :update_budget_allocation_budget_input
-      end
-    end
-  end
-
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

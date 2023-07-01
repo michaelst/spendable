@@ -1,8 +1,7 @@
 defmodule Spendable.Budget do
   use Ash.Resource,
     authorizers: [Ash.Policy.Authorizer],
-    data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource]
+    data_layer: AshPostgres.DataLayer
 
   alias Spendable.Budget.SpentByMonth
 
@@ -27,7 +26,7 @@ defmodule Spendable.Budget do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, required?: true, field_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
 
     has_many :budget_allocations, Spendable.BudgetAllocation
     has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
@@ -51,12 +50,7 @@ defmodule Spendable.Budget do
   end
 
   actions do
-    defaults [:update, :destroy]
-
-    read :read do
-      primary? true
-      prepare Spendable.Budget.Preparations.Sort
-    end
+    defaults [:read, :update, :destroy]
 
     create :create do
       primary? true
@@ -64,25 +58,10 @@ defmodule Spendable.Budget do
     end
   end
 
-  graphql do
-    type :budget
-
-    queries do
-      get :budget, :read, allow_nil?: false
-      list :budgets, :read
-    end
-
-    mutations do
-      create :create_budget, :create
-      update :update_budget, :update
-      destroy :delete_budget, :destroy
-    end
-  end
-
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if attribute(:user_id, actor(:id))
+      authorize_if expr(user_id == actor(:id))
     end
   end
 end

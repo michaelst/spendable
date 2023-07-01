@@ -40,6 +40,7 @@ defmodule Spendable.MixProject do
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:dotenv_parser, "~> 2.0", only: [:dev]},
       {:ecto_sql, "~> 3.10"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:excoveralls, ">= 0.0.0", only: :test},
@@ -68,7 +69,8 @@ defmodule Spendable.MixProject do
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:tesla, "~> 1.4"}
+      {:tesla, "~> 1.4"},
+      {:ueberauth, "~> 0.10"}
     ]
   end
 

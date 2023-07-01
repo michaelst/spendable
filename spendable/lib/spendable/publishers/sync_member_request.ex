@@ -10,8 +10,8 @@ defmodule Spendable.Publishers.SyncMemberRequest do
   defp pubsub(), do: Application.get_env(:mox, :pubsub, PubSub)
 
   def publish(member_id) when is_integer(member_id) do
-    %SyncMemberRequest{member_id: member_id}
-    |> SyncMemberRequest.encode()
+    %Banks.V1.SyncMemberRequest{member_id: member_id}
+    |> Banks.V1.SyncMemberRequest.encode()
     |> pubsub().publish(@topic)
   end
 end

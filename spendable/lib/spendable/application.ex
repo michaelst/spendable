@@ -22,8 +22,8 @@ defmodule Spendable.Application do
       SpendableWeb.Telemetry,
       Spendable.Repo,
       {Phoenix.PubSub, name: Spendable.PubSub},
-      SpendableWeb.Endpoint
-      Spendable.Broadway.SyncMember,
+      SpendableWeb.Endpoint,
+      Spendable.Broadway.SyncMember
     ]
 
     children =
