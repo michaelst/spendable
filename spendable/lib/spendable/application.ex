@@ -7,19 +7,29 @@ defmodule Spendable.Application do
 
   @impl true
   def start(_type, _args) do
+    SpandexPhoenix.Telemetry.install()
+
+    :ok =
+      :telemetry.attach(
+        "spandex-query-tracer",
+        [:spendable, :repo, :query],
+        &SpandexEcto.TelemetryAdapter.handle_event/4,
+        nil
+      )
+
     children = [
       {Finch, name: Spendable.Finch},
-      # Start the Telemetry supervisor
       SpendableWeb.Telemetry,
-      # Start the Ecto repository
       Spendable.Repo,
-      # Start the PubSub system
       {Phoenix.PubSub, name: Spendable.PubSub},
-      # Start the Endpoint (http/https)
       SpendableWeb.Endpoint
-      # Start a worker by calling: Spendable.Worker.start_link(arg)
-      # {Spendable.Worker, arg}
+      Spendable.Broadway.SyncMember,
     ]
+
+    children =
+      if Application.get_env(:spendable, :env) == :prod,
+        do: [SpandexOTLP.Sender] ++ children,
+        else: children
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

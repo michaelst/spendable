@@ -1,2 +1,0 @@
-defmodule Spendable do
-end
