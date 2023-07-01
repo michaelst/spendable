@@ -1,0 +1,10 @@
+defmodule <%= @module %> do
+  @moduledoc false
+  use Protobuf, <%= @use_options %>
+
+  <% if @extends == [], do: raise("Fuck! #{@module}") %>
+
+  <%= for ext <- @extends do %>
+  extend <%= ext %>
+  <% end %>
+end
