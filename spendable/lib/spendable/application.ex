@@ -8,6 +8,7 @@ defmodule Spendable.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Finch, name: Spendable.Finch},
       # Start the Telemetry supervisor
       SpendableWeb.Telemetry,
       # Start the Ecto repository

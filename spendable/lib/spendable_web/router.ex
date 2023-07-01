@@ -1,6 +1,8 @@
 defmodule SpendableWeb.Router do
   use SpendableWeb, :router
 
+  forward "/_health", HealthCheck
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -18,6 +20,12 @@ defmodule SpendableWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
+
+  scope "/", SpendableWeb do
+    pipe_through :api
+
+    post "/plaid/webhook", PlaidController, :webhook
   end
 
   # Other scopes may use custom stacks.

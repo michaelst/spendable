@@ -25,3 +25,20 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :spendable, Plaid,
+  base_url: "https://sandbox.plaid.com",
+  client_id: "test",
+  secret_key: "test"
+
+config :tesla, adapter: TeslaMock
+
+config :goth,
+  disabled: true
+
+config :mox,
+  apns: APNSMock,
+  pubsub: PubSubMock
+
+config :ash, disable_async?: true
+config :ash, :missed_notifications, :ignore

@@ -4,7 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title suffix=" · Phoenix Framework">
+    <link rel="icon" href={~p"/favicon.svg"} />
+    <link rel="mask-icon" href={~p"/mask-icon.svg"} color="#000000" />
+    <.live_title>
       <%= assigns[:page_title] || "Spendable" %>
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />

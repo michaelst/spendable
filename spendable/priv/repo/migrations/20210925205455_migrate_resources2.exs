@@ -23,11 +23,15 @@ defmodule Spendable.Repo.Migrations.MigrateResources2 do
 
     create index(:bank_accounts, [:user_id], name: "bank_accounts_user_id_index")
 
-    execute("ALTER INDEX bank_accounts_user_id_external_id_index RENAME TO bank_accounts_external_id_index")
+    execute(
+      "ALTER INDEX bank_accounts_user_id_external_id_index RENAME TO bank_accounts_external_id_index"
+    )
   end
 
   def down do
-    execute("ALTER INDEX bank_accounts_external_id_index RENAME TO bank_accounts_user_id_external_id_index")
+    execute(
+      "ALTER INDEX bank_accounts_external_id_index RENAME TO bank_accounts_user_id_external_id_index"
+    )
 
     drop index(:bank_accounts, [:user_id, name: "bank_accounts_user_id_index"])
 

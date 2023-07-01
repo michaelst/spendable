@@ -28,6 +28,11 @@ defmodule SpendableWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import SpendableWeb.ConnCase
+      import Hammox
+
+      alias Spendable.Support.TeslaHelper
+
+      setup :verify_on_exit!
     end
   end
 

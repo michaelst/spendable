@@ -25,11 +25,15 @@ defmodule Spendable.Repo.Migrations.MigrateResources5 do
              )
     end
 
-    create index(:budget_allocation_template_lines, [:user_id], name: "budget_allocation_template_lines_user_id_index")
+    create index(:budget_allocation_template_lines, [:user_id],
+             name: "budget_allocation_template_lines_user_id_index"
+           )
   end
 
   def down do
-    drop index(:budget_allocation_template_lines, [:user_id], name: "budget_allocation_template_lines_user_id_index")
+    drop index(:budget_allocation_template_lines, [:user_id],
+           name: "budget_allocation_template_lines_user_id_index"
+         )
 
     drop constraint(
            :budget_allocation_template_lines,

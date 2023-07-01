@@ -24,6 +24,11 @@ defmodule Spendable.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Spendable.DataCase
+      import Hammox
+
+      alias Spendable.Support.TeslaHelper
+
+      setup :verify_on_exit!
     end
   end
 

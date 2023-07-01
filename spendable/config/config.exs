@@ -8,7 +8,9 @@
 import Config
 
 config :spendable,
-  ecto_repos: [Spendable.Repo]
+  env: config_env(),
+  ecto_repos: [Spendable.Repo],
+  ash_apis: [Spendable.Api]
 
 # Configures the endpoint
 config :spendable, SpendableWeb.Endpoint,
@@ -49,6 +51,30 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :ash, :use_all_identities_in_manage_relationship?, false
+
+config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
+
+config :goth, project_id: "cloud-57"
+
+config :spendable, Spendable.Tracer,
+  service: :spendable,
+  adapter: SpandexOTLP.Adapter,
+  disabled?: config_env() != :prod,
+  env: "PROD"
+
+config :spandex_phoenix, tracer: Spendable.Tracer
+
+config :spandex_ecto, SpandexEcto.EctoLogger, tracer: Spendable.Tracer
+
+config :spandex_otlp, SpandexOTLP,
+  otp_app: :spendable,
+  endpoint: "tempo.grafana.svc.cluster.local:4317",
+  headers: %{},
+  resources: %{
+    "service.name" => "spendable"
+  }
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

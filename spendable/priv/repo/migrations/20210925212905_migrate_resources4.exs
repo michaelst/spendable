@@ -17,7 +17,9 @@ defmodule Spendable.Repo.Migrations.MigrateResources4 do
       modify :name, :text
     end
 
-    create index(:bank_transactions, [:bank_account_id], name: "bank_transactions_bank_account_id_index")
+    create index(:bank_transactions, [:bank_account_id],
+             name: "bank_transactions_bank_account_id_index"
+           )
 
     execute(
       "ALTER INDEX bank_transactions_bank_account_id_external_id_index RENAME TO bank_transactions_external_id_index"
@@ -37,7 +39,12 @@ defmodule Spendable.Repo.Migrations.MigrateResources4 do
       modify :inserted_at, :utc_datetime, default: nil
       modify :updated_at, :utc_datetime, default: nil
 
-      add :category_id, references(:categories, column: :id, name: "bank_transactions_category_id_fkey", type: :bigint)
+      add :category_id,
+          references(:categories,
+            column: :id,
+            name: "bank_transactions_category_id_fkey",
+            type: :bigint
+          )
     end
   end
 end

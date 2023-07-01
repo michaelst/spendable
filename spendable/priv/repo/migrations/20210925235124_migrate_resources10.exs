@@ -24,8 +24,13 @@ defmodule Spendable.Repo.Migrations.MigrateResources10 do
       modify :inserted_at, :utc_datetime, default: nil
       modify :updated_at, :utc_datetime, default: nil
 
-      add :category_id, references(:categories, column: :id, name: "transactions_category_id_fkey", type: :bigint),
-        null: false
+      add :category_id,
+          references(:categories,
+            column: :id,
+            name: "transactions_category_id_fkey",
+            type: :bigint
+          ),
+          null: false
     end
   end
 end

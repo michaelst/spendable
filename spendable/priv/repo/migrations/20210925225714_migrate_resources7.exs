@@ -8,11 +8,17 @@ defmodule Spendable.Repo.Migrations.MigrateResources7 do
   use Ecto.Migration
 
   def up do
-    drop_if_exists index(:budget_allocations, [:user_id], name: "budget_allocations_user_id_index")
+    drop_if_exists index(:budget_allocations, [:user_id],
+                     name: "budget_allocations_user_id_index"
+                   )
 
-    drop_if_exists index(:budget_allocations, [:transaction_id], name: "budget_allocations_transaction_id_index")
+    drop_if_exists index(:budget_allocations, [:transaction_id],
+                     name: "budget_allocations_transaction_id_index"
+                   )
 
-    drop_if_exists index(:budget_allocations, [:budget_id], name: "budget_allocations_budget_id_index")
+    drop_if_exists index(:budget_allocations, [:budget_id],
+                     name: "budget_allocations_budget_id_index"
+                   )
 
     create index(:budget_allocations, ["user_id"])
 
@@ -32,10 +38,16 @@ defmodule Spendable.Repo.Migrations.MigrateResources7 do
       modify :updated_at, :utc_datetime, default: nil
     end
 
-    drop_if_exists index(:budget_allocations, ["budget_id"], name: "budget_allocations_budget_id_index")
+    drop_if_exists index(:budget_allocations, ["budget_id"],
+                     name: "budget_allocations_budget_id_index"
+                   )
 
-    drop_if_exists index(:budget_allocations, ["transaction_id"], name: "budget_allocations_transaction_id_index")
+    drop_if_exists index(:budget_allocations, ["transaction_id"],
+                     name: "budget_allocations_transaction_id_index"
+                   )
 
-    drop_if_exists index(:budget_allocations, ["user_id"], name: "budget_allocations_user_id_index")
+    drop_if_exists index(:budget_allocations, ["user_id"],
+                     name: "budget_allocations_user_id_index"
+                   )
   end
 end

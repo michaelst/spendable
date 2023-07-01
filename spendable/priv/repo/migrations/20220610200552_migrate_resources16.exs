@@ -256,7 +256,11 @@ defmodule Spendable.Repo.Migrations.MigrateResources16 do
 
     alter table(:bank_transactions) do
       modify :user_id,
-             references(:users, column: :id, name: "bank_transactions_user_id_fkey", type: :bigint)
+             references(:users,
+               column: :id,
+               name: "bank_transactions_user_id_fkey",
+               type: :bigint
+             )
     end
 
     drop constraint(
