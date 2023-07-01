@@ -1,6 +1,8 @@
 defmodule SpendableWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :spendable
 
+  plug Spandex.Plug.StartTrace, tracer: Spendable.Tracer, ignored_routes: ["/_health"]
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
@@ -51,6 +53,9 @@ defmodule SpendableWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug SpendableWeb.Router
+
+  plug Spandex.Plug.AddContext, tracer: Spendable.Tracer
+  plug Spandex.Plug.EndTrace, tracer: Spendable.Tracer
 
   def log_level(%{request_path: "/_health"}), do: false
   def log_level(_conn), do: :info
