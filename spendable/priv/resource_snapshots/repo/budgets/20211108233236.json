@@ -1,0 +1,107 @@
+{
+  "attributes": [
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": true,
+      "name": "id",
+      "primary_key?": true,
+      "references": null,
+      "type": "bigint"
+    },
+    {
+      "allow_nil?": false,
+      "default": "0.00",
+      "generated?": false,
+      "name": "adjustment",
+      "primary_key?": false,
+      "references": null,
+      "type": "decimal"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "name": "name",
+      "primary_key?": false,
+      "references": null,
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "false",
+      "generated?": false,
+      "name": "track_spending_only",
+      "primary_key?": false,
+      "references": null,
+      "type": "boolean"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"now()\")",
+      "generated?": false,
+      "name": "inserted_at",
+      "primary_key?": false,
+      "references": null,
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"now()\")",
+      "generated?": false,
+      "name": "updated_at",
+      "primary_key?": false,
+      "references": null,
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "name": "user_id",
+      "primary_key?": false,
+      "references": {
+        "destination_field": "id",
+        "destination_field_default": null,
+        "destination_field_generated": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "budgets_user_id_fkey",
+        "on_delete": null,
+        "on_update": null,
+        "table": "users"
+      },
+      "type": "bigint"
+    }
+  ],
+  "base_filter": null,
+  "check_constraints": [],
+  "custom_indexes": [
+    {
+      "concurrently": false,
+      "fields": [
+        "user_id"
+      ],
+      "include": null,
+      "name": null,
+      "prefix": null,
+      "table": null,
+      "unique": false,
+      "using": null,
+      "where": null
+    }
+  ],
+  "has_create_action": true,
+  "hash": "F93C3B3FF8CD16F6FBF1A91A0EAB64E74EED5E31575C4B9F7D6A31FD8CE091A8",
+  "identities": [],
+  "multitenancy": {
+    "attribute": null,
+    "global": null,
+    "strategy": null
+  },
+  "repo": "Elixir.Spendable.Repo",
+  "table": "budgets"
+}
