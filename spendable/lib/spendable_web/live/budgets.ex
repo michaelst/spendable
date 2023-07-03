@@ -93,11 +93,10 @@ defmodule SpendableWeb.Live.Budgets do
           </li>
         </ul>
       </main>
-      <!-- Activity feed -->
       <aside class="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5">
         <header class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <h2 class="text-base font-semibold leading-7 text-white">Unreviewed transactions</h2>
-          <a href="#" class="text-sm font-semibold leading-6 text-blue-400">View all</a>
+          <.link navigate={~p"/transactions"} class="text-sm font-semibold leading-6 text-blue-400">View All</.link>
         </header>
         <ul role="list" class="divide-y divide-white/5">
           <li class="px-4 py-4 sm:px-6 lg:px-8">
@@ -117,7 +116,6 @@ defmodule SpendableWeb.Live.Budgets do
               (<span class="font-mono text-gray-400">2d89f0c8</span> on <span class="text-gray-400">main</span>)
             </p>
           </li>
-          <!-- More items... -->
         </ul>
       </aside>
     </div>

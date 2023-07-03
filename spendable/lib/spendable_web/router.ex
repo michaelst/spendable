@@ -36,11 +36,16 @@ defmodule SpendableWeb.Router do
     post "/:provider/callback", AuthController, :callback
   end
 
-  live_session :authenticated, on_mount: SpendableWeb.Live.UserAuth do
+  live_session :authenticated,
+    on_mount: [
+      {SpendableWeb.Live.UserAuth, :ensure_authenticated},
+      SpendableWeb.Live.Nav
+    ] do
     scope "/", SpendableWeb.Live do
       pipe_through [:browser]
 
       live "/budgets", Budgets
+      live "/transactions", Transactions
     end
   end
 

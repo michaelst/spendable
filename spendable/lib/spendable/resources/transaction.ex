@@ -18,8 +18,8 @@ defmodule Spendable.Transaction do
 
     attribute :amount, :decimal, allow_nil?: false
     attribute :date, :date, allow_nil?: false
-    attribute :name, :string, allow_nil?: false
-    attribute :note, :string
+    attribute :name, :ci_string, allow_nil?: false
+    attribute :note, :ci_string
     attribute :reviewed, :boolean, allow_nil?: false
 
     timestamps()
@@ -33,27 +33,7 @@ defmodule Spendable.Transaction do
   end
 
   actions do
-    defaults [:destroy]
-
-    read :read do
-      primary? true
-      pagination offset?: true
-    end
-
-    create :create do
-      primary? true
-      change relate_actor(:user)
-      argument :budget_allocations, {:array, :map}
-      change Spendable.Transaction.Changes.AllocateSpendable
-      change manage_relationship(:budget_allocations, type: :direct_control)
-    end
-
-    update :update do
-      primary? true
-      argument :budget_allocations, {:array, :map}
-      change Spendable.Transaction.Changes.AllocateSpendable
-      change manage_relationship(:budget_allocations, type: :direct_control)
-    end
+    defaults [:read, :create, :update, :destroy]
   end
 
   policies do
