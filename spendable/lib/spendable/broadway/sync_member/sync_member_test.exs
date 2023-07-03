@@ -84,24 +84,6 @@ defmodule Spendable.Broadway.SyncMemberTest do
 
     assert 0 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
-    [
-      %SendNotificationRequest{body: "$6.33", title: "Uber 072515 SF**POOL**", user_id: user.id},
-      %SendNotificationRequest{body: "$5.40", title: "Uber 063015 SF**POOL**", user_id: user.id},
-      %SendNotificationRequest{body: "$500.00", title: "United Airlines", user_id: user.id},
-      %SendNotificationRequest{body: "$12.00", title: "McDonald's", user_id: user.id},
-      %SendNotificationRequest{body: "$4.33", title: "Starbucks", user_id: user.id},
-      %SendNotificationRequest{body: "$89.40", title: "SparkFun", user_id: user.id},
-      %SendNotificationRequest{body: "$6.33", title: "Uber 072515 SF**POOL**", user_id: user.id}
-    ]
-    |> Enum.each(fn message ->
-      data = SendNotificationRequest.encode(message)
-
-      PubSubMock
-      |> expect(:publish, fn ^data, "spendable-dev.send-notification-request" ->
-        TeslaHelper.response(status: 200)
-      end)
-    end)
-
     bank_account
     |> Ash.Changeset.for_update(:update, %{sync: true})
     |> Api.update!()

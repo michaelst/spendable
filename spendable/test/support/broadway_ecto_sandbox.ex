@@ -13,7 +13,6 @@ defmodule BroadwayEctoSandbox do
   def handle_event(_event_name, _event_measurement, %{messages: messages}, %{repo: repo}) do
     with [%Broadway.Message{metadata: %{test_process: pid}} | _] <- messages do
       Sandbox.allow(repo, pid, self())
-      Hammox.allow(APNSMock, pid, self())
       Hammox.allow(PubSubMock, pid, self())
       Hammox.allow(TeslaMock, pid, self())
     end

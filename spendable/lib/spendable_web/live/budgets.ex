@@ -2,6 +2,7 @@ defmodule SpendableWeb.Live.Budgets do
   use SpendableWeb, :live_view
 
   alias Spendable.Budget.Storage
+  alias Spendable.Utils
 
   def mount(_params, _session, socket) do
     {:ok, fetch_data(socket)}
@@ -23,20 +24,25 @@ defmodule SpendableWeb.Live.Budgets do
               type="button"
               class="flex items-center gap-x-1 text-sm font-medium leading-6 text-white"
               id="sort-menu-button"
+              phx-click={JS.toggle(to: "#month-select")}
             >
-              Sort by <.icon name="hero-chevron-up-down-mini" class="h-5 w-5 text-gray-500" />
+              <%= Timex.format!(@selected_month, "{Mfull} {YYYY}") %>
+              <.icon name="hero-chevron-up-down-mini" class="h-5 w-5 text-gray-500" />
             </button>
-            <div class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-              <!-- Active: "bg-gray-200", Not Active: "" -->
-              <a href="#" class="bg-gray-200 block px-3 py-1 text-sm leading-6 text-gray-900" id="sort-menu-item-0">
-                Name
-              </a>
-              <a href="#" class="block px-3 py-1 text-sm leading-6 text-gray-900" id="sort-menu-item-1">
-                Date updated
-              </a>
-              <a href="#" class="block px-3 py-1 text-sm leading-6 text-gray-900" id="sort-menu-item-2">
-                Environment
-              </a>
+            <div
+              id="month-select"
+              class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-none divide-y"
+              phx-click-away={JS.hide(to: "#month-select")}
+            >
+              <button
+                :for={month <- @current_user.spent_by_month}
+                class="block px-3 py-2 w-full text-sm leading-6 text-gray-900 flex flex-col hover:bg-gray-200"
+                phx-click={JS.push("select_month") |> JS.toggle(to: "#month-select")}
+                phx-value-month={month.month}
+              >
+                <div><%= Timex.format!(month.month, "{Mfull} {YYYY}") %></div>
+                <div class="text-sm text-gray-400">spent: <%= Utils.format_currency(month.spent) %></div>
+              </button>
             </div>
           </div>
         </header>
@@ -59,14 +65,15 @@ defmodule SpendableWeb.Live.Budgets do
               <div class="min-w-0 flex-auto mr-4">
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <span class="truncate">
-                      <span :if={Decimal.negative?(budget.balance)}>-</span>$<%= Decimal.abs(budget.balance) %>
-                    </span>
+                    <%= if @current_month_is_selected and not budget.track_spending_only do %>
+                      <span class="truncate"><%= Utils.format_currency(budget.balance) %></span>
+                    <% else %>
+                      <span class="truncate"><%= Utils.format_currency(budget.spent) %></span>
+                    <% end %>
                   </h2>
                 </div>
                 <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
-                  <p :if={not budget.track_spending_only} class="truncate">remaining</p>
-                  <p :if={budget.track_spending_only} class="truncate">spent</p>
+                  <p class="truncate"><%= budget_subtext(budget, assigns) %></p>
                 </div>
               </div>
               <div
@@ -117,10 +124,44 @@ defmodule SpendableWeb.Live.Budgets do
     """
   end
 
+  def handle_event("search", params, socket) do
+    {:noreply,
+     socket
+     |> assign(:search, params["search"])
+     |> fetch_data()}
+  end
+
+  def handle_event("select_month", params, socket) do
+    {:noreply,
+     socket
+     |> assign(:selected_month, Timex.parse!(params["month"], "{YYYY}-{0M}-{D}"))
+     |> fetch_data()}
+  end
+
   defp fetch_data(socket) do
-    budgets = Storage.list_budgets(socket.assigns.current_user.id)
+    current_month = Date.utc_today() |> Timex.beginning_of_month()
+    selected_month = socket.assigns[:selected_month] || current_month
+
+    budgets =
+      Storage.list_budgets(socket.assigns.current_user.id,
+        selected_month: selected_month,
+        search: socket.assigns[:search]
+      )
+
+    user = Spendable.Api.load!(socket.assigns.current_user, :spent_by_month)
 
     socket
+    |> assign(:current_user, user)
+    |> assign(:selected_month, selected_month)
     |> assign(:budgets, budgets)
+    |> assign(:current_month_is_selected, Timex.equal?(selected_month, current_month))
+  end
+
+  defp budget_subtext(budget, %{current_month_is_selected: current}) do
+    cond do
+      current and budget.name == "Spendable" -> "AVAILABLE"
+      current and not budget.track_spending_only -> "REMAINING"
+      true -> "SPENT"
+    end
   end
 end

@@ -9,7 +9,6 @@ defmodule Spendable.Broadway.SyncMember do
   alias Spendable.BankMember
   alias Spendable.BankTransaction
   alias Spendable.Plaid.Adapter
-  alias Spendable.Publishers.SendNotificationRequest
   alias Spendable.Repo
   alias Spendable.Transaction
 
@@ -150,27 +149,7 @@ defmodule Spendable.Broadway.SyncMember do
           Repo.rollback(error)
       end
     end)
-    |> case do
-      {:ok, transaction} = response ->
-        # maybe_send_notification(details, account.user_id, transaction)
-        response
-
-      response ->
-        response
-    end
   end
-
-  # if pending transaction id is set that means we have already sent a notification for the pending transaction
-  # defp maybe_send_notification(%{"pending_transaction_id" => nil}, user_id, transaction) do
-  #   {:ok, %{status: 200}} =
-  #     SendNotificationRequest.publish(
-  #       user_id,
-  #       transaction.name,
-  #       "$#{Decimal.abs(transaction.amount)}"
-  #     )
-  # end
-
-  # defp maybe_send_notification(_details, _user_id, _transaction), do: :ok
 
   defp reassign_pending(transaction, %{"pending_transaction_id" => pending_id})
        when is_binary(pending_id) do

@@ -37,7 +37,6 @@ config :goth,
   disabled: true
 
 config :mox,
-  apns: APNSMock,
   pubsub: PubSubMock
 
 config :ash, disable_async?: true
