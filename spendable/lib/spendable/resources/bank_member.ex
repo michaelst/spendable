@@ -4,6 +4,8 @@ defmodule Spendable.BankMember do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Spendable.Notifiers.SyncMember]
 
+  alias Spendable.BankMember.Storage
+
   postgres do
     repo(Spendable.Repo)
     table "bank_members"
@@ -19,7 +21,7 @@ defmodule Spendable.BankMember do
     attribute :external_id, :string, allow_nil?: false
     attribute :institution_id, :string
     attribute :logo, :string
-    attribute :name, :string, allow_nil?: false
+    attribute :name, :ci_string, allow_nil?: false
     attribute :plaid_token, :string, allow_nil?: false, private?: true
     attribute :provider, :string, allow_nil?: false
     attribute :status, :string
@@ -59,5 +61,9 @@ defmodule Spendable.BankMember do
       authorize_if action(:create_from_public_token)
       authorize_if expr(user_id == actor(:id))
     end
+  end
+
+  def list(user_id, opts) do
+    Storage.list(user_id, opts)
   end
 end
