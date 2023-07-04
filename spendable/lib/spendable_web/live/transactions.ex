@@ -104,14 +104,41 @@ defmodule SpendableWeb.Live.Transactions do
                       phx-click="remove_allocation"
                       phx-value-path={allocation_form.name}
                     >
-                      <.icon name="hero-x-circle"></.icon>
+                      <.icon name="hero-x-circle" />
                     </button>
                   </div>
                 </.inputs_for>
               <% end %>
-              <button type="button" phx-click="split" class="text-sm font-semibold text-blue-400 mt-4">
-                Split
-              </button>
+              <div class="flex justify-between mt-2">
+                <button type="button" phx-click="split" class="text-sm font-semibold text-blue-400">
+                  Split
+                </button>
+                <div class="relative">
+                  <button
+                    type="button"
+                    class="text-sm font-semibold text-blue-400"
+                    id="sort-menu-button"
+                    phx-click={JS.toggle(to: "#template-options")}
+                  >
+                    Apply Template
+                  </button>
+                  <div
+                    id="template-options"
+                    class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-none divide-y"
+                    phx-click-away={JS.hide(to: "#template-options")}
+                  >
+                    <button
+                      :for={{template_name, template_id} <- @template_form_options}
+                      type="button"
+                      class="block px-3 py-2 w-full text-sm leading-6 text-gray-900 flex flex-col hover:bg-gray-200"
+                      phx-click={JS.push("apply_template") |> JS.toggle(to: "#template-options")}
+                      phx-value-template={template_id}
+                    >
+                      <div><%= template_name %></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             <.input type="textarea" label="Note" field={@form[:note]} />
             <.input type="checkbox" label="Reviewed" field={@form[:reviewed]} />
@@ -144,6 +171,22 @@ defmodule SpendableWeb.Live.Transactions do
       {:ok, _transaction} -> {:noreply, socket |> assign(:form, nil)}
       {:error, form} -> {:noreply, assign(socket, form: form)}
     end
+  end
+
+  def handle_event("apply_template", params, socket) do
+    form =
+      Enum.reduce(socket.assigns.form.source.forms[:budget_allocations], socket.assigns.form, fn allocation_form, acc ->
+        AshPhoenix.Form.remove_form(acc, allocation_form.name)
+      end)
+
+    form =
+      Transaction.get_template(params["template"])
+      |> Map.get(:budget_allocation_template_lines)
+      |> Enum.reduce(form, fn line, acc ->
+        AshPhoenix.Form.add_form(acc, [:budget_allocations], params: %{amount: line.amount, budget_id: line.budget_id})
+      end)
+
+    {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("split", _params, socket) do
@@ -208,6 +251,7 @@ defmodule SpendableWeb.Live.Transactions do
       )
 
     budget_form_options = Transaction.budget_form_options(socket.assigns.current_user.id)
+    template_form_options = Transaction.template_form_options(socket.assigns.current_user.id)
 
     id = "235063"
 
@@ -227,6 +271,7 @@ defmodule SpendableWeb.Live.Transactions do
     socket
     |> assign(:transactions, transactions)
     |> assign(:budget_form_options, budget_form_options)
+    |> assign(:template_form_options, template_form_options)
     |> assign(:form, form)
   end
 end

@@ -3,6 +3,8 @@ defmodule Spendable.BudgetAllocationTemplate do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer
 
+  alias Spendable.BudgetAllocationTemplate.Storage
+
   postgres do
     repo(Spendable.Repo)
     table "budget_allocation_templates"
@@ -33,7 +35,15 @@ defmodule Spendable.BudgetAllocationTemplate do
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if expr(user_id == actor(:id))
+      authorize_if expr(user_id == ^actor(:id))
     end
+  end
+
+  def form_options(user_id) do
+    Storage.form_options(user_id)
+  end
+
+  def get_template(id) do
+    Storage.get_template(id)
   end
 end

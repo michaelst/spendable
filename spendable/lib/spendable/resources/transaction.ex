@@ -3,6 +3,7 @@ defmodule Spendable.Transaction do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer
 
+  alias Spendable.BudgetAllocationTemplate
   alias Spendable.Budget
   alias Spendable.Transaction.Storage
 
@@ -82,6 +83,14 @@ defmodule Spendable.Transaction do
 
   def budget_form_options(user_id) do
     Budget.form_options(user_id)
+  end
+
+  def template_form_options(user_id) do
+    BudgetAllocationTemplate.form_options(user_id)
+  end
+
+  def get_template(id) do
+    BudgetAllocationTemplate.get_template(id)
   end
 
   def list_transactions(user_id, opts) do
