@@ -76,31 +76,31 @@ defmodule SpendableWeb.Live.Transactions do
                 <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
                   <.input
                     type="select"
-                    label="Spend From"
+                    label={if Decimal.negative?(@form[:amount].value), do: "Spend from", else: "Add to"}
                     field={allocation_form[:budget_id]}
                     options={@budget_form_options}
                   />
                 </.inputs_for>
               <% else %>
-                <div class="flex">
-                  <div class="w-2/3 mr-2">
-                    Spend From
+                <div class="grid grid-cols-10">
+                  <div class="col-span-6">
+                    <%= if Decimal.negative?(@form[:amount].value), do: "Spend from", else: "Add to" %>
                   </div>
-                  <div class="w-1/3">
+                  <div class="col-span-3">
                     Amount
                   </div>
                 </div>
                 <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
-                  <div class="flex items-center">
-                    <div class="w-2/3 mr-2">
+                  <div class="grid grid-cols-10 items-center">
+                    <div class="col-span-6 pr-2">
                       <.input type="select" field={allocation_form[:budget_id]} options={@budget_form_options} />
                     </div>
-                    <div class="w-1/3 mr-2">
+                    <div class="col-span-3">
                       <.input type="text" field={allocation_form[:amount]} />
                     </div>
                     <button
                       type="button"
-                      class="mt-1 cursor-pointer"
+                      class="cursor-pointer text-right mt-1"
                       phx-click="remove_allocation"
                       phx-value-path={allocation_form.name}
                     >
