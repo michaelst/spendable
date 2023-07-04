@@ -1,0 +1,6 @@
+version: v1
+plugins:
+  - name: elixir
+    out: gen/elixir/lib
+    opt: plugins=grpc
+    strategy: directory
