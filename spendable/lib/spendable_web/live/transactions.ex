@@ -145,7 +145,7 @@ defmodule SpendableWeb.Live.Transactions do
 
     form =
       transaction
-      |> AshPhoenix.Form.for_update(:user_update,
+      |> AshPhoenix.Form.for_update(:update,
         api: Spendable.Api,
         actor: socket.assigns.current_user,
         forms: [auto?: true]
@@ -192,7 +192,7 @@ defmodule SpendableWeb.Live.Transactions do
 
     form =
       transaction
-      |> AshPhoenix.Form.for_update(:user_update,
+      |> AshPhoenix.Form.for_update(:update,
         api: Spendable.Api,
         actor: socket.assigns.current_user,
         forms: [auto?: true]

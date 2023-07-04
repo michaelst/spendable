@@ -50,14 +50,26 @@ defmodule Spendable.Transaction do
       primary? true
 
       argument :budget_allocations, {:array, :map}
-      change manage_relationship(:budget_allocations, type: :direct_control)
+
+      change manage_relationship(:budget_allocations,
+               on_lookup: :relate,
+               on_no_match: :create,
+               on_match: :update,
+               on_missing: :destroy
+             )
+
+      change Spendable.Transaction.Changes.AllocateSpendable
     end
 
-    update :user_update do
+    update :update_allocations do
       argument :budget_allocations, {:array, :map}
-      change manage_relationship(:budget_allocations, type: :direct_control)
 
-      # change Spendable.Transaction.Changes.AllocateSpendable
+      change manage_relationship(:budget_allocations,
+               on_lookup: :relate,
+               on_no_match: :create,
+               on_match: :update,
+               on_missing: :destroy
+             )
     end
   end
 

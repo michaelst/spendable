@@ -323,7 +323,7 @@ defmodule SpendableWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md text-white bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-gray-500 sm:text-sm"
+        class="mt-2 block w-full rounded-md text-white bg-white/5 ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-gray-500 sm:text-sm"
         multiple={@multiple}
         {@rest}
       >
