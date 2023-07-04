@@ -20,6 +20,7 @@ defmodule SpendableWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    delete "/logout", AuthController, :delete
   end
 
   scope "/", SpendableWeb do

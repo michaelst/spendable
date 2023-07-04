@@ -99,7 +99,7 @@ defmodule SpendableWeb.Live.Budgets do
         id="details-form"
         class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
-      <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
+        <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit budget</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
@@ -108,7 +108,7 @@ defmodule SpendableWeb.Live.Budgets do
           </header>
           <div class="space-y-6 m-6">
             <.input type="text" label="Name" field={@form[:name]} />
-            <.input type="text" :if={not @form[:track_spending_only].value} label="Balance" field={@form[:balance]} />
+            <.input :if={not @form[:track_spending_only].value} type="text" label="Balance" field={@form[:balance]} />
             <.input type="checkbox" label="Track spending only" field={@form[:track_spending_only]} />
           </div>
         </.simple_form>
