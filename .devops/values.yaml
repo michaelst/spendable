@@ -4,9 +4,8 @@ replicaCount: 3
 service:
   port: 80
   targetPort: 4000
-  #routes:
-  #  - domain: app.spendable.money
-  #  - domain: spendable.money
+  routes:
+    - domain: spendable.money
   type: ClusterIP
   # the health check must fail 3 times before we will recreate it
   livenessProbe:

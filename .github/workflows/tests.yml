@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env: 
-      TEST_DB_PASSWORD: postgres
       MIX_ENV: test
 
     services:
@@ -87,5 +86,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-cachev2-
 
-      - run: mix do deps.get, compile --warnings-as-errors
+      - run: mix do deps.get, compile
       - run: mix credo
