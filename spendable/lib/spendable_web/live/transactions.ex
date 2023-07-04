@@ -15,7 +15,7 @@ defmodule SpendableWeb.Live.Transactions do
   def render(assigns) do
     ~H"""
     <div>
-      <main id="transactions" class="lg:pr-96">
+      <main id="transactions">
         <header class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
         </header>
@@ -58,12 +58,12 @@ defmodule SpendableWeb.Live.Transactions do
       </main>
       <aside
         id="transaction-details"
-        class="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
+        class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
         <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit transaction</h2>
-            <button class="text-sm font-semibold leading-6 text-blue-400">
+            <button phx-click={hide_transaction_details()} class="text-sm font-semibold leading-6 text-blue-400">
               Save
             </button>
           </header>
@@ -168,8 +168,20 @@ defmodule SpendableWeb.Live.Transactions do
       end
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
-      {:ok, _transaction} -> {:noreply, socket |> assign(:form, nil)}
-      {:error, form} -> {:noreply, assign(socket, form: form)}
+      {:ok, updated_transaction} ->
+        transactions =
+          Enum.map(socket.assigns.transactions, fn transaction ->
+            if updated_transaction.id == transaction.id do
+              updated_transaction
+            else
+              transaction
+            end
+          end)
+
+        {:noreply, socket |> assign(transactions: transactions) |> assign(:form, nil)}
+
+      {:error, form} ->
+        {:noreply, assign(socket, form: form)}
     end
   end
 
@@ -253,25 +265,10 @@ defmodule SpendableWeb.Live.Transactions do
     budget_form_options = Transaction.budget_form_options(socket.assigns.current_user.id)
     template_form_options = Transaction.template_form_options(socket.assigns.current_user.id)
 
-    id = "235063"
-
-    transaction =
-      Enum.find(transactions, &(to_string(&1.id) == id))
-      |> Spendable.Api.load!(:budget_allocations)
-
-    form =
-      transaction
-      |> AshPhoenix.Form.for_update(:update,
-        api: Spendable.Api,
-        actor: socket.assigns.current_user,
-        forms: [auto?: true]
-      )
-      |> to_form()
-
     socket
     |> assign(:transactions, transactions)
     |> assign(:budget_form_options, budget_form_options)
     |> assign(:template_form_options, template_form_options)
-    |> assign(:form, form)
+    |> assign(:form, nil)
   end
 end
