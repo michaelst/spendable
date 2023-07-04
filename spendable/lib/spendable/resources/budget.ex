@@ -4,6 +4,7 @@ defmodule Spendable.Budget do
     data_layer: AshPostgres.DataLayer
 
   alias Spendable.Budget.SpentByMonth
+  alias Spendable.Budget.Storage
 
   postgres do
     repo(Spendable.Repo)
@@ -63,7 +64,11 @@ defmodule Spendable.Budget do
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if expr(user_id == actor(:id))
+      authorize_if expr(user_id == ^actor(:id))
     end
+  end
+
+  def form_options(user_id) do
+    Storage.form_options(user_id)
   end
 end

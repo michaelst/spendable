@@ -1,11 +1,11 @@
 defmodule SpendableWeb.Live.Transactions do
   use SpendableWeb, :live_view
 
-  alias Spendable.Transaction.Storage
+  alias Spendable.Transaction
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok, fetch_data(socket)}
+    {:ok, socket}
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
@@ -60,16 +60,54 @@ defmodule SpendableWeb.Live.Transactions do
         id="transaction-details"
         class="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5"
       >
-        <header class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-          <h2 class="text-base font-semibold leading-7 text-white">Edit transaction</h2>
-          <button phx-click={hide_transaction_details()} class="text-sm font-semibold leading-6 text-blue-400">Save</button>
-        </header>
-        <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit" class="mx-4">
-          <.input type="text" label="Name" field={@form[:name]} />
-          <.input type="text" label="Amount" field={@form[:amount]} />
-          <.input type="date" label="Date" field={@form[:date]} />
-          <.input type="textarea" label="Note" field={@form[:note]} />
-          <.input type="checkbox" label="Reviewed" field={@form[:reviewed]} />
+        <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
+          <header class="flex items-center justify-between border-b border-white/5 p-6">
+            <h2 class="text-base font-semibold leading-7 text-white">Edit transaction</h2>
+            <button class="text-sm font-semibold leading-6 text-blue-400">
+              Save
+            </button>
+          </header>
+          <div class="space-y-6 m-6">
+            <.input type="text" label="Name" field={@form[:name]} />
+            <.input type="text" label="Amount" field={@form[:amount]} />
+            <.input type="date" label="Date" field={@form[:date]} />
+            <div>
+              <%!-- <%= if length(@form.source.params["budget_allocations"]) <= 1 do %>
+                <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
+                  <.input
+                    type="select"
+                    label="Spend From"
+                    field={allocation_form[:budget_id]}
+                    options={Transaction.budget_form_options(@current_user.id)}
+                  />
+                </.inputs_for>
+              <% else %> --%>
+              <div class="flex text-white">
+                <div class="w-2/3 mr-2">
+                  Spend From
+                </div>
+                <div class="w-1/3">
+                  Amount
+                </div>
+              </div>
+              <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
+                <div class="flex">
+                  <div class="w-2/3 mr-2">
+                    <.input type="select" field={allocation_form[:budget_id]} options={@budget_form_options} />
+                  </div>
+                  <div class="w-1/3">
+                    <.input type="text" field={allocation_form[:amount]} />
+                  </div>
+                </div>
+              </.inputs_for>
+              <%!-- <% end %> --%>
+              <button type="button" phx-click="split" class="text-sm font-semibold text-blue-400 mt-4">
+                Split
+              </button>
+            </div>
+            <.input type="textarea" label="Note" field={@form[:note]} />
+            <.input type="checkbox" label="Reviewed" field={@form[:reviewed]} />
+          </div>
         </.simple_form>
       </aside>
     </div>
@@ -88,6 +126,11 @@ defmodule SpendableWeb.Live.Transactions do
     end
   end
 
+  def handle_event("split", _params, socket) do
+    form = AshPhoenix.Form.add_form(socket.assigns.form, [:budget_allocations])
+    {:noreply, assign(socket, form: form)}
+  end
+
   def handle_event("search", params, socket) do
     {:noreply,
      socket
@@ -96,12 +139,15 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   def handle_event("select_transaction", params, socket) do
-    transaction = Enum.find(socket.assigns.transactions, &(to_string(&1.id) == params["id"]))
+    transaction =
+      Enum.find(socket.assigns.transactions, &(to_string(&1.id) == params["id"]))
+      |> Spendable.Api.load!(:budget_allocations)
 
     form =
       transaction
-      |> AshPhoenix.Form.for_update(:update,
-        api: QueryDesk.Api,
+      |> AshPhoenix.Form.for_update(:user_update,
+        api: Spendable.Api,
+        actor: socket.assigns.current_user,
         forms: [auto?: true]
       )
       |> to_form()
@@ -132,24 +178,30 @@ defmodule SpendableWeb.Live.Transactions do
 
   defp fetch_data(socket) do
     transactions =
-      Storage.list_transactions(socket.assigns.current_user.id,
+      Transaction.list_transactions(socket.assigns.current_user.id,
         search: socket.assigns[:search]
       )
 
+    budget_form_options = Transaction.budget_form_options(socket.assigns.current_user.id)
+
     id = "235063"
 
-    transaction = Enum.find(transactions, &(to_string(&1.id) == id))
+    transaction =
+      Enum.find(transactions, &(to_string(&1.id) == id))
+      |> Spendable.Api.load!(:budget_allocations)
 
     form =
       transaction
-      |> AshPhoenix.Form.for_update(:update,
-        api: QueryDesk.Api,
+      |> AshPhoenix.Form.for_update(:user_update,
+        api: Spendable.Api,
+        actor: socket.assigns.current_user,
         forms: [auto?: true]
       )
       |> to_form()
 
     socket
     |> assign(:transactions, transactions)
+    |> assign(:budget_form_options, budget_form_options)
     |> assign(:form, form)
   end
 end

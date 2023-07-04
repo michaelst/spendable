@@ -3,6 +3,9 @@ defmodule Spendable.Transaction do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer
 
+  alias Spendable.Budget
+  alias Spendable.Transaction.Storage
+
   postgres do
     repo(Spendable.Repo)
     table "transactions"
@@ -33,13 +36,43 @@ defmodule Spendable.Transaction do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read, :create, :destroy]
+
+    create :user_create do
+      change relate_actor(:user)
+
+      argument :budget_allocations, {:array, :map}
+      change Spendable.Transaction.Changes.AllocateSpendable
+      change manage_relationship(:budget_allocations, type: :create)
+    end
+
+    update :update do
+      primary? true
+
+      argument :budget_allocations, {:array, :map}
+      change manage_relationship(:budget_allocations, type: :direct_control)
+    end
+
+    update :user_update do
+      argument :budget_allocations, {:array, :map}
+      change manage_relationship(:budget_allocations, type: :direct_control)
+
+      # change Spendable.Transaction.Changes.AllocateSpendable
+    end
   end
 
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if expr(user_id == actor(:id))
+      authorize_if expr(user_id == ^actor(:id))
     end
+  end
+
+  def budget_form_options(user_id) do
+    Budget.form_options(user_id)
+  end
+
+  def list_transactions(user_id, opts) do
+    Storage.list_transactions(user_id, opts)
   end
 end

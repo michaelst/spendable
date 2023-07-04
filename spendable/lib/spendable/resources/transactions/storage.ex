@@ -9,7 +9,6 @@ defmodule Spendable.Transaction.Storage do
     |> Ash.Query.filter(user_id == ^user_id)
     |> maybe_search_transactions(opts[:search])
     |> Ash.Query.sort(date: :desc)
-    |> Ash.Query.load([:bank_transaction])
     |> Ash.Query.limit(100)
     |> Api.read!()
   end
