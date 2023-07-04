@@ -53,11 +53,18 @@ defmodule Spendable.Budget do
   end
 
   actions do
-    defaults [:read, :update, :destroy]
+    defaults [:read, :destroy]
 
     create :create do
       primary? true
       change relate_actor(:user)
+    end
+
+    update :update do
+      primary? true
+
+      argument :balance, :decimal
+      change Spendable.Budget.Changes.SetAdjustment
     end
   end
 
@@ -70,5 +77,9 @@ defmodule Spendable.Budget do
 
   def form_options(user_id) do
     Storage.form_options(user_id)
+  end
+
+  def list(user_id, opts) do
+    Storage.list(user_id, opts)
   end
 end

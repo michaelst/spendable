@@ -4,7 +4,7 @@ defmodule Spendable.Budget.Storage do
 
   require Ash.Query
 
-  def list_budgets(user_id, opts \\ []) do
+  def list(user_id, opts \\ []) do
     Budget
     |> Ash.Query.filter(user_id == ^user_id)
     |> Ash.Query.filter(is_nil(archived_at))

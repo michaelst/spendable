@@ -15,7 +15,7 @@ defmodule SpendableWeb.Live.Transactions do
   def render(assigns) do
     ~H"""
     <div>
-      <main id="transactions">
+      <main id="transactions" phx-click={hide_details()}>
         <header class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
         </header>
@@ -23,7 +23,7 @@ defmodule SpendableWeb.Live.Transactions do
         <ul role="list" class="divide-y divide-white/5">
           <li
             :for={transaction <- @transactions}
-            phx-click={JS.push("select_transaction") |> show_transaction_details()}
+            phx-click={JS.push("select_transaction") |> show_details()}
             phx-value-id={transaction.id}
             class="relative flex flex-row items-center justify-between space-x-4 px-4 py-6 sm:px-6 lg:px-8"
           >
@@ -63,7 +63,7 @@ defmodule SpendableWeb.Live.Transactions do
         <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit transaction</h2>
-            <button phx-click={hide_transaction_details()} class="text-sm font-semibold leading-6 text-blue-400">
+            <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
               Save
             </button>
           </header>
@@ -237,7 +237,7 @@ defmodule SpendableWeb.Live.Transactions do
      |> assign(:form, form)}
   end
 
-  def show_transaction_details(js \\ %JS{}) do
+  def show_details(js \\ %JS{}) do
     js
     |> JS.show(to: "#transaction-details", transition: "fade-in")
     |> JS.add_class(
@@ -246,7 +246,7 @@ defmodule SpendableWeb.Live.Transactions do
     )
   end
 
-  def hide_transaction_details(js \\ %JS{}) do
+  def hide_details(js \\ %JS{}) do
     js
     |> JS.hide(to: "#transaction-details", transition: "fade-out")
     |> JS.remove_class(
