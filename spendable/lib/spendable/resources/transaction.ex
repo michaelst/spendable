@@ -37,14 +37,17 @@ defmodule Spendable.Transaction do
   end
 
   actions do
-    defaults [:read, :create, :destroy]
+    defaults [:read, :destroy]
 
-    create :user_create do
+    create :create do
+      primary? true
+
       change relate_actor(:user)
 
       argument :budget_allocations, {:array, :map}
-      change Spendable.Transaction.Changes.AllocateSpendable
       change manage_relationship(:budget_allocations, type: :create)
+
+      change Spendable.Transaction.Changes.AllocateSpendable
     end
 
     update :update do

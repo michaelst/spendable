@@ -2,7 +2,6 @@ defmodule SpendableWeb.Live.Banks do
   use SpendableWeb, :live_view
 
   alias Spendable.BankMember
-  alias Spendable.Utils
 
   def mount(_params, _session, socket) do
     {:ok, socket}

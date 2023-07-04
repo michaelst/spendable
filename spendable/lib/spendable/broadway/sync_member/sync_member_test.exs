@@ -10,6 +10,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
   alias Spendable.Broadway.SyncMember
   alias Spendable.Broadway.SyncMemberTest.TestData
   alias Spendable.Repo
+  alias Spendable.Factory
   alias Spendable.Transaction
 
   setup do
@@ -23,10 +24,16 @@ defmodule Spendable.Broadway.SyncMemberTest do
       %{
         method: :post,
         url: "https://sandbox.plaid.com/institutions/get_by_id",
-        body:
-          "{\"client_id\":\"test\",\"institution_id\":\"ins_109511\",\"options\":{\"include_optional_metadata\":true},\"secret\":\"test\"}"
+        body: body
       },
       _opts ->
+        assert %{
+                 "client_id" => "test",
+                 "institution_id" => "ins_109511",
+                 "options" => %{"include_optional_metadata" => true},
+                 "secret" => "test"
+               } == Jason.decode!(body)
+
         TeslaHelper.response(body: TestData.institution())
 
       %{method: :post, url: "https://sandbox.plaid.com/accounts/get"}, _opts ->
@@ -44,10 +51,10 @@ defmodule Spendable.Broadway.SyncMemberTest do
   end
 
   test "sync member" do
-    user = Factory.insert(Spendable.User)
-    member = Factory.insert(Spendable.BankMember, user_id: user.id)
+    user = Factory.user()
+    member = Factory.bank_member(user)
 
-    data = %SyncMemberRequest{member_id: member.id} |> SyncMemberRequest.encode()
+    data = %Banks.V1.SyncMemberRequest{member_id: member.id} |> Banks.V1.SyncMemberRequest.encode()
 
     ref = Broadway.test_message(__MODULE__, data, metadata: %{test_process: self()})
     assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
@@ -94,8 +101,6 @@ defmodule Spendable.Broadway.SyncMemberTest do
     # there are 8 transactions in test data but one is a pending that gets replaced
     assert 7 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
 
-    today = Date.utc_today()
-
     [
       %{},
       %{},
@@ -113,8 +118,8 @@ defmodule Spendable.Broadway.SyncMemberTest do
 
     assert %{
              amount: amount,
-             name: "Uber 072515 SF**POOL**",
-             date: ^today,
+             name: name,
+             date: ~D[2022-06-10],
              bank_transaction: %{
                external_id: "gjwAb9wKgytqA9dKR4Xmc3rwN8WN5nigoEkrB",
                bank_account_id: ^account_id,
@@ -125,12 +130,14 @@ defmodule Spendable.Broadway.SyncMemberTest do
                %{
                  amount: allocation_amount,
                  budget: %{
-                   name: "Spendable"
+                   name: budget_name
                  }
                }
              ]
            } = transaction
 
+    assert to_string(budget_name) == "Spendable"
+    assert to_string(name) == "Uber 072515 SF**POOL**"
     assert Decimal.equal?("-6.33", amount)
     assert Decimal.equal?("-6.33", allocation_amount)
   end

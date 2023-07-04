@@ -15,8 +15,8 @@ defmodule Secret do
 end
 
 config :spendable, Plaid,
-  client_id: Secret.read!("PLAID_CLIENT_ID"),
-  secret_key: Secret.read!("PLAID_SECRET_KEY")
+  client_id: Secret.read!("PLAID_CLIENT_ID", "test"),
+  secret_key: Secret.read!("PLAID_SECRET_KEY", "test")
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: Secret.read!("GOOGLE_CLIENT_ID"),

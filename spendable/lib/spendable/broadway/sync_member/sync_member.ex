@@ -142,6 +142,7 @@ defmodule Spendable.Broadway.SyncMember do
           Transaction
           |> Ash.Changeset.for_create(:create, formatted_transaction_data, actor: account.user)
           |> Ash.Changeset.manage_relationship(:bank_transaction, bank_transaction, type: :append_and_remove)
+          |> Ash.Changeset.manage_relationship(:user, account.user, type: :append_and_remove)
           |> Api.create!()
           |> reassign_pending(details)
 

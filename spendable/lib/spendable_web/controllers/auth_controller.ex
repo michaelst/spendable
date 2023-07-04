@@ -8,6 +8,10 @@ defmodule SpendableWeb.AuthController do
 
   alias Spendable.User
 
+  def login(conn, _params) do
+    render(conn, :login, layout: false)
+  end
+
   def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
     conn
     |> put_flash(:error, "Failed to authenticate.")

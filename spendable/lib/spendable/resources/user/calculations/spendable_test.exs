@@ -1,48 +1,30 @@
 defmodule Spendable.User.Calculations.SpendableTest do
   use Spendable.DataCase, async: true
 
+  alias Spendable.Factory
   alias Spendable.User.Calculations.Spendable, as: Calculation
 
   test "calculate spendable" do
-    user = Factory.insert(Spendable.User)
+    user = Factory.user()
 
-    bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
+    bank_member = Factory.bank_member(user)
 
-    Factory.insert(Spendable.BankAccount,
-      user_id: user.id,
-      bank_member_id: bank_member.id,
-      balance: 100
-    )
+    Factory.bank_account(bank_member, balance: 100)
 
-    transaction = Factory.insert(Spendable.Transaction, user_id: user.id)
+    transaction = Factory.transaction(user)
 
-    budget = Factory.insert(Spendable.Budget, user_id: user.id)
+    budget = Factory.budget(user)
 
-    Factory.insert(Spendable.BudgetAllocation,
-      user_id: user.id,
-      budget_id: budget.id,
-      transaction_id: transaction.id,
-      amount: -25.55
-    )
+    Factory.budget_allocation(budget, transaction, amount: -25.55)
 
-    budget = Factory.insert(Spendable.Budget, user_id: user.id, adjustment: Decimal.new("0.01"))
+    budget = Factory.budget(user, adjustment: Decimal.new("0.01"))
 
-    Factory.insert(Spendable.BudgetAllocation,
-      user_id: user.id,
-      budget_id: budget.id,
-      transaction_id: transaction.id,
-      amount: 10
-    )
+    Factory.budget_allocation(budget, transaction, amount: 10)
 
     # budget that only tracks spending should be ignored
-    budget = Factory.insert(Spendable.Budget, user_id: user.id, track_spending_only: true)
+    budget = Factory.budget(user, track_spending_only: true)
 
-    Factory.insert(Spendable.BudgetAllocation,
-      user_id: user.id,
-      budget_id: budget.id,
-      transaction_id: transaction.id,
-      amount: 10
-    )
+    Factory.budget_allocation(budget, transaction, amount: 10)
 
     expected_spendable = Decimal.new("64.44")
     {:ok, [calculation]} = Calculation.calculate([user], [], %{})
@@ -51,7 +33,7 @@ defmodule Spendable.User.Calculations.SpendableTest do
   end
 
   test "calculate spendable for new user" do
-    user = Factory.insert(Spendable.User)
+    user = Factory.user()
 
     expected_spendable = Decimal.new("0.00")
     {:ok, [calculation]} = Calculation.calculate([user], [], %{})

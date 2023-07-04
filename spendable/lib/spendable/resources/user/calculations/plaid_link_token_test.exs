@@ -2,9 +2,10 @@ defmodule Spendable.User.Calculations.PlaidLinkTokenTest do
   use Spendable.DataCase, async: true
 
   alias Spendable.User.Calculations.PlaidLinkToken
+  alias Spendable.Factory
 
   test "calculate plaid link token" do
-    user = Factory.insert(Spendable.User)
+    user = Factory.user()
 
     token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
 
@@ -19,7 +20,7 @@ defmodule Spendable.User.Calculations.PlaidLinkTokenTest do
   end
 
   test "can't get token if at bank limit" do
-    user = Factory.insert(Spendable.User, bank_limit: 0)
+    user = Factory.user(bank_limit: 0)
 
     {:error, [:no_connections_available]} = PlaidLinkToken.calculate([user], [], %{})
   end

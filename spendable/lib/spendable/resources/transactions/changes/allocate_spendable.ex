@@ -1,13 +1,11 @@
 defmodule Spendable.Transaction.Changes.AllocateSpendable do
   use Ash.Resource.Change
 
-  alias Spendable.BudgetAllocation
   alias Spendable.Utils
-
-  require Logger
 
   def change(changeset, _opts, %{actor: user}) do
     Ash.Changeset.after_action(changeset, fn _changeset, transaction ->
+      transaction = Spendable.Api.load!(transaction, :budget_allocations)
       spendable_id = Utils.get_spendable_id(user)
       allocations = Enum.reject(transaction.budget_allocations, &(&1.budget_id == spendable_id))
 

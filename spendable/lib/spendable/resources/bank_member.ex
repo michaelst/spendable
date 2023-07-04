@@ -54,6 +54,11 @@ defmodule Spendable.BankMember do
       change relate_actor(:user)
       change Spendable.BankMember.Changes.CreateBankMember
     end
+
+    create :factory do
+      argument :plaid_token, :string
+      change set_attribute(:plaid_token, arg(:plaid_token))
+    end
   end
 
   policies do

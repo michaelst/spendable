@@ -1,5 +1,5 @@
 defmodule HealthCheckTest do
-  use CoverbotWeb.ConnCase, async: true
+  use SpendableWeb.ConnCase, async: true
 
   test "health check", %{conn: conn} do
     conn

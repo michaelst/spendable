@@ -28,7 +28,7 @@ defmodule Spendable.Application do
 
     children =
       if Application.get_env(:spendable, :env) == :prod,
-        do: [SpandexOTLP.Sender] ++ children,
+        do: [SpandexOTLP.Sender, {Goth, name: Spendable.Goth}] ++ children,
         else: children
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -2,12 +2,13 @@ defmodule Spendable.BankMember.Calculations.PlaidLinkTokenTest do
   use Spendable.DataCase, async: true
 
   alias Spendable.BankMember.Calculations.PlaidLinkToken
+  alias Spendable.Factory
 
   test "calculate plaid link token" do
-    user = Factory.insert(Spendable.User)
+    user = Factory.user()
 
     %{plaid_token: access_token} =
-      bank_member = Factory.insert(Spendable.BankMember, user_id: user.id)
+      bank_member = Factory.bank_member(user)
 
     token = "link-sandbox-961de9b2-d8f3-43ac-9e9d-c108a555a6ae"
 

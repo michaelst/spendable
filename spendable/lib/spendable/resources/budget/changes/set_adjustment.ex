@@ -1,12 +1,7 @@
 defmodule Spendable.Budget.Changes.SetAdjustment do
   use Ash.Resource.Change
 
-  alias Spendable.BudgetAllocation
-  alias Spendable.Utils
-
-  require Logger
-
-  def change(changeset, _opts, %{actor: user}) do
+  def change(changeset, _opts, _context) do
     current_balance = Ash.Changeset.get_data(changeset, :balance)
     current_adjustment = Ash.Changeset.get_data(changeset, :adjustment)
     new_balance = Ash.Changeset.get_argument(changeset, :balance) || current_balance

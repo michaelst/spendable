@@ -1,45 +1,110 @@
-defmodule Factory do
-  def build(model, overrides \\ [], opts \\ []) do
-    params = params_for(model, overrides, opts)
+defmodule Spendable.Factory do
+  def user(opts \\ []) do
+    params =
+      build_params(
+        %{
+          provider: :google,
+          external_id: Ecto.UUID.generate(),
+          bank_limit: 10
+        },
+        opts
+      )
 
-    struct!(model, params)
+    Spendable.User
+    |> Ash.Changeset.new(params)
+    |> Spendable.Api.create!()
   end
 
-  def insert(model, overrides \\ [], opts \\ []) do
-    build(model, overrides, opts)
-    |> Spendable.Repo.insert!()
+  def bank_member(user, opts \\ []) do
+    params =
+      build_params(
+        %{
+          external_id: Ecto.UUID.generate(),
+          institution_id: "ins_1",
+          name: "Plaid",
+          plaid_token: "access-sandbox-898addd0-d983-45f8-a034-3b29d62794a7",
+          provider: "Plaid",
+          status: "CONNECTED"
+        },
+        opts
+      )
+
+    Spendable.BankMember
+    |> Ash.Changeset.for_create(:factory, params)
+    |> Ash.Changeset.manage_relationship(:user, user, type: :append_and_remove)
+    |> Spendable.Api.create!()
   end
 
-  def params_for(model, overrides \\ [], opts \\ []) do
-    build_params(model, overrides, opts)
+  def bank_account(bank_member, opts \\ []) do
+    params =
+      build_params(
+        %{
+          external_id: Ecto.UUID.generate(),
+          name: "Checking",
+          balance: Decimal.new("100.00"),
+          type: "depository",
+          sub_type: "checking",
+          sync: true
+        },
+        opts
+      )
+
+    Spendable.BankAccount
+    |> Ash.Changeset.new(params)
+    |> Ash.Changeset.manage_relationship(:bank_member, bank_member, type: :append_and_remove)
+    |> Ash.Changeset.manage_relationship(:user, bank_member.user, type: :append_and_remove)
+    |> Spendable.Api.create!()
   end
 
-  defp build_params(model, overrides, opts) do
-    factory = Module.safe_concat([model, Factory])
+  def transaction(user, opts \\ []) do
+    params =
+      build_params(
+        %{
+          amount: 10.25,
+          date: Date.utc_today(),
+          name: "test",
+          note: "some notes",
+          reviewed: false
+        },
+        opts
+      )
 
-    factory_name = opts[:factory_name] || :default
+    Spendable.Transaction
+    |> Ash.Changeset.for_create(:create, params, actor: user)
+    |> Spendable.Api.create!()
+  end
 
-    unless Kernel.function_exported?(factory, factory_name, 0) do
-      raise "#{factory_name}/0 must be implemented on #{factory}"
-    end
+  def budget(user, opts \\ []) do
+    params =
+      build_params(
+        %{
+          name: "Food"
+        },
+        opts
+      )
 
-    now = DateTime.utc_now()
+    Spendable.Budget
+    |> Ash.Changeset.for_create(:create, params, actor: user)
+    |> Spendable.Api.create!()
+  end
 
-    fields = model.__schema__(:fields)
-    args = Map.new(overrides)
+  def budget_allocation(budget, transaction, opts \\ []) do
+    params =
+      build_params(
+        %{
+          amount: Spendable.TestUtils.random_decimal(500..100_000)
+        },
+        opts
+      )
 
-    keys_not_in_schema = Map.keys(args) -- fields
+    Spendable.BudgetAllocation
+    |> Ash.Changeset.for_create(:create, params, actor: transaction.user)
+    |> Ash.Changeset.manage_relationship(:budget, budget, type: :append_and_remove)
+    |> Ash.Changeset.manage_relationship(:transaction, transaction, type: :append_and_remove)
+    |> Spendable.Api.create!()
+  end
 
-    unless Enum.empty?(keys_not_in_schema) do
-      raise "field overrides provided that are not in schema: #{inspect(keys_not_in_schema)}"
-    end
-
-    factory
-    |> apply(factory_name, [])
-    |> Map.put_new(:inserted_at, now)
-    |> Map.put_new(:updated_at, now)
-    |> Map.merge(args)
-    # remove any fields that are not part of the schema
-    |> Map.take(fields)
+  defp build_params(defaults, overrides) do
+    Map.merge(defaults, Map.new(overrides))
   end
 end
