@@ -58,11 +58,11 @@ defmodule SpendableWeb.Live.Transactions do
       </main>
       <aside
         id="transaction-details"
-        class="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5"
+        class="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
         <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
-            <h2 class="text-base font-semibold leading-7 text-white">Edit transaction</h2>
+            <h2 class="text-base font-semibold leading-7">Edit transaction</h2>
             <button class="text-sm font-semibold leading-6 text-blue-400">
               Save
             </button>
@@ -82,7 +82,7 @@ defmodule SpendableWeb.Live.Transactions do
                   />
                 </.inputs_for>
               <% else %> --%>
-              <div class="flex text-white">
+              <div class="flex">
                 <div class="w-2/3 mr-2">
                   Spend From
                 </div>
@@ -91,13 +91,21 @@ defmodule SpendableWeb.Live.Transactions do
                 </div>
               </div>
               <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
-                <div class="flex">
+                <div class="flex items-center">
                   <div class="w-2/3 mr-2">
                     <.input type="select" field={allocation_form[:budget_id]} options={@budget_form_options} />
                   </div>
-                  <div class="w-1/3">
+                  <div class="w-1/3 mr-2">
                     <.input type="text" field={allocation_form[:amount]} />
                   </div>
+                  <button
+                    type="button"
+                    class="mt-1 cursor-pointer"
+                    phx-click="remove_allocation"
+                    phx-value-path={allocation_form.name}
+                  >
+                    <.icon name="hero-x-circle"></.icon>
+                  </button>
                 </div>
               </.inputs_for>
               <%!-- <% end %> --%>
@@ -128,6 +136,11 @@ defmodule SpendableWeb.Live.Transactions do
 
   def handle_event("split", _params, socket) do
     form = AshPhoenix.Form.add_form(socket.assigns.form, [:budget_allocations])
+    {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("remove_allocation", %{"path" => path}, socket) do
+    form = AshPhoenix.Form.remove_form(socket.assigns.form, path)
     {:noreply, assign(socket, form: form)}
   end
 
