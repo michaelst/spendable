@@ -1,0 +1,41 @@
+nameOverride: spendable
+replicaCount: 3
+
+service:
+  port: 80
+  targetPort: 4000
+  #routes:
+  #  - domain: app.spendable.money
+  #  - domain: spendable.money
+  type: ClusterIP
+  # the health check must fail 3 times before we will recreate it
+  livenessProbe:
+    httpGet:
+      path: /_health
+      port: http
+    failureThreshold: 6
+    periodSeconds: 10
+  # give the pod 5 minutes to run migrations on startup
+  startupProbe:
+    httpGet:
+      path: /_health
+      port: http
+    failureThreshold: 30
+    periodSeconds: 10
+  # check every second to see if we should send traffic to a pod
+  readinessProbe:
+    httpGet:
+      path: /_health
+      port: http
+    periodSeconds: 5
+
+resources:
+  requests:
+    cpu: 250m
+  limits:
+    memory: 1024M
+
+envVars:
+  DB_HOSTNAME: postgres-postgresql.postgres.svc.cluster.local
+  DB_USERNAME: postgres
+

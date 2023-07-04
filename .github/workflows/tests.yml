@@ -3,17 +3,13 @@ on: push
 env:
   MIX_ENV: test
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  OTP_VERSION: 24.3
-  ELIXIR_VERSION: 1.13.3
+  OTP_VERSION: 26.x.x
+  ELIXIR_VERSION: 1.15.x
 
 jobs:
-  backend:
-    name: Backend
+  tests:
+    name: Tests
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: backend
 
     env: 
       TEST_DB_PASSWORD: postgres
@@ -34,34 +30,35 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
           elixir-version: ${{ env.ELIXIR_VERSION }}
 
-      - name: Cache Backend Deps
+      - name: Cache Deps
         uses: actions/cache@master
         with:
-          path: backend/deps
-          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          path: deps
+          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-cachev2-
 
-      - name: Cache Backend Build
+      - name: Cache Build
         uses: actions/cache@master
         with:
-          path: backend/_build
-          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          path: _build
+          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-build-cachev2-
 
       - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
       - run: mix coveralls.json
 
-      - uses: codecov/codecov-action@master
+      - name: Check Code Coverage
+        uses: coverbot-io/coverbot-action@v1
+        with:
+          file: cover/excoveralls.json
+          coverbot_api_key: ${{ secrets.COVERBOT_API_KEY}}
+          github_token: ${{ secrets.GITHUB_TOKEN}}
 
   credo:
     name: Credo
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: backend
 
     env: 
       MIX_ENV: test
@@ -74,19 +71,19 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
           elixir-version: ${{ env.ELIXIR_VERSION }}
 
-      - name: Cache Backend Deps
+      - name: Cache Deps
         uses: actions/cache@master
         with:
-          path: backend/deps
-          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          path: deps
+          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-cachev2-
 
-      - name: Cache Backend Build
+      - name: Cache Build
         uses: actions/cache@master
         with:
-          path: backend/_build
-          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/backend/mix.lock')) }}
+          path: _build
+          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-build-cachev2-
 
