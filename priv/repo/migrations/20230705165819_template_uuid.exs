@@ -23,7 +23,8 @@ defmodule Spendable.Repo.Migrations.TemplateUuid do
       remove :budget_allocation_template_id
     end
 
-    rename table(:budget_allocation_template_lines), :budget_allocation_template_uuid, to: :budget_allocation_template_id
+    rename table(:budget_allocation_template_lines), :budget_allocation_template_uuid,
+      to: :budget_allocation_template_id
 
     alter table(:budget_allocation_templates) do
       remove :id
