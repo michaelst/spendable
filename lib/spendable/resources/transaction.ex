@@ -41,7 +41,7 @@ defmodule Spendable.Transaction do
   end
 
   relationships do
-    belongs_to :bank_transaction, Spendable.BankTransaction, attribute_type: :integer
+    belongs_to :bank_transaction, Spendable.BankTransaction
     belongs_to :user, Spendable.User, allow_nil?: false
 
     has_many :budget_allocations, Spendable.BudgetAllocation
