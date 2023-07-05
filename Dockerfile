@@ -14,6 +14,7 @@ WORKDIR /app
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs config/runtime.exs ./config/
 
+COPY assets assets
 COPY lib lib
 COPY priv priv
 COPY rel rel
@@ -22,7 +23,7 @@ COPY protobuf protobuf
 RUN --mount=type=cache,target=/app/deps \
     --mount=type=cache,target=/app/_build/prod \
       rm -rf /app/_build/prod/rel && \
-      mix do deps.get --only prod, release && \
+      mix do deps.get --only prod, assets.deploy, release && \
       # copy out of the cache so it is available
       cp -r /app/_build/prod/rel/spendable ./release
 
