@@ -16,7 +16,7 @@ defmodule Spendable.Budget do
   end
 
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :adjustment, :decimal, allow_nil?: false, default: Decimal.new("0.00")
     attribute :name, :ci_string, allow_nil?: false

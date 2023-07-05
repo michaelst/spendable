@@ -15,8 +15,20 @@ defmodule Spendable.BankMember do
     end
   end
 
+  identities do
+    identity :uuid, [:uuid]
+    identity :external_id, [:external_id]
+  end
+
   attributes do
     integer_primary_key :id
+
+    attribute :uuid, :uuid do
+      writable? false
+      default &Ash.UUID.generate/0
+      primary_key? false
+      generated? true
+    end
 
     attribute :external_id, :string, allow_nil?: false
     attribute :institution_id, :string
@@ -27,10 +39,6 @@ defmodule Spendable.BankMember do
     attribute :status, :string
 
     timestamps()
-  end
-
-  identities do
-    identity :external_id, [:external_id]
   end
 
   relationships do

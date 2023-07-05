@@ -16,8 +16,19 @@ defmodule Spendable.BudgetAllocationTemplate do
     end
   end
 
+  identities do
+    identity :uuid, [:uuid]
+  end
+
   attributes do
     integer_primary_key :id
+
+    attribute :uuid, :uuid do
+      writable? false
+      default &Ash.UUID.generate/0
+      primary_key? false
+      generated? true
+    end
 
     attribute :name, :string, allow_nil?: false
 
@@ -25,7 +36,7 @@ defmodule Spendable.BudgetAllocationTemplate do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer, destination_attribute: :id
 
     has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
   end

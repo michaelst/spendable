@@ -1,0 +1,186 @@
+{
+  "attributes": [
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "id",
+      "references": null,
+      "primary_key?": true,
+      "generated?": true,
+      "allow_nil?": false
+    },
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "uuid",
+      "references": null,
+      "primary_key?": false,
+      "generated?": true,
+      "allow_nil?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "external_id",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "institution_id",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "logo",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "citext",
+      "source": "name",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "plaid_token",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "provider",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "status",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": true
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "inserted_at",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "user_id",
+      "references": {
+        "name": "bank_members_user_id_fkey",
+        "table": "users",
+        "primary_key?": true,
+        "on_delete": null,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "destination_attribute": "id",
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    }
+  ],
+  "table": "bank_members",
+  "hash": "D28BCE857B33F8E7C95331ECCE1EE7D302F1D281554FD357E94E66051E5C3B64",
+  "repo": "Elixir.Spendable.Repo",
+  "custom_indexes": [
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "where": null,
+      "prefix": null,
+      "fields": [
+        "user_id"
+      ],
+      "unique": false,
+      "concurrently": false,
+      "using": null
+    }
+  ],
+  "identities": [
+    {
+      "name": "external_id",
+      "keys": [
+        "external_id"
+      ],
+      "base_filter": null,
+      "index_name": "bank_members_external_id_index"
+    },
+    {
+      "name": "uuid",
+      "keys": [
+        "uuid"
+      ],
+      "base_filter": null,
+      "index_name": "bank_members_uuid_index"
+    }
+  ],
+  "schema": null,
+  "check_constraints": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}

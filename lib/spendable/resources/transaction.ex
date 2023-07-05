@@ -17,8 +17,19 @@ defmodule Spendable.Transaction do
     end
   end
 
+  identities do
+    identity :uuid, [:uuid]
+  end
+
   attributes do
     integer_primary_key :id
+
+    attribute :uuid, :uuid do
+      writable? false
+      default &Ash.UUID.generate/0
+      primary_key? false
+      generated? true
+    end
 
     attribute :amount, :decimal, allow_nil?: false
     attribute :date, :date, allow_nil?: false
@@ -31,7 +42,7 @@ defmodule Spendable.Transaction do
 
   relationships do
     belongs_to :bank_transaction, Spendable.BankTransaction, attribute_type: :integer
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer, destination_attribute: :id
 
     has_many :budget_allocations, Spendable.BudgetAllocation
   end
