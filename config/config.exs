@@ -56,6 +56,7 @@ config :phoenix, :json_library, Jason
 config :ash, :use_all_identities_in_manage_relationship?, false
 
 config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
+config :oauth2, adapter: {Tesla.Adapter.Finch, name: Spendable.Finch}
 
 config :goth, project_id: "cloud-57"
 

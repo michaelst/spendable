@@ -17,6 +17,7 @@ COPY config/config.exs config/prod.exs config/runtime.exs ./config/
 COPY lib lib
 COPY priv priv
 COPY rel rel
+COPY protobuf protobuf
 
 RUN --mount=type=cache,target=/app/deps \
     --mount=type=cache,target=/app/_build/prod \
