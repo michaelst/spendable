@@ -32,20 +32,6 @@ defmodule Spendable.Repo.Migrations.MigrateResources16 do
              )
     end
 
-    drop constraint(:notification_settings, "notification_settings_user_id_fkey")
-
-    alter table(:notification_settings) do
-      modify :device_token, :text, default: false
-
-      modify :user_id,
-             references(:users,
-               column: :id,
-               prefix: "public",
-               name: "notification_settings_user_id_fkey",
-               type: :bigint
-             )
-    end
-
     drop constraint(:budgets, "budgets_user_id_fkey")
 
     alter table(:budgets) do
@@ -357,19 +343,6 @@ defmodule Spendable.Repo.Migrations.MigrateResources16 do
              references(:users, column: :id, name: "budgets_user_id_fkey", type: :bigint)
 
       modify :adjustment, :decimal, default: 0.00
-    end
-
-    drop constraint(:notification_settings, "notification_settings_user_id_fkey")
-
-    alter table(:notification_settings) do
-      modify :user_id,
-             references(:users,
-               column: :id,
-               name: "notification_settings_user_id_fkey",
-               type: :bigint
-             )
-
-      modify :device_token, :text, default: nil
     end
 
     drop constraint(:transactions, "transactions_user_id_fkey")
