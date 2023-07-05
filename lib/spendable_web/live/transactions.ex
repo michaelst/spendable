@@ -5,7 +5,7 @@ defmodule SpendableWeb.Live.Transactions do
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page: 1, per_page: 40)}
+    {:ok, assign(socket, page: 1, per_page: 25)}
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
@@ -226,8 +226,8 @@ defmodule SpendableWeb.Live.Transactions do
   def handle_event("search", params, socket) do
     {:noreply,
      socket
-     |> assign(:search, params["search"])
-     |> fetch_data()}
+     |> assign(search: params["search"])
+     |> paginate_posts(1, true)}
   end
 
   def handle_event("select_transaction", params, socket) do
@@ -297,7 +297,7 @@ defmodule SpendableWeb.Live.Transactions do
     |> paginate_posts(1)
   end
 
-  defp paginate_posts(socket, new_page) when new_page >= 1 do
+  defp paginate_posts(socket, new_page, reset \\ false) when new_page >= 1 do
     %{per_page: per_page, page: page} = socket.assigns
 
     transactions =
@@ -322,7 +322,7 @@ defmodule SpendableWeb.Live.Transactions do
         socket
         |> assign(end_of_timeline?: false)
         |> assign(:page, new_page)
-        |> stream(:transactions, transactions, at: at, limit: limit)
+        |> stream(:transactions, transactions, at: at, limit: limit, reset: reset)
     end
   end
 end

@@ -4,13 +4,13 @@ defmodule Spendable.Transaction.Storage do
 
   require Ash.Query
 
-  @default_per_page 40
+  @default_per_page 25
 
   def list_transactions(user_id, opts \\ []) do
     Transaction
     |> Ash.Query.filter(user_id == ^user_id)
     |> maybe_search_transactions(opts[:search])
-    |> Ash.Query.sort([date: :desc, id: :desc])
+    |> Ash.Query.sort(date: :desc, id: :desc)
     |> maybe_paginate(opts[:page], opts[:per_page])
     |> Ash.Query.limit(opts[:per_page] || @default_per_page)
     |> Api.read!()
