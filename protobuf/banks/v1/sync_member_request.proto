@@ -3,5 +3,5 @@ syntax = "proto3";
 package banks.v1;
 
 message SyncMemberRequest {
-  int64 member_id = 1;
+  string member_id = 1;
 }
