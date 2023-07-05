@@ -5,7 +5,7 @@ defmodule SpendableWeb.Live.Transactions do
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, page: 1, per_page: 40)}
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
@@ -20,9 +20,21 @@ defmodule SpendableWeb.Live.Transactions do
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
         </header>
 
-        <ul role="list" class="divide-y divide-white/5">
+        <ul
+          id="transactions-list"
+          phx-update="stream"
+          phx-viewport-top={@page > 1 && "prev-page"}
+          phx-viewport-bottom={!@end_of_timeline? && "next-page"}
+          phx-page-loading
+          class={[
+            "divide-y divide-white/5",
+            if(@end_of_timeline?, do: "pb-10", else: "pb-[calc(200vh)]"),
+            if(@page == 1, do: "", else: "pt-[calc(200vh)]")
+          ]}
+        >
           <li
-            :for={transaction <- @transactions}
+            :for={{id, transaction} <- @streams.transactions}
+            id={id}
             phx-click={JS.push("select_transaction") |> show_details()}
             phx-value-id={transaction.id}
             class="relative flex flex-row items-center justify-between space-x-4 px-4 py-6 sm:px-6 lg:px-8"
@@ -237,6 +249,22 @@ defmodule SpendableWeb.Live.Transactions do
      |> assign(:form, form)}
   end
 
+  def handle_event("next-page", _, socket) do
+    {:noreply, paginate_posts(socket, socket.assigns.page + 1)}
+  end
+
+  def handle_event("prev-page", %{"_overran" => true}, socket) do
+    {:noreply, paginate_posts(socket, 1)}
+  end
+
+  def handle_event("prev-page", _, socket) do
+    if socket.assigns.page > 1 do
+      {:noreply, paginate_posts(socket, socket.assigns.page - 1)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   def show_details(js \\ %JS{}) do
     js
     |> JS.show(to: "#transaction-details", transition: "fade-in")
@@ -257,18 +285,44 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp fetch_data(socket) do
-    transactions =
-      Transaction.list_transactions(socket.assigns.current_user.id,
-        search: socket.assigns[:search]
-      )
-
     budget_form_options = Transaction.budget_form_options(socket.assigns.current_user.id)
     template_form_options = Transaction.template_form_options(socket.assigns.current_user.id)
 
     socket
-    |> assign(:transactions, transactions)
-    |> assign(:budget_form_options, budget_form_options)
-    |> assign(:template_form_options, template_form_options)
-    |> assign(:form, nil)
+    |> assign(
+      budget_form_options: budget_form_options,
+      template_form_options: template_form_options,
+      form: nil
+    )
+    |> paginate_posts(1)
+  end
+
+  defp paginate_posts(socket, new_page) when new_page >= 1 do
+    %{per_page: per_page, page: page} = socket.assigns
+
+    transactions =
+      Transaction.list_transactions(socket.assigns.current_user.id,
+        search: socket.assigns[:search],
+        page: new_page,
+        per_page: per_page
+      )
+
+    {transactions, at, limit} =
+      if new_page >= page do
+        {transactions, -1, per_page * 3 * -1}
+      else
+        {Enum.reverse(transactions), 0, per_page * 3}
+      end
+
+    case transactions do
+      [] ->
+        assign(socket, end_of_timeline?: at == -1)
+
+      [_ | _] = transactions ->
+        socket
+        |> assign(end_of_timeline?: false)
+        |> assign(:page, new_page)
+        |> stream(:transactions, transactions, at: at, limit: limit)
+    end
   end
 end
