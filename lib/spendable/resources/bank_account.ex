@@ -9,24 +9,16 @@ defmodule Spendable.BankAccount do
     table "bank_accounts"
 
     custom_indexes do
-      # index(["bank_member_id"])
+      index(["bank_member_id"])
     end
   end
 
   identities do
-    identity :uuid, [:uuid]
-    # identity :external_id, [:user_id, :external_id]
+    identity :external_id, [:user_id, :external_id]
   end
 
   attributes do
-    integer_primary_key :id
-
-    attribute :uuid, :uuid do
-      writable? false
-      default &Ash.UUID.generate/0
-      primary_key? false
-      generated? true
-    end
+    uuid_primary_key :id
 
     attribute :balance, :decimal, allow_nil?: false
     attribute :external_id, :string, allow_nil?: false

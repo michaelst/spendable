@@ -38,7 +38,7 @@ defmodule Spendable.BankTransaction do
 
   relationships do
     belongs_to :user, Spendable.User, allow_nil?: false
-    belongs_to :bank_account, Spendable.BankAccount, allow_nil?: false, attribute_type: :integer
+    belongs_to :bank_account, Spendable.BankAccount, allow_nil?: false
 
     has_one :transaction, Spendable.Transaction
   end
