@@ -33,17 +33,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: deps
-          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-mix-cachev2-
+            ${{ runner.os }}-mix-
 
       - name: Cache Build
         uses: actions/cache@v3
         with:
           path: _build
-          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-build-cachev2-
+            ${{ runner.os }}-build-
 
       - run: mix do deps.get, compile --warnings-as-errors, ecto.reset
       - run: mix coveralls.json
@@ -54,6 +54,37 @@ jobs:
           file: cover/excoveralls.json
           coverbot_api_key: ${{ secrets.COVERBOT_API_KEY}}
           github_token: ${{ secrets.GITHUB_TOKEN}}
+  
+  format:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+
+      - name: Cache Deps
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+
+      - name: Cache Build
+        uses: actions/cache@v3
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - run: mix do deps.get, compile
+      - run: mix format --check-formatted
 
   credo:
     name: Credo
@@ -74,17 +105,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: deps
-          key: ${{ runner.os }}-mix-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-mix-cachev2-
+            ${{ runner.os }}-mix-
 
       - name: Cache Build
         uses: actions/cache@v3
         with:
           path: _build
-          key: ${{ runner.os }}-build-cachev2-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: ${{ runner.os }}-build-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
-            ${{ runner.os }}-build-cachev2-
+            ${{ runner.os }}-build-
 
       - run: mix do deps.get, compile
       - run: mix credo

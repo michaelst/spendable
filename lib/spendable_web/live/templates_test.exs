@@ -3,8 +3,8 @@ defmodule SpendableWeb.Live.TemplatesTest do
 
   import Phoenix.LiveViewTest
 
-  alias Spendable.Factory
   alias Spendable.BudgetAllocationTemplate
+  alias Spendable.Factory
 
   test "LIVE /templates", %{conn: conn} do
     user = Factory.user()
