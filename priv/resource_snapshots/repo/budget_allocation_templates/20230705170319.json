@@ -3,80 +3,30 @@
     {
       "default": "nil",
       "size": null,
-      "type": "bigint",
+      "type": "utc_datetime_usec",
+      "source": "archived_at",
+      "references": null,
+      "allow_nil?": true,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
       "source": "id",
       "references": null,
       "allow_nil?": false,
       "primary_key?": true,
-      "generated?": true
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "external_id",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
       "generated?": false
     },
     {
       "default": "nil",
       "size": null,
       "type": "text",
-      "source": "institution_id",
-      "references": null,
-      "allow_nil?": true,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "logo",
-      "references": null,
-      "allow_nil?": true,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "citext",
       "source": "name",
       "references": null,
       "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "plaid_token",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "provider",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "text",
-      "source": "status",
-      "references": null,
-      "allow_nil?": true,
       "primary_key?": false,
       "generated?": false
     },
@@ -103,20 +53,20 @@
     {
       "default": "nil",
       "size": null,
-      "type": "bigint",
+      "type": "uuid",
       "source": "user_id",
       "references": {
-        "name": "bank_members_user_id_fkey",
+        "name": "budget_allocation_templates_user_id_fkey",
         "table": "users",
+        "on_delete": null,
         "primary_key?": true,
         "schema": "public",
         "multitenancy": {
           "global": null,
-          "strategy": null,
-          "attribute": null
+          "attribute": null,
+          "strategy": null
         },
         "destination_attribute": "id",
-        "on_delete": null,
         "on_update": null,
         "destination_attribute_default": null,
         "destination_attribute_generated": null
@@ -126,8 +76,8 @@
       "generated?": false
     }
   ],
-  "table": "bank_members",
-  "hash": "97258999F1483A2EAB70BA7A021130E29FBBD8BBF331FAC1E596AD42B963265E",
+  "table": "budget_allocation_templates",
+  "hash": "15897ECD8186DC53EF2BE5631388E70E38AA7514594D4244E80AD5C9F5E8881A",
   "repo": "Elixir.Spendable.Repo",
   "custom_indexes": [
     {
@@ -136,33 +86,24 @@
       "table": null,
       "include": null,
       "prefix": null,
-      "where": null,
       "fields": [
         "user_id"
       ],
+      "where": null,
       "unique": false,
       "concurrently": false,
       "using": null
     }
   ],
-  "identities": [
-    {
-      "name": "external_id",
-      "keys": [
-        "external_id"
-      ],
-      "base_filter": null,
-      "index_name": "bank_members_external_id_index"
-    }
-  ],
+  "identities": [],
   "schema": null,
   "check_constraints": [],
   "multitenancy": {
     "global": null,
-    "strategy": null,
-    "attribute": null
+    "attribute": null,
+    "strategy": null
   },
-  "base_filter": null,
+  "base_filter": "archived_at IS NULL",
   "custom_statements": [],
   "has_create_action": true
 }

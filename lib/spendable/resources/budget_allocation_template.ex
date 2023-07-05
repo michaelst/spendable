@@ -17,7 +17,7 @@ defmodule Spendable.BudgetAllocationTemplate do
   end
 
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false
 
@@ -25,7 +25,7 @@ defmodule Spendable.BudgetAllocationTemplate do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
 
     has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
   end

@@ -15,8 +15,12 @@ defmodule Spendable.BankMember do
     end
   end
 
+  identities do
+    identity :external_id, [:external_id]
+  end
+
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :external_id, :string, allow_nil?: false
     attribute :institution_id, :string
@@ -29,12 +33,8 @@ defmodule Spendable.BankMember do
     timestamps()
   end
 
-  identities do
-    identity :external_id, [:external_id]
-  end
-
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
     has_many :bank_accounts, Spendable.BankAccount, sort: :name
   end
 

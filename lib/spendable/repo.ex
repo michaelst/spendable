@@ -4,6 +4,6 @@ defmodule Spendable.Repo do
     adapter: Ecto.Adapters.Postgres
 
   def installed_extensions() do
-    ["citext"]
+    ["citext", "uuid-ossp"]
   end
 end

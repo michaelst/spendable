@@ -1,60 +1,20 @@
 {
   "attributes": [
     {
-      "default": "nil",
+      "default": "fragment(\"uuid_generate_v4()\")",
       "size": null,
-      "type": "bigint",
+      "type": "uuid",
       "source": "id",
       "references": null,
       "allow_nil?": false,
       "primary_key?": true,
-      "generated?": true
+      "generated?": false
     },
     {
       "default": "nil",
       "size": null,
       "type": "decimal",
       "source": "amount",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "date",
-      "source": "date",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "citext",
-      "source": "name",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "citext",
-      "source": "note",
-      "references": null,
-      "allow_nil?": true,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "boolean",
-      "source": "reviewed",
       "references": null,
       "allow_nil?": false,
       "primary_key?": false,
@@ -83,11 +43,12 @@
     {
       "default": "nil",
       "size": null,
-      "type": "bigint",
-      "source": "bank_transaction_id",
+      "type": "uuid",
+      "source": "budget_id",
       "references": {
-        "name": "transactions_bank_transaction_id_fkey",
-        "table": "bank_transactions",
+        "name": "budget_allocation_template_lines_budget_id_fkey",
+        "table": "budgets",
+        "on_delete": null,
         "primary_key?": true,
         "schema": "public",
         "multitenancy": {
@@ -96,23 +57,23 @@
           "strategy": null
         },
         "destination_attribute": "id",
-        "on_delete": null,
         "on_update": null,
         "destination_attribute_default": null,
         "destination_attribute_generated": null
       },
-      "allow_nil?": true,
+      "allow_nil?": false,
       "primary_key?": false,
       "generated?": false
     },
     {
       "default": "nil",
       "size": null,
-      "type": "bigint",
-      "source": "user_id",
+      "type": "uuid",
+      "source": "budget_allocation_template_id",
       "references": {
-        "name": "transactions_user_id_fkey",
-        "table": "users",
+        "name": "budget_allocation_template_lines_budget_allocation_template_id_fkey",
+        "table": "budget_allocation_templates",
+        "on_delete": "delete",
         "primary_key?": true,
         "schema": "public",
         "multitenancy": {
@@ -121,7 +82,31 @@
           "strategy": null
         },
         "destination_attribute": "id",
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "user_id",
+      "references": {
+        "name": "budget_allocation_template_lines_user_id_fkey",
+        "table": "users",
         "on_delete": null,
+        "primary_key?": true,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "destination_attribute": "id",
         "on_update": null,
         "destination_attribute_default": null,
         "destination_attribute_generated": null
@@ -131,8 +116,8 @@
       "generated?": false
     }
   ],
-  "table": "transactions",
-  "hash": "14766A54303AF12D9DA185DA285BE80DC01ACBCCA8E0B2FE4EC887B28002EE90",
+  "table": "budget_allocation_template_lines",
+  "hash": "2011282B3D05382012CDD85595081493F03BB9A4A8EF372FC0D1F04040B98995",
   "repo": "Elixir.Spendable.Repo",
   "custom_indexes": [
     {
@@ -140,11 +125,11 @@
       "name": null,
       "table": null,
       "include": null,
-      "where": null,
       "prefix": null,
       "fields": [
-        "bank_transaction_id"
+        "budget_id"
       ],
+      "where": null,
       "unique": false,
       "concurrently": false,
       "using": null
@@ -154,11 +139,25 @@
       "name": null,
       "table": null,
       "include": null,
+      "prefix": null,
+      "fields": [
+        "budget_allocation_template_id"
+      ],
       "where": null,
+      "unique": false,
+      "concurrently": false,
+      "using": null
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
       "prefix": null,
       "fields": [
         "user_id"
       ],
+      "where": null,
       "unique": false,
       "concurrently": false,
       "using": null

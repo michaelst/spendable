@@ -10,8 +10,12 @@ defmodule Spendable.User do
     table "users"
   end
 
+  identities do
+    identity :external_id, [:external_id]
+  end
+
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :bank_limit, :integer, default: 0, allow_nil?: false
     attribute :external_id, :string, allow_nil?: false
@@ -19,10 +23,6 @@ defmodule Spendable.User do
     attribute :provider, :string, allow_nil?: false
 
     timestamps()
-  end
-
-  identities do
-    identity :external_id, [:external_id]
   end
 
   calculations do

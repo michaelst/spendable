@@ -10,12 +10,15 @@ defmodule Spendable.BankAccount do
 
     custom_indexes do
       index(["bank_member_id"])
-      index(["user_id"])
     end
   end
 
+  identities do
+    identity :external_id, [:user_id, :external_id]
+  end
+
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :balance, :decimal, allow_nil?: false
     attribute :external_id, :string, allow_nil?: false
@@ -28,13 +31,9 @@ defmodule Spendable.BankAccount do
     timestamps()
   end
 
-  identities do
-    identity :external_id, [:user_id, :external_id]
-  end
-
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, private?: true, attribute_type: :integer
-    belongs_to :bank_member, Spendable.BankMember, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
+    belongs_to :bank_member, Spendable.BankMember, allow_nil?: false
   end
 
   actions do

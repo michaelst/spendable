@@ -15,7 +15,7 @@ defmodule Spendable.BudgetAllocation do
   end
 
   attributes do
-    integer_primary_key :id
+    uuid_primary_key :id
 
     attribute :amount, :decimal, allow_nil?: false
 
@@ -23,9 +23,9 @@ defmodule Spendable.BudgetAllocation do
   end
 
   relationships do
-    belongs_to :transaction, Spendable.Transaction, allow_nil?: false, attribute_type: :integer
-    belongs_to :budget, Spendable.Budget, allow_nil?: false, attribute_type: :integer
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :transaction, Spendable.Transaction, allow_nil?: false
+    belongs_to :budget, Spendable.Budget, allow_nil?: false
+    belongs_to :user, Spendable.User, allow_nil?: false
   end
 
   actions do

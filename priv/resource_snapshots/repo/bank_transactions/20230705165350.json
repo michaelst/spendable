@@ -1,0 +1,188 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": true,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "decimal",
+      "source": "amount",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "date",
+      "source": "date",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "name",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "external_id",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "boolean",
+      "source": "pending",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "inserted_at",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "user_id",
+      "references": {
+        "name": "bank_transactions_user_id_fkey",
+        "table": "users",
+        "primary_key?": true,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "destination_attribute": "id",
+        "on_delete": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "bank_account_id",
+      "references": {
+        "name": "bank_transactions_bank_account_id_fkey",
+        "table": "bank_accounts",
+        "primary_key?": true,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "destination_attribute": "id",
+        "on_delete": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    }
+  ],
+  "table": "bank_transactions",
+  "hash": "67B71D6B629BA9FF15854E84A17A057E45D34DD81890FE2A5BF588841CDD2496",
+  "repo": "Elixir.Spendable.Repo",
+  "custom_indexes": [
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "fields": [
+        "bank_account_id"
+      ],
+      "where": null,
+      "prefix": null,
+      "unique": false,
+      "concurrently": false,
+      "using": null
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "fields": [
+        "user_id"
+      ],
+      "where": null,
+      "prefix": null,
+      "unique": false,
+      "concurrently": false,
+      "using": null
+    }
+  ],
+  "identities": [
+    {
+      "name": "external_id",
+      "keys": [
+        "external_id",
+        "bank_account_id"
+      ],
+      "base_filter": null,
+      "index_name": "bank_transactions_external_id_index"
+    }
+  ],
+  "schema": null,
+  "check_constraints": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}
