@@ -100,8 +100,6 @@ defmodule Spendable.Repo.Migrations.RemoveOldUserId do
                      name: "bank_accounts_external_id_index"
                    )
 
-    drop constraint("users", "users_pkey")
-
     alter table(:users) do
       modify :uuid, :uuid, null: false, primary_key: true
 
