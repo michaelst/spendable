@@ -108,7 +108,7 @@
         #
         ## Refactoring Opportunities
         #
-        {Credo.Check.Refactor.ABCSize, []},
+        {Credo.Check.Refactor.ABCSize, false},
         {Credo.Check.Refactor.AppendSingleItem, []},
         {Credo.Check.Refactor.Apply, false},
         {Credo.Check.Refactor.CondStatements, []},

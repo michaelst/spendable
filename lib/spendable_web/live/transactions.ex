@@ -249,7 +249,7 @@ defmodule SpendableWeb.Live.Transactions do
      |> assign(:form, form)}
   end
 
-  def handle_event("next-page", _, socket) do
+  def handle_event("next-page", _params, socket) do
     {:noreply, paginate_posts(socket, socket.assigns.page + 1)}
   end
 
@@ -257,7 +257,7 @@ defmodule SpendableWeb.Live.Transactions do
     {:noreply, paginate_posts(socket, 1)}
   end
 
-  def handle_event("prev-page", _, socket) do
+  def handle_event("prev-page", _params, socket) do
     if socket.assigns.page > 1 do
       {:noreply, paginate_posts(socket, socket.assigns.page - 1)}
     else

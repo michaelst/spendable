@@ -14,17 +14,37 @@ defmodule SpendableWeb.Live.Templates do
   def render(assigns) do
     ~H"""
     <div>
-      <main id="templates" phx-click={hide_details()}>
+      <main id="templates" phx-click={JS.push("close") |> hide_details()}>
         <header class="flex items-center justify-between border-b border-white/5 px-8 py-6">
-          <h1 class="text-base font-semibold leading-7 text-white">Transaction Templates</h1>
-          <button
-            :if={not Enum.empty?(@selected_templates)}
-            type="button"
-            phx-click="archive"
-            class="text-sm font-semibold leading-6 text-blue-400"
-          >
-            Archive (<%= length(@selected_templates) %>)
-          </button>
+          <h1 class="text-base font-semibold leading-7 text-white">Transaction templates</h1>
+          <div class="flex gap-x-6">
+            <button
+              :if={is_nil(@form)}
+              id="new-template"
+              type="button"
+              phx-click={JS.push("new") |> show_details()}
+              class="text-sm font-semibold leading-6 text-blue-400"
+            >
+              New
+            </button>
+            <button
+              :if={not is_nil(@form)}
+              type="button"
+              phx-click={JS.push("close") |> hide_details()}
+              class="text-sm font-semibold leading-6 text-blue-400"
+            >
+              Close
+            </button>
+            <button
+              :if={not Enum.empty?(@selected_templates)}
+              id="archive"
+              type="button"
+              phx-click="archive"
+              class="text-sm font-semibold leading-6 text-blue-400"
+            >
+              Archive (<%= length(@selected_templates) %>)
+            </button>
+          </div>
         </header>
 
         <ul role="list" class="divide-y divide-white/5">
@@ -73,7 +93,7 @@ defmodule SpendableWeb.Live.Templates do
       >
         <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
-            <h2 class="text-base font-semibold leading-7">Edit transaction</h2>
+            <h2 class="text-base font-semibold leading-7">Edit template</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
               Save
             </button>
@@ -128,7 +148,7 @@ defmodule SpendableWeb.Live.Templates do
   def handle_event("submit", %{"form" => params}, socket) do
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
       {:ok, _template} ->
-        {:noreply, socket |> assign(:form, nil)}
+        {:noreply, socket |> assign(:form, nil) |> fetch_data()}
 
       {:error, form} ->
         {:noreply, assign(socket, form: form)}
@@ -166,6 +186,24 @@ defmodule SpendableWeb.Live.Templates do
      socket
      |> assign(:search, params["search"])
      |> fetch_data()}
+  end
+
+  def handle_event("close", _params, socket) do
+    {:noreply, assign(socket, :form, nil)}
+  end
+
+  def handle_event("new", _params, socket) do
+    form =
+      BudgetAllocationTemplate
+      |> AshPhoenix.Form.for_create(:create,
+        api: Spendable.Api,
+        actor: socket.assigns.current_user,
+        forms: [auto?: true]
+      )
+      |> to_form()
+      |> AshPhoenix.Form.add_form([:budget_allocation_template_lines])
+
+    {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event("select_template", params, socket) do
@@ -208,9 +246,9 @@ defmodule SpendableWeb.Live.Templates do
 
   defp fetch_data(socket) do
     templates =
-      BudgetAllocationTemplate.list(socket.assigns.current_user.id,
-        search: socket.assigns[:search]
-      )
+      BudgetAllocationTemplate
+      |> Ash.Query.for_read(:list, search: socket.assigns[:search])
+      |> Spendable.Api.read!(actor: socket.assigns.current_user)
 
     budget_form_options = BudgetAllocationTemplate.budget_form_options(socket.assigns.current_user.id)
 
