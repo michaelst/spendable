@@ -7,6 +7,8 @@ defmodule Spendable.BudgetAllocationTemplate do
   alias Spendable.Budget
   alias Spendable.BudgetAllocationTemplate.Storage
 
+  require Ash.Query
+
   postgres do
     repo(Spendable.Repo)
     table "budget_allocation_templates"
@@ -32,6 +34,22 @@ defmodule Spendable.BudgetAllocationTemplate do
 
   actions do
     defaults [:read, :destroy]
+
+    read :list do
+      argument :search, :string
+
+      prepare fn query, _context ->
+        search = query.arguments[:search]
+
+        if is_bitstring(search) and byte_size(search) > 0 do
+          Ash.Query.filter(query, contains(name, ^search))
+        else
+          query
+        end
+      end
+
+      prepare build(sort: [:name])
+    end
 
     create :create do
       primary? true
@@ -65,10 +83,6 @@ defmodule Spendable.BudgetAllocationTemplate do
 
   def budget_form_options(user_id) do
     Budget.form_options(user_id)
-  end
-
-  def list(user_id, opts) do
-    Storage.list(user_id, opts)
   end
 
   def form_options(user_id) do
