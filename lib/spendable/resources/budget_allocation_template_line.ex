@@ -8,9 +8,9 @@ defmodule Spendable.BudgetAllocationTemplateLine do
     table "budget_allocation_template_lines"
 
     custom_indexes do
-      # index ["budget_id"]
-      # index ["budget_allocation_template_id"]
-      # index ["user_id"]
+      index ["budget_id"]
+      index ["budget_allocation_template_id"]
+      index ["user_id"]
     end
 
     references do
@@ -29,9 +29,7 @@ defmodule Spendable.BudgetAllocationTemplateLine do
   relationships do
     belongs_to :budget, Spendable.Budget, allow_nil?: false
 
-    belongs_to :budget_allocation_template, Spendable.BudgetAllocationTemplate,
-      allow_nil?: false,
-      attribute_type: :integer
+    belongs_to :budget_allocation_template, Spendable.BudgetAllocationTemplate, allow_nil?: false
 
     belongs_to :user, Spendable.User, allow_nil?: false
   end

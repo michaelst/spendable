@@ -12,23 +12,12 @@ defmodule Spendable.BudgetAllocationTemplate do
     table "budget_allocation_templates"
 
     custom_indexes do
-      # index(["user_id"])
+      index(["user_id"])
     end
-  end
-
-  identities do
-    identity :uuid, [:uuid]
   end
 
   attributes do
-    integer_primary_key :id
-
-    attribute :uuid, :uuid do
-      writable? false
-      default &Ash.UUID.generate/0
-      primary_key? false
-      generated? true
-    end
+    uuid_primary_key :id
 
     attribute :name, :string, allow_nil?: false
 
