@@ -1,0 +1,119 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "primary_key?": true,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "decimal",
+      "source": "amount",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "user_uuid",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": true
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "inserted_at",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "budget_id",
+      "references": {
+        "name": "budget_allocation_template_lines_budget_id_fkey",
+        "table": "budgets",
+        "primary_key?": true,
+        "on_delete": null,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "strategy": null,
+          "attribute": null
+        },
+        "destination_attribute": "id",
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "budget_allocation_template_id",
+      "references": {
+        "name": "budget_allocation_template_lines_budget_allocation_template_id_fkey",
+        "table": "budget_allocation_templates",
+        "primary_key?": true,
+        "on_delete": "delete",
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "strategy": null,
+          "attribute": null
+        },
+        "destination_attribute": "id",
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    }
+  ],
+  "table": "budget_allocation_template_lines",
+  "hash": "71507EFCD6A9F1C8C190534CE88BBB3B83DA97C3C5193014BE295640354F329A",
+  "repo": "Elixir.Spendable.Repo",
+  "custom_indexes": [],
+  "identities": [],
+  "schema": null,
+  "check_constraints": [],
+  "multitenancy": {
+    "global": null,
+    "strategy": null,
+    "attribute": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}

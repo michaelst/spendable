@@ -11,19 +11,11 @@ defmodule Spendable.User do
   end
 
   identities do
-    identity :uuid, [:uuid]
     identity :external_id, [:external_id]
   end
 
   attributes do
-    integer_primary_key :id
-
-    attribute :uuid, :uuid do
-      writable? false
-      default &Ash.UUID.generate/0
-      primary_key? false
-      generated? true
-    end
+    uuid_primary_key :id
 
     attribute :bank_limit, :integer, default: 0, allow_nil?: false
     attribute :external_id, :string, allow_nil?: false

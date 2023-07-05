@@ -1,0 +1,98 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "uuid",
+      "references": null,
+      "primary_key?": true,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "0",
+      "size": null,
+      "type": "bigint",
+      "source": "bank_limit",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "external_id",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "image",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "provider",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "inserted_at",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
+      "references": null,
+      "primary_key?": false,
+      "generated?": false,
+      "allow_nil?": false
+    }
+  ],
+  "table": "users",
+  "hash": "5C26FDFE5683A8569FC0BDEE018A98B0A56C928A5B27C323703C950487984E70",
+  "repo": "Elixir.Spendable.Repo",
+  "custom_indexes": [],
+  "identities": [
+    {
+      "name": "external_id",
+      "keys": [
+        "external_id"
+      ],
+      "base_filter": null,
+      "index_name": "users_external_id_index"
+    }
+  ],
+  "schema": null,
+  "check_constraints": [],
+  "multitenancy": {
+    "global": null,
+    "strategy": null,
+    "attribute": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}

@@ -8,9 +8,9 @@ defmodule Spendable.BudgetAllocation do
     table "budget_allocations"
 
     custom_indexes do
-      index(["budget_id"])
-      index(["transaction_id"])
-      index(["user_id"])
+      # index(["budget_id"])
+      # index(["transaction_id"])
+      # index(["user_id"])
     end
   end
 
@@ -38,7 +38,7 @@ defmodule Spendable.BudgetAllocation do
 
     belongs_to :budget, Spendable.Budget, allow_nil?: false
 
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
   end
 
   actions do

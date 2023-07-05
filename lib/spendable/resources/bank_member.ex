@@ -11,7 +11,7 @@ defmodule Spendable.BankMember do
     table "bank_members"
 
     custom_indexes do
-      index(["user_id"])
+      # index(["user_id"])
     end
   end
 
@@ -42,7 +42,7 @@ defmodule Spendable.BankMember do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
     has_many :bank_accounts, Spendable.BankAccount, sort: :name
   end
 

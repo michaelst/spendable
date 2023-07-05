@@ -7,14 +7,14 @@ defmodule Spendable.BankTransaction do
     table "bank_transactions"
 
     custom_indexes do
-      index(["bank_account_id"])
-      index(["user_id"])
+      # index(["bank_account_id"])
+      # index(["user_id"])
     end
   end
 
   identities do
     identity :uuid, [:uuid]
-    identity :external_id, [:external_id, :bank_account_id]
+    # identity :external_id, [:external_id, :bank_account_id]
   end
 
   attributes do
@@ -37,7 +37,7 @@ defmodule Spendable.BankTransaction do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
     belongs_to :bank_account, Spendable.BankAccount, allow_nil?: false, attribute_type: :integer
 
     has_one :transaction, Spendable.Transaction

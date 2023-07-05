@@ -11,7 +11,7 @@ defmodule Spendable.Budget do
     table "budgets"
 
     custom_indexes do
-      index(["user_id"])
+      # index(["user_id"])
     end
   end
 
@@ -27,7 +27,7 @@ defmodule Spendable.Budget do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer
+    belongs_to :user, Spendable.User, allow_nil?: false
 
     has_many :budget_allocations, Spendable.BudgetAllocation
     has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine

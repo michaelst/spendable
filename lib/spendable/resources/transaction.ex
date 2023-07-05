@@ -12,8 +12,8 @@ defmodule Spendable.Transaction do
     table "transactions"
 
     custom_indexes do
-      index(["bank_transaction_id"])
-      index(["user_id"])
+      # index(["bank_transaction_id"])
+      # index(["user_id"])
     end
   end
 
@@ -42,7 +42,7 @@ defmodule Spendable.Transaction do
 
   relationships do
     belongs_to :bank_transaction, Spendable.BankTransaction, attribute_type: :integer
-    belongs_to :user, Spendable.User, allow_nil?: false, attribute_type: :integer, destination_attribute: :id
+    belongs_to :user, Spendable.User, allow_nil?: false
 
     has_many :budget_allocations, Spendable.BudgetAllocation
   end

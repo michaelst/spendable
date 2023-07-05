@@ -15,10 +15,12 @@ defmodule Spendable.Repo.Migrations.BudgetUuidFinal do
     rename table(:budget_allocation_template_lines), :budget_uuid_id, to: :budget_id
 
     drop_if_exists constraint(:budget_allocations, "budget_allocations_budget_uuid_id_fkey")
+
     drop_if_exists constraint(
-      :budget_allocation_template_lines,
-      "budget_allocation_template_lines_budget_uuid_id_fkey"
-    )
+                     :budget_allocation_template_lines,
+                     "budget_allocation_template_lines_budget_uuid_id_fkey"
+                   )
+
     drop_if_exists unique_index(:budgets, [:uuid], name: "budgets_uuid_index")
 
     alter table(:budget_allocations) do
