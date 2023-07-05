@@ -8,7 +8,7 @@ defmodule Spendable.Budget.Storage do
     Budget
     |> Ash.Query.filter(user_id == ^user_id)
     |> Ash.Query.filter(is_nil(archived_at))
-    |> maybe_search_budgets(opts[:search])
+    |> maybe_search(opts[:search])
     |> Ash.Query.load([
       :balance,
       spent: %{month: opts[:selected_month] || Date.utc_today()}
@@ -39,9 +39,9 @@ defmodule Spendable.Budget.Storage do
     |> Enum.map(&{&1.name, &1.id})
   end
 
-  defp maybe_search_budgets(query, search) when byte_size(search) > 0 do
+  defp maybe_search(query, search) when byte_size(search) > 0 do
     Ash.Query.filter(query, contains(name, ^search))
   end
 
-  defp maybe_search_budgets(query, _search), do: query
+  defp maybe_search(query, _search), do: query
 end

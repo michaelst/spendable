@@ -41,26 +41,25 @@ defmodule Spendable.BudgetAllocationTemplateLine do
 
     create :create do
       primary? true
+
       change relate_actor(:user)
-      argument :budget, :map
-      argument :budget_allocation_template, :map
-      change manage_relationship(:budget, type: :append_and_remove)
-      change manage_relationship(:budget_allocation_template, type: :append_and_remove)
+
+      argument :budget_id, :string
+      change manage_relationship(:budget_id, :budget, type: :append_and_remove)
     end
 
     update :update do
       primary? true
-      argument :budget, :map
-      argument :budget_allocation_template, :map
-      change manage_relationship(:budget, type: :append_and_remove)
-      change manage_relationship(:budget_allocation_template, type: :append_and_remove)
+
+      argument :budget_id, :string
+      change manage_relationship(:budget_id, :budget, type: :append_and_remove)
     end
   end
 
   policies do
     policy always() do
       authorize_if action(:create)
-      authorize_if expr(user_id == actor(:id))
+      authorize_if expr(user_id == ^actor(:id))
     end
   end
 end

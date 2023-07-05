@@ -43,7 +43,7 @@ defmodule Spendable.BankAccount do
 
   policies do
     policy always() do
-      authorize_if expr(user_id == actor(:id))
+      authorize_if expr(user_id == ^actor(:id))
     end
   end
 end

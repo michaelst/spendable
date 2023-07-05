@@ -34,6 +34,7 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_archival, "~> 0.1"},
       {:ash_phoenix, "~> 1.0"},
       {:ash_postgres, "~> 1.0"},
       {:ash, "~> 2.0"},

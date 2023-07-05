@@ -90,7 +90,7 @@
     <!-- Sidebar component, swap this element with another sidebar if you like -->
     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 ring-1 ring-white/5">
       <div class="flex h-16 shrink-0 items-center">
-        <img class="h-7 w-auto mt-1" src={~p"/images/full-logo-white.svg"} alt="Your Company" />
+        <img class="h-7 w-auto mt-1" src={~p"/images/full-logo-white.svg"} alt="Spendable" />
       </div>
       <nav class="flex flex-1 flex-col">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -115,6 +115,16 @@
                     else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
                 >
                   <.icon name="hero-credit-card" class="h-6 w-6 shrink-0" /> Transactions
+                </.link>
+              </li>
+              <li>
+                <.link
+                  navigate={~p"/templates"}
+                  class={"#{if @active_tab == :banks, 
+                    do: "bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", 
+                    else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
+                >
+                  <.icon name="hero-document-duplicate" class="h-6 w-6 shrink-0" /> Transaction Templates
                 </.link>
               </li>
               <li>

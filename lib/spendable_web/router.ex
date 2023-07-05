@@ -47,6 +47,7 @@ defmodule SpendableWeb.Router do
 
       live "/budgets", Budgets
       live "/transactions", Transactions
+      live "/templates", Templates
       live "/banks", Banks
     end
   end
