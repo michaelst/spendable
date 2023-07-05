@@ -23,7 +23,7 @@ defmodule Spendable.BudgetAllocation do
   end
 
   relationships do
-    belongs_to :transaction, Spendable.Transaction, allow_nil?: false, attribute_type: :integer
+    belongs_to :transaction, Spendable.Transaction, allow_nil?: false
     belongs_to :budget, Spendable.Budget, allow_nil?: false
     belongs_to :user, Spendable.User, allow_nil?: false
   end

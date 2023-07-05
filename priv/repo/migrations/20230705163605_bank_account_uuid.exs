@@ -39,17 +39,6 @@ defmodule Spendable.Repo.Migrations.BankAccountUuid do
     create unique_index(:bank_accounts, [:user_id, :external_id],
              name: "bank_accounts_external_id_index"
            )
-
-    alter table(:bank_transactions) do
-      modify :bank_account_id,
-             references(:bank_accounts,
-               column: :id,
-               prefix: "public",
-               name: "bank_transactions_bank_account_id_fkey",
-               type: :uuid
-             ),
-             null: false
-    end
   end
 
   def down do

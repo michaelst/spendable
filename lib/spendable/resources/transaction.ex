@@ -12,24 +12,13 @@ defmodule Spendable.Transaction do
     table "transactions"
 
     custom_indexes do
-      # index(["bank_transaction_id"])
-      # index(["user_id"])
+      index(["bank_transaction_id"])
+      index(["user_id"])
     end
-  end
-
-  identities do
-    identity :uuid, [:uuid]
   end
 
   attributes do
-    integer_primary_key :id
-
-    attribute :uuid, :uuid do
-      writable? false
-      default &Ash.UUID.generate/0
-      primary_key? false
-      generated? true
-    end
+    uuid_primary_key :id
 
     attribute :amount, :decimal, allow_nil?: false
     attribute :date, :date, allow_nil?: false
