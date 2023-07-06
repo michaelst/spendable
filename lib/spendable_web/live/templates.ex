@@ -28,14 +28,6 @@ defmodule SpendableWeb.Live.Templates do
               New
             </button>
             <button
-              :if={not is_nil(@form)}
-              type="button"
-              phx-click={JS.push("close") |> hide_details()}
-              class="text-sm font-semibold leading-6 text-blue-400"
-            >
-              Close
-            </button>
-            <button
               :if={not Enum.empty?(@selected_templates)}
               id="archive"
               type="button"
@@ -43,6 +35,14 @@ defmodule SpendableWeb.Live.Templates do
               class="text-sm font-semibold leading-6 text-blue-400"
             >
               Archive (<%= length(@selected_templates) %>)
+            </button>
+            <button
+              :if={not is_nil(@form)}
+              type="button"
+              phx-click={JS.push("close") |> hide_details()}
+              class="text-sm font-semibold leading-6 text-blue-400"
+            >
+              Close
             </button>
           </div>
         </header>
