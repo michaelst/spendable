@@ -231,9 +231,7 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   def handle_event("select_transaction", params, socket) do
-    transaction =
-      Enum.find(socket.assigns.transactions, &(to_string(&1.id) == params["id"]))
-      |> Spendable.Api.load!(:budget_allocations)
+    transaction = Spendable.Api.get!(Transaction, params["id"], load: :budget_allocations)
 
     form =
       transaction
