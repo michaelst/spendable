@@ -181,7 +181,7 @@ defmodule SpendableWeb.Live.Transactions do
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
       {:ok, _transaction} ->
-        {:noreply, socket |> assign(:form, nil)}
+        {:noreply, socket |> assign(:form, nil) |> paginate_posts(socket.assigns.page)}
 
       {:error, form} ->
         {:noreply, assign(socket, form: form)}
