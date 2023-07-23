@@ -180,17 +180,8 @@ defmodule SpendableWeb.Live.Transactions do
       end
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
-      {:ok, updated_transaction} ->
-        transactions =
-          Enum.map(socket.assigns.transactions, fn transaction ->
-            if updated_transaction.id == transaction.id do
-              updated_transaction
-            else
-              transaction
-            end
-          end)
-
-        {:noreply, socket |> assign(transactions: transactions) |> assign(:form, nil)}
+      {:ok, _transaction} ->
+        {:noreply, socket |> assign(:form, nil)}
 
       {:error, form} ->
         {:noreply, assign(socket, form: form)}
