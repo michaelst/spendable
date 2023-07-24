@@ -16,7 +16,7 @@ defmodule SpendableWeb.Live.Transactions do
     ~H"""
     <div>
       <main id="transactions" phx-click={hide_details()}>
-        <header class="flex items-center justify-between border-b border-white/5 px-8 py-6">
+        <header class="flex items-center justify-between border-b border-white/5 px-8 py-6 sticky top-16 bg-gray-900 z-10">
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
           <div class="flex gap-x-6">
             <button
