@@ -12,6 +12,10 @@ defmodule Spendable.BudgetAllocation do
       index(["transaction_id"])
       index(["user_id"])
     end
+
+    references do
+      reference :transaction, on_delete: :delete
+    end
   end
 
   attributes do

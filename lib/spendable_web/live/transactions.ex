@@ -16,8 +16,27 @@ defmodule SpendableWeb.Live.Transactions do
     ~H"""
     <div>
       <main id="transactions" phx-click={hide_details()}>
-        <header class="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+        <header class="flex items-center justify-between border-b border-white/5 px-8 py-6">
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
+          <div class="flex gap-x-6">
+            <button
+              :if={not Enum.empty?(@selected_transactions)}
+              id="delete"
+              type="button"
+              phx-click="delete"
+              class="text-sm font-semibold leading-6 text-blue-400"
+            >
+              Delete (<%= length(@selected_transactions) %>)
+            </button>
+            <button
+              :if={not is_nil(@form)}
+              type="button"
+              phx-click={JS.push("close") |> hide_details()}
+              class="text-sm font-semibold leading-6 text-blue-400"
+            >
+              Close
+            </button>
+          </div>
         </header>
 
         <ul
@@ -37,16 +56,27 @@ defmodule SpendableWeb.Live.Transactions do
             id={id}
             phx-click={JS.push("select_transaction") |> show_details()}
             phx-value-id={transaction.id}
-            class="relative flex flex-row items-center justify-between space-x-4 px-4 py-6 sm:px-6 lg:px-8"
+            class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-8"
           >
-            <div class="min-w-0 flex-auto">
-              <div class="flex items-center gap-x-3">
-                <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                  <span class="truncate"><%= transaction.name %></span>
-                </h2>
-              </div>
-              <div class="mt-2 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                <p class="truncate"><%= Timex.format!(transaction.date, "{Mshort} {D}, {YYYY}") %></p>
+            <div class="min-w-0 flex-auto ml-1">
+              <div class="flex items-center">
+                <div class="pl-1 pr-2">
+                  <input
+                    type="checkbox"
+                    value={transaction.id in @selected_transactions}
+                    phx-click="toggle_select_transaction"
+                    phx-value-id={transaction.id}
+                    class="rounded border-white/10 bg-white/5 text-white/5 opacity-0 hover:opacity-100 checked:opacity-100"
+                  />
+                </div>
+                <div>
+                  <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
+                    <span class="truncate"><%= transaction.name %></span>
+                  </h2>
+                  <div class="mt-2 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+                    <p class="truncate"><%= Timex.format!(transaction.date, "{Mshort} {D}, {YYYY}") %></p>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="flex items-center">
@@ -180,8 +210,8 @@ defmodule SpendableWeb.Live.Transactions do
       end
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
-      {:ok, _transaction} ->
-        {:noreply, socket |> assign(:form, nil) |> paginate_posts(socket.assigns.page)}
+      {:ok, transaction} ->
+        {:noreply, socket |> assign(:form, nil) |> stream_insert(:transactions, transaction)}
 
       {:error, form} ->
         {:noreply, assign(socket, form: form)}
@@ -212,6 +242,26 @@ defmodule SpendableWeb.Live.Transactions do
   def handle_event("remove_allocation", %{"path" => path}, socket) do
     form = AshPhoenix.Form.remove_form(socket.assigns.form, path)
     {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("toggle_select_transaction", %{"id" => id, "value" => "on"}, socket) do
+    {:noreply, assign(socket, selected_transactions: Enum.uniq([id | socket.assigns.selected_transactions]))}
+  end
+
+  def handle_event("toggle_select_transaction", %{"id" => id}, socket) do
+    {:noreply, assign(socket, selected_transactions: Enum.filter(socket.assigns.selected_transactions, &(&1 != id)))}
+  end
+
+  def handle_event("delete", _params, socket) do
+    socket =
+      socket.assigns.selected_transactions
+      |> Enum.map(&Spendable.Api.get!(Transaction, &1))
+      |> Enum.reduce(socket, fn transaction, acc ->
+        Spendable.Api.destroy!(transaction)
+        stream_delete(acc, :transactions, transaction)
+      end)
+
+    {:noreply, fetch_data(socket)}
   end
 
   def handle_event("search", params, socket) do
@@ -254,6 +304,10 @@ defmodule SpendableWeb.Live.Transactions do
     end
   end
 
+  def handle_event("close", _params, socket) do
+    {:noreply, assign(socket, :form, nil)}
+  end
+
   def show_details(js \\ %JS{}) do
     js
     |> JS.show(to: "#transaction-details", transition: "fade-in")
@@ -281,6 +335,7 @@ defmodule SpendableWeb.Live.Transactions do
     |> assign(
       budget_form_options: budget_form_options,
       template_form_options: template_form_options,
+      selected_transactions: [],
       form: nil
     )
     |> paginate_posts(1)
