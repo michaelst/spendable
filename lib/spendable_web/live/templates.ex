@@ -123,7 +123,7 @@ defmodule SpendableWeb.Live.Templates do
                     phx-click="remove_allocation"
                     phx-value-path={allocation_form.name}
                   >
-                    <.icon name="hero-x-circle" />
+                    <.icon name="hero-x-circle" class="text-red-400" />
                   </button>
                 </div>
               </.inputs_for>
@@ -163,7 +163,7 @@ defmodule SpendableWeb.Live.Templates do
   def handle_event("archive", _params, socket) do
     socket.assigns.templates
     |> Enum.filter(&(to_string(&1.id) in socket.assigns.selected_templates))
-    |> Enum.each(&Spendable.Api.destroy!/1)
+    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_user))
 
     {:noreply, fetch_data(socket)}
   end

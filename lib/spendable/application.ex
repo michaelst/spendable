@@ -7,17 +7,7 @@ defmodule Spendable.Application do
 
   @impl true
   def start(_type, _args) do
-    SpandexPhoenix.Telemetry.install()
-
-    :ok =
-      :telemetry.attach(
-        "spandex-query-tracer",
-        [:spendable, :repo, :query],
-        &SpandexEcto.TelemetryAdapter.handle_event/4,
-        nil
-      )
-
-    children = [
+    all_env_children = [
       {Finch, name: Spendable.Finch},
       SpendableWeb.Telemetry,
       Spendable.Repo,
@@ -26,10 +16,16 @@ defmodule Spendable.Application do
       Spendable.Broadway.SyncMember
     ]
 
+    prod_children = [
+      {Goth, name: Spendable.Goth}
+    ]
+
     children =
-      if Application.get_env(:spendable, :env) == :prod,
-        do: [SpandexOTLP.Sender, {Goth, name: Spendable.Goth}] ++ children,
-        else: children
+      if Application.get_env(:spendable, :env) == :prod do
+        all_env_children ++ prod_children
+      else
+        all_env_children
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

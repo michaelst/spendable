@@ -39,7 +39,7 @@ defmodule Spendable.Utils do
 
     formatted_dollars =
       string
-      |> String.slice(0..-4)
+      |> String.slice(0..-4//1)
       |> String.reverse()
       |> String.codepoints()
       |> Enum.chunk_every(3)

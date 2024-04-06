@@ -35,7 +35,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.2.7",
+  version: "3.4.3",
   default: [
     args: ~w(
       --config=tailwind.config.js
@@ -59,24 +59,6 @@ config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
 config :oauth2, adapter: {Tesla.Adapter.Finch, name: Spendable.Finch}
 
 config :goth, project_id: "cloud-57"
-
-config :spendable, Spendable.Tracer,
-  service: :spendable,
-  adapter: SpandexOTLP.Adapter,
-  disabled?: config_env() != :prod,
-  env: "PROD"
-
-config :spandex_phoenix, tracer: Spendable.Tracer
-
-config :spandex_ecto, SpandexEcto.EctoLogger, tracer: Spendable.Tracer
-
-config :spandex_otlp, SpandexOTLP,
-  otp_app: :spendable,
-  endpoint: "tempo.grafana.svc.cluster.local:4317",
-  headers: %{},
-  resources: %{
-    "service.name" => "spendable"
-  }
 
 config :ueberauth, Ueberauth,
   providers: [

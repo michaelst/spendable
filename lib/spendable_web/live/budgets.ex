@@ -232,7 +232,7 @@ defmodule SpendableWeb.Live.Budgets do
   def handle_event("archive", _params, socket) do
     socket.assigns.budgets
     |> Enum.filter(&(to_string(&1.id) in socket.assigns.selected_budgets))
-    |> Enum.each(&Spendable.Api.destroy!/1)
+    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_user))
 
     {:noreply, fetch_data(socket)}
   end

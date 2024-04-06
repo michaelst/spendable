@@ -33,11 +33,9 @@ config :spendable, Plaid,
 
 config :tesla, adapter: TeslaMock
 
-config :goth,
-  disabled: true
-
 config :mox,
   pubsub: PubSubMock
 
 config :ash, disable_async?: true
 config :ash, :missed_notifications, :ignore
+config :ash, :policies, show_policy_breakdowns?: true

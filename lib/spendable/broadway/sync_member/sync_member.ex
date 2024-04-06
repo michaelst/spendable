@@ -18,7 +18,7 @@ defmodule Spendable.Broadway.SyncMember do
   @producer if Application.compile_env(:spendable, :env) == :prod,
               do:
                 {BroadwayCloudPubSub.Producer,
-                 subscription: "projects/cloud-57/subscriptions/spendable.sync-member-request"},
+                 subscription: "projects/cloud-57/subscriptions/spendable.sync-member-request", goth: Spendable.Goth},
               else: {Broadway.DummyProducer, []}
 
   def start_link(opts) do

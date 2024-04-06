@@ -1,15 +1,14 @@
-FROM elixir:1.15-slim AS build
+FROM hexpm/elixir:1.16.2-erlang-26.2.2-ubuntu-focal-20240123 AS build
 
-ENV MIX_ENV=prod \
-    LANG=C.UTF-8
-
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential software-properties-common git \
-  && rm -rf /var/lib/apt/lists/* \
-  && mix local.hex --force \
-  && mix local.rebar --force
+RUN apt-get update -y && apt-get install -y build-essential git \
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 WORKDIR /app
+
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+ENV MIX_ENV="prod"
 
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs config/runtime.exs ./config/
@@ -23,7 +22,7 @@ COPY protobuf protobuf
 RUN --mount=type=cache,target=/app/deps \
     --mount=type=cache,target=/app/_build/prod \
       rm -rf /app/_build/prod/rel && \
-      mix do deps.get --only prod, assets.deploy, release && \
+      mix do deps.clean tailwind, deps.get --only prod, clean, assets.deploy, release && \
       # copy out of the cache so it is available
       cp -r /app/_build/prod/rel/spendable ./release
 
@@ -42,5 +41,5 @@ USER app
 WORKDIR /home/app
 
 COPY --from=build --chown=app:app /app/release ./
-COPY --chown=app:app .devops/entrypoint.sh .
-CMD ["./entrypoint.sh"]
+
+CMD ["./bin/spendable", "start"]
