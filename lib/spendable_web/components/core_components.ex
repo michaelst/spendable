@@ -26,7 +26,7 @@ defmodule SpendableWeb.CoreComponents do
   def dropdown(assigns) do
     ~H"""
     <div class="relative inline-block text-left">
-      <div phx-click={toggle("##{@id}-content")}>
+      <div phx-click={toggle("##{@id}-content")} phx-click-away={hide("##{@id}-content")}>
         <%= render_slot(@trigger) %>
       </div>
       <div id={"#{@id}-content"} class="hidden">
@@ -353,7 +353,7 @@ defmodule SpendableWeb.CoreComponents do
     |> input()
   end
 
-  def input(%{type: "switch", value: value} = assigns) do
+  def input(%{type: "checkbox", value: value} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", value) end)
 
@@ -361,7 +361,15 @@ defmodule SpendableWeb.CoreComponents do
     <div phx-feedback-for={@name}>
       <label class="flex items-center gap-4 text-sm leading-6 text-white">
         <input type="hidden" name={@name} value="false" />
-        <input type="checkbox" id={@id} name={@name} value="true" checked={@checked} class="sr-only peer" {@rest} />
+        <input
+          type="checkbox"
+          id={@id}
+          name={@name}
+          value="true"
+          checked={@checked}
+          class="rounded border-white/10 bg-white/5 text-white/5"
+          {@rest}
+        />
         <%= @label %>
       </label>
       <.error :for={msg <- @errors}><%= msg %></.error>
