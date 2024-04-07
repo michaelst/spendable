@@ -24,6 +24,7 @@ defmodule Spendable.Budget.Calculations.Spent do
         where: ba.budget_id in ^budget_ids,
         where: t.date >= ^start_date,
         where: t.date <= ^end_date,
+        where: not t.excluded,
         where: ba.amount < 0,
         group_by: :budget_id
 

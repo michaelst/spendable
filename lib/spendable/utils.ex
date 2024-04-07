@@ -13,7 +13,7 @@ defmodule Spendable.Utils do
             :create,
             %{
               name: "Spendable",
-              track_spending_only: true
+              type: :tracking
             },
             actor: user
           )
@@ -25,6 +25,8 @@ defmodule Spendable.Utils do
 
     budget.id
   end
+
+  def format_currency(nil), do: "$0.00"
 
   def format_currency(decimal) do
     negative? = Decimal.negative?(decimal)

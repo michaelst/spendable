@@ -8,6 +8,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
   test "LIVE /budgets", %{conn: conn} do
     user = Factory.user()
+    spendable_id = Spendable.Utils.get_spendable_id(user)
 
     conn =
       conn
@@ -26,7 +27,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     form = %{
       "name" => "Groceries",
-      "track_spending_only" => true
+      "type" => "tracking"
     }
 
     view
@@ -39,10 +40,11 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     assert {:ok,
             [
+              %{id: ^spendable_id},
               %{
                 id: id,
                 name: name,
-                track_spending_only: true
+                type: :tracking
               }
             ]} = Spendable.Api.read(Budget)
 

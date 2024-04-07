@@ -4,10 +4,11 @@ defmodule Spendable.Budget do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshArchival.Resource]
 
-  require Ash.Resource.Preparation.Builtins
   alias Spendable.Budget.SpentByMonth
   alias Spendable.Budget.Storage
+  alias Spendable.Resources.Budget.BudgetType
 
+  require Ash.Resource.Preparation.Builtins
   require Ash.Query
 
   postgres do
@@ -23,8 +24,9 @@ defmodule Spendable.Budget do
     uuid_primary_key :id
 
     attribute :adjustment, :decimal, allow_nil?: false, default: Decimal.new("0.00")
+    attribute :budgeted_amount, :decimal
     attribute :name, :ci_string, allow_nil?: false
-    attribute :track_spending_only, :boolean, allow_nil?: false, default: false
+    attribute :type, BudgetType, allow_nil?: false, default: :envelope
 
     timestamps()
   end

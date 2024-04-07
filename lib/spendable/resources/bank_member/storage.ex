@@ -1,6 +1,9 @@
 defmodule Spendable.BankMember.Storage do
   alias Spendable.Api
+  alias Spendable.BankAccount
   alias Spendable.BankMember
+
+  import Ecto.Query
 
   require Ash.Query
 
@@ -9,6 +12,7 @@ defmodule Spendable.BankMember.Storage do
     |> Ash.Query.filter(user_id == ^user_id)
     |> maybe_search(opts[:search])
     |> Ash.Query.sort(:name)
+    |> Ash.Query.load(:bank_accounts)
     |> Api.read!()
   end
 
@@ -17,4 +21,10 @@ defmodule Spendable.BankMember.Storage do
   end
 
   defp maybe_search(query, _search), do: query
+
+  def credit_card_balance(user_id) do
+    query = from(b in BankAccount, where: b.user_id == ^user_id, where: b.sub_type == "credit card" and b.sync)
+
+    Spendable.Repo.aggregate(query, :sum, :balance) || Decimal.new("-0.00")
+  end
 end

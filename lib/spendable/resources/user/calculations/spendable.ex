@@ -12,16 +12,11 @@ defmodule Spendable.User.Calculations.Spendable do
   def calculate([user], _opts, _resolution) do
     balance =
       from(ba in BankAccount,
-        select:
-          fragment(
-            "SUM(CASE WHEN ? = 'credit' THEN -? ELSE ? END)",
-            ba.type,
-            ba.balance,
-            ba.balance
-          ),
-        where: ba.user_id == ^user.id and ba.sync
+        where: ba.user_id == ^user.id,
+        where: ba.sync,
+        where: is_nil(ba.budget_id)
       )
-      |> Repo.one()
+      |> Repo.aggregate(:sum, :balance)
       |> Kernel.||("0.00")
 
     allocations_query =
@@ -38,10 +33,14 @@ defmodule Spendable.User.Calculations.Spendable do
       from(a in subquery(allocations_query),
         full_join: b in Budget,
         on: a.budget_id == b.id,
+        left_join: ba in BankAccount,
+        on: b.id == ba.budget_id,
         select: fragment("SUM(ABS(COALESCE(?, 0) + ?))", a.allocated, b.adjustment),
         where: b.user_id == ^user.id,
         # ignore budgets that are only used to track spending
-        where: b.track_spending_only == false
+        where: b.type != :tracking,
+        # ignore budgets that are allocated from a bank account balance
+        where: is_nil(ba.id)
       )
       |> Repo.one()
       |> Kernel.||("0.00")

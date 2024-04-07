@@ -22,7 +22,7 @@ defmodule Spendable.User.Calculations.SpendableTest do
     Factory.budget_allocation(budget, transaction, amount: 10)
 
     # budget that only tracks spending should be ignored
-    budget = Factory.budget(user, track_spending_only: true)
+    budget = Factory.budget(user, type: :tracking)
 
     Factory.budget_allocation(budget, transaction, amount: 10)
 

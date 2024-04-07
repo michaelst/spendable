@@ -16,6 +16,7 @@ defmodule Spendable.User.Calculations.SpentByMonth do
         },
         where: t.user_id == ^user.id,
         where: t.amount < 0,
+        where: not t.excluded,
         group_by: fragment("TO_CHAR(?, 'YYYY-MM-01')", t.date),
         order_by: [desc: fragment("TO_CHAR(?, 'YYYY-MM-01')", t.date)]
 

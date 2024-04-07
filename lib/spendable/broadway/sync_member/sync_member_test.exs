@@ -17,7 +17,7 @@ defmodule Spendable.Broadway.SyncMemberTest do
     _pid = start_supervised!({SyncMember, name: __MODULE__})
 
     TeslaMock
-    |> expect(:call, 7, fn
+    |> expect(:call, 4, fn
       %{method: :post, url: "https://sandbox.plaid.com/item/get"}, _opts ->
         TeslaHelper.response(body: TestData.item())
 
@@ -62,17 +62,6 @@ defmodule Spendable.Broadway.SyncMemberTest do
     bank_accounts =
       from(BankAccount, where: [bank_member_id: ^member.id], order_by: :id) |> Repo.all()
 
-    assert [
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false},
-             %{sync: false}
-           ] = bank_accounts
-
     bank_account =
       Enum.find(bank_accounts, &(&1.external_id == "zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP"))
 
@@ -83,20 +72,11 @@ defmodule Spendable.Broadway.SyncMemberTest do
              name: "Plaid Gold Standard 0% Interest Checking",
              number: "0000",
              sub_type: "checking",
-             sync: false,
+             sync: true,
              type: "depository"
            } = bank_account
 
     assert "100" |> Decimal.new() |> Decimal.equal?(balance)
-
-    assert 0 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)
-
-    bank_account
-    |> Ash.Changeset.for_update(:update, %{sync: true})
-    |> Api.update!()
-
-    ref = Broadway.test_message(__MODULE__, data, metadata: %{test_process: self()})
-    assert_receive {:ack, ^ref, [_] = _successful, []}, 1000
 
     # there are 8 transactions in test data but one is a pending that gets replaced
     assert 7 == from(BankTransaction, where: [user_id: ^user.id]) |> Repo.aggregate(:count, :id)

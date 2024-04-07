@@ -8,10 +8,6 @@ defmodule SpendableWeb.Live.Budgets do
     {:ok, fetch_data(socket)}
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
-    {:noreply, socket |> fetch_data()}
-  end
-
   def render(assigns) do
     ~H"""
     <div>
@@ -115,8 +111,11 @@ defmodule SpendableWeb.Live.Budgets do
               <div class="min-w-0 flex-auto mr-4">
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= if @current_month_is_selected and not budget.track_spending_only do %>
-                      <span class="truncate"><%= Utils.format_currency(budget.balance) %></span>
+                    <%= if @current_month_is_selected and budget.type != :tracking do %>
+                      <span class="truncate">
+                        <%= Utils.format_currency(budget.balance) %>
+                        <span :if={budget.budgeted_amount}>/ <%= Utils.format_currency(budget.budgeted_amount) %></span>
+                      </span>
                     <% else %>
                       <span class="truncate"><%= Utils.format_currency(budget.spent) %></span>
                     <% end %>
@@ -126,17 +125,34 @@ defmodule SpendableWeb.Live.Budgets do
                   <p class="truncate"><%= budget_subtext(budget, assigns) %></p>
                 </div>
               </div>
+
+              <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
+                <div class="flex items-center gap-x-3">
+                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
+                    <%= Utils.format_currency(@current_user.spendable) %>
+                  </h2>
+                </div>
+                <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
+                  <p class="truncate">AVAILABLE</p>
+                </div>
+              </div>
               <div
-                :if={budget.track_spending_only}
-                class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-gray-400 bg-gray-400/10 ring-gray-400/20"
+                :if={budget.type == :tracking}
+                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-gray-400 bg-gray-400/10 ring-gray-400/20"
               >
                 Tracking
               </div>
               <div
-                :if={not budget.track_spending_only}
-                class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-blue-400 bg-blue-400/10 ring-blue-400/20"
+                :if={budget.type == :envelope}
+                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-blue-400 bg-blue-400/10 ring-blue-400/20"
               >
                 Envelope
+              </div>
+              <div
+                :if={budget.type == :goal}
+                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
+              >
+                Goal
               </div>
               <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
             </div>
@@ -156,8 +172,19 @@ defmodule SpendableWeb.Live.Budgets do
           </header>
           <div class="space-y-6 m-6">
             <.input type="text" label="Name" field={@form[:name]} />
-            <.input :if={not @form[:track_spending_only].value} type="text" label="Balance" field={@form[:balance]} />
-            <.input type="checkbox" label="Track spending only" field={@form[:track_spending_only]} />
+            <.input
+              type="select"
+              label="Budget Type"
+              field={@form[:type]}
+              options={[{"Envelope", :envelope}, {"Goal", :goal}, {"Track Spending Only", :tracking}]}
+            />
+            <.input
+              :if={@form[:type].value != :tracking}
+              type="text"
+              label={if @form[:type].value == :envelope, do: "Budgeted Amount", else: "Goal Amount"}
+              field={@form[:budgeted_amount]}
+            />
+            <.input :if={@form[:type].value != :tracking} type="text" label="Allocated" field={@form[:balance]} />
           </div>
         </.simple_form>
       </aside>
@@ -267,8 +294,9 @@ defmodule SpendableWeb.Live.Budgets do
   defp fetch_data(socket) do
     current_month = Date.utc_today() |> Timex.beginning_of_month()
     selected_month = socket.assigns[:selected_month] || current_month
+    current_month_is_selected = Timex.equal?(selected_month, current_month)
 
-    budgets =
+    [spendable | budgets] =
       Budget
       |> Ash.Query.for_read(:list,
         selected_month: selected_month,
@@ -276,22 +304,39 @@ defmodule SpendableWeb.Live.Budgets do
       )
       |> Spendable.Api.read!(actor: socket.assigns.current_user)
 
-    user = Spendable.Api.load!(socket.assigns.current_user, :spent_by_month)
+    budgets =
+      if current_month_is_selected do
+        [
+          spendable,
+          %Budget{
+            name: "Credit Cards",
+            type: :envelope,
+            spent: Decimal.new("0"),
+            balance:
+              Spendable.BankMember.Storage.credit_card_balance(socket.assigns.current_user.id) |> Decimal.negate()
+          }
+          | budgets
+        ]
+      else
+        [spendable | budgets]
+      end
+
+    user = Spendable.Api.load!(socket.assigns.current_user, [:spent_by_month, :spendable])
 
     socket
     |> assign(:current_user, user)
     |> assign(:selected_month, selected_month)
     |> assign(:selected_budgets, [])
     |> assign(:budgets, budgets)
-    |> assign(:current_month_is_selected, Timex.equal?(selected_month, current_month))
+    |> assign(:current_month_is_selected, current_month_is_selected)
     |> assign(:form, nil)
   end
 
   defp budget_subtext(budget, %{current_month_is_selected: current}) do
-    cond do
-      current and budget.name == "Spendable" -> "AVAILABLE"
-      current and not budget.track_spending_only -> "REMAINING"
-      true -> "SPENT"
+    if current and budget.type != :tracking do
+      "ALLOCATED"
+    else
+      "SPENT"
     end
   end
 end
