@@ -8,10 +8,6 @@ defmodule SpendableWeb.Live.Budgets do
     {:ok, fetch_data(socket)}
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
-    {:noreply, socket |> fetch_data()}
-  end
-
   def render(assigns) do
     ~H"""
     <div>
@@ -117,7 +113,8 @@ defmodule SpendableWeb.Live.Budgets do
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
                     <%= if @current_month_is_selected and not budget.track_spending_only do %>
                       <span class="truncate">
-                        <%= Utils.format_currency(budget.balance) %> / <%= Utils.format_currency(budget.monthly_amount) %>
+                        <%= Utils.format_currency(budget.balance) %>
+                        <span :if={budget.budgeted_amount}>/ <%= Utils.format_currency(budget.budgeted_amount) %></span>
                       </span>
                     <% else %>
                       <span class="truncate"><%= Utils.format_currency(budget.spent) %></span>
@@ -126,6 +123,17 @@ defmodule SpendableWeb.Live.Budgets do
                 </div>
                 <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
                   <p class="truncate"><%= budget_subtext(budget, assigns) %></p>
+                </div>
+              </div>
+
+              <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
+                <div class="flex items-center gap-x-3">
+                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
+                    <%= Utils.format_currency(@spendable_amount) %>
+                  </h2>
+                </div>
+                <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
+                  <p class="truncate">AVAILABLE</p>
                 </div>
               </div>
               <div
@@ -161,8 +169,8 @@ defmodule SpendableWeb.Live.Budgets do
             <.input
               :if={not @form[:track_spending_only].value}
               type="text"
-              label="Monthly Amount"
-              field={@form[:monthly_amount]}
+              label="Budgeted Amount"
+              field={@form[:budgeted_amount]}
             />
             <.input :if={not @form[:track_spending_only].value} type="text" label="Allocated" field={@form[:balance]} />
             <.input type="checkbox" label="Track spending only" field={@form[:track_spending_only]} />
@@ -275,14 +283,37 @@ defmodule SpendableWeb.Live.Budgets do
   defp fetch_data(socket) do
     current_month = Date.utc_today() |> Timex.beginning_of_month()
     selected_month = socket.assigns[:selected_month] || current_month
+    current_month_is_selected = Timex.equal?(selected_month, current_month)
 
-    budgets =
+    [spendable | budgets] =
       Budget
       |> Ash.Query.for_read(:list,
         selected_month: selected_month,
         search: socket.assigns[:search]
       )
       |> Spendable.Api.read!(actor: socket.assigns.current_user)
+
+    budgeted = Enum.reduce(budgets, Decimal.new("0"), &Decimal.add(&1.balance, &2)) |> dbg()
+
+    spendable_amount =
+      Spendable.BankMember.Storage.available_balance(socket.assigns.current_user.id) |> dbg() |> Decimal.sub(budgeted)
+
+    budgets =
+      if current_month_is_selected do
+        [
+          spendable,
+          %Budget{
+            name: "Credit Cards",
+            track_spending_only: false,
+            spent: Decimal.new("0"),
+            balance:
+              Spendable.BankMember.Storage.credit_card_balance(socket.assigns.current_user.id) |> Decimal.negate()
+          }
+          | budgets
+        ]
+      else
+        [spendable | budgets]
+      end
 
     user = Spendable.Api.load!(socket.assigns.current_user, :spent_by_month)
 
@@ -291,13 +322,13 @@ defmodule SpendableWeb.Live.Budgets do
     |> assign(:selected_month, selected_month)
     |> assign(:selected_budgets, [])
     |> assign(:budgets, budgets)
-    |> assign(:current_month_is_selected, Timex.equal?(selected_month, current_month))
+    |> assign(:spendable_amount, spendable_amount)
+    |> assign(:current_month_is_selected, current_month_is_selected)
     |> assign(:form, nil)
   end
 
   defp budget_subtext(budget, %{current_month_is_selected: current}) do
     cond do
-      current and to_string(budget.name) == "Spendable" -> "AVAILABLE"
       current and not budget.track_spending_only -> "ALLOCATED"
       true -> "SPENT"
     end
