@@ -5,11 +5,7 @@ defmodule SpendableWeb.Live.Transactions do
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page: 1, per_page: 25)}
-  end
-
-  def handle_params(_unsigned_params, _uri, socket) do
-    {:noreply, socket |> fetch_data()}
+    {:ok, socket |> assign(page: 1, per_page: 25) |> fetch_data()}
   end
 
   def render(assigns) do
@@ -360,7 +356,9 @@ defmodule SpendableWeb.Live.Transactions do
 
     case transactions do
       [] ->
-        assign(socket, end_of_timeline?: at == -1)
+        socket
+        |> assign(end_of_timeline?: at == -1)
+        |> stream(:transactions, transactions, at: at, limit: limit, reset: reset)
 
       [_ | _] = transactions ->
         socket
