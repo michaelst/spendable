@@ -20,6 +20,23 @@ defmodule SpendableWeb.CoreComponents do
   import SpendableWeb.Gettext
 
   attr :id, :string, required: true
+  slot :trigger, required: true
+  slot :inner_block, required: true
+
+  def dropdown(assigns) do
+    ~H"""
+    <div class="relative inline-block text-left">
+      <div phx-click={toggle("##{@id}-content")}>
+        <%= render_slot(@trigger) %>
+      </div>
+      <div id={"#{@id}-content"} class="hidden">
+        <%= render_slot(@inner_block) %>
+      </div>
+    </div>
+    """
+  end
+
+  attr :id, :string, required: true
   attr :enabled, :boolean, default: false
   attr :on_toggle, :string
 
@@ -622,6 +639,17 @@ defmodule SpendableWeb.CoreComponents do
   end
 
   ## JS Commands
+  def toggle(js \\ %JS{}, selector) do
+    JS.toggle(js,
+      to: selector,
+      in:
+        {"transition-all transform ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"},
+      out:
+        {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
+    )
+  end
 
   def show(js \\ %JS{}, selector) do
     JS.show(js,

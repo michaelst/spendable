@@ -9,6 +9,8 @@ defmodule Spendable.Transaction.Storage do
   def list_transactions(user_id, opts \\ []) do
     Transaction
     |> Ash.Query.filter(user_id == ^user_id)
+    |> maybe_filter_reviewed(opts[:options][:show_reviewed_transactions])
+    |> maybe_filter_excluded(opts[:options][:show_excluded_transactions])
     |> maybe_search_transactions(opts[:search])
     |> Ash.Query.sort(date: :desc, id: :desc)
     |> maybe_paginate(opts[:page], opts[:per_page])
@@ -29,4 +31,20 @@ defmodule Spendable.Transaction.Storage do
   end
 
   defp maybe_paginate(query, _page, _limit), do: query
+
+  defp maybe_filter_reviewed(query, show_reviewed_transactions) do
+    if show_reviewed_transactions do
+      query
+    else
+      Ash.Query.filter(query, reviewed == false)
+    end
+  end
+
+  defp maybe_filter_excluded(query, show_excluded_transactions) do
+    if show_excluded_transactions do
+      query
+    else
+      Ash.Query.filter(query, excluded == false)
+    end
+  end
 end

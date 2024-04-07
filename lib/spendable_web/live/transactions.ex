@@ -5,7 +5,17 @@ defmodule SpendableWeb.Live.Transactions do
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign(page: 1, per_page: 25) |> fetch_data()}
+    {:ok,
+     socket
+     |> assign(
+       page: 1,
+       per_page: 25,
+       options: %{
+         show_reviewed_transactions: true,
+         show_excluded_transactions: false
+       }
+     )
+     |> fetch_data()}
   end
 
   def render(assigns) do
@@ -15,12 +25,39 @@ defmodule SpendableWeb.Live.Transactions do
         <header class="flex items-center justify-between border-b border-white/5 px-8 py-6 sticky top-16 bg-gray-900 z-10">
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
           <div class="flex gap-x-6">
+            <.dropdown id="options-dropdown">
+              <:trigger>
+                <button class="text-sm font-semibold leading-6 text-sky-400">
+                  Filter
+                </button>
+              </:trigger>
+              <div class="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-slate-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div class="px-4 py-2 divide-y divide-white/5">
+                  <div class="flex items-center justify-between py-2">
+                    <span class="text-gray-300">Show reviewed transactions</span>
+                    <.switch
+                      id="reviewed-option"
+                      on_toggle="change_reviewed_option"
+                      enabled={@options.show_reviewed_transactions}
+                    />
+                  </div>
+                  <div class="flex items-center justify-between py-2">
+                    <span class="text-gray-300">Show excluded transactions</span>
+                    <.switch
+                      id="excluded-option"
+                      on_toggle="change_excluded_option"
+                      enabled={@options.show_excluded_transactions}
+                    />
+                  </div>
+                </div>
+              </div>
+            </.dropdown>
             <button
               :if={not Enum.empty?(@selected_transactions)}
               id="delete"
               type="button"
               phx-click="delete"
-              class="text-sm font-semibold leading-6 text-blue-400"
+              class="text-sm font-semibold leading-6 text-sky-400"
             >
               Delete (<%= length(@selected_transactions) %>)
             </button>
@@ -28,7 +65,7 @@ defmodule SpendableWeb.Live.Transactions do
               :if={not is_nil(@form)}
               type="button"
               phx-click={JS.push("close") |> hide_details()}
-              class="text-sm font-semibold leading-6 text-blue-400"
+              class="text-sm font-semibold leading-6 text-sky-400"
             >
               Close
             </button>
@@ -52,7 +89,7 @@ defmodule SpendableWeb.Live.Transactions do
             id={id}
             phx-click={JS.push("select_transaction") |> show_details()}
             phx-value-id={transaction.id}
-            class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-8"
+            class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-6"
           >
             <div class={[
               if(transaction.excluded, do: "opacity-30"),
@@ -275,6 +312,34 @@ defmodule SpendableWeb.Live.Transactions do
      |> paginate_posts(1, true)}
   end
 
+  def handle_event("change_reviewed_option", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(
+       options:
+         Map.put(
+           socket.assigns.options,
+           :show_reviewed_transactions,
+           !socket.assigns.options.show_reviewed_transactions
+         )
+     )
+     |> paginate_posts(1, true)}
+  end
+
+  def handle_event("change_excluded_option", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(
+       options:
+         Map.put(
+           socket.assigns.options,
+           :show_excluded_transactions,
+           !socket.assigns.options.show_excluded_transactions
+         )
+     )
+     |> paginate_posts(1, true)}
+  end
+
   def handle_event("select_transaction", params, socket) do
     transaction = Spendable.Api.get!(Transaction, params["id"], load: :budget_allocations)
 
@@ -346,13 +411,14 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp paginate_posts(socket, new_page, reset \\ false) when new_page >= 1 do
-    %{per_page: per_page, page: page} = socket.assigns
+    %{per_page: per_page, page: page, options: options} = socket.assigns
 
     transactions =
       Transaction.list_transactions(socket.assigns.current_user.id,
         search: socket.assigns[:search],
         page: new_page,
-        per_page: per_page
+        per_page: per_page,
+        options: options
       )
 
     {transactions, at, limit} =
