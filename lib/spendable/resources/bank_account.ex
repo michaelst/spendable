@@ -25,7 +25,7 @@ defmodule Spendable.BankAccount do
     attribute :name, :string, allow_nil?: false
     attribute :number, :string
     attribute :sub_type, :string, allow_nil?: false
-    attribute :sync, :boolean, allow_nil?: false, default: false
+    attribute :sync, :boolean, allow_nil?: false, default: true
     attribute :type, :string, allow_nil?: false
 
     timestamps()

@@ -116,7 +116,9 @@ defmodule SpendableWeb.Live.Budgets do
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
                     <%= if @current_month_is_selected and not budget.track_spending_only do %>
-                      <span class="truncate"><%= Utils.format_currency(budget.balance) %></span>
+                      <span class="truncate">
+                        <%= Utils.format_currency(budget.balance) %> / <%= Utils.format_currency(budget.monthly_amount) %>
+                      </span>
                     <% else %>
                       <span class="truncate"><%= Utils.format_currency(budget.spent) %></span>
                     <% end %>
@@ -156,7 +158,13 @@ defmodule SpendableWeb.Live.Budgets do
           </header>
           <div class="space-y-6 m-6">
             <.input type="text" label="Name" field={@form[:name]} />
-            <.input :if={not @form[:track_spending_only].value} type="text" label="Balance" field={@form[:balance]} />
+            <.input
+              :if={not @form[:track_spending_only].value}
+              type="text"
+              label="Monthly Amount"
+              field={@form[:monthly_amount]}
+            />
+            <.input :if={not @form[:track_spending_only].value} type="text" label="Allocated" field={@form[:balance]} />
             <.input type="checkbox" label="Track spending only" field={@form[:track_spending_only]} />
           </div>
         </.simple_form>
@@ -289,8 +297,8 @@ defmodule SpendableWeb.Live.Budgets do
 
   defp budget_subtext(budget, %{current_month_is_selected: current}) do
     cond do
-      current and budget.name == "Spendable" -> "AVAILABLE"
-      current and not budget.track_spending_only -> "REMAINING"
+      current and to_string(budget.name) == "Spendable" -> "AVAILABLE"
+      current and not budget.track_spending_only -> "ALLOCATED"
       true -> "SPENT"
     end
   end
