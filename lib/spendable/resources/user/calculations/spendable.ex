@@ -17,6 +17,7 @@ defmodule Spendable.User.Calculations.Spendable do
         where: is_nil(ba.budget_id)
       )
       |> Repo.aggregate(:sum, :balance)
+      |> Kernel.||("0.00")
 
     allocations_query =
       from(a in BudgetAllocation,
@@ -35,7 +36,7 @@ defmodule Spendable.User.Calculations.Spendable do
         select: fragment("SUM(ABS(COALESCE(?, 0) + ?))", a.allocated, b.adjustment),
         where: b.user_id == ^user.id,
         # ignore budgets that are only used to track spending
-        where: b.type == :tracking
+        where: b.type != :tracking
       )
       |> Repo.one()
       |> Kernel.||("0.00")

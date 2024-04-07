@@ -333,9 +333,10 @@ defmodule SpendableWeb.Live.Budgets do
   end
 
   defp budget_subtext(budget, %{current_month_is_selected: current}) do
-    cond do
-      current and budget.type != :tracking -> "ALLOCATED"
-      true -> "SPENT"
+    if current and budget.type != :tracking do
+      "ALLOCATED"
+    else
+      "SPENT"
     end
   end
 end

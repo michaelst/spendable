@@ -25,6 +25,6 @@ defmodule Spendable.BankMember.Storage do
   def credit_card_balance(user_id) do
     query = from(b in BankAccount, where: b.user_id == ^user_id, where: b.sub_type == "credit card" and b.sync)
 
-    Spendable.Repo.aggregate(query, :sum, :balance)
+    Spendable.Repo.aggregate(query, :sum, :balance) || Decimal.new("-0.00")
   end
 end

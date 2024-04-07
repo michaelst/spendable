@@ -8,6 +8,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
   test "LIVE /budgets", %{conn: conn} do
     user = Factory.user()
+    spendable_id = Spendable.Utils.get_spendable_id(user)
 
     conn =
       conn
@@ -39,6 +40,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     assert {:ok,
             [
+              %{id: ^spendable_id},
               %{
                 id: id,
                 name: name,
