@@ -25,6 +25,7 @@ defmodule Spendable.Transaction do
     attribute :name, :ci_string, allow_nil?: false
     attribute :note, :ci_string
     attribute :reviewed, :boolean, allow_nil?: false
+    attribute :excluded, :boolean, allow_nil?: false, default: false
 
     timestamps()
   end

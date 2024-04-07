@@ -27,6 +27,7 @@ defmodule Spendable.Budget.Calculations.SpentByMonth do
         where: ba.budget_id == ^budget.id,
         where: ba.amount < 0,
         where: t.date >= ^start_date,
+        where: not t.excluded,
         group_by: fragment("TO_CHAR(?, 'YYYY-MM-01')", t.date)
 
     data = Repo.all(query)

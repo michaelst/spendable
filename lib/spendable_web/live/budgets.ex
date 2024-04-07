@@ -129,7 +129,7 @@ defmodule SpendableWeb.Live.Budgets do
               <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= Utils.format_currency(@spendable_amount) %>
+                    <%= Utils.format_currency(@current_user.spendable) %>
                   </h2>
                 </div>
                 <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
@@ -293,11 +293,6 @@ defmodule SpendableWeb.Live.Budgets do
       )
       |> Spendable.Api.read!(actor: socket.assigns.current_user)
 
-    budgeted = Enum.reduce(budgets, Decimal.new("0"), &Decimal.add(&1.balance, &2)) |> dbg()
-
-    spendable_amount =
-      Spendable.BankMember.Storage.available_balance(socket.assigns.current_user.id) |> dbg() |> Decimal.sub(budgeted)
-
     budgets =
       if current_month_is_selected do
         [
@@ -315,14 +310,13 @@ defmodule SpendableWeb.Live.Budgets do
         [spendable | budgets]
       end
 
-    user = Spendable.Api.load!(socket.assigns.current_user, :spent_by_month)
+    user = Spendable.Api.load!(socket.assigns.current_user, [:spent_by_month, :spendable])
 
     socket
     |> assign(:current_user, user)
     |> assign(:selected_month, selected_month)
     |> assign(:selected_budgets, [])
     |> assign(:budgets, budgets)
-    |> assign(:spendable_amount, spendable_amount)
     |> assign(:current_month_is_selected, current_month_is_selected)
     |> assign(:form, nil)
   end

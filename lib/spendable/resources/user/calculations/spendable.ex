@@ -12,17 +12,10 @@ defmodule Spendable.User.Calculations.Spendable do
   def calculate([user], _opts, _resolution) do
     balance =
       from(ba in BankAccount,
-        select:
-          fragment(
-            "SUM(CASE WHEN ? = 'credit' THEN -? ELSE ? END)",
-            ba.type,
-            ba.balance,
-            ba.balance
-          ),
         where: ba.user_id == ^user.id and ba.sync
       )
-      |> Repo.one()
-      |> Kernel.||("0.00")
+      |> Repo.aggregate(:sum, :balance)
+      |> dbg
 
     allocations_query =
       from(a in BudgetAllocation,

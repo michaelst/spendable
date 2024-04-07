@@ -21,12 +21,6 @@ defmodule Spendable.BankMember.Storage do
 
   defp maybe_search(query, _search), do: query
 
-  def available_balance(user_id) do
-    query = from(b in BankAccount, where: b.user_id == ^user_id and b.sync)
-
-    Spendable.Repo.aggregate(query, :sum, :balance)
-  end
-
   def credit_card_balance(user_id) do
     query = from(b in BankAccount, where: b.user_id == ^user_id, where: b.sub_type == "credit card" and b.sync)
 

@@ -54,42 +54,47 @@ defmodule SpendableWeb.Live.Transactions do
             phx-value-id={transaction.id}
             class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-8"
           >
-            <div class="min-w-0 flex-auto ml-1">
-              <div class="flex items-center">
-                <div class="pl-1 pr-2">
-                  <input
-                    type="checkbox"
-                    value={transaction.id in @selected_transactions}
-                    phx-click="toggle_select_transaction"
-                    phx-value-id={transaction.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5 opacity-0 hover:opacity-100 checked:opacity-100"
-                  />
-                </div>
-                <div>
-                  <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                    <span class="truncate"><%= transaction.name %></span>
-                  </h2>
-                  <div class="mt-2 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                    <p class="truncate"><%= Timex.format!(transaction.date, "{Mshort} {D}, {YYYY}") %></p>
+            <div class={[
+              if(transaction.excluded, do: "opacity-30"),
+              "w-full ml-1 flex"
+            ]}>
+              <div class="min-w-0 flex-auto">
+                <div class="flex items-center">
+                  <div class="pl-1 pr-2">
+                    <input
+                      type="checkbox"
+                      value={transaction.id in @selected_transactions}
+                      phx-click="toggle_select_transaction"
+                      phx-value-id={transaction.id}
+                      class="rounded border-white/10 bg-white/5 text-white/5 opacity-0 hover:opacity-100 checked:opacity-100"
+                    />
+                  </div>
+                  <div>
+                    <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
+                      <span class="truncate"><%= transaction.name %></span>
+                    </h2>
+                    <div class="mt-2 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+                      <p class="truncate"><%= Timex.format!(transaction.date, "{Mshort} {D}, {YYYY}") %></p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="flex items-center">
-              <div class="min-w-0 flex-auto mr-4">
-                <div class="flex items-center gap-x-3">
-                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <span class="truncate"><%= Utils.format_currency(transaction.amount) %></span>
-                  </h2>
+              <div class="flex items-center">
+                <div class="min-w-0 flex-auto mr-4">
+                  <div class="flex items-center gap-x-3">
+                    <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
+                      <span class="truncate"><%= Utils.format_currency(transaction.amount) %></span>
+                    </h2>
+                  </div>
                 </div>
+                <div
+                  :if={transaction.reviewed}
+                  class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
+                >
+                  Reviewed
+                </div>
+                <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
               </div>
-              <div
-                :if={transaction.reviewed}
-                class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
-              >
-                Reviewed
-              </div>
-              <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
             </div>
           </li>
         </ul>
@@ -179,7 +184,10 @@ defmodule SpendableWeb.Live.Transactions do
               </div>
             </div>
             <.input type="textarea" label="Note" field={@form[:note]} />
-            <.input type="checkbox" label="Reviewed" field={@form[:reviewed]} />
+            <div class="flex justify-between">
+              <.input type="checkbox" label="Reviewed" field={@form[:reviewed]} />
+              <.input type="checkbox" label="Excluded" field={@form[:excluded]} />
+            </div>
           </div>
         </.simple_form>
       </aside>
