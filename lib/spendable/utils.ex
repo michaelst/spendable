@@ -13,7 +13,7 @@ defmodule Spendable.Utils do
             :create,
             %{
               name: "Spendable",
-              track_spending_only: true
+              type: :tracking
             },
             actor: user
           )

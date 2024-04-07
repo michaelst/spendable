@@ -26,7 +26,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     form = %{
       "name" => "Groceries",
-      "track_spending_only" => true
+      "type" => "tracking"
     }
 
     view
@@ -42,7 +42,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
               %{
                 id: id,
                 name: name,
-                track_spending_only: true
+                type: :tracking
               }
             ]} = Spendable.Api.read(Budget)
 

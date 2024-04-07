@@ -111,7 +111,7 @@ defmodule SpendableWeb.Live.Budgets do
               <div class="min-w-0 flex-auto mr-4">
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= if @current_month_is_selected and not budget.track_spending_only do %>
+                    <%= if @current_month_is_selected and budget.type != :tracking do %>
                       <span class="truncate">
                         <%= Utils.format_currency(budget.balance) %>
                         <span :if={budget.budgeted_amount}>/ <%= Utils.format_currency(budget.budgeted_amount) %></span>
@@ -137,16 +137,22 @@ defmodule SpendableWeb.Live.Budgets do
                 </div>
               </div>
               <div
-                :if={budget.track_spending_only}
-                class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-gray-400 bg-gray-400/10 ring-gray-400/20"
+                :if={budget.type == :tracking}
+                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-gray-400 bg-gray-400/10 ring-gray-400/20"
               >
                 Tracking
               </div>
               <div
-                :if={not budget.track_spending_only}
-                class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-blue-400 bg-blue-400/10 ring-blue-400/20"
+                :if={budget.type == :envelope}
+                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-blue-400 bg-blue-400/10 ring-blue-400/20"
               >
                 Envelope
+              </div>
+              <div
+                :if={budget.type == :goal}
+                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
+              >
+                Goal
               </div>
               <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
             </div>
@@ -167,13 +173,18 @@ defmodule SpendableWeb.Live.Budgets do
           <div class="space-y-6 m-6">
             <.input type="text" label="Name" field={@form[:name]} />
             <.input
-              :if={not @form[:track_spending_only].value}
+              type="select"
+              label="Budget Type"
+              field={@form[:type]}
+              options={[{"Envelope", :envelope}, {"Goal", :goal}, {"Track Spending Only", :tracking}]}
+            />
+            <.input
+              :if={@form[:type].value != :tracking}
               type="text"
-              label="Budgeted Amount"
+              label={if @form[:type].value == :envelope, do: "Budgeted Amount", else: "Goal Amount"}
               field={@form[:budgeted_amount]}
             />
-            <.input :if={not @form[:track_spending_only].value} type="text" label="Allocated" field={@form[:balance]} />
-            <.input type="checkbox" label="Track spending only" field={@form[:track_spending_only]} />
+            <.input :if={@form[:type].value != :tracking} type="text" label="Allocated" field={@form[:balance]} />
           </div>
         </.simple_form>
       </aside>
@@ -299,7 +310,7 @@ defmodule SpendableWeb.Live.Budgets do
           spendable,
           %Budget{
             name: "Credit Cards",
-            track_spending_only: false,
+            type: :envelope,
             spent: Decimal.new("0"),
             balance:
               Spendable.BankMember.Storage.credit_card_balance(socket.assigns.current_user.id) |> Decimal.negate()
@@ -323,7 +334,7 @@ defmodule SpendableWeb.Live.Budgets do
 
   defp budget_subtext(budget, %{current_month_is_selected: current}) do
     cond do
-      current and not budget.track_spending_only -> "ALLOCATED"
+      current and budget.type != :tracking -> "ALLOCATED"
       true -> "SPENT"
     end
   end
