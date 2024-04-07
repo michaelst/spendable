@@ -62,9 +62,9 @@ defmodule SpendableWeb.Live.Banks do
             <li
               :for={bank_account <- bank_member.bank_accounts}
               :if={@selected_bank_member_id == bank_member.id}
-              class="relative flex flex-row items-center justify-between space-x-4 px-4 py-6 sm:px-6 lg:px-8"
+              class="flex items-center justify-between py-6 px-8"
             >
-              <div class="flex-1 pl-10">
+              <div class="pl-10 w-96">
                 <div class="flex items-center">
                   <h2 class="min-w-0 text-sm font-semibold leading-6 text-gray-400 flex flex-col">
                     <span class="truncate"><%= bank_account.name %> *<%= bank_account.number %></span>
@@ -72,14 +72,21 @@ defmodule SpendableWeb.Live.Banks do
                   </h2>
                 </div>
               </div>
-              <div class="pr-8">
-                <.form :let={f} for={bank_account_form(bank_account)} phx-change="assign_budget">
-                  <.input type="hidden" field={f[:id]} />
-                  <.input type="select" field={f[:budget_id]} options={[{"Assign to budget", nil} | @budget_form_options]} />
-                </.form>
-              </div>
-              <div>
-                <.switch id={bank_account.id} enabled={bank_account.sync} on_toggle="toggle_sync" />
+              <div class="flex items-center space-x-8">
+                <div class="text-gray-400"><%= Spendable.Utils.format_currency(bank_account.balance) %></div>
+                <div class="-mt-2">
+                  <.form :let={f} for={bank_account_form(bank_account)} phx-change="assign_budget">
+                    <.input type="hidden" field={f[:id]} />
+                    <.input
+                      type="select"
+                      field={f[:budget_id]}
+                      options={[{"Assign to budget", nil} | @budget_form_options]}
+                    />
+                  </.form>
+                </div>
+                <div>
+                  <.switch id={bank_account.id} enabled={bank_account.sync} on_toggle="toggle_sync" />
+                </div>
               </div>
             </li>
           </li>
