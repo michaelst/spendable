@@ -34,10 +34,18 @@ defmodule Spendable.BankAccount do
   relationships do
     belongs_to :user, Spendable.User, allow_nil?: false
     belongs_to :bank_member, Spendable.BankMember, allow_nil?: false
+    belongs_to :budget, Spendable.Budget, allow_nil?: true
   end
 
   actions do
-    defaults [:read, :create, :update]
+    defaults [:read, :create]
+
+    update :update do
+      primary? true
+
+      argument :budget_id, :string
+      change manage_relationship(:budget_id, :budget, type: :append_and_remove)
+    end
   end
 
   policies do

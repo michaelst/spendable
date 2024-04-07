@@ -12,6 +12,7 @@ defmodule Spendable.BankMember.Storage do
     |> Ash.Query.filter(user_id == ^user_id)
     |> maybe_search(opts[:search])
     |> Ash.Query.sort(:name)
+    |> Ash.Query.load(:bank_accounts)
     |> Api.read!()
   end
 

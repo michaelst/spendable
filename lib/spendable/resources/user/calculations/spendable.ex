@@ -12,10 +12,11 @@ defmodule Spendable.User.Calculations.Spendable do
   def calculate([user], _opts, _resolution) do
     balance =
       from(ba in BankAccount,
-        where: ba.user_id == ^user.id and ba.sync
+        where: ba.user_id == ^user.id,
+        where: ba.sync,
+        where: is_nil(ba.budget_id)
       )
       |> Repo.aggregate(:sum, :balance)
-      |> dbg
 
     allocations_query =
       from(a in BudgetAllocation,
