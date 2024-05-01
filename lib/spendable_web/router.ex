@@ -21,6 +21,8 @@ defmodule SpendableWeb.Router do
 
     get "/", AuthController, :login
     delete "/logout", AuthController, :delete
+
+    get "/privacy-policy", PageController, :privacy_policy
   end
 
   scope "/", SpendableWeb do
