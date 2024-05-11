@@ -17,11 +17,11 @@ defmodule SpendableWeb.Live.UserAuth do
     if socket.assigns.current_user do
       {:cont, socket}
     else
-      {:halt, redirect(socket, to: "/")}
+      {:halt, redirect(socket, to: "/login")}
     end
   end
 
   def on_mount(:ensure_authenticated, _params, _session, socket) do
-    {:halt, redirect(socket, to: "/")}
+    {:halt, redirect(socket, to: "/login")}
   end
 end

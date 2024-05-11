@@ -9,7 +9,10 @@ defmodule SpendableWeb.AuthController do
   alias Spendable.User
 
   def login(conn, _params) do
-    render(conn, :login, layout: false)
+    case get_session(conn, :current_user_id) do
+      nil -> render(conn, :login, layout: false)
+      _user_id -> redirect(conn, to: "/budgets")
+    end
   end
 
   def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do

@@ -35,7 +35,7 @@ config :spendable, SpendableWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/spendable_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/spendable_web/(controllers|live|components|styles)/.*(ex|heex,neex)$"
     ]
   ]
 
@@ -53,3 +53,7 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :spendable, Plaid, base_url: "https://sandbox.plaid.com"
+
+config :live_view_native_stylesheet,
+  annotations: true,
+  pretty: true

@@ -52,6 +52,13 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+config :phoenix, :template_engines, neex: LiveViewNative.Engine
+config :phoenix_template, :format_encoders, swiftui: Phoenix.HTML.Engine
+
+config :live_view_native,
+  plugins: [
+    LiveViewNative.SwiftUI
+  ]
 
 config :ash, :use_all_identities_in_manage_relationship?, false
 
@@ -64,6 +71,19 @@ config :ueberauth, Ueberauth,
   providers: [
     google: {Ueberauth.Strategy.Google, []}
   ]
+
+config :mime, :types, %{
+  "text/swiftui" => ["swiftui"],
+  "text/styles" => ["styles"]
+}
+
+config :live_view_native_stylesheet,
+  content: [
+    swiftui: [
+      "lib/**/*swiftui*"
+    ]
+  ],
+  output: "priv/static/assets"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

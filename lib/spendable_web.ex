@@ -54,6 +54,12 @@ defmodule SpendableWeb do
       use Phoenix.LiveView,
         layout: {SpendableWeb.Layouts, :app}
 
+      use LiveViewNative.LiveView,
+        formats: [:swiftui],
+        layouts: [
+          swiftui: {SpendableWeb.Layouts.SwiftUI, :app}
+        ]
+
       unquote(html_helpers())
     end
   end
