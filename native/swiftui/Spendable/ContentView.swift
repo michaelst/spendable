@@ -5,15 +5,17 @@
 
 import SwiftUI
 import LiveViewNative
+import GoogleSignInSwift
+import GoogleSignIn
 
 struct ContentView: View {
     var body: some View {
         #LiveView(
             .automatic(
-                development: .localhost(path: "/"),
-                production: URL(string: "https://example.com")!
+                development: URL(string: "https://dev.spendable.money")!,
+                production: URL(string: "https://spendable.money")!
             ),
-            addons: []
+            addons: [GoogleSignInButtonRegistry<_>.self]
         ) {
             ConnectingView()
         } disconnected: {

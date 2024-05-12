@@ -13,6 +13,8 @@
 		481D8319D33DDE8CE2DBC2EE /* DisconnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908F257371BEFA1065CE5FF9 /* DisconnectedView.swift */; };
 		4CE597AC2BEFEAFD006B9D88 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 4CE597AB2BEFEAFD006B9D88 /* GoogleSignIn */; };
 		4CE597AE2BEFEAFD006B9D88 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CE597AD2BEFEAFD006B9D88 /* GoogleSignInSwift */; };
+		4CE597B32BF12ECC006B9D88 /* GoogleSignInButtonRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE597B22BF12ECC006B9D88 /* GoogleSignInButtonRegistry.swift */; };
+		4CE597B52BF1335E006B9D88 /* GoogleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE597B42BF1335E006B9D88 /* GoogleButton.swift */; };
 		56172EB8F5C44173E5CE5040 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB074450803FFA965F06D19 /* ContentView.swift */; };
 		5906C78E27E550A99BF8364E /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08BAF88C417C3234EB75E1ED /* ConnectingView.swift */; };
 		5A8455B64F63D75836095F6E /* ReconnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19F503862469152B3692D59 /* ReconnectingView.swift */; };
@@ -32,6 +34,8 @@
 /* Begin PBXFileReference section */
 		08BAF88C417C3234EB75E1ED /* ConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectingView.swift; sourceTree = "<group>"; };
 		0CA92D7D0F7D6C16B4C9B6C8 /* Spendable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spendable.swift; sourceTree = "<group>"; };
+		4CE597B22BF12ECC006B9D88 /* GoogleSignInButtonRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInButtonRegistry.swift; sourceTree = "<group>"; };
+		4CE597B42BF1335E006B9D88 /* GoogleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleButton.swift; sourceTree = "<group>"; };
 		529EA8B1EF1E3AE2F7CB94C7 /* Spendable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spendable.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FE76877A5AC7CB403272C56 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		861836223349A54D5C9073E5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -67,6 +71,7 @@
 		18916B96B4F236F9D32D3930 /* Spendable */ = {
 			isa = PBXGroup;
 			children = (
+				4CE597B62BF13365006B9D88 /* GoogleSignInButton */,
 				78AA746125E20200C55917CB /* Preview Content */,
 				7FE76877A5AC7CB403272C56 /* Assets.xcassets */,
 				08BAF88C417C3234EB75E1ED /* ConnectingView.swift */,
@@ -86,6 +91,15 @@
 				529EA8B1EF1E3AE2F7CB94C7 /* Spendable.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4CE597B62BF13365006B9D88 /* GoogleSignInButton */ = {
+			isa = PBXGroup;
+			children = (
+				4CE597B42BF1335E006B9D88 /* GoogleButton.swift */,
+				4CE597B22BF12ECC006B9D88 /* GoogleSignInButtonRegistry.swift */,
+			);
+			path = GoogleSignInButton;
 			sourceTree = "<group>";
 		};
 		78AA746125E20200C55917CB /* Preview Content */ = {
@@ -210,6 +224,8 @@
 				56172EB8F5C44173E5CE5040 /* ContentView.swift in Sources */,
 				19C1467C2DB77271DFA17AB8 /* DisconnectedView.swift in Sources */,
 				07DA21036E57B3D7D6AA7029 /* ErrorView.swift in Sources */,
+				4CE597B52BF1335E006B9D88 /* GoogleButton.swift in Sources */,
+				4CE597B32BF12ECC006B9D88 /* GoogleSignInButtonRegistry.swift in Sources */,
 				5A8455B64F63D75836095F6E /* ReconnectingView.swift in Sources */,
 				1DEDA2E6558FAD88952FC9F7 /* Spendable.swift in Sources */,
 			);
@@ -316,7 +332,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = A4TA99R8XM;
+				INFOPLIST_FILE = Spendable/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Spendable;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.example.Spendable;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -326,11 +344,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.Spendable;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -340,7 +358,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = A4TA99R8XM;
+				INFOPLIST_FILE = Spendable/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Spendable;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.example.Spendable;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -350,11 +370,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = fiftysevenmedia.Spendable;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

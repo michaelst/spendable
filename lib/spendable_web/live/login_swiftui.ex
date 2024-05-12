@@ -4,14 +4,8 @@ defmodule SpendableWeb.Live.Login.SwiftUI do
     as: :render
 
   def render(assigns, _interface) do
-    dbg(assigns)
-
     ~LVN"""
-    <VStack>
-      <Text>
-        Hello SwiftUI!
-      </Text>
-    </VStack>
+    <GoogleSignInButton />
     """
   end
 end
