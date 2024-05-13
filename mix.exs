@@ -55,6 +55,7 @@ defmodule Spendable.MixProject do
       {:floki, ">= 0.30.0"},
       {:gettext, "~> 0.20"},
       {:goth, github: "michaelst/goth", override: true},
+      {:guardian, "~> 2.3"},
       {:gun, "~> 2.0", override: true},
       {:hammox, "~> 0.6", only: :test},
       {:jason, "~> 1.2"},

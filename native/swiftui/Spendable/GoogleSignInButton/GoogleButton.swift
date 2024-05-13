@@ -12,7 +12,7 @@ struct GoogleButton<Root: RootRegistry>: View {
         GoogleSignInButton(action: handleSignInButton)
     }
     
-    func handleSignInButton() {        
+    func handleSignInButton() {
         var firstKeyWindow: UIWindow? {
             return UIApplication.shared.connectedScenes
                 .compactMap { $0 as? UIWindowScene }
@@ -22,11 +22,17 @@ struct GoogleButton<Root: RootRegistry>: View {
         }
         
         GIDSignIn.sharedInstance.signIn(withPresenting: (firstKeyWindow?.rootViewController)!) { signInResult, error in
-            guard let result = signInResult else {
-                return
+            guard error == nil else { return }
+            guard let signInResult = signInResult else { return }
+            
+            signInResult.user.refreshTokensIfNeeded { user, error in
+                guard error == nil else { return }
+                guard let user = user else { return }
+                
+                let idToken = user.idToken
+                print(idToken?.tokenString)
+                // Send ID token to backend (example below).
             }
-            print(result)
-            // If sign in succeeded, display the app's main content View.
         }
         
     }

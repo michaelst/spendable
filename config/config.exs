@@ -65,6 +65,13 @@ config :ash, :use_all_identities_in_manage_relationship?, false
 config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
 config :oauth2, adapter: {Tesla.Adapter.Finch, name: Spendable.Finch}
 
+config :spendable, Spendable.Guardian,
+  issuer: "https://accounts.google.com",
+  verify_issuer: true,
+  ttl: {1, :hour},
+  allowed_algos: ["RS256"],
+  secret_fetcher: Spendable.Guardian.KeyServer
+
 config :goth, project_id: "cloud-57"
 
 config :ueberauth, Ueberauth,

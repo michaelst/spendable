@@ -9,6 +9,7 @@ defmodule Spendable.Application do
   def start(_type, _args) do
     all_env_children = [
       {Finch, name: Spendable.Finch},
+      Spendable.Guardian.KeyServer,
       SpendableWeb.Telemetry,
       Spendable.Repo,
       {Phoenix.PubSub, name: Spendable.PubSub},

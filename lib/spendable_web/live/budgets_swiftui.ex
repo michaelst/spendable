@@ -5,11 +5,9 @@ defmodule SpendableWeb.Live.Budgets.SwiftUI do
 
   def render(assigns, _interface) do
     ~LVN"""
-    <VStack>
-      <Text>
-        Hello SwiftUI!
-      </Text>
-    </VStack>
+    <List>
+      <Text :for={budget <- @budgets}><%= budget.name %></Text>
+    </List>
     """
   end
 end
