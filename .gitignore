@@ -37,4 +37,4 @@ npm-debug.log
 
 .env
 .DS_Store
-UserInterfaceState.xcuserstate
+xcuserdata

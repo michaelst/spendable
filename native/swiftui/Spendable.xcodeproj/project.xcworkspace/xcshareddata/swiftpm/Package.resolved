@@ -1,5 +1,5 @@
 {
-  "originHash" : "6fb92e88f6a7e88318aefebe202f52560d45230b95d96a2496fd9ce5cdc5e6e0",
+  "originHash" : "271c4085ab122eab3a1439bb2175400a58f16d3de17f66623cc427db1f439743",
   "pins" : [
     {
       "identity" : "appauth-ios",
@@ -53,6 +53,15 @@
       "state" : {
         "revision" : "b6a24652b35acd534fa437cb4cf4654fcb33828f",
         "version" : "0.1.0-7500ce9"
+      }
+    },
+    {
+      "identity" : "liveview-native-swiftui-google-sign-in",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/michaelst/liveview-native-swiftui-google-sign-in",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b0160b043e9e0e617e1935d3489f61be37cdde2d"
       }
     },
     {

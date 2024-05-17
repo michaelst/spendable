@@ -51,13 +51,12 @@ defmodule SpendableNative do
   end
 
   defp helpers(_format) do
-    gettext_quoted = quote do
-      import SpendableWeb.Gettext
-    end
-    
+    gettext_quoted =
+      quote do
+        import SpendableWeb.Gettext
+      end
 
     [gettext_quoted, verified_routes()]
-      
   end
 
   @doc """

@@ -7,6 +7,7 @@ import SwiftUI
 import LiveViewNative
 import GoogleSignInSwift
 import GoogleSignIn
+import LiveViewNativeGoogleSignIn
 
 struct ContentView: View {
     var body: some View {
@@ -15,7 +16,7 @@ struct ContentView: View {
                 development: URL(string: "https://dev.spendable.money")!,
                 production: URL(string: "https://spendable.money")!
             ),
-            addons: [GoogleSignInButtonRegistry<_>.self]
+            addons: [GoogleSignInRegistry<_>.self]
         ) {
             ConnectingView()
         } disconnected: {
