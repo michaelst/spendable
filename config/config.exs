@@ -55,11 +55,6 @@ config :phoenix, :json_library, Jason
 config :phoenix, :template_engines, neex: LiveViewNative.Engine
 config :phoenix_template, :format_encoders, swiftui: Phoenix.HTML.Engine
 
-config :live_view_native,
-  plugins: [
-    LiveViewNative.SwiftUI
-  ]
-
 config :ash, :use_all_identities_in_manage_relationship?, false
 
 config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
@@ -83,6 +78,12 @@ config :mime, :types, %{
   "text/swiftui" => ["swiftui"],
   "text/styles" => ["styles"]
 }
+
+config :live_view_native,
+  plugins: [
+    LiveViewNative.HTML,
+    LiveViewNative.SwiftUI
+  ]
 
 config :live_view_native_stylesheet,
   content: [

@@ -2,194 +2,86 @@ defmodule SpendableWeb.Live.Budgets do
   use SpendableWeb, :live_view
 
   alias Spendable.Budget
-  alias Spendable.Utils
+  alias Spendable.BankMember
 
   def mount(_params, _session, socket) do
     {:ok, fetch_data(socket)}
   end
 
-  def render(assigns) do
-    ~H"""
-    <div>
-      <main id="budgets" phx-click={JS.push("close") |> hide_details()}>
-        <header class="flex items-center justify-between border-b border-white/5 px-8 py-6">
-          <h1 class="text-base font-semibold leading-7 text-white">Budgets</h1>
-          <div class="flex gap-x-6">
-            <!-- Sort dropdown -->
-            <div class="relative">
-              <button
-                type="button"
-                class="flex items-center gap-x-1 text-sm font-medium leading-6 text-white"
-                id="sort-menu-button"
-                phx-click={JS.toggle(to: "#month-select")}
-              >
-                <%= Timex.format!(@selected_month, "{Mfull} {YYYY}") %>
-                <.icon name="hero-chevron-up-down-mini" class="h-5 w-5 text-gray-500" />
-              </button>
-              <div
-                id="month-select"
-                class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-none divide-y"
-                phx-click-away={JS.hide(to: "#month-select")}
-              >
-                <button
-                  :for={month <- @current_user.spent_by_month}
-                  class="block px-3 py-2 w-full text-sm leading-6 text-gray-900 flex flex-col hover:bg-gray-200"
-                  phx-click={JS.push("select_month") |> JS.toggle(to: "#month-select")}
-                  phx-value-month={month.month}
-                >
-                  <div><%= Timex.format!(month.month, "{Mfull} {YYYY}") %></div>
-                  <div class="text-sm text-gray-400">spent: <%= Utils.format_currency(month.spent) %></div>
-                </button>
-              </div>
-            </div>
-            <button
-              :if={is_nil(@form)}
-              id="new-budget"
-              type="button"
-              phx-click={JS.push("new") |> show_details()}
-              class="text-sm font-semibold leading-6 text-blue-400"
-            >
-              New
-            </button>
-            <button
-              :if={not Enum.empty?(@selected_budgets)}
-              id="archive"
-              type="button"
-              phx-click="archive"
-              class="text-sm font-semibold leading-6 text-blue-400"
-            >
-              Archive (<%= length(@selected_budgets) %>)
-            </button>
-            <button
-              :if={not is_nil(@form)}
-              type="button"
-              phx-click={JS.push("close") |> hide_details()}
-              class="text-sm font-semibold leading-6 text-blue-400"
-            >
-              Close
-            </button>
-          </div>
-        </header>
-        <!-- Budget list -->
-        <ul role="list" class="divide-y divide-white/5">
-          <li
-            :for={budget <- @budgets}
-            phx-click={JS.push("select_budget") |> show_details()}
-            phx-value-id={budget.id}
-            class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-8"
-          >
-            <div class="min-w-0 flex-auto ml-1">
-              <div class="flex items-center">
-                <div :if={to_string(budget.id) not in @selected_budgets} class="pl-1 pr-2 opacity-0 hover:opacity-100">
-                  <input
-                    type="checkbox"
-                    value="true"
-                    checked={false}
-                    phx-click="check_budget"
-                    phx-value-id={budget.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5"
-                  />
-                </div>
-                <div :if={to_string(budget.id) in @selected_budgets} class="pl-1 pr-2">
-                  <input
-                    type="checkbox"
-                    value="true"
-                    checked={true}
-                    phx-click="uncheck_budget"
-                    phx-value-id={budget.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5"
-                  />
-                </div>
-                <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                  <a href="#" class="flex gap-x-2">
-                    <span class="truncate"><%= budget.name %></span>
-                  </a>
-                </h2>
-              </div>
-            </div>
-            <div class="flex items-center">
-              <div class="min-w-0 flex-auto mr-4">
-                <div class="flex items-center gap-x-3">
-                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= if @current_month_is_selected and budget.type != :tracking do %>
-                      <span class="truncate">
-                        <%= Utils.format_currency(budget.balance) %>
-                        <span :if={budget.budgeted_amount}>/ <%= Utils.format_currency(budget.budgeted_amount) %></span>
-                      </span>
-                    <% else %>
-                      <span class="truncate"><%= Utils.format_currency(budget.spent) %></span>
-                    <% end %>
-                  </h2>
-                </div>
-                <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
-                  <p class="truncate"><%= budget_subtext(budget, assigns) %></p>
-                </div>
-              </div>
+  def handle_event("accounts_synced", %{"accounts" => accounts}, socket) do
+    accounts = Jason.decode!(accounts)
 
-              <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
-                <div class="flex items-center gap-x-3">
-                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= Utils.format_currency(@current_user.spendable) %>
-                  </h2>
-                </div>
-                <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
-                  <p class="truncate">AVAILABLE</p>
-                </div>
-              </div>
-              <div
-                :if={budget.type == :tracking}
-                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-gray-400 bg-gray-400/10 ring-gray-400/20"
-              >
-                Tracking
-              </div>
-              <div
-                :if={budget.type == :envelope}
-                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-blue-400 bg-blue-400/10 ring-blue-400/20"
-              >
-                Envelope
-              </div>
-              <div
-                :if={budget.type == :goal}
-                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
-              >
-                Goal
-              </div>
-              <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
-            </div>
-          </li>
-        </ul>
-      </main>
-      <aside
-        id="details-form"
-        class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
-      >
-        <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
-          <header class="flex items-center justify-between border-b border-white/5 p-6">
-            <h2 class="text-base font-semibold leading-7">Edit budget</h2>
-            <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
-              Save
-            </button>
-          </header>
-          <div class="space-y-6 m-6">
-            <.input type="text" label="Name" field={@form[:name]} />
-            <.input
-              type="select"
-              label="Budget Type"
-              field={@form[:type]}
-              options={[{"Envelope", :envelope}, {"Goal", :goal}, {"Track Spending Only", :tracking}]}
-            />
-            <.input
-              :if={@form[:type].value != :tracking}
-              type="text"
-              label={if @form[:type].value == :envelope, do: "Budgeted Amount", else: "Goal Amount"}
-              field={@form[:budgeted_amount]}
-            />
-            <.input :if={@form[:type].value != :tracking} type="text" label="Allocated" field={@form[:balance]} />
-          </div>
-        </.simple_form>
-      </aside>
-    </div>
-    """
+    bank_member =
+      BankMember
+      |> Ash.Changeset.new(%{
+        external_id: socket.assigns.current_user.id,
+        name: "Apple",
+        provider: "apple",
+        status: "CONNECTED",
+        logo:
+          "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"
+      })
+      |> Spendable.Api.create!(
+        upsert?: true,
+        upsert_identity: :external_id,
+        actor: socket.assigns.current_user
+      )
+
+    # Enum.each(accounts, fn %{type => accounts_for_type} ->
+    #   Enum.each(accounts_for_type, fn %{_n => account} ->
+    #   BankAccount
+    #   |> Ash.Changeset.new(%{
+    #     balance: 0,
+    #     external_id: account["id"],
+    #     name: account["displayName"],
+    #     type: type,
+    #     subtype: type,
+    #     sync: true
+    #     })
+    #   |> Ash.Changeset.manage_relationship(:bank_member, member, type: :append_and_remove)
+    #   |> Ash.Changeset.manage_relationship(:user, member.user, type: :append_and_remove)
+    #   |> Api.create!(
+    #     upsert?: true,
+    #     upsert_identity: :external_id,
+    #     actor: socket.assigns.current_user
+    #   )
+    #   end)
+    # end)
+
+    # [
+    #   %{
+    #     "liability" => %{
+    #       "_0" => %{
+    #         "accountDescription" => "Apple Card",
+    #         "creditInformation" => %{
+    #           "creditLimit" => %{"amount" => "16900", "currency" => "USD"},
+    #           "minimumNextPaymentAmount" => %{
+    #             "amount" => "362.58",
+    #             "currency" => "USD"
+    #           },
+    #           "nextPaymentDueDate" => 738907197
+    #         },
+    #         "currencyCode" => "USD",
+    #         "displayName" => "Apple Card",
+    #         "id" => "C1D80EF4-7017-4B4F-A45C-0E98F729E175",
+    #         "institutionName" => "Apple"
+    #       }
+    #     }
+    #   },
+    #   %{
+    #     "asset" => %{
+    #       "_0" => %{
+    #         "accountDescription" => "Apple Cash",
+    #         "currencyCode" => "USD",
+    #         "displayName" => "Apple Cash",
+    #         "id" => "E2FF7F2F-8BF9-416F-8C5D-28F8163DD53A",
+    #         "institutionName" => "Apple"
+    #       }
+    #     }
+    #   }
+    # ]
+
+    {:noreply, socket}
   end
 
   def handle_event("validate", %{"form" => params}, socket) do
@@ -272,25 +164,6 @@ defmodule SpendableWeb.Live.Budgets do
     {:noreply, assign(socket, selected_budgets: Enum.filter(socket.assigns.selected_budgets, &(&1 != id)))}
   end
 
-  def show_details(js \\ %JS{}) do
-    js
-    |> JS.show(to: "#details-form", transition: "fade-in")
-    |> JS.add_class(
-      "lg:pr-96",
-      to: "#budgets"
-    )
-  end
-
-  def hide_details(js \\ %JS{}) do
-    js
-    |> JS.hide(to: "#details-form", transition: "fade-out")
-    |> JS.remove_class(
-      "lg:pr-96",
-      to: "#budgets",
-      transition: "fade-out"
-    )
-  end
-
   defp fetch_data(socket) do
     current_month = Date.utc_today() |> Timex.beginning_of_month()
     selected_month = socket.assigns[:selected_month] || current_month
@@ -330,13 +203,6 @@ defmodule SpendableWeb.Live.Budgets do
     |> assign(:budgets, budgets)
     |> assign(:current_month_is_selected, current_month_is_selected)
     |> assign(:form, nil)
-  end
-
-  defp budget_subtext(budget, %{current_month_is_selected: current}) do
-    if current and budget.type != :tracking do
-      "ALLOCATED"
-    else
-      "SPENT"
-    end
+    |> push_event("request-finance-data", %{"test" => "test"})
   end
 end
