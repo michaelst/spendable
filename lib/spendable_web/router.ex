@@ -4,10 +4,10 @@ defmodule SpendableWeb.Router do
   forward "/_health", HealthCheck
 
   pipeline :browser do
-    plug :accepts, ["html"]
+    plug :accepts, ["html", "swiftui"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {SpendableWeb.Layouts, :root}
+    plug :put_root_layout, html: {SpendableWeb.Layouts, :root}, swiftui: {SpendableWeb.Layouts.SwiftUI, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -19,7 +19,7 @@ defmodule SpendableWeb.Router do
   scope "/", SpendableWeb do
     pipe_through :browser
 
-    get "/", AuthController, :login
+    live "/login", Live.Login
     delete "/logout", AuthController, :delete
 
     get "/privacy-policy", PageController, :privacy_policy
@@ -47,6 +47,7 @@ defmodule SpendableWeb.Router do
     scope "/", SpendableWeb.Live do
       pipe_through [:browser]
 
+      live "/", Budgets
       live "/budgets", Budgets
       live "/transactions", Transactions
       live "/templates", Templates

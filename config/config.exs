@@ -52,11 +52,20 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+config :phoenix, :template_engines, neex: LiveViewNative.Engine
+config :phoenix_template, :format_encoders, swiftui: Phoenix.HTML.Engine
 
 config :ash, :use_all_identities_in_manage_relationship?, false
 
 config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
 config :oauth2, adapter: {Tesla.Adapter.Finch, name: Spendable.Finch}
+
+config :spendable, Spendable.Guardian,
+  issuer: "https://accounts.google.com",
+  verify_issuer: true,
+  ttl: {1, :hour},
+  allowed_algos: ["RS256"],
+  secret_fetcher: Spendable.Guardian.KeyServer
 
 config :goth, project_id: "cloud-57"
 
@@ -64,6 +73,25 @@ config :ueberauth, Ueberauth,
   providers: [
     google: {Ueberauth.Strategy.Google, []}
   ]
+
+config :mime, :types, %{
+  "text/swiftui" => ["swiftui"],
+  "text/styles" => ["styles"]
+}
+
+config :live_view_native,
+  plugins: [
+    LiveViewNative.HTML,
+    LiveViewNative.SwiftUI
+  ]
+
+config :live_view_native_stylesheet,
+  content: [
+    swiftui: [
+      "lib/**/*swiftui*"
+    ]
+  ],
+  output: "priv/static/assets"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
