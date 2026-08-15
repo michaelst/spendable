@@ -1,3 +1,16 @@
+FROM node:26-alpine AS node-builder
+
+# Node 26 no longer bundles corepack.
+RUN npm install -g pnpm@10.20.0
+
+RUN mkdir -p /app/assets
+WORKDIR /app
+
+COPY assets/package.json assets/pnpm-lock.yaml ./assets/
+RUN cd assets && pnpm install --prod --frozen-lockfile
+
+COPY assets assets
+
 FROM hexpm/elixir:1.20.3-erlang-29.0.5-ubuntu-noble-20260730.1 AS build
 
 RUN apt-get update -y && apt-get install -y build-essential git \
@@ -13,7 +26,7 @@ ENV MIX_ENV="prod"
 COPY mix.exs mix.lock ./
 COPY config/config.exs config/prod.exs config/runtime.exs ./config/
 
-COPY assets assets
+COPY --from=node-builder /app/assets ./assets
 COPY lib lib
 COPY priv priv
 COPY rel rel

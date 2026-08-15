@@ -1,15 +1,15 @@
 // Embeds Phosphor icons (https://phosphoricons.com) into the app.css bundle as `pi-*` classes.
 // See `CoreComponents.icon/1`.
 //
-// The two vendored weights flatten into one namespace, which is safe because Phosphor suffixes
-// every non-regular file: `caret-right.svg` and `caret-right-fill.svg` become `pi-caret-right` and
-// `pi-caret-right-fill`. Only the icons a template actually names are emitted.
+// All weights flatten into one namespace, which is safe because Phosphor suffixes every non-regular
+// file: `caret-right.svg` and `caret-right-fill.svg` become `pi-caret-right` and `pi-caret-right-fill`.
+// Only the icons a template actually names are emitted.
 const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
 const path = require("path")
 
 module.exports = plugin(function ({matchComponents}) {
-  let iconsDir = path.join(__dirname, "./phosphor")
+  let iconsDir = path.join(__dirname, "../node_modules/@phosphor-icons/core/assets")
   let values = {}
 
   fs.readdirSync(iconsDir, {withFileTypes: true}).forEach(entry => {
