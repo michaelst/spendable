@@ -55,7 +55,7 @@ defmodule SpendableWeb.Live.Transactions do
               phx-click="delete"
               class="text-sm font-semibold leading-6 text-sky-400"
             >
-              Delete (<%= length(@selected_transactions) %>)
+              Delete ({length(@selected_transactions)})
             </button>
             <button
               :if={not is_nil(@changeset)}
@@ -104,10 +104,10 @@ defmodule SpendableWeb.Live.Transactions do
                   </div>
                   <div>
                     <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                      <span class="truncate"><%= transaction.name %></span>
+                      <span class="truncate">{transaction.name}</span>
                     </h2>
                     <div class="mt-2 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                      <p class="truncate"><%= Timex.format!(transaction.date, "{Mshort} {D}, {YYYY}") %></p>
+                      <p class="truncate">{Calendar.strftime(transaction.date, "%b %-d, %Y")}</p>
                     </div>
                   </div>
                 </div>
@@ -116,7 +116,7 @@ defmodule SpendableWeb.Live.Transactions do
                 <div class="min-w-0 flex-auto mr-4">
                   <div class="flex items-center gap-x-3">
                     <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                      <span class="truncate"><%= Utils.format_currency(transaction.amount) %></span>
+                      <span class="truncate">{Utils.format_currency(transaction.amount)}</span>
                     </h2>
                   </div>
                 </div>
@@ -160,7 +160,7 @@ defmodule SpendableWeb.Live.Transactions do
               <% else %>
                 <div class="grid grid-cols-10">
                   <div class="col-span-6">
-                    <%= allocation_label(f[:amount].value) %>
+                    {allocation_label(f[:amount].value)}
                   </div>
                   <div class="col-span-3">
                     Amount
@@ -220,7 +220,7 @@ defmodule SpendableWeb.Live.Transactions do
                       phx-click={JS.push("apply_template") |> JS.toggle(to: "#template-options")}
                       phx-value-template={template_id}
                     >
-                      <div><%= template_name %></div>
+                      <div>{template_name}</div>
                     </button>
                   </div>
                 </div>

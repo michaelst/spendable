@@ -43,7 +43,7 @@ defmodule SpendableWeb do
         layouts: [html: SpendableWeb.Layouts]
 
       import Plug.Conn
-      import SpendableWeb.Gettext
+      use Gettext, backend: SpendableWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -94,7 +94,7 @@ defmodule SpendableWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import SpendableWeb.CoreComponents
-      import SpendableWeb.Gettext
+      use Gettext, backend: SpendableWeb.Gettext
       import SpendableWeb.Utils.SocketReplies
 
       # Shortcut for generating JS commands

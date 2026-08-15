@@ -1,8 +1,6 @@
 defmodule SpendableWeb.Live.Budgets do
   use SpendableWeb, :live_view
 
-  import SpendableWeb.Utils.FormOptions
-
   alias Spendable.Banks
   alias Spendable.Budgets
   alias Spendable.Budgets.Schemas.Budget
@@ -31,7 +29,7 @@ defmodule SpendableWeb.Live.Budgets do
                 id="sort-menu-button"
                 phx-click={JS.toggle(to: "#month-select")}
               >
-                <%= Timex.format!(@selected_month, "{Mfull} {YYYY}") %>
+                {Calendar.strftime(@selected_month, "%B %Y")}
                 <.icon name="hero-chevron-up-down-mini" class="h-5 w-5 text-gray-500" />
               </button>
               <div
@@ -45,8 +43,8 @@ defmodule SpendableWeb.Live.Budgets do
                   phx-click={JS.push("select_month") |> JS.toggle(to: "#month-select")}
                   phx-value-month={month.month}
                 >
-                  <div><%= Timex.format!(month.month, "{Mfull} {YYYY}") %></div>
-                  <div class="text-sm text-gray-400">spent: <%= Utils.format_currency(month.spent) %></div>
+                  <div>{Calendar.strftime(month.month, "%B %Y")}</div>
+                  <div class="text-sm text-gray-400">spent: {Utils.format_currency(month.spent)}</div>
                 </button>
               </div>
             </div>
@@ -66,7 +64,7 @@ defmodule SpendableWeb.Live.Budgets do
               phx-click="archive"
               class="text-sm font-semibold leading-6 text-blue-400"
             >
-              Archive (<%= length(@selected_budgets) %>)
+              Archive ({length(@selected_budgets)})
             </button>
             <button
               :if={not is_nil(@changeset)}
@@ -110,7 +108,7 @@ defmodule SpendableWeb.Live.Budgets do
                 </div>
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
                   <a href="#" class="flex gap-x-2">
-                    <span class="truncate"><%= budget.name %></span>
+                    <span class="truncate">{budget.name}</span>
                   </a>
                 </h2>
               </div>
@@ -121,23 +119,23 @@ defmodule SpendableWeb.Live.Budgets do
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
                     <%= if @current_month_is_selected and budget.type != :tracking do %>
                       <span class="truncate">
-                        <%= Utils.format_currency(budget.balance) %>
-                        <span :if={budget.budgeted_amount}>/ <%= Utils.format_currency(budget.budgeted_amount) %></span>
+                        {Utils.format_currency(budget.balance)}
+                        <span :if={budget.budgeted_amount}>/ {Utils.format_currency(budget.budgeted_amount)}</span>
                       </span>
                     <% else %>
-                      <span class="truncate"><%= Utils.format_currency(@spent[budget.id]) %></span>
+                      <span class="truncate">{Utils.format_currency(@spent[budget.id])}</span>
                     <% end %>
                   </h2>
                 </div>
                 <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
-                  <p class="truncate"><%= budget_subtext(budget, assigns) %></p>
+                  <p class="truncate">{budget_subtext(budget, assigns)}</p>
                 </div>
               </div>
 
               <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= Utils.format_currency(@spendable) %>
+                    {Utils.format_currency(@spendable)}
                   </h2>
                 </div>
                 <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">

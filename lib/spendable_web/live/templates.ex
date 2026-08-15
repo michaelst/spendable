@@ -37,7 +37,7 @@ defmodule SpendableWeb.Live.Templates do
               phx-click="archive"
               class="text-sm font-semibold leading-6 text-blue-400"
             >
-              Archive (<%= length(@selected_templates) %>)
+              Archive ({length(@selected_templates)})
             </button>
             <button
               :if={not is_nil(@changeset)}
@@ -80,7 +80,7 @@ defmodule SpendableWeb.Live.Templates do
                   />
                 </div>
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                  <span class="truncate"><%= template.name %></span>
+                  <span class="truncate">{template.name}</span>
                 </h2>
               </div>
             </div>
