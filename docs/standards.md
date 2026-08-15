@@ -162,7 +162,8 @@ end
 - **Anything said about a function goes in its `@doc`, not a `#` comment above it.** `#` is for a line or block *inside* a function body.
 - Never `@doc` a `defdelegate`. The context module is a delegate table and nothing else; what there is to say about an action belongs on the action itself.
 - Keep every comment to one or two lines. Never a paragraph. This includes `@moduledoc` and `@doc` bodies.
-- Controllers and LiveViews are the exception: they get no `@doc`/`@moduledoc` at all (see below), so a rare `#` comment is the only option there.
+- Exceptions, where a `#` comment is the only option: private functions (`@doc` on a `defp` warns), and controllers and LiveViews, which get no `@doc`/`@moduledoc` at all (see below).
+- Changesets get no `@doc`. What a changeset casts and validates is the code itself; if one line of it is genuinely surprising, comment that line.
 
 ## Integrating with External Services
 

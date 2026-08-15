@@ -23,8 +23,9 @@ defmodule Spendable.Budgets.Schemas.BudgetAllocationTemplate do
     template
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    # Stamp the owner onto each line so a posted budget_id is checked against it.
     |> cast_assoc(:budget_allocation_template_lines,
-      with: {BudgetAllocationTemplateLine, :changeset, [template.user_id]},
+      with: &BudgetAllocationTemplateLine.changeset(%{&1 | user_id: template.user_id}, &2),
       sort_param: :lines_sort,
       drop_param: :lines_drop
     )

@@ -21,7 +21,6 @@ defmodule Spendable.Banks.Schemas.BankMember do
     timestamps()
   end
 
-  @doc "plaid_token is never cast: it comes from the token exchange, never from a form."
   def changeset(member \\ %__MODULE__{}, attrs) do
     member
     |> cast(attrs, [:external_id, :institution_id, :logo, :name, :provider, :status])

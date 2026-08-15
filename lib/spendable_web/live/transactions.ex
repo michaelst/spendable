@@ -1,21 +1,25 @@
 defmodule SpendableWeb.Live.Transactions do
   use SpendableWeb, :live_view
 
-  alias Spendable.Transaction
+  import SpendableWeb.Utils.FormOptions
+
+  alias Spendable.Budgets
+  alias Spendable.Transactions
+  alias Spendable.Transactions.Schemas.Transaction
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(
-       page: 1,
-       per_page: 25,
-       options: %{
-         show_reviewed_transactions: true,
-         show_excluded_transactions: false
-       }
-     )
-     |> fetch_data()}
+    socket
+    |> assign(:page, 1)
+    |> assign(:per_page, 25)
+    |> assign(:show_reviewed, true)
+    |> assign(:show_excluded, false)
+    |> fetch_data()
+    |> ok()
+  end
+
+  def handle_params(_params, _uri, socket) do
+    noreply(socket)
   end
 
   def render(assigns) do
@@ -35,19 +39,11 @@ defmodule SpendableWeb.Live.Transactions do
                 <div class="px-4 py-2 divide-y divide-white/5">
                   <div class="flex items-center justify-between py-2">
                     <span class="text-gray-300">Show reviewed transactions</span>
-                    <.switch
-                      id="reviewed-option"
-                      on_toggle="change_reviewed_option"
-                      enabled={@options.show_reviewed_transactions}
-                    />
+                    <.switch id="reviewed-option" on_toggle="change_reviewed_option" enabled={@show_reviewed} />
                   </div>
                   <div class="flex items-center justify-between py-2">
                     <span class="text-gray-300">Show excluded transactions</span>
-                    <.switch
-                      id="excluded-option"
-                      on_toggle="change_excluded_option"
-                      enabled={@options.show_excluded_transactions}
-                    />
+                    <.switch id="excluded-option" on_toggle="change_excluded_option" enabled={@show_excluded} />
                   </div>
                 </div>
               </div>
@@ -62,7 +58,7 @@ defmodule SpendableWeb.Live.Transactions do
               Delete (<%= length(@selected_transactions) %>)
             </button>
             <button
-              :if={not is_nil(@form)}
+              :if={not is_nil(@changeset)}
               type="button"
               phx-click={JS.push("close") |> hide_details()}
               class="text-sm font-semibold leading-6 text-sky-400"
@@ -140,7 +136,7 @@ defmodule SpendableWeb.Live.Transactions do
         id="transaction-details"
         class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
-        <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
+        <.simple_form :let={f} :if={@changeset} for={@changeset} as={:transaction} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit transaction</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
@@ -148,15 +144,15 @@ defmodule SpendableWeb.Live.Transactions do
             </button>
           </header>
           <div class="space-y-6 m-6">
-            <.input type="text" label="Name" field={@form[:name]} />
-            <.input type="text" label="Amount" field={@form[:amount]} />
-            <.input type="date" label="Date" field={@form[:date]} />
+            <.input type="text" label="Name" field={f[:name]} />
+            <.input type="text" label="Amount" field={f[:amount]} />
+            <.input type="date" label="Date" field={f[:date]} />
             <div>
-              <%= if length(@form.source.forms[:budget_allocations]) <= 1 do %>
-                <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
+              <%= if length(Ecto.Changeset.get_assoc(@changeset, :budget_allocations)) <= 1 do %>
+                <.inputs_for :let={allocation_form} field={f[:budget_allocations]}>
                   <.input
                     type="select"
-                    label={if Decimal.negative?(@form[:amount].value), do: "Spend from", else: "Add to"}
+                    label={allocation_label(f[:amount].value)}
                     field={allocation_form[:budget_id]}
                     options={@budget_form_options}
                   />
@@ -164,33 +160,43 @@ defmodule SpendableWeb.Live.Transactions do
               <% else %>
                 <div class="grid grid-cols-10">
                   <div class="col-span-6">
-                    <%= if Decimal.negative?(@form[:amount].value), do: "Spend from", else: "Add to" %>
+                    <%= allocation_label(f[:amount].value) %>
                   </div>
                   <div class="col-span-3">
                     Amount
                   </div>
                 </div>
-                <.inputs_for :let={allocation_form} field={@form[:budget_allocations]}>
+                <.inputs_for :let={allocation} field={f[:budget_allocations]}>
+                  <input type="hidden" name="transaction[allocations_sort][]" value={allocation.index} />
                   <div class="grid grid-cols-10 items-center">
                     <div class="col-span-6 pr-2">
-                      <.input type="select" field={allocation_form[:budget_id]} options={@budget_form_options} />
+                      <.input type="select" field={allocation[:budget_id]} options={@budget_form_options} />
                     </div>
                     <div class="col-span-3">
-                      <.input type="text" field={allocation_form[:amount]} />
+                      <.input type="text" field={allocation[:amount]} />
                     </div>
                     <button
                       type="button"
                       class="cursor-pointer text-right mt-1"
-                      phx-click="remove_allocation"
-                      phx-value-path={allocation_form.name}
+                      name="transaction[allocations_drop][]"
+                      value={allocation.index}
+                      phx-click={JS.dispatch("change")}
                     >
                       <.icon name="hero-x-circle" />
                     </button>
                   </div>
                 </.inputs_for>
+                <input type="hidden" name="transaction[allocations_drop][]" />
               <% end %>
               <div class="flex justify-between mt-2">
-                <button type="button" phx-click="split" class="text-sm font-semibold text-blue-400">
+                <button
+                  type="button"
+                  id="split"
+                  name="transaction[allocations_sort][]"
+                  value="new"
+                  phx-click={JS.dispatch("change")}
+                  class="text-sm font-semibold text-blue-400"
+                >
                   Split
                 </button>
                 <div class="relative">
@@ -220,10 +226,10 @@ defmodule SpendableWeb.Live.Transactions do
                 </div>
               </div>
             </div>
-            <.input type="textarea" label="Note" field={@form[:note]} />
+            <.input type="textarea" label="Note" field={f[:note]} />
             <div class="flex justify-between">
-              <.input type="checkbox" label="Reviewed" field={@form[:reviewed]} />
-              <.input type="checkbox" label="Excluded" field={@form[:excluded]} />
+              <.input type="checkbox" label="Reviewed" field={f[:reviewed]} />
+              <.input type="checkbox" label="Excluded" field={f[:excluded]} />
             </div>
           </div>
         </.simple_form>
@@ -232,149 +238,111 @@ defmodule SpendableWeb.Live.Transactions do
     """
   end
 
-  def handle_event("validate", %{"form" => params}, socket) do
-    form = AshPhoenix.Form.validate(socket.assigns.form, params)
-    {:noreply, assign(socket, form: form)}
+  def handle_event("validate", %{"transaction" => params}, socket) do
+    changeset =
+      socket.assigns.changeset.data
+      |> Transaction.changeset(params)
+      |> Map.put(:action, :validate)
+
+    socket |> assign(:changeset, changeset) |> noreply()
   end
 
-  def handle_event("submit", %{"form" => params}, socket) do
-    params =
-      if Enum.count(params["budget_allocations"]) == 1 do
-        %{
-          params
-          | "budget_allocations" => %{
-              "0" => Map.put(params["budget_allocations"]["0"], "amount", params["amount"])
-            }
-        }
-      else
-        params
+  def handle_event("submit", %{"transaction" => params}, socket) do
+    scope = socket.assigns.current_scope
+
+    result =
+      case socket.assigns.changeset.data do
+        %Transaction{id: nil} -> Transactions.create_transaction(scope, single_split(params))
+        transaction -> Transactions.update_transaction(scope, transaction, single_split(params))
       end
 
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
-      {:ok, transaction} ->
-        {:noreply, socket |> assign(:form, nil) |> stream_insert(:transactions, transaction)}
-
-      {:error, form} ->
-        {:noreply, assign(socket, form: form)}
+    case result do
+      {:ok, _transaction} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
+      {:error, changeset} -> socket |> assign(:changeset, changeset) |> noreply()
     end
   end
 
-  def handle_event("apply_template", params, socket) do
-    form =
-      Enum.reduce(socket.assigns.form.source.forms[:budget_allocations], socket.assigns.form, fn allocation_form, acc ->
-        AshPhoenix.Form.remove_form(acc, allocation_form.name)
+  def handle_event("apply_template", %{"template" => template_id}, socket) do
+    {:ok, template} = Budgets.get_template(socket.assigns.current_scope, template_id)
+
+    allocations =
+      template.budget_allocation_template_lines
+      |> Enum.with_index()
+      |> Map.new(fn {line, index} ->
+        {to_string(index), %{"amount" => line.amount, "budget_id" => line.budget_id}}
       end)
 
-    form =
-      Transaction.get_template(params["template"])
-      |> Map.get(:budget_allocation_template_lines, [])
-      |> Enum.reduce(form, fn line, acc ->
-        AshPhoenix.Form.add_form(acc, [:budget_allocations], params: %{amount: line.amount, budget_id: line.budget_id})
-      end)
+    changeset =
+      Transaction.changeset(socket.assigns.changeset.data, %{
+        "budget_allocations" => allocations,
+        "allocations_sort" => Enum.map(0..(map_size(allocations) - 1)//1, &to_string/1)
+      })
 
-    {:noreply, assign(socket, form: form)}
-  end
-
-  def handle_event("split", _params, socket) do
-    form = AshPhoenix.Form.add_form(socket.assigns.form, [:budget_allocations])
-    {:noreply, assign(socket, form: form)}
-  end
-
-  def handle_event("remove_allocation", %{"path" => path}, socket) do
-    form = AshPhoenix.Form.remove_form(socket.assigns.form, path)
-    {:noreply, assign(socket, form: form)}
+    socket |> assign(:changeset, changeset) |> noreply()
   end
 
   def handle_event("toggle_select_transaction", %{"id" => id, "value" => "on"}, socket) do
-    {:noreply, assign(socket, selected_transactions: Enum.uniq([id | socket.assigns.selected_transactions]))}
+    socket
+    |> assign(:selected_transactions, Enum.uniq([id | socket.assigns.selected_transactions]))
+    |> noreply()
   end
 
   def handle_event("toggle_select_transaction", %{"id" => id}, socket) do
-    {:noreply, assign(socket, selected_transactions: Enum.filter(socket.assigns.selected_transactions, &(&1 != id)))}
+    socket
+    |> assign(:selected_transactions, Enum.filter(socket.assigns.selected_transactions, &(&1 != id)))
+    |> noreply()
   end
 
   def handle_event("delete", _params, socket) do
-    socket =
-      socket.assigns.selected_transactions
-      |> Enum.map(&Spendable.Api.get!(Transaction, &1))
-      |> Enum.reduce(socket, fn transaction, acc ->
-        Spendable.Api.destroy!(transaction)
-        stream_delete(acc, :transactions, transaction)
-      end)
+    scope = socket.assigns.current_scope
 
-    {:noreply, fetch_data(socket)}
+    Enum.each(socket.assigns.selected_transactions, fn id ->
+      case Transactions.get_transaction(scope, id: id) do
+        {:ok, transaction} -> Transactions.delete_transaction(scope, transaction)
+        {:error, :transaction_not_found} -> :ok
+      end
+    end)
+
+    socket |> fetch_data() |> noreply()
   end
 
   def handle_event("search", params, socket) do
-    {:noreply,
-     socket
-     |> assign(search: params["search"])
-     |> paginate_posts(1, true)}
+    socket |> assign(:search, params["search"]) |> fetch_data() |> noreply()
   end
 
   def handle_event("change_reviewed_option", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(
-       options:
-         Map.put(
-           socket.assigns.options,
-           :show_reviewed_transactions,
-           !socket.assigns.options.show_reviewed_transactions
-         )
-     )
-     |> paginate_posts(1, true)}
+    socket
+    |> assign(:show_reviewed, not socket.assigns.show_reviewed)
+    |> fetch_data()
+    |> noreply()
   end
 
   def handle_event("change_excluded_option", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(
-       options:
-         Map.put(
-           socket.assigns.options,
-           :show_excluded_transactions,
-           !socket.assigns.options.show_excluded_transactions
-         )
-     )
-     |> paginate_posts(1, true)}
+    socket
+    |> assign(:show_excluded, not socket.assigns.show_excluded)
+    |> fetch_data()
+    |> noreply()
   end
 
-  def handle_event("select_transaction", params, socket) do
-    transaction = Spendable.Api.get!(Transaction, params["id"], load: :budget_allocations)
+  def handle_event("select_transaction", %{"id" => id}, socket) do
+    {:ok, transaction} = Transactions.get_transaction(socket.assigns.current_scope, id: id)
 
-    form =
-      transaction
-      |> AshPhoenix.Form.for_update(:update,
-        api: Spendable.Api,
-        actor: socket.assigns.current_scope.user,
-        forms: [auto?: true]
-      )
-      |> to_form()
-
-    {:noreply,
-     socket
-     |> assign(:form, form)}
+    socket |> assign(:changeset, Transaction.changeset(transaction, %{})) |> noreply()
   end
 
   def handle_event("next-page", _params, socket) do
-    {:noreply, paginate_posts(socket, socket.assigns.page + 1)}
-  end
-
-  def handle_event("prev-page", %{"_overran" => true}, socket) do
-    {:noreply, paginate_posts(socket, 1)}
+    socket |> assign(:page, socket.assigns.page + 1) |> fetch_transactions() |> noreply()
   end
 
   def handle_event("prev-page", _params, socket) do
-    if socket.assigns.page > 1 do
-      {:noreply, paginate_posts(socket, socket.assigns.page - 1)}
-    else
-      {:noreply, socket}
-    end
+    socket
+    |> assign(:page, max(socket.assigns.page - 1, 1))
+    |> fetch_transactions()
+    |> noreply()
   end
 
   def handle_event("close", _params, socket) do
-    {:noreply, assign(socket, :form, nil)}
+    socket |> assign(:changeset, nil) |> noreply()
   end
 
   def show_details(js \\ %JS{}) do
@@ -397,48 +365,51 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp fetch_data(socket) do
-    budget_form_options = Transaction.budget_form_options(socket.assigns.current_scope.user.id)
-    template_form_options = Transaction.template_form_options(socket.assigns.current_scope.user.id)
+    scope = socket.assigns.current_scope
 
     socket
-    |> assign(
-      budget_form_options: budget_form_options,
-      template_form_options: template_form_options,
-      selected_transactions: [],
-      form: nil
-    )
-    |> paginate_posts(1)
+    |> assign(:budget_form_options, form_options(Budgets.list_budgets(scope)))
+    |> assign(:template_form_options, form_options(Budgets.list_templates(scope)))
+    |> assign(:selected_transactions, [])
+    |> assign(:changeset, nil)
+    |> assign(:page, 1)
+    |> fetch_transactions()
   end
 
-  defp paginate_posts(socket, new_page, reset \\ false) when new_page >= 1 do
-    %{per_page: per_page, page: page, options: options} = socket.assigns
+  defp fetch_transactions(socket) do
+    %{per_page: per_page, page: page} = socket.assigns
 
     transactions =
-      Transaction.list_transactions(socket.assigns.current_scope.user.id,
+      Transactions.list_transactions(socket.assigns.current_scope,
         search: socket.assigns[:search],
-        page: new_page,
+        page: page,
         per_page: per_page,
-        options: options
+        show_reviewed: socket.assigns.show_reviewed,
+        show_excluded: socket.assigns.show_excluded
       )
 
-    {transactions, at, limit} =
-      if new_page >= page do
-        {transactions, -1, per_page * 3 * -1}
-      else
-        {Enum.reverse(transactions), 0, per_page * 3}
-      end
-
-    case transactions do
-      [] ->
-        socket
-        |> assign(end_of_timeline?: at == -1)
-        |> stream(:transactions, transactions, at: at, limit: limit, reset: reset)
-
-      [_ | _] = transactions ->
-        socket
-        |> assign(end_of_timeline?: false)
-        |> assign(:page, new_page)
-        |> stream(:transactions, transactions, at: at, limit: limit, reset: reset)
-    end
+    socket
+    |> assign(:end_of_timeline?, transactions == [])
+    |> stream(:transactions, transactions, reset: true)
   end
+
+  # On a failed submit the form hands back what the user typed, so this sees a string as often
+  # as a Decimal.
+  defp allocation_label(%Decimal{} = amount) do
+    if Decimal.negative?(amount), do: "Spend from", else: "Add to"
+  end
+
+  defp allocation_label(amount) when is_binary(amount) do
+    if String.starts_with?(String.trim(amount), "-"), do: "Spend from", else: "Add to"
+  end
+
+  defp allocation_label(_amount), do: "Add to"
+
+  # A transaction with a single allocation splits nothing, so that line carries the whole amount.
+  defp single_split(%{"budget_allocations" => %{"0" => allocation} = allocations} = params)
+       when map_size(allocations) == 1 do
+    %{params | "budget_allocations" => %{"0" => Map.put(allocation, "amount", params["amount"])}}
+  end
+
+  defp single_split(params), do: params
 end

@@ -15,13 +15,13 @@ defmodule Spendable.Schema do
       Rejects a foreign key pointing at a record the user does not own, so a caller cannot
       attach someone else's budget to their own transaction by posting an id.
       """
-      def validate_relationships(changeset, fields, user_id \\ nil) do
+      def validate_relationships(changeset, fields) do
         Enum.reduce(fields, changeset, fn relationship, changeset ->
           prepare_changes(changeset, fn changeset ->
             association = changeset.data.__struct__.__schema__(:association, relationship)
 
             relationship_id = get_field(changeset, association.owner_key)
-            user_id = get_field(changeset, :user_id) || user_id
+            user_id = get_field(changeset, :user_id)
 
             if changed?(changeset, association.owner_key) and is_binary(relationship_id) and
                  not Spendable.Repo.exists?(

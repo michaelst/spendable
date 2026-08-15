@@ -3,10 +3,6 @@ defmodule Spendable.Transaction do
     authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer
 
-  alias Spendable.Budget
-  alias Spendable.BudgetAllocationTemplate
-  alias Spendable.Transaction.Storage
-
   postgres do
     repo(Spendable.Repo)
     table "transactions"
@@ -86,21 +82,5 @@ defmodule Spendable.Transaction do
       authorize_if action(:create)
       authorize_if expr(user_id == ^actor(:id))
     end
-  end
-
-  def budget_form_options(user_id) do
-    Budget.form_options(user_id)
-  end
-
-  def template_form_options(user_id) do
-    BudgetAllocationTemplate.form_options(user_id)
-  end
-
-  def get_template(id) do
-    BudgetAllocationTemplate.get_template(id)
-  end
-
-  def list_transactions(user_id, opts) do
-    Storage.list_transactions(user_id, opts)
   end
 end

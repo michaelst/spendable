@@ -17,7 +17,6 @@ defmodule Spendable.Budgets.Schemas.BudgetAllocation do
     timestamps()
   end
 
-  @doc "budget_id crosses from user input, so it is checked against the owner before it is written."
   def changeset(allocation \\ %__MODULE__{}, attrs) do
     allocation
     |> cast(attrs, [:amount, :budget_id])

@@ -17,11 +17,10 @@ defmodule Spendable.Budgets.Schemas.BudgetAllocationTemplateLine do
     timestamps()
   end
 
-  def changeset(line, attrs, user_id) do
+  def changeset(line \\ %__MODULE__{}, attrs) do
     line
     |> cast(attrs, [:amount, :budget_id])
-    |> put_change(:user_id, user_id)
     |> validate_required([:amount, :budget_id])
-    |> validate_relationships([:budget], user_id)
+    |> validate_relationships([:budget])
   end
 end

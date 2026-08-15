@@ -22,13 +22,13 @@ defmodule Spendable.Transactions.Schemas.Transaction do
     timestamps()
   end
 
-  @doc "Allocations are edited on the transaction's own form, so they are cast with it."
   def changeset(transaction \\ %__MODULE__{}, attrs) do
     transaction
     |> cast(attrs, [:amount, :date, :name, :note, :reviewed, :excluded])
     |> validate_required([:amount, :date, :name, :reviewed])
+    # Stamp the owner onto each line so a posted budget_id is checked against it.
     |> cast_assoc(:budget_allocations,
-      with: {BudgetAllocation, :changeset, []},
+      with: &BudgetAllocation.changeset(%{&1 | user_id: transaction.user_id}, &2),
       sort_param: :allocations_sort,
       drop_param: :allocations_drop
     )

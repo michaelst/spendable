@@ -23,7 +23,6 @@ defmodule Spendable.Banks.Schemas.BankAccount do
     timestamps()
   end
 
-  @doc "budget_id crosses from user input, so it is checked against the owner before it is written."
   def changeset(account \\ %__MODULE__{}, attrs) do
     account
     |> cast(attrs, [:external_id, :balance, :name, :number, :sub_type, :type, :sync, :budget_id])

@@ -84,14 +84,6 @@ defmodule Spendable.BudgetAllocationTemplate do
     end
   end
 
-  def budget_form_options(user_id) do
-    Budget.form_options(user_id)
-  end
-
-  def form_options(user_id) do
-    Storage.form_options(user_id)
-  end
-
   def get_template(id) do
     Storage.get_template(id)
   end

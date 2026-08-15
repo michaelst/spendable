@@ -27,10 +27,6 @@ defmodule Spendable.Budgets.Schemas.Budget do
     timestamps()
   end
 
-  @doc """
-  A user edits the balance, never the adjustment: the adjustment absorbs the gap between the
-  balance they asked for and what the allocations already add up to.
-  """
   def changeset(budget \\ %__MODULE__{}, attrs) do
     budget
     |> cast(attrs, [:name, :budgeted_amount, :type, :balance])
@@ -44,6 +40,8 @@ defmodule Spendable.Budgets.Schemas.Budget do
 
   def types(), do: @types
 
+  # A user edits the balance, never the adjustment: the adjustment absorbs the gap between
+  # the balance they asked for and what the allocations already add up to.
   defp put_adjustment(changeset) do
     case fetch_change(changeset, :balance) do
       {:ok, %Decimal{} = new_balance} ->
