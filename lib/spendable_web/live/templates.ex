@@ -85,7 +85,7 @@ defmodule SpendableWeb.Live.Templates do
               </div>
             </div>
             <div class="flex items-center">
-              <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
+              <.icon name="pi-caret-right" class="h-5 w-5 flex-none text-gray-400" />
             </div>
           </li>
         </ul>
@@ -128,7 +128,7 @@ defmodule SpendableWeb.Live.Templates do
                     value={line.index}
                     phx-click={JS.dispatch("change")}
                   >
-                    <.icon name="hero-x-circle" class="text-red-400" />
+                    <.icon name="pi-x-circle" class="text-red-400" />
                   </button>
                 </div>
               </.inputs_for>

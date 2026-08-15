@@ -126,7 +126,7 @@ defmodule SpendableWeb.Live.Transactions do
                 >
                   Reviewed
                 </div>
-                <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
+                <.icon name="pi-caret-right" class="h-5 w-5 flex-none text-gray-400" />
               </div>
             </div>
           </li>
@@ -182,7 +182,7 @@ defmodule SpendableWeb.Live.Transactions do
                       value={allocation.index}
                       phx-click={JS.dispatch("change")}
                     >
-                      <.icon name="hero-x-circle" />
+                      <.icon name="pi-x-circle" />
                     </button>
                   </div>
                 </.inputs_for>

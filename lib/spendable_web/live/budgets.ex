@@ -30,7 +30,7 @@ defmodule SpendableWeb.Live.Budgets do
                 phx-click={JS.toggle(to: "#month-select")}
               >
                 {Calendar.strftime(@selected_month, "%B %Y")}
-                <.icon name="hero-chevron-up-down-mini" class="h-5 w-5 text-gray-500" />
+                <.icon name="pi-caret-up-down" class="h-5 w-5 text-gray-500" />
               </button>
               <div
                 id="month-select"
@@ -160,7 +160,7 @@ defmodule SpendableWeb.Live.Budgets do
               >
                 Goal
               </div>
-              <.icon name="hero-chevron-right-mini" class="h-5 w-5 flex-none text-gray-400" />
+              <.icon name="pi-caret-right" class="h-5 w-5 flex-none text-gray-400" />
             </div>
           </li>
         </ul>

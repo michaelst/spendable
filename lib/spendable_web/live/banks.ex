@@ -49,19 +49,19 @@ defmodule SpendableWeb.Live.Banks do
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-red-500 text-right">
                     <span class="truncate">
-                      Reconnect <.icon name="hero-exclamation-circle" />
+                      Reconnect <.icon name="pi-warning-circle" />
                     </span>
                   </h2>
                 </div>
               </div>
               <.icon
                 :if={@selected_bank_member_id != bank_member.id}
-                name="hero-chevron-right-mini"
+                name="pi-caret-right"
                 class="h-5 w-5 flex-none text-gray-400"
               />
               <.icon
                 :if={@selected_bank_member_id == bank_member.id}
-                name="hero-chevron-down-mini"
+                name="pi-caret-down"
                 class="h-5 w-5 flex-none text-gray-400"
               />
             </div>

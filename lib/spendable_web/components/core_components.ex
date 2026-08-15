@@ -12,7 +12,7 @@ defmodule SpendableWeb.CoreComponents do
   See the [Tailwind CSS documentation](https://tailwindcss.com) to learn
   how to customize them or feel free to swap in another framework altogether.
 
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
+  Icons are provided by [Phosphor](https://phosphoricons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
 
@@ -134,7 +134,7 @@ defmodule SpendableWeb.CoreComponents do
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5" />
+                  <.icon name="pi-x" class="h-5 w-5" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -179,13 +179,13 @@ defmodule SpendableWeb.CoreComponents do
       {@rest}
     >
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
+        <.icon :if={@kind == :info} name="pi-info" class="h-4 w-4" />
+        <.icon :if={@kind == :error} name="pi-warning-circle" class="h-4 w-4" />
         {@title}
       </p>
       <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+        <.icon name="pi-x" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
     """
@@ -212,7 +212,7 @@ defmodule SpendableWeb.CoreComponents do
       phx-connected={hide("#client-error")}
       hidden
     >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      Attempting to reconnect <.icon name="pi-arrow-clockwise" class="ml-1 h-3 w-3 animate-spin" />
     </.flash>
 
     <.flash
@@ -223,7 +223,7 @@ defmodule SpendableWeb.CoreComponents do
       phx-connected={hide("#server-error")}
       hidden
     >
-      Hang in there while we get back on track <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      Hang in there while we get back on track <.icon name="pi-arrow-clockwise" class="ml-1 h-3 w-3 animate-spin" />
     </.flash>
     """
   end
@@ -503,7 +503,7 @@ defmodule SpendableWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+      <.icon name="pi-warning-circle" class="mt-0.5 h-5 w-5 flex-none" />
       {render_slot(@inner_block)}
     </p>
     """
@@ -651,7 +651,7 @@ defmodule SpendableWeb.CoreComponents do
     ~H"""
     <div class="mt-16">
       <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
+        <.icon name="pi-arrow-left" class="h-3 w-3" />
         {render_slot(@inner_block)}
       </.link>
     </div>
@@ -659,27 +659,26 @@ defmodule SpendableWeb.CoreComponents do
   end
 
   @doc """
-  Renders a [Heroicon](https://heroicons.com).
+  Renders a [Phosphor icon](https://phosphoricons.com).
 
-  Heroicons come in three styles – outline, solid, and mini.
-  By default, the outline style is used, but solid and mini may
-  be applied by using the `-solid` and `-mini` suffix.
+  The regular weight is the default; the filled version of an icon is its name
+  with a `-fill` suffix.
 
   You can customize the size and colors of the icons by setting
   width, height, and background color classes.
 
-  Icons are extracted from your `assets/vendor/heroicons` directory and bundled
-  within your compiled app.css by the plugin in your `assets/tailwind.config.js`.
+  Icons are extracted from your `assets/vendor/phosphor` directory and bundled
+  within your compiled app.css by `assets/vendor/phosphor-plugin.js`.
 
   ## Examples
 
-      <.icon name="hero-x-mark-solid" />
-      <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
+      <.icon name="pi-x" />
+      <.icon name="pi-arrow-clockwise" class="ml-1 w-3 h-3 animate-spin" />
   """
   attr :name, :string, required: true
   attr :class, :string, default: nil
 
-  def icon(%{name: "hero-" <> _icon_name} = assigns) do
+  def icon(%{name: "pi-" <> _icon_name} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
     """

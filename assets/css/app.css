@@ -6,7 +6,7 @@
 @source "../../lib/spendable_web";
 
 @plugin "@tailwindcss/forms";
-@plugin "../vendor/heroicons-plugin.js";
+@plugin "../vendor/phosphor-plugin.js";
 
 /* Prefix a utility with a LiveView state class to apply it only in that state, e.g.
    <div class="phx-click-loading:animate-ping"> */
