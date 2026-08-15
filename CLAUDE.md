@@ -11,6 +11,7 @@ Follow the project conventions documented here:
 
 - [standards.md](docs/standards.md): code style, contexts, scope, actions, schemas, utils, components, hooks
 - [tests.md](docs/tests.md): what makes a good vs. bad test, how to use `DataCase` / `ConnCase`, when to mock
+- [CONTEXT-MAP.md](CONTEXT-MAP.md): the four contexts and how they relate. Each links to a `CONTEXT.md` defining the words that context owns - use those words.
 
 Two rules worth repeating because they are easy to get wrong here:
 
