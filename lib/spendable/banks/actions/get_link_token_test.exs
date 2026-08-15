@@ -1,0 +1,73 @@
+defmodule Spendable.Banks.Actions.GetLinkTokenTest do
+  use Spendable.DataCase, async: true
+
+  alias Spendable.Accounts
+  alias Spendable.Banks
+  alias Spendable.Banks.Schemas.BankMember
+  alias Spendable.Scope
+
+  setup do
+    stub(TeslaMock, :call, fn
+      %{method: :post, url: "https://sandbox.plaid.com/link/token/create"}, _opts ->
+        TeslaHelper.response(body: %{"link_token" => "link-sandbox-token"})
+    end)
+
+    :ok
+  end
+
+  test "returns a link token while the user has room for another bank" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{
+        external_id: Ecto.UUID.generate(),
+        provider: "google",
+        bank_limit: 1
+      })
+
+    assert {:ok, "link-sandbox-token"} = Banks.get_link_token(Scope.for_user(user))
+  end
+
+  # Checked before Plaid is called, so the user is not sent to pick a bank we would then refuse.
+  test "refuses once the user is at their bank limit" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    assert {:error, :bank_limit_reached} = Banks.get_link_token(Scope.for_user(user))
+  end
+
+  test "returns an update token for an existing connection" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Plaid",
+        provider: "Plaid",
+        plaid_token: "access-sandbox-token"
+      })
+
+    assert {:ok, "link-sandbox-token"} =
+             Banks.get_update_link_token(Scope.for_user(user), bank_member)
+  end
+
+  test "refuses an update token for another user's connection" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    {:ok, other_user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: other_user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Plaid",
+        provider: "Plaid",
+        plaid_token: "access-sandbox-token"
+      })
+
+    assert {:error, :not_authorized} =
+             Banks.get_update_link_token(Scope.for_user(user), bank_member)
+  end
+end

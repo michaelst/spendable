@@ -37,34 +37,27 @@ defmodule Spendable.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(_env), do: ["lib"]
 
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash_archival, "~> 0.1"},
-      {:ash_phoenix, "~> 1.0"},
-      {:ash_postgres, "~> 1.0"},
-      {:ash, "~> 2.0"},
       {:bandit, "~> 1.0-pre"},
-      {:broadway_cloud_pub_sub, "~> 0.7"},
-      {:broadway, "~> 1.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:spendable_credo, path: "credo", only: [:dev, :test], runtime: false},
       {:dotenv_parser, "~> 2.0", only: [:dev]},
-      # ash 2.x is incompatible with the parameterized type change in ecto 3.12
-      {:ecto_sql, "~> 3.11.0"},
+      {:ecto_sql, "~> 3.11"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:excoveralls, ">= 0.0.0", only: :test},
       {:finch, "~> 0.13"},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.20"},
-      {:goth, github: "michaelst/goth", override: true},
       {:gun, "~> 2.0", override: true},
       {:hammox, "~> 0.6", only: :test},
       {:jason, "~> 1.2"},
+      {:oban, "~> 2.19"},
       {:logger_json, "~> 5.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 4.0"},
@@ -74,8 +67,6 @@ defmodule Spendable.MixProject do
       {:phoenix, "~> 1.7.6"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
-      {:protobuf, "~> 0.8"},
-      {:spendable_protos, path: "protobuf/gen/elixir"},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
@@ -102,7 +93,6 @@ defmodule Spendable.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-      "ash.gen.migration": ["ash_postgres.generate_migrations"],
       credo: ["credo --config-file credo/.credo.exs"]
     ]
   end

@@ -7,25 +7,14 @@ defmodule Spendable.Application do
 
   @impl true
   def start(_type, _args) do
-    all_env_children = [
+    children = [
       {Finch, name: Spendable.Finch},
       SpendableWeb.Telemetry,
       Spendable.Repo,
+      {Oban, Application.fetch_env!(:spendable, Oban)},
       {Phoenix.PubSub, name: Spendable.PubSub},
-      SpendableWeb.Endpoint,
-      Spendable.Broadway.SyncMember
+      SpendableWeb.Endpoint
     ]
-
-    prod_children = [
-      {Goth, name: Spendable.Goth}
-    ]
-
-    children =
-      if Application.get_env(:spendable, :env) == :prod do
-        all_env_children ++ prod_children
-      else
-        all_env_children
-      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

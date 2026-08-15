@@ -24,8 +24,9 @@ defmodule Spendable.Transactions.Schemas.Transaction do
 
   def changeset(transaction \\ %__MODULE__{}, attrs) do
     transaction
-    |> cast(attrs, [:amount, :date, :name, :note, :reviewed, :excluded])
+    |> cast(attrs, [:amount, :date, :name, :note, :reviewed, :excluded, :bank_transaction_id])
     |> validate_required([:amount, :date, :name, :reviewed])
+    |> validate_relationships([:bank_transaction])
     # Stamp the owner onto each line so a posted budget_id is checked against it.
     |> cast_assoc(:budget_allocations,
       with: &BudgetAllocation.changeset(%{&1 | user_id: transaction.user_id}, &2),

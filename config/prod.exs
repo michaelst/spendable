@@ -6,4 +6,4 @@ config :spendable, SpendableWeb.Endpoint,
 
 config :logger, level: :info
 
-config :spendable, Plaid, base_url: "https://production.plaid.com"
+config :spendable, Spendable.Banks.Clients.Plaid, base_url: "https://production.plaid.com"

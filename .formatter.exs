@@ -1,5 +1,5 @@
 [
-  import_deps: [:ecto, :ecto_sql, :phoenix, :ash, :ash_phoenix, :ash_postgres],
+  import_deps: [:ecto, :ecto_sql, :phoenix],
   line_length: 120,
   subdirectories: ["priv/*/migrations"],
   plugins: [Phoenix.LiveView.HTMLFormatter],

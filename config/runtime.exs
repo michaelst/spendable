@@ -14,7 +14,7 @@ defmodule Secret do
   end
 end
 
-config :spendable, Plaid,
+config :spendable, Spendable.Banks.Clients.Plaid,
   client_id: Secret.read!("PLAID_CLIENT_ID", "test"),
   secret_key: Secret.read!("PLAID_SECRET_KEY", "test")
 

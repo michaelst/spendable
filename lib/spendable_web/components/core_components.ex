@@ -247,7 +247,7 @@ defmodule SpendableWeb.CoreComponents do
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
 
   attr :rest, :global,
-    include: ~w(autocomplete name rel action enctype method novalidate target multipart),
+    include: ["autocomplete", "name", "rel", "action", "enctype", "method", "novalidate", "target", "multipart"],
     doc: "the arbitrary HTML attributes to apply to the form tag"
 
   slot :inner_block, required: true
@@ -276,7 +276,7 @@ defmodule SpendableWeb.CoreComponents do
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :rest, :global, include: ["disabled", "form", "name", "value"]
 
   slot :inner_block, required: true
 
@@ -328,8 +328,28 @@ defmodule SpendableWeb.CoreComponents do
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+    values: [
+      "checkbox",
+      "color",
+      "date",
+      "datetime-local",
+      "email",
+      "file",
+      "hidden",
+      "month",
+      "number",
+      "password",
+      "range",
+      "radio",
+      "search",
+      "select",
+      "tel",
+      "text",
+      "textarea",
+      "time",
+      "url",
+      "week"
+    ]
 
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -339,14 +359,35 @@ defmodule SpendableWeb.CoreComponents do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
-  attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
-                multiple pattern placeholder readonly required rows size step)
+  attr :rest, :global,
+    include: [
+      "accept",
+      "autocomplete",
+      "capture",
+      "cols",
+      "disabled",
+      "form",
+      "list",
+      "max",
+      "maxlength",
+      "min",
+      "minlength",
+      "multiple",
+      "pattern",
+      "placeholder",
+      "readonly",
+      "required",
+      "rows",
+      "size",
+      "step"
+    ]
 
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
-    |> assign(field: nil, id: assigns.id || field.id)
+    |> assign(:field, nil)
+    |> assign(:id, assigns.id || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
@@ -523,7 +564,7 @@ defmodule SpendableWeb.CoreComponents do
   def table(assigns) do
     assigns =
       with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
-        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
+        assign(assigns, :row_id, assigns.row_id || fn {id, _item} -> id end)
       end
 
     ~H"""
@@ -640,7 +681,7 @@ defmodule SpendableWeb.CoreComponents do
   attr :name, :string, required: true
   attr :class, :string, default: nil
 
-  def icon(%{name: "hero-" <> _} = assigns) do
+  def icon(%{name: "hero-" <> _icon_name} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
     """

@@ -1,4 +1,6 @@
-defmodule Spendable.Broadway.SyncMemberTest.TestData do
+defmodule Spendable.TestData.Plaid do
+  @moduledoc false
+
   def item() do
     %{
       "item" => %{

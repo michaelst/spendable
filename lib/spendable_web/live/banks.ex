@@ -3,15 +3,19 @@ defmodule SpendableWeb.Live.Banks do
 
   import SpendableWeb.Utils.FormOptions
 
-  alias Spendable.BankMember
+  alias Spendable.Banks
+  alias Spendable.Banks.Schemas.BankAccount
   alias Spendable.Budgets
 
   def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
-    {:noreply, socket |> assign(selected_bank_member_id: nil, form: nil) |> fetch_data()}
+  def handle_params(_params, _uri, socket) do
+    socket
+    |> assign(:selected_bank_member_id, nil)
+    |> fetch_data()
+    |> noreply()
   end
 
   def render(assigns) do
@@ -77,7 +81,7 @@ defmodule SpendableWeb.Live.Banks do
               <div class="flex items-center space-x-8">
                 <div class="text-gray-400"><%= Spendable.Utils.format_currency(bank_account.balance) %></div>
                 <div class="-mt-2">
-                  <.form :let={f} for={bank_account_form(bank_account)} phx-change="assign_budget">
+                  <.form :let={f} for={bank_account_form(bank_account)} as={:bank_account} phx-change="assign_budget">
                     <.input type="hidden" field={f[:id]} />
                     <.input
                       type="select"
@@ -99,79 +103,63 @@ defmodule SpendableWeb.Live.Banks do
   end
 
   def handle_event("open_plaid_link", _params, socket) do
-    case Spendable.Api.load(socket.assigns.current_scope.user, [:plaid_link_token]) do
-      {:ok, user} ->
-        {:noreply, push_event(socket, "open_plaid_link", %{"link_token" => user.plaid_link_token})}
-
-      _error ->
-        {:noreply, socket}
+    case Banks.get_link_token(socket.assigns.current_scope) do
+      {:ok, token} -> socket |> push_event("open_plaid_link", %{"link_token" => token}) |> noreply()
+      {:error, :bank_limit_reached} -> noreply(socket)
     end
   end
 
   def handle_event("add_bank", %{"public_token" => public_token}, socket) do
-    BankMember
-    |> Ash.Changeset.for_create(:create_from_public_token, %{public_token: public_token},
-      actor: socket.assigns.current_scope.user
-    )
-    |> Spendable.Api.create!()
+    Banks.create_bank_member_from_public_token(socket.assigns.current_scope, public_token)
 
-    {:noreply, fetch_data(socket)}
+    socket |> fetch_data() |> noreply()
   end
 
   def handle_event("toggle_sync", %{"id" => id}, socket) do
     bank_member = Enum.find(socket.assigns.bank_members, &(&1.id == socket.assigns.selected_bank_member_id))
     bank_account = Enum.find(bank_member.bank_accounts, &(&1.id == id))
 
-    bank_account
-    |> Ash.Changeset.for_update(:update, %{sync: !bank_account.sync})
-    |> Spendable.Api.update!()
+    Banks.update_bank_account(socket.assigns.current_scope, bank_account, %{
+      "sync" => not bank_account.sync
+    })
 
-    {:noreply, fetch_data(socket)}
+    socket |> fetch_data() |> noreply()
   end
 
-  def handle_event("assign_budget", %{"form" => %{"id" => id, "budget_id" => budget_id}}, socket) do
+  def handle_event("assign_budget", %{"bank_account" => %{"id" => id, "budget_id" => budget_id}}, socket) do
     bank_member = Enum.find(socket.assigns.bank_members, &(&1.id == socket.assigns.selected_bank_member_id))
     bank_account = Enum.find(bank_member.bank_accounts, &(&1.id == id))
 
-    bank_account
-    |> Ash.Changeset.for_update(:update, %{budget_id: budget_id})
-    |> Spendable.Api.update!()
+    Banks.update_bank_account(socket.assigns.current_scope, bank_account, %{
+      "budget_id" => budget_id
+    })
 
-    {:noreply, fetch_data(socket)}
+    socket |> fetch_data() |> noreply()
   end
 
   def handle_event("search", params, socket) do
-    {:noreply,
-     socket
-     |> assign(:search, params["search"])
-     |> fetch_data()}
+    socket |> assign(:search, params["search"]) |> fetch_data() |> noreply()
   end
 
   def handle_event("select_bank_member", %{"id" => id}, socket) do
-    if socket.assigns.selected_bank_member_id == id do
-      {:noreply, assign(socket, selected_bank_member_id: nil)}
-    else
-      {:noreply, assign(socket, selected_bank_member_id: id)}
-    end
+    selected = if socket.assigns.selected_bank_member_id == id, do: nil, else: id
+
+    socket |> assign(:selected_bank_member_id, selected) |> noreply()
   end
 
   defp fetch_data(socket) do
     budget_form_options = form_options(Budgets.list_budgets(socket.assigns.current_scope))
 
     bank_members =
-      BankMember.list(socket.assigns.current_scope.user.id,
-        search: socket.assigns[:search]
-      )
+      Banks.list_bank_members(socket.assigns.current_scope, search: socket.assigns[:search])
 
-    assign(socket, bank_members: bank_members, budget_form_options: budget_form_options)
+    socket
+    |> assign(:bank_members, bank_members)
+    |> assign(:budget_form_options, budget_form_options)
   end
 
+  # One tiny form per account, so each row's select posts only its own id and budget.
   defp bank_account_form(bank_account) do
-    bank_account
-    |> AshPhoenix.Form.for_update(:update,
-      api: Spendable.Api,
-      forms: [auto?: true]
-    )
-    |> to_form()
+    BankAccount.changeset(bank_account, %{})
   end
 end

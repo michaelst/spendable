@@ -9,8 +9,11 @@ import Config
 
 config :spendable,
   env: config_env(),
-  ecto_repos: [Spendable.Repo],
-  ash_apis: [Spendable.Api]
+  ecto_repos: [Spendable.Repo]
+
+config :spendable, Oban,
+  repo: Spendable.Repo,
+  queues: [banks: 5]
 
 config :spendable, Spendable.Repo,
   migration_primary_key: [type: :text],
@@ -58,12 +61,8 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :ash, :use_all_identities_in_manage_relationship?, false
-
 config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
 config :oauth2, adapter: {Tesla.Adapter.Finch, name: Spendable.Finch}
-
-config :goth, project_id: "cloud-57"
 
 config :ueberauth, Ueberauth,
   providers: [
