@@ -11,7 +11,7 @@ defmodule SpendableWeb.Live.Transactions do
   def mount(_params, _session, socket) do
     socket
     |> assign(:page, 1)
-    |> assign(:per_page, 25)
+    |> assign(:per_page, 100)
     |> assign(:show_reviewed, true)
     |> assign(:show_excluded, false)
     |> fetch_data()
@@ -26,7 +26,7 @@ defmodule SpendableWeb.Live.Transactions do
     ~H"""
     <div>
       <main id="transactions" phx-click={hide_details()}>
-        <header class="flex items-center justify-between border-b border-white/5 px-8 py-6 sticky top-16 bg-gray-900 z-10">
+        <header class="flex items-center justify-between border-b border-white/5 px-3 py-3 sticky top-16 bg-gray-900 z-10">
           <h1 class="text-base font-semibold leading-7 text-white">Transactions</h1>
           <div class="flex gap-x-6">
             <.dropdown id="options-dropdown">
@@ -49,15 +49,6 @@ defmodule SpendableWeb.Live.Transactions do
               </div>
             </.dropdown>
             <button
-              :if={not Enum.empty?(@selected_transactions)}
-              id="delete"
-              type="button"
-              phx-click="delete"
-              class="text-sm font-semibold leading-6 text-sky-400"
-            >
-              Delete ({length(@selected_transactions)})
-            </button>
-            <button
               :if={not is_nil(@changeset)}
               type="button"
               phx-click={JS.push("close") |> hide_details()}
@@ -75,7 +66,7 @@ defmodule SpendableWeb.Live.Transactions do
           phx-viewport-bottom={!@end_of_timeline? && "next-page"}
           phx-page-loading
           class={[
-            "divide-y divide-white/5",
+            "@container divide-y divide-white/5",
             if(@end_of_timeline?, do: "pb-10", else: "pb-[calc(200vh)]"),
             if(@page == 1, do: "", else: "pt-[calc(200vh)]")
           ]}
@@ -83,54 +74,99 @@ defmodule SpendableWeb.Live.Transactions do
           <li
             :for={{id, transaction} <- @streams.transactions}
             id={id}
-            phx-click={JS.push("select_transaction") |> show_details()}
-            phx-value-id={transaction.id}
-            class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-6"
+            class={[
+              if(transaction.excluded or transaction.transfer_id, do: "opacity-40"),
+              "group flex flex-row items-center gap-x-3 p-2"
+            ]}
           >
-            <div class={[
-              if(transaction.excluded, do: "opacity-30"),
-              "w-full ml-1 flex"
-            ]}>
-              <div class="min-w-0 flex-auto">
-                <div class="flex items-center">
-                  <div class="pl-1 pr-2">
-                    <input
-                      type="checkbox"
-                      value={transaction.id in @selected_transactions}
-                      phx-click="toggle_select_transaction"
-                      phx-value-id={transaction.id}
-                      class="rounded-sm border-white/10 bg-white/5 text-white/5 opacity-0 hover:opacity-100 checked:opacity-100"
-                    />
-                  </div>
-                  <div>
-                    <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                      <span class="truncate">{transaction.name}</span>
-                    </h2>
-                    <div class="mt-2 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                      <p class="truncate">{Calendar.strftime(transaction.date, "%b %-d, %Y")}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex items-center">
-                <div class="min-w-0 flex-auto mr-4">
-                  <div class="flex items-center gap-x-3">
-                    <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                      <span class="truncate">{Utils.format_currency(transaction.amount)}</span>
-                    </h2>
-                  </div>
-                </div>
-                <div
-                  :if={transaction.reviewed}
-                  class="rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
-                >
-                  Reviewed
-                </div>
-                <.icon name="pi-caret-right" class="h-5 w-5 flex-none text-gray-400" />
-              </div>
+            <input
+              type="checkbox"
+              checked={transaction.id in @selected_transactions}
+              phx-click="toggle_select_transaction"
+              phx-value-id={transaction.id}
+              class="shrink-0 rounded-sm border-white/20 bg-white/5 text-sky-500 opacity-40 group-hover:opacity-100 checked:opacity-100"
+            />
+            <div
+              id={"open-#{transaction.id}"}
+              class="flex min-w-0 flex-1 basis-0 cursor-pointer items-baseline gap-x-3"
+              phx-click={JS.push("select_transaction") |> show_details()}
+              phx-value-id={transaction.id}
+            >
+              <span class="truncate text-sm font-semibold text-white">{transaction.name}</span>
+              <span class="hidden shrink-0 text-xs text-gray-400 @sm:block">
+                {Calendar.strftime(transaction.date, "%b %-d, %Y")}
+              </span>
+              <span
+                :if={transaction.transfer_id}
+                class="shrink-0 rounded-full bg-sky-400/10 px-2 py-0.5 text-xs font-medium text-sky-400 ring-1 ring-inset ring-sky-400/20"
+              >
+                Transfer
+              </span>
             </div>
+            <div class="hidden min-w-0 flex-1 basis-0 items-center gap-x-2 @2xl:flex">
+              <img
+                :if={bank_member(transaction)}
+                src={~p"/banks/#{bank_member(transaction).id}/logo"}
+                alt={bank_member(transaction).name}
+                class="h-5 w-5 shrink-0 rounded-sm"
+              />
+              <span :if={bank_account(transaction)} class="truncate text-xs text-gray-400">
+                {bank_account(transaction).name}
+              </span>
+              <span :if={bank_account(transaction)} class="shrink-0 text-xs text-gray-500">
+                {mask(bank_account(transaction).number)}
+              </span>
+            </div>
+            <span class="w-24 shrink-0 text-right text-sm font-semibold tabular-nums text-white">
+              {Utils.format_currency(transaction.amount)}
+            </span>
+            <div class="hidden w-36 shrink-0 @lg:block">
+              <form
+                :if={sole_allocation(transaction)}
+                id={"spend-from-#{transaction.id}"}
+                phx-change="set_spend_from"
+              >
+                <input type="hidden" name="transaction_id" value={transaction.id} />
+                <select
+                  name="budget_id"
+                  class="block w-full rounded-md border-0 bg-white/5 py-1 text-xs text-white ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-gray-500"
+                >
+                  {Phoenix.HTML.Form.options_for_select(
+                    @budget_form_options,
+                    sole_allocation(transaction).budget_id
+                  )}
+                </select>
+              </form>
+              <button
+                :if={is_nil(sole_allocation(transaction))}
+                type="button"
+                phx-click={JS.push("select_transaction") |> show_details()}
+                phx-value-id={transaction.id}
+                class="rounded-full bg-white/5 px-2 py-1 text-xs font-medium text-gray-300 ring-1 ring-inset ring-white/10"
+              >
+                Split
+              </button>
+            </div>
+            <button
+              type="button"
+              phx-click="toggle_reviewed"
+              phx-value-id={transaction.id}
+              aria-label={if transaction.reviewed, do: "Mark unreviewed", else: "Mark reviewed"}
+              aria-pressed={to_string(transaction.reviewed)}
+              class="shrink-0"
+            >
+              <.icon
+                name={if transaction.reviewed, do: "pi-check-circle-fill", else: "pi-circle"}
+                class={if transaction.reviewed, do: "h-5 w-5 text-green-400", else: "h-5 w-5 text-gray-500"}
+              />
+            </button>
+            <.icon name="pi-caret-right" class="h-5 w-5 shrink-0 text-gray-400" />
           </li>
         </ul>
+        <.bulk_actions
+          count={length(@selected_transactions)}
+          budget_options={@budget_form_options}
+        />
       </main>
       <aside
         id="transaction-details"
@@ -199,42 +235,59 @@ defmodule SpendableWeb.Live.Transactions do
               <div class="flex justify-between mt-2">
                 <button
                   type="button"
-                  id="split"
+                  id="add-line"
                   name="transaction[allocations_sort][]"
                   value="new"
                   phx-click={JS.dispatch("change")}
                   class="text-sm font-semibold text-blue-400"
                 >
-                  Split
+                  Add line
                 </button>
                 <div class="relative">
                   <button
                     type="button"
                     class="text-sm font-semibold text-blue-400"
                     id="sort-menu-button"
-                    phx-click={JS.toggle(to: "#template-options")}
+                    phx-click={JS.toggle(to: "#split-options")}
                   >
-                    Apply Template
+                    Apply Split
                   </button>
                   <div
-                    id="template-options"
+                    id="split-options"
                     class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-hidden divide-y"
-                    phx-click-away={JS.hide(to: "#template-options")}
+                    phx-click-away={JS.hide(to: "#split-options")}
                   >
                     <button
-                      :for={{template_name, template_id} <- @template_form_options}
+                      :for={{split_name, split_id} <- @split_form_options}
                       type="button"
                       class="block px-3 py-2 w-full text-sm leading-6 text-gray-900 flex flex-col hover:bg-gray-200"
-                      phx-click={JS.push("apply_template") |> JS.toggle(to: "#template-options")}
-                      phx-value-template={template_id}
+                      phx-click={JS.push("apply_split") |> JS.toggle(to: "#split-options")}
+                      phx-value-split={split_id}
                     >
-                      <div>{template_name}</div>
+                      <div>{split_name}</div>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
             <.input type="textarea" label="Note" field={f[:note]} />
+            <div
+              :if={@changeset.data.transfer}
+              class="flex items-center justify-between rounded-md bg-white/5 px-3 py-2 text-sm"
+            >
+              <span class="truncate text-gray-300">
+                Transfer with {transfer_label(@changeset.data.transfer)}
+              </span>
+              <button
+                type="button"
+                id="remove-transfer"
+                phx-click="remove_transfer"
+                phx-value-id={@changeset.data.id}
+                class="shrink-0 font-semibold text-blue-400"
+              >
+                Remove
+              </button>
+            </div>
             <div class="flex justify-between">
               <.input type="checkbox" label="Reviewed" field={f[:reviewed]} />
               <.input type="checkbox" label="Excluded" field={f[:excluded]} />
@@ -259,17 +312,17 @@ defmodule SpendableWeb.Live.Transactions do
     scope = socket.assigns.current_scope
     transaction = socket.assigns.changeset.data
 
-    case Transactions.update_transaction(scope, transaction, single_split(params)) do
+    case Transactions.update_transaction(scope, transaction, single_allocation(params)) do
       {:ok, _transaction} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
       {:error, changeset} -> socket |> assign(:changeset, changeset) |> noreply()
     end
   end
 
-  def handle_event("apply_template", %{"template" => template_id}, socket) do
-    {:ok, template} = Budgets.get_template(socket.assigns.current_scope, template_id)
+  def handle_event("apply_split", %{"split" => split_id}, socket) do
+    {:ok, split} = Budgets.get_split(socket.assigns.current_scope, split_id)
 
     allocations =
-      template.budget_allocation_template_lines
+      split.split_lines
       |> Enum.with_index()
       |> Map.new(fn {line, index} ->
         {to_string(index), %{"amount" => line.amount, "budget_id" => line.budget_id}}
@@ -296,17 +349,90 @@ defmodule SpendableWeb.Live.Transactions do
     |> noreply()
   end
 
+  def handle_event("clear_selection", _params, socket) do
+    socket |> clear_selection() |> noreply()
+  end
+
+  def handle_event("toggle_reviewed", %{"id" => id}, socket) do
+    socket |> update_row(id, &%{"reviewed" => not &1.reviewed}) |> noreply()
+  end
+
+  def handle_event("set_spend_from", %{"transaction_id" => id, "budget_id" => budget_id}, socket) do
+    socket |> update_row(id, &whole_amount_to(&1, budget_id)) |> noreply()
+  end
+
+  def handle_event("bulk_review", _params, socket) do
+    socket |> update_selection(fn _transaction -> %{"reviewed" => true} end) |> noreply()
+  end
+
+  def handle_event("bulk_exclude", _params, socket) do
+    socket |> update_selection(fn _transaction -> %{"excluded" => true} end) |> noreply()
+  end
+
+  def handle_event("bulk_spend_from", %{"budget" => budget_id}, socket) do
+    socket |> update_selection(&whole_amount_to(&1, budget_id)) |> noreply()
+  end
+
+  def handle_event("bulk_transfer", _params, socket) do
+    scope = socket.assigns.current_scope
+
+    with [one_id, two_id] <- socket.assigns.selected_transactions,
+         {:ok, one} <- Transactions.get_transaction(scope, id: one_id),
+         {:ok, two} <- Transactions.get_transaction(scope, id: two_id),
+         {:ok, {linked_one, linked_two}} <- Transactions.mark_as_transfer(scope, one, two) do
+      socket
+      |> clear_selection()
+      |> refresh_row(linked_one)
+      |> refresh_row(linked_two)
+      |> noreply()
+    else
+      {:error, :transfer_not_allowed} ->
+        socket
+        |> put_flash(:error, "A transfer needs one transaction leaving an account and one arriving in another.")
+        |> noreply()
+
+      {:error, :already_transferred} ->
+        socket
+        |> put_flash(:error, "One of those transactions is already part of a transfer.")
+        |> noreply()
+
+      _no_pair ->
+        noreply(socket)
+    end
+  end
+
+  def handle_event("remove_transfer", %{"id" => id}, socket) do
+    scope = socket.assigns.current_scope
+
+    with {:ok, transaction} <- Transactions.get_transaction(scope, id: id),
+         {:ok, removed} <- Transactions.remove_transfer(scope, transaction),
+         {:ok, counterpart} <- Transactions.get_transaction(scope, id: transaction.transfer_id) do
+      socket
+      |> assign(:changeset, nil)
+      |> refresh_row(removed)
+      |> refresh_row(counterpart)
+      |> noreply()
+    else
+      _not_a_transfer -> noreply(socket)
+    end
+  end
+
   def handle_event("delete", _params, socket) do
     scope = socket.assigns.current_scope
 
-    Enum.each(socket.assigns.selected_transactions, fn id ->
-      case Transactions.get_transaction(scope, id: id) do
-        {:ok, transaction} -> Transactions.delete_transaction(scope, transaction)
-        {:error, :transaction_not_found} -> :ok
-      end
-    end)
+    socket =
+      Enum.reduce(socket.assigns.selected_transactions, socket, fn id, socket ->
+        case Transactions.get_transaction(scope, id: id) do
+          {:ok, transaction} ->
+            {:ok, deleted} = Transactions.delete_transaction(scope, transaction)
+            stream_delete(socket, :transactions, deleted)
 
-    socket |> fetch_data() |> noreply()
+          {:error, :transaction_not_found} ->
+            socket
+        end
+      end)
+
+    socket |> clear_selection() |> noreply()
   end
 
   def handle_event("search", params, socket) do
@@ -334,14 +460,11 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   def handle_event("next-page", _params, socket) do
-    socket |> assign(:page, socket.assigns.page + 1) |> fetch_transactions() |> noreply()
+    socket |> paginate_transactions(socket.assigns.page + 1) |> noreply()
   end
 
   def handle_event("prev-page", _params, socket) do
-    socket
-    |> assign(:page, max(socket.assigns.page - 1, 1))
-    |> fetch_transactions()
-    |> noreply()
+    socket |> paginate_transactions(max(socket.assigns.page - 1, 1)) |> noreply()
   end
 
   def handle_event("close", _params, socket) do
@@ -372,7 +495,7 @@ defmodule SpendableWeb.Live.Transactions do
 
     socket
     |> assign(:budget_form_options, form_options(Budgets.list_budgets(scope)))
-    |> assign(:template_form_options, form_options(Budgets.list_templates(scope)))
+    |> assign(:split_form_options, form_options(Budgets.list_splits(scope)))
     |> assign(:selected_transactions, [])
     |> assign(:changeset, nil)
     |> assign(:page, 1)
@@ -380,21 +503,119 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp fetch_transactions(socket) do
-    %{per_page: per_page, page: page} = socket.assigns
-
-    transactions =
-      Transactions.list_transactions(socket.assigns.current_scope,
-        search: socket.assigns[:search],
-        page: page,
-        per_page: per_page,
-        show_reviewed: socket.assigns.show_reviewed,
-        show_excluded: socket.assigns.show_excluded
-      )
+    transactions = page_of_transactions(socket, socket.assigns.page)
 
     socket
     |> assign(:end_of_timeline?, transactions == [])
     |> stream(:transactions, transactions, reset: true)
   end
+
+  # Scrolling keeps a sliding window of pages in the stream. An empty page means we hit the end,
+  # so leave what is already rendered alone rather than replacing it with nothing.
+  defp paginate_transactions(socket, new_page) do
+    %{per_page: per_page, page: current_page} = socket.assigns
+    forward? = new_page >= current_page
+
+    {transactions, at, limit} =
+      case page_of_transactions(socket, new_page) do
+        transactions when forward? -> {transactions, -1, -(per_page * 3)}
+        transactions -> {Enum.reverse(transactions), 0, per_page * 3}
+      end
+
+    case transactions do
+      [] ->
+        assign(socket, :end_of_timeline?, forward?)
+
+      transactions ->
+        socket
+        |> assign(:end_of_timeline?, false)
+        |> assign(:page, new_page)
+        |> stream(:transactions, transactions, at: at, limit: limit)
+    end
+  end
+
+  defp page_of_transactions(socket, page) do
+    Transactions.list_transactions(socket.assigns.current_scope,
+      search: socket.assigns[:search],
+      page: page,
+      per_page: socket.assigns.per_page,
+      show_reviewed: socket.assigns.show_reviewed,
+      show_excluded: socket.assigns.show_excluded
+    )
+  end
+
+  # Rewriting the one row that changed keeps the reader's place: a selection is usually made deep
+  # into an infinitely scrolling list, and refetching would send them back to the top.
+  defp update_row(socket, id, build_attrs) do
+    scope = socket.assigns.current_scope
+
+    with {:ok, transaction} <- Transactions.get_transaction(scope, id: id),
+         {:ok, updated} <-
+           Transactions.update_transaction(scope, transaction, build_attrs.(transaction)) do
+      # The update is handed the record this just loaded, so what comes back still carries the
+      # bank account the row renders.
+      refresh_row(socket, updated)
+    else
+      _error -> socket
+    end
+  end
+
+  defp update_selection(socket, build_attrs) do
+    ids = socket.assigns.selected_transactions
+
+    socket
+    |> clear_selection()
+    |> then(&Enum.reduce(ids, &1, fn id, socket -> update_row(socket, id, build_attrs) end))
+  end
+
+  # A row that is already rendered stays checked when the assign empties, because streams only
+  # re-render the rows they are handed. The client clears the rest.
+  defp clear_selection(socket) do
+    socket
+    |> assign(:selected_transactions, [])
+    |> push_event("deselect-transactions", %{})
+  end
+
+  # A row leaves the list when the change no longer matches the filters, which is what makes
+  # reviewing clear the queue.
+  defp refresh_row(socket, transaction) do
+    if visible?(socket, transaction),
+      do: stream_insert(socket, :transactions, transaction),
+      else: stream_delete(socket, :transactions, transaction)
+  end
+
+  defp visible?(socket, transaction) do
+    (socket.assigns.show_reviewed or not transaction.reviewed) and
+      (socket.assigns.show_excluded or not transaction.excluded)
+  end
+
+  defp whole_amount_to(transaction, budget_id) do
+    %{"budget_allocations" => [%{"amount" => transaction.amount, "budget_id" => budget_id}]}
+  end
+
+  # A transaction with one allocation splits nothing, so the whole amount is spent from that
+  # budget and the row can offer it directly.
+  defp sole_allocation(%{budget_allocations: [allocation]}), do: allocation
+  defp sole_allocation(_transaction), do: nil
+
+  defp bank_member(%{bank_transaction: %{bank_account: %{bank_member: bank_member}}}) do
+    if bank_member.logo, do: bank_member
+  end
+
+  defp bank_member(_transaction), do: nil
+
+  defp bank_account(%{bank_transaction: %{bank_account: account}}), do: account
+  defp bank_account(_transaction), do: nil
+
+  # The dots stand in for the digits the bank does not give us, so the number reads as an account
+  # rather than as a footnote.
+  defp mask(number), do: "••••#{number}"
+
+  defp transfer_label(%{bank_transaction: %{bank_account: account}}) do
+    "#{account.name} #{mask(account.number)}"
+  end
+
+  defp transfer_label(transfer), do: transfer.name
 
   # On a failed submit the form hands back what the user typed, so this sees a string as often
   # as a Decimal.
@@ -409,10 +630,10 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   # A transaction with a single allocation splits nothing, so that line carries the whole amount.
-  defp single_split(%{"budget_allocations" => %{"0" => allocation} = allocations} = params)
+  defp single_allocation(%{"budget_allocations" => %{"0" => allocation} = allocations} = params)
        when map_size(allocations) == 1 do
     %{params | "budget_allocations" => %{"0" => Map.put(allocation, "amount", params["amount"])}}
   end
 
-  defp single_split(params), do: params
+  defp single_allocation(params), do: params
 end

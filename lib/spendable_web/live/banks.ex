@@ -32,13 +32,18 @@ defmodule SpendableWeb.Live.Banks do
         <ul role="list" class="divide-y divide-white/5">
           <li
             :for={bank_member <- @bank_members}
-            phx-click="select_bank_member"
-            phx-value-id={bank_member.id}
             class="relative flex flex-row items-center justify-between space-x-4 px-4 py-6 sm:px-6 lg:px-8"
           >
+            <!-- The whole row toggles, but the sync button sits above this so it does not toggle too. -->
+            <div
+              class="absolute inset-0 cursor-pointer"
+              phx-click="select_bank_member"
+              phx-value-id={bank_member.id}
+            >
+            </div>
             <div class="min-w-0">
               <div class="flex items-center">
-                <img src={"data:image/png;base64,#{bank_member.logo}"} alt="bank logo" class="h-8 mr-2" />
+                <img src={~p"/banks/#{bank_member.id}/logo"} alt="bank logo" class="h-8 mr-2" />
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
                   <span class="truncate">{bank_member.name}</span>
                 </h2>
@@ -54,6 +59,14 @@ defmodule SpendableWeb.Live.Banks do
                   </h2>
                 </div>
               </div>
+              <button
+                type="button"
+                phx-click="historical_sync"
+                phx-value-id={bank_member.id}
+                class="relative z-10 text-sm font-semibold leading-6 text-sky-400 mr-4 cursor-pointer"
+              >
+                Sync history
+              </button>
               <.icon
                 :if={@selected_bank_member_id != bank_member.id}
                 name="pi-caret-right"
@@ -146,6 +159,14 @@ defmodule SpendableWeb.Live.Banks do
     })
 
     socket |> fetch_data() |> noreply()
+  end
+
+  def handle_event("historical_sync", %{"id" => id}, socket) do
+    bank_member = Enum.find(socket.assigns.bank_members, &(&1.id == id))
+
+    {:ok, _job} = Banks.queue_historical_sync(socket.assigns.current_scope, bank_member)
+
+    noreply(socket)
   end
 
   def handle_event("search", params, socket) do

@@ -26,6 +26,7 @@ defmodule Spendable.Budgets.Actions.CalculateSpentByMonth do
         where: transaction.user_id == ^user_id,
         where: transaction.amount < 0,
         where: not transaction.excluded,
+        where: is_nil(transaction.transfer_id),
         group_by: fragment("TO_CHAR(?, 'YYYY-MM-01')", transaction.date),
         order_by: [desc: fragment("TO_CHAR(?, 'YYYY-MM-01')", transaction.date)]
       )

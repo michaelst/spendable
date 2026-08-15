@@ -19,6 +19,8 @@ defmodule SpendableWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   use Gettext, backend: SpendableWeb.Gettext
 
+  defdelegate bulk_actions(assigns), to: SpendableWeb.Components.BulkActions
+
   attr :id, :string, required: true
   slot :trigger, required: true
   slot :inner_block, required: true
@@ -412,13 +414,13 @@ defmodule SpendableWeb.CoreComponents do
   @doc """
   Renders a [Phosphor icon](https://phosphoricons.com).
 
-  The regular weight is the default; the filled version of an icon is its name
-  with a `-fill` suffix.
+  The regular weight is the default; other weights are the name with a weight
+  suffix, e.g. `-fill`, `-bold`, `-thin`.
 
   You can customize the size and colors of the icons by setting
   width, height, and background color classes.
 
-  Icons are extracted from your `assets/vendor/phosphor` directory and bundled
+  Icons are extracted from the `@phosphor-icons/core` node module and bundled
   within your compiled app.css by `assets/vendor/phosphor-plugin.js`.
 
   ## Examples

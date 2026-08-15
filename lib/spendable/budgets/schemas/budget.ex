@@ -4,7 +4,7 @@ defmodule Spendable.Budgets.Schemas.Budget do
 
   alias Spendable.Accounts.Schemas.User
   alias Spendable.Budgets.Schemas.BudgetAllocation
-  alias Spendable.Budgets.Schemas.BudgetAllocationTemplateLine
+  alias Spendable.Budgets.Schemas.SplitLine
 
   @types [:tracking, :envelope, :goal]
 
@@ -22,7 +22,7 @@ defmodule Spendable.Budgets.Schemas.Budget do
     belongs_to :user, User
 
     has_many :budget_allocations, BudgetAllocation
-    has_many :budget_allocation_template_lines, BudgetAllocationTemplateLine
+    has_many :split_lines, SplitLine
 
     timestamps()
   end

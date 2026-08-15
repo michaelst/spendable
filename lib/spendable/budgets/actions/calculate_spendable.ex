@@ -16,7 +16,8 @@ defmodule Spendable.Budgets.Actions.CalculateSpendable do
 
   Tracking budgets are skipped because they record spending without reserving anything, and a
   budget backed by a bank account is skipped because its balance is that account's, not a claim
-  on the pool.
+  on the pool. Allocations belonging to an excluded transaction or to a transfer are left out:
+  neither is a claim on the pool either.
   """
   def calculate_spendable(%Scope{user: %{id: user_id}}) do
     balance =
@@ -30,7 +31,10 @@ defmodule Spendable.Budgets.Actions.CalculateSpendable do
 
     allocations =
       from(allocation in BudgetAllocation,
+        join: transaction in assoc(allocation, :transaction),
         where: allocation.user_id == ^user_id,
+        where: not transaction.excluded,
+        where: is_nil(transaction.transfer_id),
         select: %{budget_id: allocation.budget_id, allocated: sum(allocation.amount)},
         group_by: allocation.budget_id
       )

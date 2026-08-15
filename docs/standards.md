@@ -181,7 +181,7 @@ end
 - Use changesets to keep state when possible. Rarely do you not need a changeset. If you start handling errors manually in a LiveView, you are likely missing a chance to use a changeset.
 - Don't wrap changesets in `to_form`. Assign the changeset directly and let `<.form>` handle the conversion internally.
 - When `Repo.update` or `Repo.insert` fails validation, the returned changeset already has its action set. Only set the action manually for client-side-only validation in `phx-change` handlers.
-- Nested rows (a transaction's allocations, a template's lines) use `inputs_for` with `sort_param`/`drop_param` rather than hand-rolled add/remove event handlers.
+- Nested rows (a transaction's allocations, a split's lines) use `inputs_for` with `sort_param`/`drop_param` rather than hand-rolled add/remove event handlers.
 - In `for` loops, extract a function for the element and pass the assigns down. If a private function is only used once, inline it.
 - Modals go outside the app layout. When deleting, use a modal for confirmation.
 - Use `:if={}` syntax, not `<%= if @condition do %>`.

@@ -34,6 +34,7 @@ defmodule Spendable.Budgets.Actions.CalculateSpent do
         where: transaction.date >= ^start_date,
         where: transaction.date <= ^end_date,
         where: not transaction.excluded,
+        where: is_nil(transaction.transfer_id),
         where: allocation.amount < 0,
         group_by: allocation.budget_id
       )

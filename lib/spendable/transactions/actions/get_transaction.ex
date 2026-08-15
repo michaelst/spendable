@@ -12,7 +12,11 @@ defmodule Spendable.Transactions.Actions.GetTransaction do
       from(transaction in Transaction,
         where: transaction.user_id == ^user_id,
         where: ^by,
-        preload: [:budget_allocations]
+        preload: [
+          :budget_allocations,
+          bank_transaction: [bank_account: :bank_member],
+          transfer: [bank_transaction: :bank_account]
+        ]
       )
 
     case Repo.one(query) do

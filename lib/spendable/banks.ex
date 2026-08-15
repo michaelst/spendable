@@ -4,6 +4,7 @@ defmodule Spendable.Banks do
   alias Spendable.Banks.Actions
 
   defdelegate list_bank_members(scope, opts \\ []), to: Actions.ListBankMembers
+  defdelegate get_bank_member(scope, by), to: Actions.GetBankMember
   defdelegate get_bank_member_by_external_id(external_id), to: Actions.GetBankMemberByExternalId
 
   defdelegate create_bank_member_from_public_token(scope, public_token),
@@ -13,6 +14,7 @@ defmodule Spendable.Banks do
   defdelegate get_update_link_token(scope, bank_member), to: Actions.GetUpdateLinkToken
   defdelegate update_bank_account(scope, bank_account, attrs), to: Actions.UpdateBankAccount
   defdelegate calculate_credit_card_balance(scope), to: Actions.CalculateCreditCardBalance
-  defdelegate queue_sync(bank_member), to: Actions.QueueSync
-  defdelegate sync_member(bank_member_id), to: Actions.SyncMember
+  defdelegate queue_sync(bank_member, opts \\ []), to: Actions.QueueSync
+  defdelegate queue_historical_sync(scope, bank_member), to: Actions.QueueHistoricalSync
+  defdelegate sync_member(bank_member_id, opts \\ []), to: Actions.SyncMember
 end

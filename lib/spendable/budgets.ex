@@ -13,9 +13,9 @@ defmodule Spendable.Budgets do
   defdelegate calculate_spent(scope, budgets, month), to: Actions.CalculateSpent
   defdelegate calculate_spent_by_month(scope), to: Actions.CalculateSpentByMonth
 
-  defdelegate list_templates(scope, opts \\ []), to: Actions.ListTemplates
-  defdelegate get_template(scope, id), to: Actions.GetTemplate
-  defdelegate create_template(scope, attrs), to: Actions.CreateTemplate
-  defdelegate update_template(scope, template, attrs), to: Actions.UpdateTemplate
-  defdelegate archive_template(scope, template), to: Actions.ArchiveTemplate
+  defdelegate list_splits(scope, opts \\ []), to: Actions.ListSplits
+  defdelegate get_split(scope, id), to: Actions.GetSplit
+  defdelegate create_split(scope, attrs), to: Actions.CreateSplit
+  defdelegate update_split(scope, split, attrs), to: Actions.UpdateSplit
+  defdelegate archive_split(scope, split), to: Actions.ArchiveSplit
 end
