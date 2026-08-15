@@ -19,7 +19,10 @@ defmodule Spendable.BudgetAllocation do
   end
 
   attributes do
-    uuid_primary_key :id
+    attribute :id, :string,
+      primary_key?: true,
+      allow_nil?: false,
+      default: fn -> UXID.generate!(prefix: "bal") end
 
     attribute :amount, :decimal, allow_nil?: false
 
@@ -27,9 +30,9 @@ defmodule Spendable.BudgetAllocation do
   end
 
   relationships do
-    belongs_to :transaction, Spendable.Transaction, allow_nil?: false
-    belongs_to :budget, Spendable.Budget, allow_nil?: false
-    belongs_to :user, Spendable.User, allow_nil?: false
+    belongs_to :transaction, Spendable.Transaction, attribute_type: :string, allow_nil?: false
+    belongs_to :budget, Spendable.Budget, attribute_type: :string, allow_nil?: false
+    belongs_to :user, Spendable.User, attribute_type: :string, allow_nil?: false
   end
 
   actions do

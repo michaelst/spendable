@@ -15,7 +15,10 @@ defmodule Spendable.User do
   end
 
   attributes do
-    uuid_primary_key :id
+    attribute :id, :string,
+      primary_key?: true,
+      allow_nil?: false,
+      default: fn -> UXID.generate!(prefix: "usr") end
 
     attribute :bank_limit, :integer, default: 0, allow_nil?: false
     attribute :external_id, :string, allow_nil?: false

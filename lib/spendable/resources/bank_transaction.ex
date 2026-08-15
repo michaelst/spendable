@@ -17,7 +17,10 @@ defmodule Spendable.BankTransaction do
   end
 
   attributes do
-    uuid_primary_key :id
+    attribute :id, :string,
+      primary_key?: true,
+      allow_nil?: false,
+      default: fn -> UXID.generate!(prefix: "bkt") end
 
     attribute :amount, :decimal, allow_nil?: false
     attribute :date, :date, allow_nil?: false
@@ -29,8 +32,8 @@ defmodule Spendable.BankTransaction do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false
-    belongs_to :bank_account, Spendable.BankAccount, allow_nil?: false
+    belongs_to :user, Spendable.User, attribute_type: :string, allow_nil?: false
+    belongs_to :bank_account, Spendable.BankAccount, attribute_type: :string, allow_nil?: false
 
     has_one :transaction, Spendable.Transaction
   end

@@ -19,7 +19,10 @@ defmodule Spendable.BudgetAllocationTemplateLine do
   end
 
   attributes do
-    uuid_primary_key :id
+    attribute :id, :string,
+      primary_key?: true,
+      allow_nil?: false,
+      default: fn -> UXID.generate!(prefix: "tll") end
 
     attribute :amount, :decimal, allow_nil?: false
 
@@ -27,11 +30,13 @@ defmodule Spendable.BudgetAllocationTemplateLine do
   end
 
   relationships do
-    belongs_to :budget, Spendable.Budget, allow_nil?: false
+    belongs_to :budget, Spendable.Budget, attribute_type: :string, allow_nil?: false
 
-    belongs_to :budget_allocation_template, Spendable.BudgetAllocationTemplate, allow_nil?: false
+    belongs_to :budget_allocation_template, Spendable.BudgetAllocationTemplate,
+      attribute_type: :string,
+      allow_nil?: false
 
-    belongs_to :user, Spendable.User, allow_nil?: false
+    belongs_to :user, Spendable.User, attribute_type: :string, allow_nil?: false
   end
 
   actions do

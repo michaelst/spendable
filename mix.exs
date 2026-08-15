@@ -11,8 +11,13 @@ defmodule Spendable.MixProject do
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
-      test_paths: ["lib"],
-      preferred_cli_env: [
+      test_paths: ["lib"]
+    ]
+  end
+
+  def cli() do
+    [
+      preferred_envs: [
         coveralls: :test,
         "coveralls.json": :test,
         "coveralls.html": :test
@@ -46,7 +51,8 @@ defmodule Spendable.MixProject do
       {:bandit, "~> 1.0-pre"},
       {:broadway_cloud_pub_sub, "~> 0.7"},
       {:broadway, "~> 1.0"},
-      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:spendable_credo, path: "credo", only: [:dev, :test], runtime: false},
       {:dotenv_parser, "~> 2.0", only: [:dev]},
       # ash 2.x is incompatible with the parameterized type change in ecto 3.12
       {:ecto_sql, "~> 3.11.0"},
@@ -96,7 +102,8 @@ defmodule Spendable.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-      "ash.gen.migration": ["ash_postgres.generate_migrations"]
+      "ash.gen.migration": ["ash_postgres.generate_migrations"],
+      credo: ["credo --config-file credo/.credo.exs"]
     ]
   end
 end

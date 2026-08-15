@@ -12,6 +12,11 @@ config :spendable,
   ecto_repos: [Spendable.Repo],
   ash_apis: [Spendable.Api]
 
+config :spendable, Spendable.Repo,
+  migration_primary_key: [type: :text],
+  migration_foreign_key: [type: :text],
+  migration_timestamps: [type: :utc_datetime_usec]
+
 # Configures the endpoint
 config :spendable, SpendableWeb.Endpoint,
   adapter: Bandit.PhoenixAdapter,

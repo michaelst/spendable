@@ -21,7 +21,10 @@ defmodule Spendable.Budget do
   end
 
   attributes do
-    uuid_primary_key :id
+    attribute :id, :string,
+      primary_key?: true,
+      allow_nil?: false,
+      default: fn -> UXID.generate!(prefix: "bgt") end
 
     attribute :adjustment, :decimal, allow_nil?: false, default: Decimal.new("0.00")
     attribute :budgeted_amount, :decimal
@@ -32,7 +35,7 @@ defmodule Spendable.Budget do
   end
 
   relationships do
-    belongs_to :user, Spendable.User, allow_nil?: false
+    belongs_to :user, Spendable.User, attribute_type: :string, allow_nil?: false
 
     has_many :budget_allocations, Spendable.BudgetAllocation
     has_many :budget_allocation_template_lines, Spendable.BudgetAllocationTemplateLine
