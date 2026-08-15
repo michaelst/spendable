@@ -41,7 +41,17 @@ Credentials go to `.secrets/` as one 0600 file per value, because the release re
 compose itself needs. Both are gitignored, and nothing is echoed back or left in shell history.
 
 Re-run the script any time to change a credential; every prompt offers to keep what is already there.
-To start it again without the prompts:
+
+To deploy a new version, pull and rebuild in one step:
+
+```bash
+scripts/update.sh
+```
+
+It pulls (unless the working tree is dirty), rebuilds the image, runs migrations, and recreates
+whatever the compose file changed — including removing services it no longer defines.
+
+Either script can be replaced with the compose command it runs:
 
 ```bash
 docker compose --env-file .env.prod --profile prod --profile tunnel up -d --build
