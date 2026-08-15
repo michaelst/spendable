@@ -36,7 +36,6 @@ defmodule SpendableWeb.Router do
 
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
-    post "/:provider/callback", AuthController, :callback
   end
 
   live_session :authenticated,

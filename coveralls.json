@@ -5,6 +5,7 @@
   },
   "skip_files": [
     "lib/spendable/release.ex",
+    "lib/spendable_web.ex",
     "test/support"
   ]
 }

@@ -169,7 +169,15 @@ defmodule SpendableWeb.Live.Budgets do
         id="details-form"
         class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
-        <.simple_form :let={f} :if={@changeset} for={@changeset} as={:budget} phx-change="validate" phx-submit="submit">
+        <.simple_form
+          :let={f}
+          :if={@changeset}
+          id="budget-form"
+          for={@changeset}
+          as={:budget}
+          phx-change="validate"
+          phx-submit="submit"
+        >
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit budget</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">

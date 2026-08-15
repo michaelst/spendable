@@ -14,12 +14,15 @@ defmodule Spendable.Transactions.Actions.CreateTransaction do
       |> Transaction.changeset(attrs)
       |> Repo.insert()
       |> case do
-        {:ok, transaction} -> unwrap(allocate_spendable(scope, transaction))
-        {:error, changeset} -> Repo.rollback(changeset)
+        # The remainder is built from a valid transaction and the user's own Spendable budget, so
+        # anything but an :ok is a database failure, and raising rolls the transaction back.
+        {:ok, transaction} ->
+          {:ok, allocated} = allocate_spendable(scope, transaction)
+          allocated
+
+        {:error, changeset} ->
+          Repo.rollback(changeset)
       end
     end)
   end
-
-  defp unwrap({:ok, transaction}), do: transaction
-  defp unwrap({:error, changeset}), do: Repo.rollback(changeset)
 end

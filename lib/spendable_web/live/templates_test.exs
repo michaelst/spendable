@@ -140,6 +140,15 @@ defmodule SpendableWeb.Live.TemplatesTest do
     assert [%{name: "Paycheck"}] = Budgets.list_templates(scope)
   end
 
+  test "closes the details form", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/templates")
+
+    view |> element("#new-template") |> render_click()
+    html = render_click(view, "close", %{})
+
+    refute html =~ ~s(phx-submit="submit")
+  end
+
   test "filters the list by the search box", %{conn: conn, scope: scope} do
     {:ok, _paycheck} = Budgets.create_template(scope, %{"name" => "Paycheck"})
     {:ok, _bonus} = Budgets.create_template(scope, %{"name" => "Bonus"})

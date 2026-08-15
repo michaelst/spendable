@@ -136,7 +136,15 @@ defmodule SpendableWeb.Live.Transactions do
         id="transaction-details"
         class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
-        <.simple_form :let={f} :if={@changeset} for={@changeset} as={:transaction} phx-change="validate" phx-submit="submit">
+        <.simple_form
+          :let={f}
+          :if={@changeset}
+          id="transaction-form"
+          for={@changeset}
+          as={:transaction}
+          phx-change="validate"
+          phx-submit="submit"
+        >
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit transaction</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
@@ -249,14 +257,9 @@ defmodule SpendableWeb.Live.Transactions do
 
   def handle_event("submit", %{"transaction" => params}, socket) do
     scope = socket.assigns.current_scope
+    transaction = socket.assigns.changeset.data
 
-    result =
-      case socket.assigns.changeset.data do
-        %Transaction{id: nil} -> Transactions.create_transaction(scope, single_split(params))
-        transaction -> Transactions.update_transaction(scope, transaction, single_split(params))
-      end
-
-    case result do
+    case Transactions.update_transaction(scope, transaction, single_split(params)) do
       {:ok, _transaction} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
       {:error, changeset} -> socket |> assign(:changeset, changeset) |> noreply()
     end
@@ -399,11 +402,11 @@ defmodule SpendableWeb.Live.Transactions do
     if Decimal.negative?(amount), do: "Spend from", else: "Add to"
   end
 
-  defp allocation_label(amount) when is_binary(amount) do
-    if String.starts_with?(String.trim(amount), "-"), do: "Spend from", else: "Add to"
+  defp allocation_label(amount) do
+    if is_binary(amount) and String.starts_with?(String.trim(amount), "-"),
+      do: "Spend from",
+      else: "Add to"
   end
-
-  defp allocation_label(_amount), do: "Add to"
 
   # A transaction with a single allocation splits nothing, so that line carries the whole amount.
   defp single_split(%{"budget_allocations" => %{"0" => allocation} = allocations} = params)

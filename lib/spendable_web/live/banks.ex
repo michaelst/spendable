@@ -86,7 +86,13 @@ defmodule SpendableWeb.Live.Banks do
                   {Spendable.Utils.format_currency(bank_account.balance)}
                 </div>
                 <div class="-mt-2">
-                  <.form :let={f} for={bank_account_form(bank_account)} as={:bank_account} phx-change="assign_budget">
+                  <.form
+                    :let={f}
+                    id={"bank-account-#{bank_account.id}-form"}
+                    for={bank_account_form(bank_account)}
+                    as={:bank_account}
+                    phx-change="assign_budget"
+                  >
                     <.input type="hidden" field={f[:id]} />
                     <.input
                       type="select"

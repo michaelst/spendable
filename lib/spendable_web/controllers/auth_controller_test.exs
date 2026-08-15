@@ -45,6 +45,17 @@ defmodule SpendableWeb.AuthControllerTest do
     assert Plug.Conn.get_session(conn, :current_user_id) == user.id
   end
 
+  test "GET /auth/:provider hands the user to the provider", %{conn: conn} do
+    assert conn |> get("/auth/google") |> redirected_to() =~ "accounts.google.com"
+  end
+
+  test "GET /auth/:provider/callback without a grant fails authentication", %{conn: conn} do
+    conn = get(conn, "/auth/google/callback")
+
+    assert redirected_to(conn) == "/"
+    assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Failed to authenticate."
+  end
+
   test "DELETE /logout", %{conn: conn} do
     assert conn
            |> delete("/logout")

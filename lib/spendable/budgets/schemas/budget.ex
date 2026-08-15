@@ -38,8 +38,6 @@ defmodule Spendable.Budgets.Schemas.Budget do
     cast(budget, attrs, [:archived_at])
   end
 
-  def types(), do: @types
-
   # A user edits the balance, never the adjustment: the adjustment absorbs the gap between
   # the balance they asked for and what the allocations already add up to.
   defp put_adjustment(changeset) do

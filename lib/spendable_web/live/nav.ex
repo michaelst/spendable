@@ -9,16 +9,14 @@ defmodule SpendableWeb.Live.Nav do
     |> cont()
   end
 
-  defp set_active_tab(_params, _url, socket) do
-    active_tab =
-      case socket.view do
-        SpendableWeb.Live.Budgets -> :budgets
-        SpendableWeb.Live.Transactions -> :transactions
-        SpendableWeb.Live.Templates -> :templates
-        SpendableWeb.Live.Banks -> :banks
-        _other_view -> nil
-      end
+  @tabs %{
+    SpendableWeb.Live.Budgets => :budgets,
+    SpendableWeb.Live.Transactions => :transactions,
+    SpendableWeb.Live.Templates => :templates,
+    SpendableWeb.Live.Banks => :banks
+  }
 
-    socket |> assign(:active_tab, active_tab) |> cont()
+  defp set_active_tab(_params, _url, socket) do
+    socket |> assign(:active_tab, @tabs[socket.view]) |> cont()
   end
 end

@@ -18,14 +18,17 @@ defmodule Spendable.Transactions.Actions.UpdateTransaction do
       |> Transaction.changeset(attrs)
       |> Repo.update()
       |> case do
-        {:ok, updated} -> unwrap(allocate_spendable(scope, updated))
-        {:error, changeset} -> Repo.rollback(changeset)
+        # The remainder is built from a valid transaction and the user's own Spendable budget, so
+        # anything but an :ok is a database failure, and raising rolls the transaction back.
+        {:ok, updated} ->
+          {:ok, allocated} = allocate_spendable(scope, updated)
+          allocated
+
+        {:error, changeset} ->
+          Repo.rollback(changeset)
       end
     end)
   end
 
   def update_transaction(_scope, _transaction, _attrs), do: {:error, :not_authorized}
-
-  defp unwrap({:ok, transaction}), do: transaction
-  defp unwrap({:error, changeset}), do: Repo.rollback(changeset)
 end

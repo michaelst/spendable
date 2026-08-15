@@ -27,8 +27,4 @@ defmodule Spendable.Banks.Schemas.BankMember do
     |> validate_required([:external_id, :name, :provider])
     |> unique_constraint(:external_id)
   end
-
-  def token_changeset(member, plaid_token) do
-    change(member, plaid_token: plaid_token)
-  end
 end

@@ -2,6 +2,7 @@ defmodule Spendable.Schema do
   @moduledoc false
 
   defmacro __using__(_opts) do
+    # coveralls-ignore-next-line the macro body only runs while schemas compile, before coverage is instrumented
     quote do
       use Ecto.Schema
 

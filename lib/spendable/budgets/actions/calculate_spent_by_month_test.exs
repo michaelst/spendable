@@ -4,6 +4,7 @@ defmodule Spendable.Budgets.Actions.CalculateSpentByMonthTest do
   alias Spendable.Accounts
   alias Spendable.Budgets
   alias Spendable.Scope
+  alias Spendable.Transactions
 
   setup do
     {:ok, user} =
@@ -18,5 +19,19 @@ defmodule Spendable.Budgets.Actions.CalculateSpentByMonthTest do
 
     assert [%{month: ^current_month, spent: spent}] = Budgets.calculate_spent_by_month(scope)
     assert Decimal.eq?(spent, 0)
+  end
+
+  test "sums what the current month has spent so far", %{scope: scope} do
+    current_month = Date.beginning_of_month(Date.utc_today())
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-25.00",
+        "date" => Date.utc_today(),
+        "name" => "Groceries"
+      })
+
+    assert [%{month: ^current_month, spent: spent}] = Budgets.calculate_spent_by_month(scope)
+    assert Decimal.eq?(spent, "-25.00")
   end
 end

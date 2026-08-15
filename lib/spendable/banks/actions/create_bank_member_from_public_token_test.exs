@@ -47,6 +47,24 @@ defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicTokenTest do
     assert_enqueued(worker: SyncMember, args: %{bank_member_id: bank_member.id})
   end
 
+  # Reconnecting a bank the user already holds would be a second copy of the same connection.
+  test "errors when the same connection is added twice" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{
+        external_id: Ecto.UUID.generate(),
+        provider: "google",
+        bank_limit: 2
+      })
+
+    scope = Scope.for_user(user)
+    {:ok, _first} = Banks.create_bank_member_from_public_token(scope, "public-sandbox-token")
+
+    assert {:error, changeset} =
+             Banks.create_bank_member_from_public_token(scope, "public-sandbox-token")
+
+    assert %{external_id: ["has already been taken"]} = errors_on(changeset)
+  end
+
   test "refuses once the user is at their bank limit", %{scope: scope} do
     {:ok, _first} = Banks.create_bank_member_from_public_token(scope, "public-sandbox-token")
 

@@ -6,6 +6,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
   alias Spendable.Accounts
   alias Spendable.Budgets
   alias Spendable.Scope
+  alias Spendable.Transactions
 
   setup %{conn: conn} do
     {:ok, user} =
@@ -104,6 +105,43 @@ defmodule SpendableWeb.Live.BudgetsTest do
     # Nothing is selected, so there is nothing to archive and the button is gone with it.
     refute html =~ ~s(id="archive")
     assert [%{name: "Groceries"}] = Budgets.list_budgets(scope)
+  end
+
+  # Whatever a transaction leaves unallocated waits in Spendable, and the page leads with it.
+  test "shows what is available to spend", %{conn: conn, scope: scope} do
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-20.00",
+        "date" => Date.utc_today(),
+        "name" => "Groceries"
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "AVAILABLE"
+    assert html =~ "-$20.00"
+  end
+
+  test "closes the details form", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    view |> element("#new-budget") |> render_click()
+    html = render_click(view, "close", %{})
+
+    refute html =~ ~s(phx-submit="submit")
+  end
+
+  # A past month is a record of what was spent, so there is no card debt to cover in it.
+  test "shows a past month without the credit card debt", %{conn: conn, scope: scope} do
+    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+    last_month = Date.utc_today() |> Date.beginning_of_month() |> Date.add(-1)
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    html = render_click(view, "select_month", %{"month" => Date.to_iso8601(last_month)})
+
+    assert html =~ "SPENT"
+    refute html =~ "Credit Cards"
   end
 
   test "filters the list by the search box", %{conn: conn, scope: scope} do

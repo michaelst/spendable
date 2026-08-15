@@ -84,6 +84,26 @@ defmodule SpendableWeb.Live.BanksTest do
     refute_receive {_ref, {:push_event, "open_plaid_link", _payload}}, 50
   end
 
+  # Plaid Link hands the public token back to the page once the user finishes connecting.
+  test "connects the bank Plaid Link returns", %{conn: conn, scope: scope} do
+    stub(TeslaMock, :call, fn
+      %{method: :post, url: "https://sandbox.plaid.com/item/public_token/exchange"}, _opts ->
+        TeslaHelper.response(body: %{"access_token" => "access-sandbox-token"})
+
+      %{method: :post, url: "https://sandbox.plaid.com/item/get"}, _opts ->
+        TeslaHelper.response(body: Spendable.TestData.Plaid.item())
+
+      %{method: :post, url: "https://sandbox.plaid.com/institutions/get_by_id"}, _opts ->
+        TeslaHelper.response(body: Spendable.TestData.Plaid.institution())
+    end)
+
+    {:ok, view, _html} = live(conn, ~p"/banks")
+
+    render_click(view, "add_bank", %{"public_token" => "public-sandbox-token"})
+
+    assert [%{name: "Tartan Bank"}, %{name: "Tartan Bank"}] = Banks.list_bank_members(scope)
+  end
+
   test "toggles syncing for an account", %{conn: conn, member: member, bank_account: account} do
     {:ok, view, _html} = live(conn, ~p"/banks")
 
