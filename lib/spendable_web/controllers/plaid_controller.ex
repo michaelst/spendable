@@ -1,17 +1,16 @@
 defmodule SpendableWeb.PlaidController do
   use SpendableWeb, :controller
 
-  alias Spendable.Api
-  alias Spendable.Publishers.SyncMemberRequest
+  alias Spendable.Banks
 
   def webhook(conn, %{"item_id" => item_id}) when is_binary(item_id) do
-    case Api.get(Spendable.BankMember, external_id: item_id) do
+    case Banks.get_bank_member_by_external_id(item_id) do
       {:ok, bank_member} ->
-        {:ok, %{status: 200}} = SyncMemberRequest.publish(bank_member.id)
+        {:ok, _job} = Banks.queue_sync(bank_member)
 
         send_resp(conn, :ok, "")
 
-      {:error, %Ash.Error.Invalid{errors: [%Ash.Error.Query.NotFound{}]}} ->
+      {:error, :bank_member_not_found} ->
         send_resp(conn, :not_found, "")
     end
   end

@@ -1,31 +1,4 @@
 defmodule Spendable.Utils do
-  alias Spendable.Api
-  alias Spendable.Budget
-  alias Spendable.Repo
-
-  def get_spendable_id(user) do
-    budget =
-      Repo.get_by(Budget, user_id: user.id, name: "Spendable")
-      |> case do
-        nil ->
-          Budget
-          |> Ash.Changeset.for_create(
-            :create,
-            %{
-              name: "Spendable",
-              type: :tracking
-            },
-            actor: user
-          )
-          |> Api.create!()
-
-        budget ->
-          budget
-      end
-
-    budget.id
-  end
-
   def format_currency(nil), do: "$0.00"
 
   def format_currency(decimal) do

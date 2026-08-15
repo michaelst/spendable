@@ -65,7 +65,7 @@
                       href="#"
                       class="bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                     >
-                      <.icon name="hero-banknotes" class="h-6 w-6 shrink-0" /> Budgets
+                      <.icon name="pi-money" class="h-6 w-6 shrink-0" /> Budgets
                     </a>
                   </li>
                 </ul>
@@ -75,7 +75,7 @@
                   href="#"
                   class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
                 >
-                  <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_user.image} alt="" />
+                  <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_scope.user.image} alt="" />
                   <span class="sr-only">Your profile</span>
                 </a>
               </li>
@@ -104,7 +104,7 @@
                     do: "bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", 
                     else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
                 >
-                  <.icon name="hero-banknotes" class="h-6 w-6 shrink-0" /> Budgets
+                  <.icon name="pi-money" class="h-6 w-6 shrink-0" /> Budgets
                 </.link>
               </li>
               <li>
@@ -114,17 +114,17 @@
                     do: "bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", 
                     else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
                 >
-                  <.icon name="hero-credit-card" class="h-6 w-6 shrink-0" /> Transactions
+                  <.icon name="pi-credit-card" class="h-6 w-6 shrink-0" /> Transactions
                 </.link>
               </li>
               <li>
                 <.link
                   navigate={~p"/templates"}
-                  class={"#{if @active_tab == :banks, 
+                  class={"#{if @active_tab == :templates, 
                     do: "bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", 
                     else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
                 >
-                  <.icon name="hero-document-duplicate" class="h-6 w-6 shrink-0" /> Transaction templates
+                  <.icon name="pi-copy" class="h-6 w-6 shrink-0" /> Transaction templates
                 </.link>
               </li>
               <li>
@@ -134,7 +134,7 @@
                     do: "bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold", 
                     else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
                 >
-                  <.icon name="hero-building-library" class="h-6 w-6 shrink-0" /> Banks
+                  <.icon name="pi-bank" class="h-6 w-6 shrink-0" /> Banks
                 </.link>
               </li>
             </ul>
@@ -145,7 +145,7 @@
               method="delete"
               class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
             >
-              <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_user.image} alt="" /> Sign out
+              <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_scope.user.image} alt="" /> Sign out
             </.link>
           </li>
         </ul>
@@ -155,7 +155,7 @@
 
   <div class="xl:pl-72">
     <!-- Sticky search header -->
-    <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-gray-900 px-4 shadow-sm sm:px-6 lg:px-8">
+    <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-white/5 bg-gray-900 px-4 shadow-xs sm:px-6 lg:px-8">
       <button type="button" class="-m-2.5 p-2.5 text-white xl:hidden">
         <span class="sr-only">Open sidebar</span>
         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -197,6 +197,6 @@
       </div>
     </div>
 
-    <%= @inner_content %>
+    {@inner_content}
   </div>
 </div>

@@ -6,7 +6,7 @@ defmodule SpendableWeb.AuthController do
 
   plug Ueberauth
 
-  alias Spendable.User
+  alias Spendable.Accounts
 
   def login(conn, _params) do
     render(conn, :login, layout: false)
@@ -27,14 +27,13 @@ defmodule SpendableWeb.AuthController do
       }
     } = auth
 
-    user =
-      User
-      |> Ash.Changeset.new(%{
+    # Ueberauth hands the provider back as an atom; the boundary is where that becomes our string.
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{
         external_id: uid,
-        provider: provider,
+        provider: to_string(provider),
         image: image
       })
-      |> Spendable.Api.create!(upsert?: true, upsert_identity: :external_id)
 
     conn
     |> put_session(:current_user_id, user.id)

@@ -1,4 +1,4 @@
-FROM hexpm/elixir:1.16.2-erlang-26.2.2-ubuntu-focal-20240123 AS build
+FROM hexpm/elixir:1.20.3-erlang-29.0.5-ubuntu-noble-20260730.1 AS build
 
 RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
@@ -17,7 +17,6 @@ COPY assets assets
 COPY lib lib
 COPY priv priv
 COPY rel rel
-COPY protobuf protobuf
 
 RUN --mount=type=cache,target=/app/deps \
     --mount=type=cache,target=/app/_build/prod \
@@ -26,14 +25,16 @@ RUN --mount=type=cache,target=/app/deps \
       # copy out of the cache so it is available
       cp -r /app/_build/prod/rel/spendable ./release
 
-FROM ubuntu:20.04 AS app
+FROM ubuntu:24.04 AS app
 
 ENV LANG=C.UTF-8
 
 RUN set -xe \
   && apt-get update \
   && apt-get -y upgrade \
-  && apt-get install -y --no-install-recommends openssl \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
+  # ubuntu:24.04 ships a default `ubuntu` user occupying uid 1000
+  && userdel -r ubuntu \
   && useradd --create-home -u 1000 app \
   && rm -rf /var/lib/apt/lists/*
 

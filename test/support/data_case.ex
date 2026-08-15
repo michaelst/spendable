@@ -26,6 +26,8 @@ defmodule Spendable.DataCase do
       import Spendable.DataCase
       import Hammox
 
+      use Oban.Testing, repo: Spendable.Repo
+
       alias Spendable.Support.TeslaHelper
 
       setup :verify_on_exit!

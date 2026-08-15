@@ -12,12 +12,12 @@ defmodule SpendableWeb.CoreComponents do
   See the [Tailwind CSS documentation](https://tailwindcss.com) to learn
   how to customize them or feel free to swap in another framework altogether.
 
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
+  Icons are provided by [Phosphor](https://phosphoricons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import SpendableWeb.Gettext
+  use Gettext, backend: SpendableWeb.Gettext
 
   attr :id, :string, required: true
   slot :trigger, required: true
@@ -27,10 +27,10 @@ defmodule SpendableWeb.CoreComponents do
     ~H"""
     <div class="relative inline-block text-left">
       <div phx-click={toggle("##{@id}-content")} phx-click-away={hide("##{@id}-content")}>
-        <%= render_slot(@trigger) %>
+        {render_slot(@trigger)}
       </div>
       <div id={"#{@id}-content"} class="hidden">
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </div>
     </div>
     """
@@ -47,36 +47,34 @@ defmodule SpendableWeb.CoreComponents do
       phx-click={JS.push(@on_toggle) |> toggle_switch(@id)}
       phx-value-id={@id}
       type="button"
-      class="group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+      class="group relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-hidden focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
       role="switch"
-      aria-checked="false"
+      aria-checked={to_string(@enabled)}
     >
       <span aria-hidden="true" class="pointer-events-none absolute h-full w-full rounded-md"></span>
       <span
         id={"#{@id}-bg"}
         aria-hidden="true"
         class={[
-          if(@enabled, do: "bg-sky-600", else: "bg-gray-600"),
+          if(@enabled, do: "bg-sky-500", else: "bg-gray-600"),
           "pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out"
         ]}
-      >
-      </span>
+      ></span>
       <span
         id={"#{@id}-circle"}
         aria-hidden="true"
         class={[
           if(@enabled, do: "translate-x-5", else: "translate-x-0"),
-          "pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-600 bg-gray-400 shadow ring-0 transition-transform duration-200 ease-in-out"
+          "pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-300 bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out"
         ]}
-      >
-      </span>
+      ></span>
     </button>
     """
   end
 
   def toggle_switch(js \\ %JS{}, id) when is_binary(id) do
     js
-    |> JS.toggle_class("bg-sky-600 bg-gray-600", to: "##{id}-bg")
+    |> JS.toggle_class("bg-sky-500 bg-gray-600", to: "##{id}-bg")
     |> JS.toggle_class("translate-x-5 translate-x-0", to: "##{id}-circle")
   end
 
@@ -136,11 +134,11 @@ defmodule SpendableWeb.CoreComponents do
                   class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5" />
+                  <.icon name="pi-x" class="h-5 w-5" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
+                {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
           </div>
@@ -181,13 +179,13 @@ defmodule SpendableWeb.CoreComponents do
       {@rest}
     >
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
-        <%= @title %>
+        <.icon :if={@kind == :info} name="pi-info" class="h-4 w-4" />
+        <.icon :if={@kind == :error} name="pi-warning-circle" class="h-4 w-4" />
+        {@title}
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
+      <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
+        <.icon name="pi-x" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
     """
@@ -214,7 +212,7 @@ defmodule SpendableWeb.CoreComponents do
       phx-connected={hide("#client-error")}
       hidden
     >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      Attempting to reconnect <.icon name="pi-arrow-clockwise" class="ml-1 h-3 w-3 animate-spin" />
     </.flash>
 
     <.flash
@@ -225,7 +223,7 @@ defmodule SpendableWeb.CoreComponents do
       phx-connected={hide("#server-error")}
       hidden
     >
-      Hang in there while we get back on track <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      Hang in there while we get back on track <.icon name="pi-arrow-clockwise" class="ml-1 h-3 w-3 animate-spin" />
     </.flash>
     """
   end
@@ -247,7 +245,7 @@ defmodule SpendableWeb.CoreComponents do
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
 
   attr :rest, :global,
-    include: ~w(autocomplete name rel action enctype method novalidate target multipart),
+    include: ["autocomplete", "name", "rel", "action", "enctype", "method", "novalidate", "target", "multipart"],
     doc: "the arbitrary HTML attributes to apply to the form tag"
 
   slot :inner_block, required: true
@@ -257,9 +255,9 @@ defmodule SpendableWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div>
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -276,7 +274,7 @@ defmodule SpendableWeb.CoreComponents do
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :rest, :global, include: ["disabled", "form", "name", "value"]
 
   slot :inner_block, required: true
 
@@ -291,7 +289,7 @@ defmodule SpendableWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -328,8 +326,28 @@ defmodule SpendableWeb.CoreComponents do
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+    values: [
+      "checkbox",
+      "color",
+      "date",
+      "datetime-local",
+      "email",
+      "file",
+      "hidden",
+      "month",
+      "number",
+      "password",
+      "range",
+      "radio",
+      "search",
+      "select",
+      "tel",
+      "text",
+      "textarea",
+      "time",
+      "url",
+      "week"
+    ]
 
   attr :field, Phoenix.HTML.FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -339,14 +357,35 @@ defmodule SpendableWeb.CoreComponents do
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
-  attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
-                multiple pattern placeholder readonly required rows size step)
+  attr :rest, :global,
+    include: [
+      "accept",
+      "autocomplete",
+      "capture",
+      "cols",
+      "disabled",
+      "form",
+      "list",
+      "max",
+      "maxlength",
+      "min",
+      "minlength",
+      "multiple",
+      "pattern",
+      "placeholder",
+      "readonly",
+      "required",
+      "rows",
+      "size",
+      "step"
+    ]
 
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
-    |> assign(field: nil, id: assigns.id || field.id)
+    |> assign(:field, nil)
+    |> assign(:id, assigns.id || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
@@ -367,12 +406,12 @@ defmodule SpendableWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-white/10 bg-white/5 text-white/5"
+          class="rounded-sm border-white/10 bg-white/5 text-white/5"
           {@rest}
         />
-        <%= @label %>
+        {@label}
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -380,7 +419,7 @@ defmodule SpendableWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <select
         id={@id}
         name={@name}
@@ -388,10 +427,10 @@ defmodule SpendableWeb.CoreComponents do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -399,19 +438,19 @@ defmodule SpendableWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <textarea
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-gray-500 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg border-0 bg-white/5 py-1.5 text-white shadow-xs ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-gray-500 sm:text-sm sm:leading-6",
           "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -420,7 +459,7 @@ defmodule SpendableWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <div class="mt-2">
         <div class={[
           "flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset",
@@ -436,7 +475,7 @@ defmodule SpendableWeb.CoreComponents do
             {@rest}
           />
         </div>
-        <.error :for={msg <- @errors}><%= msg %></.error>
+        <.error :for={msg <- @errors}>{msg}</.error>
       </div>
     </div>
     """
@@ -451,7 +490,7 @@ defmodule SpendableWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="block text-sm font-semibold leading-6 text-white">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -464,8 +503,8 @@ defmodule SpendableWeb.CoreComponents do
   def error(assigns) do
     ~H"""
     <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
-      <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
-      <%= render_slot(@inner_block) %>
+      <.icon name="pi-warning-circle" class="mt-0.5 h-5 w-5 flex-none" />
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -484,13 +523,13 @@ defmodule SpendableWeb.CoreComponents do
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
         <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -523,7 +562,7 @@ defmodule SpendableWeb.CoreComponents do
   def table(assigns) do
     assigns =
       with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
-        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
+        assign(assigns, :row_id, assigns.row_id || fn {id, _item} -> id end)
       end
 
     ~H"""
@@ -531,8 +570,8 @@ defmodule SpendableWeb.CoreComponents do
       <table class="w-[40rem] mt-11 sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pr-6 pb-4 font-normal"><%= col[:label] %></th>
-            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+            <th :for={col <- @col} class="p-0 pr-6 pb-4 font-normal">{col[:label]}</th>
+            <th class="relative p-0 pb-4"><span class="sr-only">{gettext("Actions")}</span></th>
           </tr>
         </thead>
         <tbody
@@ -549,7 +588,7 @@ defmodule SpendableWeb.CoreComponents do
               <div class="block py-4 pr-6">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
+                  {render_slot(col, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -560,7 +599,7 @@ defmodule SpendableWeb.CoreComponents do
                   :for={action <- @action}
                   class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
                 >
-                  <%= render_slot(action, @row_item.(row)) %>
+                  {render_slot(action, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -590,8 +629,8 @@ defmodule SpendableWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none text-zinc-500">{item.title}</dt>
+          <dd class="text-zinc-700">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -612,35 +651,34 @@ defmodule SpendableWeb.CoreComponents do
     ~H"""
     <div class="mt-16">
       <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
-        <%= render_slot(@inner_block) %>
+        <.icon name="pi-arrow-left" class="h-3 w-3" />
+        {render_slot(@inner_block)}
       </.link>
     </div>
     """
   end
 
   @doc """
-  Renders a [Heroicon](https://heroicons.com).
+  Renders a [Phosphor icon](https://phosphoricons.com).
 
-  Heroicons come in three styles – outline, solid, and mini.
-  By default, the outline style is used, but solid and mini may
-  be applied by using the `-solid` and `-mini` suffix.
+  The regular weight is the default; the filled version of an icon is its name
+  with a `-fill` suffix.
 
   You can customize the size and colors of the icons by setting
   width, height, and background color classes.
 
-  Icons are extracted from your `assets/vendor/heroicons` directory and bundled
-  within your compiled app.css by the plugin in your `assets/tailwind.config.js`.
+  Icons are extracted from your `assets/vendor/phosphor` directory and bundled
+  within your compiled app.css by `assets/vendor/phosphor-plugin.js`.
 
   ## Examples
 
-      <.icon name="hero-x-mark-solid" />
-      <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
+      <.icon name="pi-x" />
+      <.icon name="pi-arrow-clockwise" class="ml-1 w-3 h-3 animate-spin" />
   """
   attr :name, :string, required: true
   attr :class, :string, default: nil
 
-  def icon(%{name: "hero-" <> _} = assigns) do
+  def icon(%{name: "pi-" <> _icon_name} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
     """

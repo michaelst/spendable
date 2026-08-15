@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package banks.v1;
-
-message SyncMemberRequest {
-  string member_id = 1;
-}

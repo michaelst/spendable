@@ -17,7 +17,7 @@ defmodule SpendableWeb do
   those modules here.
   """
 
-  def static_paths(), do: ~w(assets fonts images favicon.svg mask-icon.svg robots.txt)
+  def static_paths(), do: ["assets", "fonts", "images", "favicon.svg", "mask-icon.svg", "robots.txt"]
 
   def router() do
     quote do
@@ -43,7 +43,7 @@ defmodule SpendableWeb do
         layouts: [html: SpendableWeb.Layouts]
 
       import Plug.Conn
-      import SpendableWeb.Gettext
+      use Gettext, backend: SpendableWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -79,28 +79,29 @@ defmodule SpendableWeb do
     end
   end
 
-  defp html_helpers() do
-    quote do
-      # HTML escaping functionality
-      import Phoenix.HTML
-      # Core UI components and translation
-      import SpendableWeb.CoreComponents
-      import SpendableWeb.Gettext
-
-      # Shortcut for generating JS commands
-      alias Phoenix.LiveView.JS
-
-      # Routes generation with the ~p sigil
-      unquote(verified_routes())
-    end
-  end
-
   def verified_routes() do
     quote do
       use Phoenix.VerifiedRoutes,
         endpoint: SpendableWeb.Endpoint,
         router: SpendableWeb.Router,
         statics: SpendableWeb.static_paths()
+    end
+  end
+
+  defp html_helpers() do
+    quote do
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      import SpendableWeb.CoreComponents
+      use Gettext, backend: SpendableWeb.Gettext
+      import SpendableWeb.Utils.SocketReplies
+
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
     end
   end
 

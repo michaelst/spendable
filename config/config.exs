@@ -9,8 +9,16 @@ import Config
 
 config :spendable,
   env: config_env(),
-  ecto_repos: [Spendable.Repo],
-  ash_apis: [Spendable.Api]
+  ecto_repos: [Spendable.Repo]
+
+config :spendable, Oban,
+  repo: Spendable.Repo,
+  queues: [banks: 5]
+
+config :spendable, Spendable.Repo,
+  migration_primary_key: [type: :text],
+  migration_foreign_key: [type: :text],
+  migration_timestamps: [type: :utc_datetime_usec]
 
 # Configures the endpoint
 config :spendable, SpendableWeb.Endpoint,
@@ -35,10 +43,9 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.3",
+  version: "4.3.3",
   default: [
     args: ~w(
-      --config=tailwind.config.js
       --input=css/app.css
       --output=../priv/static/assets/app.css
     ),
@@ -53,12 +60,8 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :ash, :use_all_identities_in_manage_relationship?, false
-
 config :tesla, :adapter, {Tesla.Adapter.Finch, name: Spendable.Finch}
 config :oauth2, adapter: {Tesla.Adapter.Finch, name: Spendable.Finch}
-
-config :goth, project_id: "cloud-57"
 
 config :ueberauth, Ueberauth,
   providers: [

@@ -26,16 +26,12 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :spendable, Plaid,
+config :spendable, Spendable.Banks.Clients.Plaid,
   base_url: "https://sandbox.plaid.com",
   client_id: "test",
   secret_key: "test"
 
 config :tesla, adapter: TeslaMock
 
-config :mox,
-  pubsub: PubSubMock
-
-config :ash, disable_async?: true
-config :ash, :missed_notifications, :ignore
-config :ash, :policies, show_policy_breakdowns?: true
+# Jobs run inline in tests so a sync is asserted on, not waited for.
+config :spendable, Oban, testing: :manual

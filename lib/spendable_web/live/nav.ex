@@ -1,11 +1,12 @@
 defmodule SpendableWeb.Live.Nav do
   import Phoenix.Component
   import Phoenix.LiveView
+  import SpendableWeb.Utils.SocketReplies
 
   def on_mount(:default, _params, _session, socket) do
-    {:cont,
-     socket
-     |> attach_hook(:active_tab, :handle_params, &set_active_tab/3)}
+    socket
+    |> attach_hook(:active_tab, :handle_params, &set_active_tab/3)
+    |> cont()
   end
 
   defp set_active_tab(_params, _url, socket) do
@@ -13,10 +14,11 @@ defmodule SpendableWeb.Live.Nav do
       case socket.view do
         SpendableWeb.Live.Budgets -> :budgets
         SpendableWeb.Live.Transactions -> :transactions
-        SpendableWeb.Live.Banks -> :Banks
-        _view -> nil
+        SpendableWeb.Live.Templates -> :templates
+        SpendableWeb.Live.Banks -> :banks
+        _other_view -> nil
       end
 
-    {:cont, assign(socket, active_tab: active_tab)}
+    socket |> assign(:active_tab, active_tab) |> cont()
   end
 end

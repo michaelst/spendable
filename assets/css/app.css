@@ -1,5 +1,20 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+/* Tailwind is configured here rather than in a JS config file - see
+   https://tailwindcss.com/docs/theme. `source(none)` turns off automatic detection so the scan
+   never wanders into deps/ or priv/. */
+@import "tailwindcss" source(none);
+@source "../js";
+@source "../../lib/spendable_web";
 
-/* This file is for your main application CSS */
+@plugin "@tailwindcss/forms";
+@plugin "../vendor/phosphor-plugin.js";
+
+/* Prefix a utility with a LiveView state class to apply it only in that state, e.g.
+   <div class="phx-click-loading:animate-ping"> */
+@custom-variant phx-no-feedback (.phx-no-feedback&, .phx-no-feedback &);
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+@theme {
+  --color-brand: #3c8ad7;
+}
