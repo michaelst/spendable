@@ -25,6 +25,7 @@ defmodule Spendable.Banks.Clients.Plaid do
       client_id: config()[:client_id],
       secret: config()[:secret_key],
       institution_id: id,
+      country_codes: ["US"],
       options: %{
         include_optional_metadata: true
       }

@@ -72,14 +72,19 @@ defmodule SpendableWeb.Live.Banks do
             >
               <div class="pl-10 w-96">
                 <div class="flex items-center">
-                  <h2 class="min-w-0 text-sm font-semibold leading-6 text-gray-400 flex flex-col">
+                  <h2 class={[
+                    if(bank_account.sync, do: "text-white", else: "text-gray-500"),
+                    "min-w-0 text-sm font-semibold leading-6 flex flex-col"
+                  ]}>
                     <span class="truncate">{bank_account.name} *{bank_account.number}</span>
-                    <span class="truncate uppercase mt-1 text-xs text-gray-600">{bank_account.sub_type}</span>
+                    <span class="truncate uppercase mt-1 text-xs text-gray-400">{bank_account.sub_type}</span>
                   </h2>
                 </div>
               </div>
               <div class="flex items-center space-x-8">
-                <div class="text-gray-400">{Spendable.Utils.format_currency(bank_account.balance)}</div>
+                <div class={if bank_account.sync, do: "text-white", else: "text-gray-500"}>
+                  {Spendable.Utils.format_currency(bank_account.balance)}
+                </div>
                 <div class="-mt-2">
                   <.form :let={f} for={bank_account_form(bank_account)} as={:bank_account} phx-change="assign_budget">
                     <.input type="hidden" field={f[:id]} />
