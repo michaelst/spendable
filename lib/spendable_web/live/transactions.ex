@@ -11,7 +11,7 @@ defmodule SpendableWeb.Live.Transactions do
   def mount(_params, _session, socket) do
     socket
     |> assign(:page, 1)
-    |> assign(:per_page, 25)
+    |> assign(:per_page, 100)
     |> assign(:show_reviewed, true)
     |> assign(:show_excluded, false)
     |> fetch_data()
@@ -334,14 +334,11 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   def handle_event("next-page", _params, socket) do
-    socket |> assign(:page, socket.assigns.page + 1) |> fetch_transactions() |> noreply()
+    socket |> paginate_transactions(socket.assigns.page + 1) |> noreply()
   end
 
   def handle_event("prev-page", _params, socket) do
-    socket
-    |> assign(:page, max(socket.assigns.page - 1, 1))
-    |> fetch_transactions()
-    |> noreply()
+    socket |> paginate_transactions(max(socket.assigns.page - 1, 1)) |> noreply()
   end
 
   def handle_event("close", _params, socket) do
@@ -380,20 +377,45 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp fetch_transactions(socket) do
-    %{per_page: per_page, page: page} = socket.assigns
-
-    transactions =
-      Transactions.list_transactions(socket.assigns.current_scope,
-        search: socket.assigns[:search],
-        page: page,
-        per_page: per_page,
-        show_reviewed: socket.assigns.show_reviewed,
-        show_excluded: socket.assigns.show_excluded
-      )
+    transactions = page_of_transactions(socket, socket.assigns.page)
 
     socket
     |> assign(:end_of_timeline?, transactions == [])
     |> stream(:transactions, transactions, reset: true)
+  end
+
+  # Scrolling keeps a sliding window of pages in the stream. An empty page means we hit the end,
+  # so leave what is already rendered alone rather than replacing it with nothing.
+  defp paginate_transactions(socket, new_page) do
+    %{per_page: per_page, page: current_page} = socket.assigns
+    forward? = new_page >= current_page
+
+    {transactions, at, limit} =
+      case page_of_transactions(socket, new_page) do
+        transactions when forward? -> {transactions, -1, -(per_page * 3)}
+        transactions -> {Enum.reverse(transactions), 0, per_page * 3}
+      end
+
+    case transactions do
+      [] ->
+        assign(socket, :end_of_timeline?, forward?)
+
+      transactions ->
+        socket
+        |> assign(:end_of_timeline?, false)
+        |> assign(:page, new_page)
+        |> stream(:transactions, transactions, at: at, limit: limit)
+    end
+  end
+
+  defp page_of_transactions(socket, page) do
+    Transactions.list_transactions(socket.assigns.current_scope,
+      search: socket.assigns[:search],
+      page: page,
+      per_page: socket.assigns.per_page,
+      show_reviewed: socket.assigns.show_reviewed,
+      show_excluded: socket.assigns.show_excluded
+    )
   end
 
   # On a failed submit the form hands back what the user typed, so this sees a string as often
