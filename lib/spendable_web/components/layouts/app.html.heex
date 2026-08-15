@@ -75,7 +75,7 @@
                   href="#"
                   class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
                 >
-                  <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_user.image} alt="" />
+                  <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_scope.user.image} alt="" />
                   <span class="sr-only">Your profile</span>
                 </a>
               </li>
@@ -145,7 +145,7 @@
               method="delete"
               class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
             >
-              <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_user.image} alt="" /> Sign out
+              <img class="h-8 w-8 rounded-full bg-gray-800" src={@current_scope.user.image} alt="" /> Sign out
             </.link>
           </li>
         </ul>

@@ -11,8 +11,10 @@ defmodule Spendable.Schema do
       @foreign_key_type :string
       @timestamps_opts [type: :utc_datetime_usec]
 
-      # Rejects a foreign key pointing at a record the scope's user does not own, so a caller
-      # cannot attach one user's budget to another user's transaction by posting an id.
+      @doc """
+      Rejects a foreign key pointing at a record the user does not own, so a caller cannot
+      attach someone else's budget to their own transaction by posting an id.
+      """
       def validate_relationships(changeset, fields, user_id \\ nil) do
         Enum.reduce(fields, changeset, fn relationship, changeset ->
           prepare_changes(changeset, fn changeset ->

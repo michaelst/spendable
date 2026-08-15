@@ -32,7 +32,7 @@ defmodule SpendableWeb.Live.Budgets do
                 phx-click-away={JS.hide(to: "#month-select")}
               >
                 <button
-                  :for={month <- @current_user.spent_by_month}
+                  :for={month <- @spent_by_month}
                   class="block px-3 py-2 w-full text-sm leading-6 text-gray-900 flex flex-col hover:bg-gray-200"
                   phx-click={JS.push("select_month") |> JS.toggle(to: "#month-select")}
                   phx-value-month={month.month}
@@ -129,7 +129,7 @@ defmodule SpendableWeb.Live.Budgets do
               <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
                 <div class="flex items-center gap-x-3">
                   <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= Utils.format_currency(@current_user.spendable) %>
+                    <%= Utils.format_currency(@spendable) %>
                   </h2>
                 </div>
                 <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
@@ -223,7 +223,7 @@ defmodule SpendableWeb.Live.Budgets do
       Budget
       |> AshPhoenix.Form.for_create(:create,
         api: Spendable.Api,
-        actor: socket.assigns.current_user,
+        actor: socket.assigns.current_scope.user,
         forms: [auto?: true]
       )
       |> to_form()
@@ -246,7 +246,7 @@ defmodule SpendableWeb.Live.Budgets do
       budget
       |> AshPhoenix.Form.for_update(:update,
         api: Spendable.Api,
-        actor: socket.assigns.current_user,
+        actor: socket.assigns.current_scope.user,
         forms: [auto?: true]
       )
       |> to_form()
@@ -259,7 +259,7 @@ defmodule SpendableWeb.Live.Budgets do
   def handle_event("archive", _params, socket) do
     socket.assigns.budgets
     |> Enum.filter(&(to_string(&1.id) in socket.assigns.selected_budgets))
-    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_user))
+    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_scope.user))
 
     {:noreply, fetch_data(socket)}
   end
@@ -302,7 +302,7 @@ defmodule SpendableWeb.Live.Budgets do
         selected_month: selected_month,
         search: socket.assigns[:search]
       )
-      |> Spendable.Api.read!(actor: socket.assigns.current_user)
+      |> Spendable.Api.read!(actor: socket.assigns.current_scope.user)
 
     budgets =
       if current_month_is_selected do
@@ -313,7 +313,7 @@ defmodule SpendableWeb.Live.Budgets do
             type: :envelope,
             spent: Decimal.new("0"),
             balance:
-              Spendable.BankMember.Storage.credit_card_balance(socket.assigns.current_user.id) |> Decimal.negate()
+              Spendable.BankMember.Storage.credit_card_balance(socket.assigns.current_scope.user.id) |> Decimal.negate()
           }
           | budgets
         ]
@@ -321,10 +321,11 @@ defmodule SpendableWeb.Live.Budgets do
         [spendable | budgets]
       end
 
-    user = Spendable.Api.load!(socket.assigns.current_user, [:spent_by_month, :spendable])
+    user = Spendable.Api.load!(socket.assigns.current_scope.user, [:spent_by_month, :spendable])
 
     socket
-    |> assign(:current_user, user)
+    |> assign(:spendable, user.spendable)
+    |> assign(:spent_by_month, user.spent_by_month)
     |> assign(:selected_month, selected_month)
     |> assign(:selected_budgets, [])
     |> assign(:budgets, budgets)

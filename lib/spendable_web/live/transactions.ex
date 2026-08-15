@@ -347,7 +347,7 @@ defmodule SpendableWeb.Live.Transactions do
       transaction
       |> AshPhoenix.Form.for_update(:update,
         api: Spendable.Api,
-        actor: socket.assigns.current_user,
+        actor: socket.assigns.current_scope.user,
         forms: [auto?: true]
       )
       |> to_form()
@@ -397,8 +397,8 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp fetch_data(socket) do
-    budget_form_options = Transaction.budget_form_options(socket.assigns.current_user.id)
-    template_form_options = Transaction.template_form_options(socket.assigns.current_user.id)
+    budget_form_options = Transaction.budget_form_options(socket.assigns.current_scope.user.id)
+    template_form_options = Transaction.template_form_options(socket.assigns.current_scope.user.id)
 
     socket
     |> assign(
@@ -414,7 +414,7 @@ defmodule SpendableWeb.Live.Transactions do
     %{per_page: per_page, page: page, options: options} = socket.assigns
 
     transactions =
-      Transaction.list_transactions(socket.assigns.current_user.id,
+      Transaction.list_transactions(socket.assigns.current_scope.user.id,
         search: socket.assigns[:search],
         page: new_page,
         per_page: per_page,

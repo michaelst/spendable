@@ -159,7 +159,10 @@ end
 
 - Don't write comments that describe *what* the code is doing - the code already says that, and such comments rot as the code changes.
 - Only add a comment to explain *why* a decision was made, and only when that reasoning isn't intuitive from the code itself (a non-obvious workaround, a deliberate deviation, or a constraint that isn't visible locally).
+- **Anything said about a function goes in its `@doc`, not a `#` comment above it.** `#` is for a line or block *inside* a function body.
+- Never `@doc` a `defdelegate`. The context module is a delegate table and nothing else; what there is to say about an action belongs on the action itself.
 - Keep every comment to one or two lines. Never a paragraph. This includes `@moduledoc` and `@doc` bodies.
+- Controllers and LiveViews are the exception: they get no `@doc`/`@moduledoc` at all (see below), so a rare `#` comment is the only option there.
 
 ## Integrating with External Services
 

@@ -97,7 +97,7 @@ defmodule SpendableWeb.Live.Banks do
   end
 
   def handle_event("open_plaid_link", _params, socket) do
-    case Spendable.Api.load(socket.assigns.current_user, [:plaid_link_token]) do
+    case Spendable.Api.load(socket.assigns.current_scope.user, [:plaid_link_token]) do
       {:ok, user} ->
         {:noreply, push_event(socket, "open_plaid_link", %{"link_token" => user.plaid_link_token})}
 
@@ -109,7 +109,7 @@ defmodule SpendableWeb.Live.Banks do
   def handle_event("add_bank", %{"public_token" => public_token}, socket) do
     BankMember
     |> Ash.Changeset.for_create(:create_from_public_token, %{public_token: public_token},
-      actor: socket.assigns.current_user
+      actor: socket.assigns.current_scope.user
     )
     |> Spendable.Api.create!()
 
@@ -154,10 +154,10 @@ defmodule SpendableWeb.Live.Banks do
   end
 
   defp fetch_data(socket) do
-    budget_form_options = Budget.form_options(socket.assigns.current_user.id)
+    budget_form_options = Budget.form_options(socket.assigns.current_scope.user.id)
 
     bank_members =
-      BankMember.list(socket.assigns.current_user.id,
+      BankMember.list(socket.assigns.current_scope.user.id,
         search: socket.assigns[:search]
       )
 

@@ -163,7 +163,7 @@ defmodule SpendableWeb.Live.Templates do
   def handle_event("archive", _params, socket) do
     socket.assigns.templates
     |> Enum.filter(&(to_string(&1.id) in socket.assigns.selected_templates))
-    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_user))
+    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_scope.user))
 
     {:noreply, fetch_data(socket)}
   end
@@ -197,7 +197,7 @@ defmodule SpendableWeb.Live.Templates do
       BudgetAllocationTemplate
       |> AshPhoenix.Form.for_create(:create,
         api: Spendable.Api,
-        actor: socket.assigns.current_user,
+        actor: socket.assigns.current_scope.user,
         forms: [auto?: true]
       )
       |> to_form()
@@ -215,7 +215,7 @@ defmodule SpendableWeb.Live.Templates do
       template
       |> AshPhoenix.Form.for_update(:update,
         api: Spendable.Api,
-        actor: socket.assigns.current_user,
+        actor: socket.assigns.current_scope.user,
         forms: [auto?: true]
       )
       |> to_form()
@@ -248,9 +248,9 @@ defmodule SpendableWeb.Live.Templates do
     templates =
       BudgetAllocationTemplate
       |> Ash.Query.for_read(:list, search: socket.assigns[:search])
-      |> Spendable.Api.read!(actor: socket.assigns.current_user)
+      |> Spendable.Api.read!(actor: socket.assigns.current_scope.user)
 
-    budget_form_options = BudgetAllocationTemplate.budget_form_options(socket.assigns.current_user.id)
+    budget_form_options = BudgetAllocationTemplate.budget_form_options(socket.assigns.current_scope.user.id)
 
     assign(socket,
       templates: templates,
