@@ -32,7 +32,7 @@ ENV LANG=C.UTF-8
 RUN set -xe \
   && apt-get update \
   && apt-get -y upgrade \
-  && apt-get install -y --no-install-recommends openssl \
+  && apt-get install -y --no-install-recommends openssl ca-certificates \
   # ubuntu:24.04 ships a default `ubuntu` user occupying uid 1000
   && userdel -r ubuntu \
   && useradd --create-home -u 1000 app \
