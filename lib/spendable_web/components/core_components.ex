@@ -47,7 +47,7 @@ defmodule SpendableWeb.CoreComponents do
       phx-click={JS.push(@on_toggle) |> toggle_switch(@id)}
       phx-value-id={@id}
       type="button"
-      class="group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+      class="group relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-hidden focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
       role="switch"
       aria-checked={to_string(@enabled)}
     >
@@ -65,7 +65,7 @@ defmodule SpendableWeb.CoreComponents do
         aria-hidden="true"
         class={[
           if(@enabled, do: "translate-x-5", else: "translate-x-0"),
-          "pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-300 bg-white shadow ring-0 transition-transform duration-200 ease-in-out"
+          "pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-300 bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out"
         ]}
       ></span>
     </button>
@@ -406,7 +406,7 @@ defmodule SpendableWeb.CoreComponents do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-white/10 bg-white/5 text-white/5"
+          class="rounded-sm border-white/10 bg-white/5 text-white/5"
           {@rest}
         />
         {@label}
@@ -443,7 +443,7 @@ defmodule SpendableWeb.CoreComponents do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-gray-500 sm:text-sm sm:leading-6",
+          "mt-2 block w-full rounded-lg border-0 bg-white/5 py-1.5 text-white shadow-xs ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-gray-500 sm:text-sm sm:leading-6",
           "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"

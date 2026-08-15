@@ -34,7 +34,7 @@ defmodule SpendableWeb.Live.Budgets do
               </button>
               <div
                 id="month-select"
-                class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-none divide-y"
+                class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-hidden divide-y"
                 phx-click-away={JS.hide(to: "#month-select")}
               >
                 <button
@@ -93,7 +93,7 @@ defmodule SpendableWeb.Live.Budgets do
                     checked={false}
                     phx-click="check_budget"
                     phx-value-id={budget.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5"
+                    class="rounded-sm border-white/10 bg-white/5 text-white/5"
                   />
                 </div>
                 <div :if={to_string(budget.id) in @selected_budgets} class="pl-1 pr-2">
@@ -103,7 +103,7 @@ defmodule SpendableWeb.Live.Budgets do
                     checked={true}
                     phx-click="uncheck_budget"
                     phx-value-id={budget.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5"
+                    class="rounded-sm border-white/10 bg-white/5 text-white/5"
                   />
                 </div>
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">

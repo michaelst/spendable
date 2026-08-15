@@ -66,7 +66,7 @@ defmodule SpendableWeb.Live.Templates do
                     checked={false}
                     phx-click="check_template"
                     phx-value-id={template.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5"
+                    class="rounded-sm border-white/10 bg-white/5 text-white/5"
                   />
                 </div>
                 <div :if={to_string(template.id) in @selected_templates} class="pl-1 pr-2">
@@ -76,7 +76,7 @@ defmodule SpendableWeb.Live.Templates do
                     checked={true}
                     phx-click="uncheck_template"
                     phx-value-id={template.id}
-                    class="rounded border-white/10 bg-white/5 text-white/5"
+                    class="rounded-sm border-white/10 bg-white/5 text-white/5"
                   />
                 </div>
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">

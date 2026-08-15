@@ -35,7 +35,7 @@ defmodule SpendableWeb.Live.Transactions do
                   Filter
                 </button>
               </:trigger>
-              <div class="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-slate-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div class="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-slate-700 shadow-lg ring-1 ring-black/5 focus:outline-hidden">
                 <div class="px-4 py-2 divide-y divide-white/5">
                   <div class="flex items-center justify-between py-2">
                     <span class="text-gray-300">Show reviewed transactions</span>
@@ -99,7 +99,7 @@ defmodule SpendableWeb.Live.Transactions do
                       value={transaction.id in @selected_transactions}
                       phx-click="toggle_select_transaction"
                       phx-value-id={transaction.id}
-                      class="rounded border-white/10 bg-white/5 text-white/5 opacity-0 hover:opacity-100 checked:opacity-100"
+                      class="rounded-sm border-white/10 bg-white/5 text-white/5 opacity-0 hover:opacity-100 checked:opacity-100"
                     />
                   </div>
                   <div>
@@ -210,7 +210,7 @@ defmodule SpendableWeb.Live.Transactions do
                   </button>
                   <div
                     id="template-options"
-                    class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-none divide-y"
+                    class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-hidden divide-y"
                     phx-click-away={JS.hide(to: "#template-options")}
                   >
                     <button
