@@ -82,7 +82,7 @@ defmodule Spendable.Banks.Clients.Plaid do
     })
   end
 
-  def account_transactions(token, account_id, opts \\ []) do
+  def account_transactions(token, account_id, %Date{} = start_date, opts \\ []) do
     count = opts[:count] || 500
     offset = opts[:offset] || 0
 
@@ -91,7 +91,7 @@ defmodule Spendable.Banks.Clients.Plaid do
       client_id: config()[:client_id],
       secret: config()[:secret_key],
       access_token: token,
-      start_date: Date.utc_today() |> Date.add(-92),
+      start_date: start_date,
       end_date: Date.utc_today(),
       options: %{
         account_ids: [account_id],

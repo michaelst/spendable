@@ -212,25 +212,26 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
   # The list pages as it is scrolled, so the page moves with the viewport rather than a button.
   test "pages through the list as it is scrolled", %{conn: conn, scope: scope, attrs: attrs} do
-    for day <- 1..26 do
+    # One more than a page, so the last one only appears once the list has been paged.
+    for number <- 1..101 do
       {:ok, _transaction} =
         Transactions.create_transaction(
           scope,
           attrs
-          |> Map.put("name", "Txn-#{String.pad_leading(to_string(day), 2, "0")}")
-          |> Map.put("date", "2026-08-#{String.pad_leading(to_string(day), 2, "0")}")
+          |> Map.put("name", "Txn-#{String.pad_leading(to_string(number), 3, "0")}")
+          |> Map.put("date", Date.to_iso8601(Date.add(~D[2026-08-15], -number)))
         )
     end
 
     {:ok, view, html} = live(conn, ~p"/transactions")
 
-    assert html =~ "Txn-26"
-    refute html =~ "Txn-01"
+    assert html =~ "Txn-001"
+    refute html =~ "Txn-101"
 
     html = render_click(view, "next-page", %{})
-    assert html =~ "Txn-01"
+    assert html =~ "Txn-101"
 
-    assert render_click(view, "prev-page", %{}) =~ "Txn-26"
+    assert render_click(view, "prev-page", %{}) =~ "Txn-001"
   end
 
   # Scrolling past the last page must leave the rows alone rather than emptying the list.

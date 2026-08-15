@@ -13,6 +13,7 @@ defmodule Spendable.Banks.Actions.SyncMember do
   alias Spendable.Transactions
 
   @page_size 500
+  @default_days 30
 
   @doc """
   Pulls a connection's current state from Plaid: the item, its accounts, and the activity on the
@@ -20,18 +21,20 @@ defmodule Spendable.Banks.Actions.SyncMember do
 
   Takes an id rather than a record because the only caller is the job queue, which carries ids.
   Runs under a system scope: the work is ours, but the rows are still the member's owner's.
+  Activity is pulled from `:start_date`, defaulting to the last #{@default_days} days.
   """
-  def sync_member(bank_member_id) when is_binary(bank_member_id) do
+  def sync_member(bank_member_id, opts \\ []) when is_binary(bank_member_id) do
     case Repo.get(BankMember, bank_member_id) do
       %BankMember{} = bank_member ->
         bank_member = Repo.preload(bank_member, :user)
         scope = Scope.for_system(bank_member.user)
+        start_date = opts[:start_date] || Date.add(Date.utc_today(), -@default_days)
 
         bank_member
         |> sync_item(scope)
         |> sync_accounts(scope)
         |> Enum.filter(& &1.sync)
-        |> Enum.each(&sync_transactions(&1, scope, bank_member))
+        |> Enum.each(&sync_transactions(&1, scope, bank_member, start_date))
 
         :ok
 
@@ -75,15 +78,15 @@ defmodule Spendable.Banks.Actions.SyncMember do
     account
   end
 
-  defp sync_transactions(account, scope, bank_member, offset \\ 0) do
+  defp sync_transactions(account, scope, bank_member, start_date, offset \\ 0) do
     opts = [count: @page_size, offset: offset]
 
-    case Plaid.account_transactions(bank_member.plaid_token, account.external_id, opts) do
+    case Plaid.account_transactions(bank_member.plaid_token, account.external_id, start_date, opts) do
       {:ok, %{body: %{"transactions" => transactions} = response}} ->
         Enum.each(transactions, &sync_transaction(&1, account, scope))
 
         with %{"total_transactions" => total} when total > offset + @page_size <- response do
-          sync_transactions(account, scope, bank_member, offset + @page_size)
+          sync_transactions(account, scope, bank_member, start_date, offset + @page_size)
         end
 
       {:ok, %{body: %{"error_code" => "PRODUCT_NOT_READY"}}} ->

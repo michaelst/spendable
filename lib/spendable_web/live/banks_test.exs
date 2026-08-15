@@ -113,6 +113,21 @@ defmodule SpendableWeb.Live.BanksTest do
     assert %{sync: false} = Repo.reload(account)
   end
 
+  test "queues a historical sync for a bank member", %{conn: conn, member: member} do
+    {:ok, view, _html} = live(conn, ~p"/banks")
+
+    render_click(view, "select_bank_member", %{"id" => member.id})
+    render_click(view, "historical_sync", %{"id" => member.id})
+
+    assert_enqueued(
+      worker: Spendable.Banks.Jobs.SyncMember,
+      args: %{
+        bank_member_id: member.id,
+        start_date: Date.to_iso8601(Date.shift(Date.utc_today(), month: -24))
+      }
+    )
+  end
+
   test "assigns a budget to an account", %{
     conn: conn,
     scope: scope,
