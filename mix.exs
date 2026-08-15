@@ -48,7 +48,8 @@ defmodule Spendable.MixProject do
       {:broadway, "~> 1.0"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dotenv_parser, "~> 2.0", only: [:dev]},
-      {:ecto_sql, "~> 3.10"},
+      # ash 2.x is incompatible with the parameterized type change in ecto 3.12
+      {:ecto_sql, "~> 3.11.0"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:excoveralls, ">= 0.0.0", only: :test},
       {:finch, "~> 0.13"},
