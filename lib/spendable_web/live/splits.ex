@@ -1,10 +1,10 @@
-defmodule SpendableWeb.Live.Templates do
+defmodule SpendableWeb.Live.Splits do
   use SpendableWeb, :live_view
 
   import SpendableWeb.Utils.FormOptions
 
   alias Spendable.Budgets
-  alias Spendable.Budgets.Schemas.BudgetAllocationTemplate
+  alias Spendable.Budgets.Schemas.Split
 
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -17,13 +17,13 @@ defmodule SpendableWeb.Live.Templates do
   def render(assigns) do
     ~H"""
     <div>
-      <main id="templates" phx-click={JS.push("close") |> hide_details()}>
+      <main id="splits" phx-click={JS.push("close") |> hide_details()}>
         <header class="flex items-center justify-between border-b border-white/5 px-8 py-6">
-          <h1 class="text-base font-semibold leading-7 text-white">Transaction templates</h1>
+          <h1 class="text-base font-semibold leading-7 text-white">Splits</h1>
           <div class="flex gap-x-6">
             <button
               :if={is_nil(@changeset)}
-              id="new-template"
+              id="new-split"
               type="button"
               phx-click={JS.push("new") |> show_details()}
               class="text-sm font-semibold leading-6 text-blue-400"
@@ -31,13 +31,13 @@ defmodule SpendableWeb.Live.Templates do
               New
             </button>
             <button
-              :if={not Enum.empty?(@selected_templates)}
+              :if={not Enum.empty?(@selected_splits)}
               id="archive"
               type="button"
               phx-click="archive"
               class="text-sm font-semibold leading-6 text-blue-400"
             >
-              Archive ({length(@selected_templates)})
+              Archive ({length(@selected_splits)})
             </button>
             <button
               :if={not is_nil(@changeset)}
@@ -52,35 +52,35 @@ defmodule SpendableWeb.Live.Templates do
 
         <ul role="list" class="divide-y divide-white/5">
           <li
-            :for={template <- @templates}
-            phx-click={JS.push("select_template") |> show_details()}
-            phx-value-id={template.id}
+            :for={split <- @splits}
+            phx-click={JS.push("select_split") |> show_details()}
+            phx-value-id={split.id}
             class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-8"
           >
             <div class="min-w-0 flex-auto ml-1">
               <div class="flex items-center">
-                <div :if={to_string(template.id) not in @selected_templates} class="pl-1 pr-2 opacity-0 hover:opacity-100">
+                <div :if={to_string(split.id) not in @selected_splits} class="pl-1 pr-2 opacity-0 hover:opacity-100">
                   <input
                     type="checkbox"
                     value="true"
                     checked={false}
-                    phx-click="check_template"
-                    phx-value-id={template.id}
+                    phx-click="check_split"
+                    phx-value-id={split.id}
                     class="rounded-sm border-white/10 bg-white/5 text-white/5"
                   />
                 </div>
-                <div :if={to_string(template.id) in @selected_templates} class="pl-1 pr-2">
+                <div :if={to_string(split.id) in @selected_splits} class="pl-1 pr-2">
                   <input
                     type="checkbox"
                     value="true"
                     checked={true}
-                    phx-click="uncheck_template"
-                    phx-value-id={template.id}
+                    phx-click="uncheck_split"
+                    phx-value-id={split.id}
                     class="rounded-sm border-white/10 bg-white/5 text-white/5"
                   />
                 </div>
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                  <span class="truncate">{template.name}</span>
+                  <span class="truncate">{split.name}</span>
                 </h2>
               </div>
             </div>
@@ -91,20 +91,20 @@ defmodule SpendableWeb.Live.Templates do
         </ul>
       </main>
       <aside
-        id="template-details"
+        id="split-details"
         class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
         <.simple_form
           :let={f}
           :if={@changeset}
-          id="template-form"
+          id="split-form"
           for={@changeset}
-          as={:template}
+          as={:split}
           phx-change="validate"
           phx-submit="submit"
         >
           <header class="flex items-center justify-between border-b border-white/5 p-6">
-            <h2 class="text-base font-semibold leading-7">Edit template</h2>
+            <h2 class="text-base font-semibold leading-7">Edit split</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
               Save
             </button>
@@ -120,8 +120,8 @@ defmodule SpendableWeb.Live.Templates do
                   Amount
                 </div>
               </div>
-              <.inputs_for :let={line} field={f[:budget_allocation_template_lines]}>
-                <input type="hidden" name="template[lines_sort][]" value={line.index} />
+              <.inputs_for :let={line} field={f[:split_lines]}>
+                <input type="hidden" name="split[lines_sort][]" value={line.index} />
                 <div class="grid grid-cols-10 items-center">
                   <div class="col-span-6 pr-2">
                     <.input type="select" field={line[:budget_id]} options={@budget_form_options} />
@@ -132,7 +132,7 @@ defmodule SpendableWeb.Live.Templates do
                   <button
                     type="button"
                     class="cursor-pointer text-right mt-1"
-                    name="template[lines_drop][]"
+                    name="split[lines_drop][]"
                     value={line.index}
                     phx-click={JS.dispatch("change")}
                   >
@@ -140,17 +140,17 @@ defmodule SpendableWeb.Live.Templates do
                   </button>
                 </div>
               </.inputs_for>
-              <input type="hidden" name="template[lines_drop][]" />
+              <input type="hidden" name="split[lines_drop][]" />
               <div class="flex justify-between mt-2">
                 <button
                   type="button"
-                  id="split"
-                  name="template[lines_sort][]"
+                  id="add-line"
+                  name="split[lines_sort][]"
                   value="new"
                   phx-click={JS.dispatch("change")}
                   class="text-sm font-semibold text-blue-400"
                 >
-                  Split
+                  Add line
                 </button>
               </div>
             </div>
@@ -161,26 +161,26 @@ defmodule SpendableWeb.Live.Templates do
     """
   end
 
-  def handle_event("validate", %{"template" => params}, socket) do
+  def handle_event("validate", %{"split" => params}, socket) do
     changeset =
       socket.assigns.changeset.data
-      |> BudgetAllocationTemplate.changeset(params)
+      |> Split.changeset(params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("submit", %{"template" => params}, socket) do
+  def handle_event("submit", %{"split" => params}, socket) do
     scope = socket.assigns.current_scope
 
     result =
       case socket.assigns.changeset.data do
-        %BudgetAllocationTemplate{id: nil} -> Budgets.create_template(scope, params)
-        template -> Budgets.update_template(scope, template, params)
+        %Split{id: nil} -> Budgets.create_split(scope, params)
+        split -> Budgets.update_split(scope, split, params)
       end
 
     case result do
-      {:ok, _template} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
+      {:ok, _split} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
       {:error, changeset} -> socket |> assign(:changeset, changeset) |> noreply()
     end
   end
@@ -188,22 +188,22 @@ defmodule SpendableWeb.Live.Templates do
   def handle_event("archive", _params, socket) do
     scope = socket.assigns.current_scope
 
-    socket.assigns.templates
-    |> Enum.filter(&(&1.id in socket.assigns.selected_templates))
-    |> Enum.each(&Budgets.archive_template(scope, &1))
+    socket.assigns.splits
+    |> Enum.filter(&(&1.id in socket.assigns.selected_splits))
+    |> Enum.each(&Budgets.archive_split(scope, &1))
 
     {:noreply, fetch_data(socket)}
   end
 
-  def handle_event("check_template", %{"id" => id}, socket) do
+  def handle_event("check_split", %{"id" => id}, socket) do
     socket
-    |> assign(:selected_templates, Enum.uniq([id | socket.assigns.selected_templates]))
+    |> assign(:selected_splits, Enum.uniq([id | socket.assigns.selected_splits]))
     |> noreply()
   end
 
-  def handle_event("uncheck_template", %{"id" => id}, socket) do
+  def handle_event("uncheck_split", %{"id" => id}, socket) do
     socket
-    |> assign(:selected_templates, Enum.filter(socket.assigns.selected_templates, &(&1 != id)))
+    |> assign(:selected_splits, Enum.filter(socket.assigns.selected_splits, &(&1 != id)))
     |> noreply()
   end
 
@@ -220,38 +220,38 @@ defmodule SpendableWeb.Live.Templates do
 
   def handle_event("new", _params, socket) do
     # Seeded with the owner because the line changesets read it off the parent, and with one
-    # blank row, since a template with no lines allocates nothing.
-    template = %BudgetAllocationTemplate{user_id: socket.assigns.current_scope.user.id}
+    # blank row, since a split with no lines allocates nothing.
+    split = %Split{user_id: socket.assigns.current_scope.user.id}
 
     changeset =
-      BudgetAllocationTemplate.changeset(template, %{
-        "budget_allocation_template_lines" => %{"0" => %{}}
+      Split.changeset(split, %{
+        "split_lines" => %{"0" => %{}}
       })
 
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("select_template", %{"id" => id}, socket) do
-    {:ok, template} = Budgets.get_template(socket.assigns.current_scope, id)
+  def handle_event("select_split", %{"id" => id}, socket) do
+    {:ok, split} = Budgets.get_split(socket.assigns.current_scope, id)
 
-    {:noreply, assign(socket, :changeset, BudgetAllocationTemplate.changeset(template, %{}))}
+    {:noreply, assign(socket, :changeset, Split.changeset(split, %{}))}
   end
 
   def show_details(js \\ %JS{}) do
     js
-    |> JS.show(to: "#template-details", transition: "fade-in")
+    |> JS.show(to: "#split-details", transition: "fade-in")
     |> JS.add_class(
       "lg:pr-96",
-      to: "#templates"
+      to: "#splits"
     )
   end
 
   def hide_details(js \\ %JS{}) do
     js
-    |> JS.hide(to: "#template-details", transition: "fade-out")
+    |> JS.hide(to: "#split-details", transition: "fade-out")
     |> JS.remove_class(
       "lg:pr-96",
-      to: "#templates",
+      to: "#splits",
       transition: "fade-out"
     )
   end
@@ -260,9 +260,9 @@ defmodule SpendableWeb.Live.Templates do
     scope = socket.assigns.current_scope
 
     socket
-    |> assign(:templates, Budgets.list_templates(scope, search: socket.assigns[:search]))
+    |> assign(:splits, Budgets.list_splits(scope, search: socket.assigns[:search]))
     |> assign(:budget_form_options, form_options(Budgets.list_budgets(scope)))
     |> assign(:changeset, nil)
-    |> assign(:selected_templates, [])
+    |> assign(:selected_splits, [])
   end
 end

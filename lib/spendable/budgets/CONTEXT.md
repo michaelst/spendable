@@ -41,29 +41,29 @@ The reserved tracking **Budget** that holds whatever a **Transaction** does not 
 _Avoid_: Unallocated, remainder, default budget
 
 **Archiving**:
-Retiring a **Budget** or **Template** so it stops appearing, without erasing what it explains.
+Retiring a **Budget** or **Split** so it stops appearing, without erasing what it explains.
 _Avoid_: Deleting, hiding
 
-### Allocations and templates
+### Allocations and splits
 
 **Allocation**:
 A signed amount tying one **Transaction** to one **Budget**.
-_Avoid_: Split, assignment, entry
+_Avoid_: Assignment, entry
 
-**Template**:
+**Split**:
 A named set of **Lines** used to pre-fill a **Transaction**'s **Allocations**.
-_Avoid_: Rule, preset, recipe
+_Avoid_: Template, rule, preset, recipe
 
 **Line**:
-One **Budget** and amount on a **Template**.
-_Avoid_: Row, item, template allocation
+One **Budget** and amount on a **Split**.
+_Avoid_: Row, item, split allocation
 
 ## Relationships
 
 - A **Budget** has many **Allocations**
 - An **Allocation** belongs to exactly one **Budget** and one **Transaction**
 - A **Budget**'s **Balance** is the sum of its **Allocations** plus its **Adjustment**, unless a **Bank Account** is assigned to it, in which case the **Balance** is that account's
-- A **Template** has many **Lines**; a **Line** names one **Budget**
+- A **Split** has many **Lines**; a **Line** names one **Budget**
 - A **User** has at most one **Spendable** budget, created the first time one is needed
 - Spending is read per month and is derived from **Allocations**, so it belongs to a month rather than to a **Budget**
 
@@ -78,4 +78,5 @@ _Avoid_: Row, item, template allocation
 ## Flagged ambiguities
 
 - "balance" meant both a **Budget**'s derived balance and a **Bank Account**'s reported one - resolved: they are distinct, and the second belongs to Banks.
-- "template" was used for both a **Template** and a HEEx template - resolved: in domain terms it is only ever the former.
+- "template" was used for both a **Split** and a HEEx template - resolved: the domain concept is a **Split**, so "template" now only ever means the HEEx kind.
+- "split" was also loose talk for dividing one **Transaction** across several **Budgets** - resolved: that act produces **Allocations**; a **Split** is the saved, named set of **Lines** that pre-fills them.

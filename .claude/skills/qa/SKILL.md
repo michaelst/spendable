@@ -82,7 +82,7 @@ Not a form to fill in. Skip what the change cannot reach, and say you skipped it
   in the app's voice?
 - **Every new error reaches a field the form renders.** An error on a field the form does not render
   is a save that silently does nothing — the user clicks save, nothing happens, nothing is said. The
-  nested allocation rows on `/transactions` and `/templates` are where this bites: an error on a
+  nested allocation rows on `/transactions` and `/splits` are where this bites: an error on a
   child row that the parent form never displays looks exactly like a dead button.
 - **Adding and removing nested rows.** Those same allocation rows use Ecto's `sort_param` /
   `drop_param`, so add a row, remove a middle one, remove the last one, and remove all of them —

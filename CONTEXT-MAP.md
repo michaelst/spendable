@@ -3,7 +3,7 @@
 ## Contexts
 
 - [Accounts](./lib/spendable/accounts/CONTEXT.md) - who the user is and how they sign in
-- [Budgets](./lib/spendable/budgets/CONTEXT.md) - the envelopes money is divided into, and the templates that pre-fill them
+- [Budgets](./lib/spendable/budgets/CONTEXT.md) - the envelopes money is divided into, and the splits that pre-fill them
 - [Transactions](./lib/spendable/transactions/CONTEXT.md) - the movements of money a user reviews and allocates
 - [Banks](./lib/spendable/banks/CONTEXT.md) - Plaid connections, accounts, and the activity synced from them
 

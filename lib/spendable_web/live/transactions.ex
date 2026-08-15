@@ -199,36 +199,36 @@ defmodule SpendableWeb.Live.Transactions do
               <div class="flex justify-between mt-2">
                 <button
                   type="button"
-                  id="split"
+                  id="add-line"
                   name="transaction[allocations_sort][]"
                   value="new"
                   phx-click={JS.dispatch("change")}
                   class="text-sm font-semibold text-blue-400"
                 >
-                  Split
+                  Add line
                 </button>
                 <div class="relative">
                   <button
                     type="button"
                     class="text-sm font-semibold text-blue-400"
                     id="sort-menu-button"
-                    phx-click={JS.toggle(to: "#template-options")}
+                    phx-click={JS.toggle(to: "#split-options")}
                   >
-                    Apply Template
+                    Apply Split
                   </button>
                   <div
-                    id="template-options"
+                    id="split-options"
                     class="hidden absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white max-h-96 overflow-auto shadow-lg ring-1 ring-gray-900/5 focus:outline-hidden divide-y"
-                    phx-click-away={JS.hide(to: "#template-options")}
+                    phx-click-away={JS.hide(to: "#split-options")}
                   >
                     <button
-                      :for={{template_name, template_id} <- @template_form_options}
+                      :for={{split_name, split_id} <- @split_form_options}
                       type="button"
                       class="block px-3 py-2 w-full text-sm leading-6 text-gray-900 flex flex-col hover:bg-gray-200"
-                      phx-click={JS.push("apply_template") |> JS.toggle(to: "#template-options")}
-                      phx-value-template={template_id}
+                      phx-click={JS.push("apply_split") |> JS.toggle(to: "#split-options")}
+                      phx-value-split={split_id}
                     >
-                      <div>{template_name}</div>
+                      <div>{split_name}</div>
                     </button>
                   </div>
                 </div>
@@ -259,17 +259,17 @@ defmodule SpendableWeb.Live.Transactions do
     scope = socket.assigns.current_scope
     transaction = socket.assigns.changeset.data
 
-    case Transactions.update_transaction(scope, transaction, single_split(params)) do
+    case Transactions.update_transaction(scope, transaction, single_allocation(params)) do
       {:ok, _transaction} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
       {:error, changeset} -> socket |> assign(:changeset, changeset) |> noreply()
     end
   end
 
-  def handle_event("apply_template", %{"template" => template_id}, socket) do
-    {:ok, template} = Budgets.get_template(socket.assigns.current_scope, template_id)
+  def handle_event("apply_split", %{"split" => split_id}, socket) do
+    {:ok, split} = Budgets.get_split(socket.assigns.current_scope, split_id)
 
     allocations =
-      template.budget_allocation_template_lines
+      split.split_lines
       |> Enum.with_index()
       |> Map.new(fn {line, index} ->
         {to_string(index), %{"amount" => line.amount, "budget_id" => line.budget_id}}
@@ -369,7 +369,7 @@ defmodule SpendableWeb.Live.Transactions do
 
     socket
     |> assign(:budget_form_options, form_options(Budgets.list_budgets(scope)))
-    |> assign(:template_form_options, form_options(Budgets.list_templates(scope)))
+    |> assign(:split_form_options, form_options(Budgets.list_splits(scope)))
     |> assign(:selected_transactions, [])
     |> assign(:changeset, nil)
     |> assign(:page, 1)
@@ -431,10 +431,10 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   # A transaction with a single allocation splits nothing, so that line carries the whole amount.
-  defp single_split(%{"budget_allocations" => %{"0" => allocation} = allocations} = params)
+  defp single_allocation(%{"budget_allocations" => %{"0" => allocation} = allocations} = params)
        when map_size(allocations) == 1 do
     %{params | "budget_allocations" => %{"0" => Map.put(allocation, "amount", params["amount"])}}
   end
 
-  defp single_split(params), do: params
+  defp single_allocation(params), do: params
 end

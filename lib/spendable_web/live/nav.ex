@@ -12,7 +12,7 @@ defmodule SpendableWeb.Live.Nav do
   @tabs %{
     SpendableWeb.Live.Budgets => :budgets,
     SpendableWeb.Live.Transactions => :transactions,
-    SpendableWeb.Live.Templates => :templates,
+    SpendableWeb.Live.Splits => :splits,
     SpendableWeb.Live.Banks => :banks
   }
 

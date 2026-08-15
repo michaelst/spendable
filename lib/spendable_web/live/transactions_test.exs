@@ -100,16 +100,16 @@ defmodule SpendableWeb.Live.TransactionsTest do
     assert [%{name: "Coffee"}] = Transactions.list_transactions(scope)
   end
 
-  test "applies a template's lines to the open transaction", %{
+  test "applies a split's lines to the open transaction", %{
     conn: conn,
     scope: scope,
     budget: budget,
     attrs: attrs
   } do
-    {:ok, template} =
-      Budgets.create_template(scope, %{
+    {:ok, split} =
+      Budgets.create_split(scope, %{
         "name" => "Paycheck",
-        "budget_allocation_template_lines" => %{
+        "split_lines" => %{
           "0" => %{"amount" => "-3.00", "budget_id" => budget.id}
         }
       })
@@ -121,7 +121,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     view |> element(~s(li[phx-value-id="#{transaction.id}"])) |> render_click()
 
-    html = render_click(view, "apply_template", %{"template" => template.id})
+    html = render_click(view, "apply_split", %{"split" => split.id})
 
     assert html =~ "-3.00"
   end

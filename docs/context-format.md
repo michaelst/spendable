@@ -84,7 +84,7 @@ No other top-level sections. Content that wants one (boundaries, how to read the
 ## Contexts
 
 - [Accounts](./lib/spendable/accounts/CONTEXT.md) - who the user is and how they sign in
-- [Budgets](./lib/spendable/budgets/CONTEXT.md) - envelopes, allocations and the templates that pre-fill them
+- [Budgets](./lib/spendable/budgets/CONTEXT.md) - envelopes, allocations and the splits that pre-fill them
 - [Transactions](./lib/spendable/transactions/CONTEXT.md) - the spending records a user reviews and allocates
 - [Banks](./lib/spendable/banks/CONTEXT.md) - Plaid connections, accounts and the raw activity synced from them
 
