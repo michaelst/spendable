@@ -12,7 +12,11 @@ module.exports = plugin(function ({matchComponents}) {
   let iconsDir = path.join(__dirname, "./phosphor")
   let values = {}
 
-  fs.readdirSync(iconsDir).forEach(weight => {
+  fs.readdirSync(iconsDir, {withFileTypes: true}).forEach(entry => {
+    if (!entry.isDirectory()) return
+
+    let weight = entry.name
+
     fs.readdirSync(path.join(iconsDir, weight)).map(file => {
       let name = path.basename(file, ".svg")
       values[name] = {name, fullPath: path.join(iconsDir, weight, file)}

@@ -23,8 +23,10 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_secret: Secret.read!("GOOGLE_CLIENT_SECRET")
 
 if config_env() == :prod do
+  # On by default because every deployed database requires it; the docker compose prod profile
+  # turns it off, since the postgres it runs against is on the same bridge network.
   config :spendable, Spendable.Repo,
-    ssl: true,
+    ssl: System.get_env("DB_SSL") != "false",
     ssl_opts: [
       verify: :verify_none
     ],

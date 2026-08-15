@@ -1,14 +1,79 @@
+x-app: &app
+  profiles: ["prod"]
+  build: .
+  environment:
+    DB_HOSTNAME: db
+    DB_USERNAME: postgres
+    # The db service is on this bridge network and speaks plaintext; every deployed database does not.
+    DB_SSL: "false"
+    # The host the app builds its URLs from and checks websocket origins against, so behind a tunnel
+    # this has to be the tunnel's public hostname or LiveView will refuse to connect.
+    PHX_HOST: "${PHX_HOST:-localhost}"
+    PORT: "4000"
+  volumes:
+    - ./.secrets:/etc/secrets:ro
+
 services:
   db:
     image: postgres:18-alpine
     environment:
-      POSTGRES_PASSWORD:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
     volumes:
       - postgres-data:/var/lib/postgresql
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
     logging:
       driver: none
+
+  # The release reads its database name from runtime.exs and will not create it, so make it first.
+  createdb:
+    profiles: ["prod"]
+    image: postgres:18-alpine
+    environment:
+      PGPASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+    entrypoint:
+      - sh
+      - -c
+      - psql -h db -U postgres -lqt | cut -d'|' -f1 | grep -qw spendable || createdb -h db -U postgres spendable
+    depends_on:
+      db:
+        condition: service_healthy
+
+  migrate:
+    <<: *app
+    command: ["./bin/spendable", "eval", "Spendable.Release.migrate()"]
+    depends_on:
+      createdb:
+        condition: service_completed_successfully
+
+  app:
+    <<: *app
+    # Set PROD_PORT to run this alongside a `mix phx.server` already holding 4000.
+    ports:
+      - "${PROD_PORT:-4000}:4000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  # Publishes the app on its Cloudflare hostname without opening a port on the machine. The tunnel's
+  # own ingress rule lives in the Cloudflare dashboard and should point at http://app:4000.
+  cloudflared:
+    profiles: ["tunnel"]
+    image: cloudflare/cloudflared:2026.8.2
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      # Not a required variable: compose interpolates every service whether or not its profile is
+      # selected, so demanding a token here would break a plain `--profile prod` run.
+      TUNNEL_TOKEN: "${TUNNEL_TOKEN:-}"
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
 
 volumes:
   postgres-data:

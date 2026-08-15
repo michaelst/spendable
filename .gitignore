@@ -36,3 +36,7 @@ npm-debug.log
 /assets/node_modules/
 
 .env
+
+# Credentials for the production stack (scripts/install.sh).
+/.secrets/
+.env.prod
