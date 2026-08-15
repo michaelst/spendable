@@ -21,7 +21,8 @@ defmodule Spendable.Transactions.Actions.ListTransactions do
     from(transaction in Transaction,
       where: transaction.user_id == ^user_id,
       order_by: [desc: transaction.date, desc: transaction.id],
-      limit: ^per_page
+      limit: ^per_page,
+      preload: [:budget_allocations, bank_transaction: [bank_account: :bank_member]]
     )
     |> maybe_hide_reviewed(opts[:show_reviewed])
     |> maybe_hide_excluded(opts[:show_excluded])

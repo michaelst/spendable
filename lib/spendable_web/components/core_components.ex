@@ -19,6 +19,8 @@ defmodule SpendableWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   use Gettext, backend: SpendableWeb.Gettext
 
+  defdelegate bulk_actions(assigns), to: SpendableWeb.Components.BulkActions
+
   attr :id, :string, required: true
   slot :trigger, required: true
   slot :inner_block, required: true

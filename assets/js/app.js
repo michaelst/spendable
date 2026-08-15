@@ -37,6 +37,14 @@ Hooks.Plaid = {
   },
 }
 
+// Rows live in a stream, so they are not re-rendered when the selection is emptied server-side.
+// The server says when the boxes should come back up.
+window.addEventListener("phx:deselect-transactions", () => {
+  for (const box of document.querySelectorAll("#transactions-list input[type=checkbox]")) {
+    box.checked = false
+  }
+})
+
 let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
   params: { _csrf_token: csrfToken },

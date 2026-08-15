@@ -4,6 +4,7 @@ defmodule Spendable.Budgets.Actions.CalculateSpendableTest do
   alias Spendable.Accounts
   alias Spendable.Budgets
   alias Spendable.Scope
+  alias Spendable.Transactions
 
   setup do
     {:ok, user} =
@@ -38,6 +39,22 @@ defmodule Spendable.Budgets.Actions.CalculateSpendableTest do
     other_scope = Scope.for_user(other_user)
     {:ok, budget} = Budgets.create_budget(other_scope, %{"name" => "Theirs"})
     {:ok, _adjusted} = Budgets.update_budget(other_scope, budget, %{"balance" => "30.00"})
+
+    assert Decimal.eq?(Budgets.calculate_spendable(scope), "0.00")
+  end
+
+  test "ignores what an excluded transaction allocated to an envelope", %{scope: scope} do
+    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "name" => "Reimbursed lunch",
+        "amount" => "-20.00",
+        "date" => "2026-08-15",
+        "reviewed" => false,
+        "excluded" => true,
+        "budget_allocations" => %{"0" => %{"amount" => "-20.00", "budget_id" => budget.id}}
+      })
 
     assert Decimal.eq?(Budgets.calculate_spendable(scope), "0.00")
   end

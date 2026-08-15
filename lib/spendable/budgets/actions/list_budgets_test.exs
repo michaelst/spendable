@@ -4,6 +4,7 @@ defmodule Spendable.Budgets.Actions.ListBudgetsTest do
   alias Spendable.Accounts
   alias Spendable.Budgets
   alias Spendable.Scope
+  alias Spendable.Transactions
 
   setup do
     {:ok, user} =
@@ -59,5 +60,53 @@ defmodule Spendable.Budgets.Actions.ListBudgetsTest do
 
     assert [%{balance: balance}] = Budgets.list_budgets(scope)
     assert Decimal.eq?(balance, "30.00")
+  end
+
+  test "leaves an excluded transaction out of the balance", %{scope: scope} do
+    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "name" => "Reimbursed lunch",
+        "amount" => "-20.00",
+        "date" => "2026-08-15",
+        "reviewed" => false,
+        "excluded" => true,
+        "budget_allocations" => %{"0" => %{"amount" => "-20.00", "budget_id" => budget.id}}
+      })
+
+    assert [%{name: "Spendable"}, %{name: "Groceries", balance: balance}] = Budgets.list_budgets(scope)
+    assert Decimal.eq?(balance, "0.00")
+  end
+
+  test "leaves a transfer out of the balance", %{scope: scope} do
+    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+
+    {:ok, out} =
+      Transactions.create_transaction(scope, %{
+        "name" => "Transfer to savings",
+        "amount" => "-20.00",
+        "date" => "2026-08-15",
+        "reviewed" => false
+      })
+
+    {:ok, into} =
+      Transactions.create_transaction(scope, %{
+        "name" => "Transfer from checking",
+        "amount" => "20.00",
+        "date" => "2026-08-15",
+        "reviewed" => false
+      })
+
+    {:ok, _pair} = Transactions.mark_as_transfer(scope, out, into)
+    {:ok, out} = Transactions.get_transaction(scope, id: out.id)
+
+    {:ok, _allocated} =
+      Transactions.update_transaction(scope, out, %{
+        "budget_allocations" => %{"0" => %{"amount" => "-20.00", "budget_id" => budget.id}}
+      })
+
+    assert [%{name: "Spendable"}, %{name: "Groceries", balance: balance}] = Budgets.list_budgets(scope)
+    assert Decimal.eq?(balance, "0.00")
   end
 end

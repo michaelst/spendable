@@ -4,7 +4,11 @@ defmodule SpendableWeb.Live.TransactionsTest do
   import Phoenix.LiveViewTest
 
   alias Spendable.Accounts
+  alias Spendable.Banks.Schemas.BankAccount
+  alias Spendable.Banks.Schemas.BankMember
+  alias Spendable.Banks.Schemas.BankTransaction
   alias Spendable.Budgets
+  alias Spendable.Repo
   alias Spendable.Scope
   alias Spendable.Transactions
 
@@ -13,7 +17,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
 
     scope = Scope.for_user(user)
-    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+    {:ok, %{id: budget_id} = budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
 
     conn =
       conn
@@ -22,7 +26,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     attrs = %{"amount" => "-5.00", "date" => "2026-08-15", "reviewed" => false}
 
-    %{conn: conn, scope: scope, budget: budget, attrs: attrs}
+    %{conn: conn, scope: scope, budget: budget, budget_id: budget_id, attrs: attrs}
   end
 
   test "renders the transaction list", %{conn: conn, scope: scope, attrs: attrs} do
@@ -40,7 +44,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     {:ok, view, _html} = live(conn, ~p"/transactions")
 
-    view |> element(~s(li[phx-value-id="#{transaction.id}"])) |> render_click()
+    view |> element("#open-#{transaction.id}") |> render_click()
 
     view
     |> element(~s(form[phx-submit="submit"]))
@@ -61,7 +65,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     {:ok, view, _html} = live(conn, ~p"/transactions")
 
-    view |> element(~s(li[phx-value-id="#{transaction.id}"])) |> render_click()
+    view |> element("#open-#{transaction.id}") |> render_click()
 
     html =
       view
@@ -119,7 +123,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     {:ok, view, _html} = live(conn, ~p"/transactions")
 
-    view |> element(~s(li[phx-value-id="#{transaction.id}"])) |> render_click()
+    view |> element("#open-#{transaction.id}") |> render_click()
 
     html = render_click(view, "apply_split", %{"split" => split.id})
 
@@ -158,7 +162,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     {:ok, view, _html} = live(conn, ~p"/transactions")
 
-    view |> element(~s(li[phx-value-id="#{transaction.id}"])) |> render_click()
+    view |> element("#open-#{transaction.id}") |> render_click()
 
     params = %{
       "name" => "Coffee",
@@ -186,7 +190,7 @@ defmodule SpendableWeb.Live.TransactionsTest do
 
     {:ok, view, _html} = live(conn, ~p"/transactions")
 
-    view |> element(~s(li[phx-value-id="#{transaction.id}"])) |> render_click()
+    view |> element("#open-#{transaction.id}") |> render_click()
     html = render_click(view, "close", %{})
 
     refute html =~ ~s(phx-submit="submit")
@@ -261,6 +265,345 @@ defmodule SpendableWeb.Live.TransactionsTest do
     render_click(view, "delete", %{})
 
     assert [] = Transactions.list_transactions(scope)
+  end
+
+  test "toggles reviewed from the row", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_reviewed", %{"id" => transaction.id})
+    assert {:ok, %{reviewed: true}} = Transactions.get_transaction(scope, id: transaction.id)
+
+    render_click(view, "toggle_reviewed", %{"id" => transaction.id})
+    assert {:ok, %{reviewed: false}} = Transactions.get_transaction(scope, id: transaction.id)
+  end
+
+  test "sets what a transaction is spent from with the row's select", %{
+    conn: conn,
+    scope: scope,
+    budget: budget,
+    budget_id: budget_id,
+    attrs: attrs
+  } do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    view
+    |> element("#spend-from-#{transaction.id}")
+    |> render_change(%{"budget_id" => budget.id})
+
+    {:ok, transaction} = Transactions.get_transaction(scope, id: transaction.id)
+
+    assert [%{budget_id: ^budget_id, amount: amount}] = transaction.budget_allocations
+    assert Decimal.eq?(amount, "-5.00")
+  end
+
+  # A split has no single budget to offer, so the row sends the user to the drawer instead.
+  test "offers no select for a split transaction", %{
+    conn: conn,
+    scope: scope,
+    budget: budget,
+    attrs: attrs
+  } do
+    {:ok, _transaction} =
+      Transactions.create_transaction(
+        scope,
+        attrs
+        |> Map.put("name", "Shopping")
+        |> Map.put("budget_allocations", %{
+          "0" => %{"amount" => "-2.00", "budget_id" => budget.id}
+        })
+      )
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    assert has_element?(view, "button", "Split")
+    refute has_element?(view, ~s(form[phx-change="set_spend_from"]))
+  end
+
+  test "shows which account a transaction came from", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: scope.user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Tartan Bank",
+        provider: "Plaid",
+        plaid_token: "access-sandbox-token",
+        logo: Base.encode64(<<137, 80, 78, 71>>)
+      })
+
+    {:ok, bank_account} =
+      Repo.insert(%BankAccount{
+        user_id: scope.user.id,
+        bank_member_id: bank_member.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Checking",
+        number: "1234",
+        balance: Decimal.new("100.00"),
+        sub_type: "checking",
+        type: "depository"
+      })
+
+    {:ok, bank_transaction} =
+      Repo.insert(%BankTransaction{
+        user_id: scope.user.id,
+        bank_account_id: bank_account.id,
+        external_id: Ecto.UUID.generate(),
+        amount: Decimal.new("5.00"),
+        date: ~D[2026-08-15],
+        name: "Coffee",
+        pending: false
+      })
+
+    {:ok, transaction} =
+      Transactions.create_transaction(
+        scope,
+        attrs
+        |> Map.put("name", "Coffee")
+        |> Map.put("bank_transaction_id", bank_transaction.id)
+      )
+
+    {:ok, view, html} = live(conn, ~p"/transactions")
+
+    assert html =~ "Checking"
+    assert html =~ "••••1234"
+    assert html =~ "/banks/#{bank_member.id}/logo"
+
+    # A row is re-rendered from what the write returned, so the account has to survive an edit.
+    html = render_click(view, "toggle_reviewed", %{"id" => transaction.id})
+
+    assert html =~ "Checking"
+    assert html =~ "••••1234"
+    assert html =~ "/banks/#{bank_member.id}/logo"
+  end
+
+  test "marks the selected transactions reviewed", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => transaction.id, "value" => "on"})
+    render_click(view, "bulk_review", %{})
+
+    assert {:ok, %{reviewed: true}} = Transactions.get_transaction(scope, id: transaction.id)
+  end
+
+  test "excludes the selected transactions", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => transaction.id, "value" => "on"})
+    render_click(view, "bulk_exclude", %{})
+
+    assert {:ok, %{excluded: true}} = Transactions.get_transaction(scope, id: transaction.id)
+  end
+
+  test "sets what the selected transactions are spent from", %{
+    conn: conn,
+    scope: scope,
+    budget: budget,
+    budget_id: budget_id,
+    attrs: attrs
+  } do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => transaction.id, "value" => "on"})
+    render_click(view, "bulk_spend_from", %{"budget" => budget.id})
+
+    {:ok, transaction} = Transactions.get_transaction(scope, id: transaction.id)
+
+    assert [%{budget_id: ^budget_id}] = transaction.budget_allocations
+  end
+
+  test "marks two selected transactions as a transfer", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, out} = Transactions.create_transaction(scope, Map.put(attrs, "name", "To savings"))
+
+    {:ok, %{id: into_id} = into} =
+      Transactions.create_transaction(
+        scope,
+        attrs |> Map.put("name", "From checking") |> Map.put("amount", "5.00")
+      )
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => out.id, "value" => "on"})
+    render_click(view, "toggle_select_transaction", %{"id" => into.id, "value" => "on"})
+    html = render_click(view, "bulk_transfer", %{})
+
+    assert html =~ "Transfer"
+
+    assert {:ok, %{transfer_id: ^into_id}} = Transactions.get_transaction(scope, id: out.id)
+
+    # A hand-entered counterpart has no account, so the drawer falls back to naming it.
+    assert view |> element("#open-#{out.id}") |> render_click() =~ "Transfer with From checking"
+  end
+
+  test "reports why two transactions cannot be a transfer", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, one} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+    {:ok, two} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Tea"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => one.id, "value" => "on"})
+    render_click(view, "toggle_select_transaction", %{"id" => two.id, "value" => "on"})
+
+    assert render_click(view, "bulk_transfer", %{}) =~ "one transaction leaving an account"
+  end
+
+  test "reports a transaction that is already part of a transfer", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, out} = Transactions.create_transaction(scope, Map.put(attrs, "name", "To savings"))
+
+    {:ok, into} =
+      Transactions.create_transaction(
+        scope,
+        attrs |> Map.put("name", "From checking") |> Map.put("amount", "5.00")
+      )
+
+    {:ok, other} =
+      Transactions.create_transaction(
+        scope,
+        attrs |> Map.put("name", "Refund") |> Map.put("amount", "5.00")
+      )
+
+    {:ok, _pair} = Transactions.mark_as_transfer(scope, out, into)
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => out.id, "value" => "on"})
+    render_click(view, "toggle_select_transaction", %{"id" => other.id, "value" => "on"})
+
+    assert render_click(view, "bulk_transfer", %{}) =~ "already part of a transfer"
+  end
+
+  test "does nothing when a transfer is asked for without a pair", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => transaction.id, "value" => "on"})
+    render_click(view, "bulk_transfer", %{})
+
+    assert {:ok, %{transfer_id: nil}} = Transactions.get_transaction(scope, id: transaction.id)
+  end
+
+  test "does nothing when asked to remove a transfer that is not one", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    view |> element("#open-#{transaction.id}") |> render_click()
+
+    assert render_click(view, "remove_transfer", %{"id" => transaction.id}) =~ "Coffee"
+  end
+
+  # A selected row can be gone by the time a bulk action lands, and the rest still has to apply.
+  test "skips a selected transaction that is already gone", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, gone} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+    {:ok, kept} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Tea"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => gone.id, "value" => "on"})
+    render_click(view, "toggle_select_transaction", %{"id" => kept.id, "value" => "on"})
+    {:ok, _deleted} = Transactions.delete_transaction(scope, gone)
+
+    render_click(view, "bulk_review", %{})
+
+    assert {:ok, %{reviewed: true}} = Transactions.get_transaction(scope, id: kept.id)
+  end
+
+  test "removes a transfer from the details form", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: scope.user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Tartan Bank",
+        provider: "Plaid",
+        plaid_token: "access-sandbox-token"
+      })
+
+    {:ok, bank_account} =
+      Repo.insert(%BankAccount{
+        user_id: scope.user.id,
+        bank_member_id: bank_member.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Checking",
+        number: "1234",
+        balance: Decimal.new("100.00"),
+        sub_type: "checking",
+        type: "depository"
+      })
+
+    {:ok, bank_transaction} =
+      Repo.insert(%BankTransaction{
+        user_id: scope.user.id,
+        bank_account_id: bank_account.id,
+        external_id: Ecto.UUID.generate(),
+        amount: Decimal.new("5.00"),
+        date: ~D[2026-08-15],
+        name: "From checking",
+        pending: false
+      })
+
+    {:ok, out} = Transactions.create_transaction(scope, Map.put(attrs, "name", "To savings"))
+
+    {:ok, into} =
+      Transactions.create_transaction(
+        scope,
+        attrs
+        |> Map.put("name", "From checking")
+        |> Map.put("amount", "5.00")
+        |> Map.put("bank_transaction_id", bank_transaction.id)
+      )
+
+    {:ok, _pair} = Transactions.mark_as_transfer(scope, out, into)
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    # The drawer names the account the money went to, not the counterpart's own name.
+    assert view |> element("#open-#{out.id}") |> render_click() =~ "Checking ••••1234"
+
+    render_click(view, "remove_transfer", %{"id" => out.id})
+
+    assert {:ok, %{transfer_id: nil}} = Transactions.get_transaction(scope, id: out.id)
+    assert {:ok, %{transfer_id: nil}} = Transactions.get_transaction(scope, id: into.id)
+  end
+
+  test "clears the selection", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    render_click(view, "toggle_select_transaction", %{"id" => transaction.id, "value" => "on"})
+    render_click(view, "clear_selection", %{})
+    render_click(view, "delete", %{})
+
+    assert [%{name: "Coffee"}] = Transactions.list_transactions(scope)
   end
 
   test "filters the list by the search box", %{conn: conn, scope: scope, attrs: attrs} do

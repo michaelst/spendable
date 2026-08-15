@@ -124,7 +124,7 @@ defmodule SpendableWeb.Live.Budgets do
             <div :if={card.percent} class="mt-4 h-1 w-full rounded-full bg-white/10">
               <div class={["h-1 rounded-full", card.bar_class]} style={"width: #{card.percent}%"} />
             </div>
-            <p class="mt-4 text-xs text-gray-400">{card.footer}</p>
+            <p class="mt-3 text-xs text-gray-400">{card.footer}</p>
           </li>
         </ul>
       </main>

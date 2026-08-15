@@ -23,6 +23,8 @@ defmodule SpendableWeb.Router do
     delete "/logout", AuthController, :delete
 
     get "/privacy-policy", PageController, :privacy_policy
+
+    get "/banks/:id/logo", BankLogoController, :show
   end
 
   scope "/", SpendableWeb do

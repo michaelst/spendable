@@ -14,7 +14,8 @@ defmodule Spendable.Budgets.Utils.CalculateBalances do
   Fills in the virtual balance for a list of budgets in two queries rather than one per budget.
 
   A budget backed by a bank account reports that account's balance; every other budget reports
-  what its allocations add up to, plus its manual adjustment.
+  what its allocations add up to, plus its manual adjustment. Allocations belonging to an
+  excluded transaction or to a transfer are left out: neither is money the budget spent.
   """
   def calculate_balance(%Budget{} = budget) do
     [budget] = calculate_balances([budget])
@@ -37,9 +38,12 @@ defmodule Spendable.Budgets.Utils.CalculateBalances do
 
     allocated =
       from(allocation in BudgetAllocation,
+        join: transaction in assoc(allocation, :transaction),
         select: {allocation.budget_id, sum(allocation.amount)},
         group_by: allocation.budget_id,
-        where: allocation.budget_id in ^budget_ids
+        where: allocation.budget_id in ^budget_ids,
+        where: not transaction.excluded,
+        where: is_nil(transaction.transfer_id)
       )
       |> Repo.all()
       |> Map.new()

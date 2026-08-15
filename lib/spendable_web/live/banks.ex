@@ -43,7 +43,7 @@ defmodule SpendableWeb.Live.Banks do
             </div>
             <div class="min-w-0">
               <div class="flex items-center">
-                <img src={"data:image/png;base64,#{bank_member.logo}"} alt="bank logo" class="h-8 mr-2" />
+                <img src={~p"/banks/#{bank_member.id}/logo"} alt="bank logo" class="h-8 mr-2" />
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
                   <span class="truncate">{bank_member.name}</span>
                 </h2>
