@@ -3,122 +3,152 @@ defmodule SpendableWeb.Live.TemplatesTest do
 
   import Phoenix.LiveViewTest
 
-  alias Spendable.BudgetAllocationTemplate
-  alias Spendable.Factory
+  alias Spendable.Accounts
+  alias Spendable.Budgets
+  alias Spendable.Scope
 
-  test "LIVE /templates", %{conn: conn} do
-    user = Factory.user()
-    %{id: budget_id} = Factory.budget(user)
+  setup %{conn: conn} do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    scope = Scope.for_user(user)
+    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
 
     conn =
       conn
       |> Plug.Test.init_test_session(%{})
       |> put_session(:current_user_id, user.id)
 
-    conn = get(conn, "/templates")
-    assert html_response(conn, 200)
+    %{conn: conn, scope: scope, budget: budget}
+  end
 
-    {:ok, view, _html} = live(conn)
+  test "renders the template list", %{conn: conn, scope: scope} do
+    {:ok, _template} = Budgets.create_template(scope, %{"name" => "Paycheck"})
 
-    # creating templates
-    view
-    |> element(~s(#new-template))
-    |> render_click()
+    {:ok, _view, html} = live(conn, ~p"/templates")
 
-    amount = Decimal.new("10.00")
+    assert html =~ "Paycheck"
+  end
 
-    form = %{
+  test "creates a template with a line", %{conn: conn, scope: scope, budget: budget} do
+    {:ok, view, _html} = live(conn, ~p"/templates")
+
+    view |> element("#new-template") |> render_click()
+
+    params = %{
       "name" => "Paycheck",
+      "lines_sort" => ["0"],
       "budget_allocation_template_lines" => %{
-        "0" => %{
-          "amount" => to_string(amount),
-          "budget_id" => budget_id
-        }
+        "0" => %{"amount" => "10.00", "budget_id" => budget.id}
       }
     }
 
-    view
-    |> element(~s(form[phx-submit="submit"]))
-    |> render_change(%{form: form})
+    view |> element(~s(form[phx-submit="submit"])) |> render_change(%{template: params})
+    view |> element(~s(form[phx-submit="submit"])) |> render_submit(%{template: params})
 
-    view
-    |> element(~s(form[phx-submit="submit"]))
-    |> render_submit(%{form: form})
+    assert [%{name: "Paycheck"} = template] = Budgets.list_templates(scope)
+    {:ok, template} = Budgets.get_template(scope, template.id)
+    assert [%{amount: amount}] = template.budget_allocation_template_lines
+    assert Decimal.eq?(amount, "10.00")
+  end
 
-    assert {:ok,
-            [
-              %{
-                id: id,
-                name: "Paycheck",
-                budget_allocation_template_lines: [
-                  %{
-                    amount: ^amount,
-                    budget_id: ^budget_id
-                  }
-                ]
-              }
-            ]} = Spendable.Api.read(BudgetAllocationTemplate, load: :budget_allocation_template_lines)
+  test "keeps the form open and reports the error when the name is blank", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/templates")
 
-    # create a second template
-    view
-    |> element(~s(#new-template))
-    |> render_click()
+    view |> element("#new-template") |> render_click()
 
-    view
-    |> element(~s(form[phx-submit="submit"]))
-    |> render_submit(%{
-      form: %{
-        "name" => "Another",
-        "budget_allocation_template_lines" => %{
-          "0" => %{
-            "amount" => to_string(amount),
-            "budget_id" => budget_id
-          }
+    html =
+      view
+      |> element(~s(form[phx-submit="submit"]))
+      |> render_submit(%{template: %{"name" => ""}})
+
+    assert html =~ "can&#39;t be blank"
+  end
+
+  # The Split button posts a new index in lines_sort rather than firing its own event.
+  test "adds a blank line", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/templates")
+
+    view |> element("#new-template") |> render_click()
+
+    html =
+      view
+      |> element(~s(form[phx-submit="submit"]))
+      |> render_change(%{
+        template: %{
+          "name" => "Paycheck",
+          "lines_sort" => ["0", "new"],
+          "budget_allocation_template_lines" => %{"0" => %{}}
         }
-      }
-    })
+      })
 
-    # editing templates
-    view
-    |> element(~s(li[phx-value-id="#{id}"]))
-    |> render_click()
+    assert html =~ "budget_allocation_template_lines][1]"
+  end
+
+  test "edits a template", %{conn: conn, scope: scope, budget: budget} do
+    {:ok, template} =
+      Budgets.create_template(scope, %{
+        "name" => "Paycheck",
+        "budget_allocation_template_lines" => %{
+          "0" => %{"amount" => "10.00", "budget_id" => budget.id}
+        }
+      })
+
+    {:ok, view, _html} = live(conn, ~p"/templates")
+
+    view |> element(~s(li[phx-value-id="#{template.id}"])) |> render_click()
 
     view
     |> element(~s(form[phx-submit="submit"]))
-    |> render_submit(%{
-      form: %{
-        "name" => "Paycheck Template",
-        "budget_allocation_template_lines" => %{
-          "0" => %{
-            "amount" => to_string(amount),
-            "budget_id" => budget_id
-          }
-        }
-      }
-    })
+    |> render_submit(%{template: %{"name" => "Salary"}})
 
-    assert {:ok, %{name: "Paycheck Template"}} = Spendable.Api.get(BudgetAllocationTemplate, id)
+    assert [%{name: "Salary"}] = Budgets.list_templates(scope)
+  end
 
-    # selecting templates
-    view
-    |> element(~s(input[phx-click="check_template"][phx-value-id="#{id}"]))
-    |> render_click()
+  test "archives the checked templates", %{conn: conn, scope: scope} do
+    {:ok, template} = Budgets.create_template(scope, %{"name" => "Paycheck"})
+
+    {:ok, view, _html} = live(conn, ~p"/templates")
 
     view
-    |> element(~s(input[phx-click="uncheck_template"][phx-value-id="#{id}"]))
+    |> element(~s(input[phx-click="check_template"][phx-value-id="#{template.id}"]))
     |> render_click()
 
-    assert {:ok, %{id: ^id}} = Spendable.Api.get(BudgetAllocationTemplate, id)
+    view |> element("#archive") |> render_click()
 
-    # archiving templates
+    assert [] = Budgets.list_templates(scope)
+  end
+
+  test "leaves a template alone when it is checked and then unchecked", %{
+    conn: conn,
+    scope: scope
+  } do
+    {:ok, template} = Budgets.create_template(scope, %{"name" => "Paycheck"})
+
+    {:ok, view, _html} = live(conn, ~p"/templates")
+
     view
-    |> element(~s(input[phx-click="check_template"][phx-value-id="#{id}"]))
+    |> element(~s(input[phx-click="check_template"][phx-value-id="#{template.id}"]))
     |> render_click()
 
-    view
-    |> element(~s(#archive))
-    |> render_click()
+    html =
+      view
+      |> element(~s(input[phx-click="uncheck_template"][phx-value-id="#{template.id}"]))
+      |> render_click()
 
-    assert {:error, _not_found} = Spendable.Api.get(BudgetAllocationTemplate, id)
+    refute html =~ ~s(id="archive")
+    assert [%{name: "Paycheck"}] = Budgets.list_templates(scope)
+  end
+
+  test "filters the list by the search box", %{conn: conn, scope: scope} do
+    {:ok, _paycheck} = Budgets.create_template(scope, %{"name" => "Paycheck"})
+    {:ok, _bonus} = Budgets.create_template(scope, %{"name" => "Bonus"})
+
+    {:ok, view, _html} = live(conn, ~p"/templates")
+
+    html = render_change(view, "search", %{"search" => "pay"})
+
+    assert html =~ "Paycheck"
+    refute html =~ "Bonus"
   end
 end

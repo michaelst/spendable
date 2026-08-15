@@ -1,11 +1,19 @@
 defmodule SpendableWeb.Live.Budgets do
   use SpendableWeb, :live_view
 
-  alias Spendable.Budget
+  import SpendableWeb.Utils.FormOptions
+
+  alias Spendable.Banks
+  alias Spendable.Budgets
+  alias Spendable.Budgets.Schemas.Budget
   alias Spendable.Utils
 
   def mount(_params, _session, socket) do
-    {:ok, fetch_data(socket)}
+    socket |> fetch_data() |> ok()
+  end
+
+  def handle_params(_params, _uri, socket) do
+    noreply(socket)
   end
 
   def render(assigns) do
@@ -43,7 +51,7 @@ defmodule SpendableWeb.Live.Budgets do
               </div>
             </div>
             <button
-              :if={is_nil(@form)}
+              :if={is_nil(@changeset)}
               id="new-budget"
               type="button"
               phx-click={JS.push("new") |> show_details()}
@@ -61,7 +69,7 @@ defmodule SpendableWeb.Live.Budgets do
               Archive (<%= length(@selected_budgets) %>)
             </button>
             <button
-              :if={not is_nil(@form)}
+              :if={not is_nil(@changeset)}
               type="button"
               phx-click={JS.push("close") |> hide_details()}
               class="text-sm font-semibold leading-6 text-blue-400"
@@ -117,7 +125,7 @@ defmodule SpendableWeb.Live.Budgets do
                         <span :if={budget.budgeted_amount}>/ <%= Utils.format_currency(budget.budgeted_amount) %></span>
                       </span>
                     <% else %>
-                      <span class="truncate"><%= Utils.format_currency(budget.spent) %></span>
+                      <span class="truncate"><%= Utils.format_currency(@spent[budget.id]) %></span>
                     <% end %>
                   </h2>
                 </div>
@@ -163,7 +171,7 @@ defmodule SpendableWeb.Live.Budgets do
         id="details-form"
         class="hidden bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5 text-white"
       >
-        <.simple_form :if={@form} for={@form} phx-change="validate" phx-submit="submit">
+        <.simple_form :let={f} :if={@changeset} for={@changeset} as={:budget} phx-change="validate" phx-submit="submit">
           <header class="flex items-center justify-between border-b border-white/5 p-6">
             <h2 class="text-base font-semibold leading-7">Edit budget</h2>
             <button phx-click={hide_details()} class="text-sm font-semibold leading-6 text-blue-400">
@@ -171,20 +179,20 @@ defmodule SpendableWeb.Live.Budgets do
             </button>
           </header>
           <div class="space-y-6 m-6">
-            <.input type="text" label="Name" field={@form[:name]} />
+            <.input type="text" label="Name" field={f[:name]} />
             <.input
               type="select"
               label="Budget Type"
-              field={@form[:type]}
+              field={f[:type]}
               options={[{"Envelope", :envelope}, {"Goal", :goal}, {"Track Spending Only", :tracking}]}
             />
             <.input
-              :if={@form[:type].value != :tracking}
+              :if={f[:type].value != :tracking}
               type="text"
-              label={if @form[:type].value == :envelope, do: "Budgeted Amount", else: "Goal Amount"}
-              field={@form[:budgeted_amount]}
+              label={if f[:type].value == :envelope, do: "Budgeted Amount", else: "Goal Amount"}
+              field={f[:budgeted_amount]}
             />
-            <.input :if={@form[:type].value != :tracking} type="text" label="Allocated" field={@form[:balance]} />
+            <.input :if={f[:type].value != :tracking} type="text" label="Allocated" field={f[:balance]} />
           </div>
         </.simple_form>
       </aside>
@@ -192,84 +200,78 @@ defmodule SpendableWeb.Live.Budgets do
     """
   end
 
-  def handle_event("validate", %{"form" => params}, socket) do
-    form = AshPhoenix.Form.validate(socket.assigns.form, params)
-    {:noreply, assign(socket, form: form)}
+  def handle_event("validate", %{"budget" => params}, socket) do
+    changeset =
+      socket.assigns.changeset.data
+      |> Budget.changeset(params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("submit", %{"form" => params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
-      {:ok, _budget} ->
-        {:noreply, socket |> assign(:form, nil) |> fetch_data()}
+  def handle_event("submit", %{"budget" => params}, socket) do
+    scope = socket.assigns.current_scope
 
-      {:error, form} ->
-        {:noreply, assign(socket, form: form)}
+    result =
+      case socket.assigns.changeset.data do
+        %Budget{id: nil} -> Budgets.create_budget(scope, params)
+        budget -> Budgets.update_budget(scope, budget, params)
+      end
+
+    case result do
+      {:ok, _budget} -> socket |> assign(:changeset, nil) |> fetch_data() |> noreply()
+      {:error, changeset} -> socket |> assign(:changeset, changeset) |> noreply()
     end
   end
 
   def handle_event("search", params, socket) do
-    {:noreply,
-     socket
-     |> assign(:search, params["search"])
-     |> fetch_data()}
+    socket
+    |> assign(:search, params["search"])
+    |> fetch_data()
+    |> noreply()
   end
 
   def handle_event("close", _params, socket) do
-    {:noreply, assign(socket, :form, nil)}
+    {:noreply, assign(socket, :changeset, nil)}
   end
 
   def handle_event("new", _params, socket) do
-    form =
-      Budget
-      |> AshPhoenix.Form.for_create(:create,
-        api: Spendable.Api,
-        actor: socket.assigns.current_scope.user,
-        forms: [auto?: true]
-      )
-      |> to_form()
-
-    {:noreply, assign(socket, :form, form)}
+    {:noreply, assign(socket, :changeset, Budget.changeset(%Budget{}, %{}))}
   end
 
   def handle_event("select_month", params, socket) do
-    {:noreply,
-     socket
-     |> assign(:selected_month, Timex.parse!(params["month"], "{YYYY}-{0M}-{D}"))
-     |> fetch_data()}
+    socket
+    |> assign(:selected_month, Date.from_iso8601!(params["month"]))
+    |> fetch_data()
+    |> noreply()
   end
 
   def handle_event("select_budget", params, socket) do
-    budget =
-      Enum.find(socket.assigns.budgets, &(to_string(&1.id) == params["id"]))
+    budget = Enum.find(socket.assigns.budgets, &(&1.id == params["id"]))
 
-    form =
-      budget
-      |> AshPhoenix.Form.for_update(:update,
-        api: Spendable.Api,
-        actor: socket.assigns.current_scope.user,
-        forms: [auto?: true]
-      )
-      |> to_form()
-
-    {:noreply,
-     socket
-     |> assign(:form, form)}
+    {:noreply, assign(socket, :changeset, Budget.changeset(budget, %{}))}
   end
 
   def handle_event("archive", _params, socket) do
+    scope = socket.assigns.current_scope
+
     socket.assigns.budgets
-    |> Enum.filter(&(to_string(&1.id) in socket.assigns.selected_budgets))
-    |> Enum.each(&Spendable.Api.destroy!(&1, actor: socket.assigns.current_scope.user))
+    |> Enum.filter(&(&1.id in socket.assigns.selected_budgets))
+    |> Enum.each(&Budgets.archive_budget(scope, &1))
 
     {:noreply, fetch_data(socket)}
   end
 
   def handle_event("check_budget", %{"id" => id}, socket) do
-    {:noreply, assign(socket, selected_budgets: Enum.uniq([id | socket.assigns.selected_budgets]))}
+    socket
+    |> assign(:selected_budgets, Enum.uniq([id | socket.assigns.selected_budgets]))
+    |> noreply()
   end
 
   def handle_event("uncheck_budget", %{"id" => id}, socket) do
-    {:noreply, assign(socket, selected_budgets: Enum.filter(socket.assigns.selected_budgets, &(&1 != id)))}
+    socket
+    |> assign(:selected_budgets, Enum.filter(socket.assigns.selected_budgets, &(&1 != id)))
+    |> noreply()
   end
 
   def show_details(js \\ %JS{}) do
@@ -292,46 +294,39 @@ defmodule SpendableWeb.Live.Budgets do
   end
 
   defp fetch_data(socket) do
-    current_month = Date.utc_today() |> Timex.beginning_of_month()
+    scope = socket.assigns.current_scope
+    current_month = Date.beginning_of_month(Date.utc_today())
     selected_month = socket.assigns[:selected_month] || current_month
-    current_month_is_selected = Timex.equal?(selected_month, current_month)
+    current_month_is_selected = Date.compare(selected_month, current_month) == :eq
 
-    [spendable | budgets] =
-      Budget
-      |> Ash.Query.for_read(:list,
-        selected_month: selected_month,
-        search: socket.assigns[:search]
-      )
-      |> Spendable.Api.read!(actor: socket.assigns.current_scope.user)
-
-    budgets =
-      if current_month_is_selected do
-        [
-          spendable,
-          %Budget{
-            name: "Credit Cards",
-            type: :envelope,
-            spent: Decimal.new("0"),
-            balance:
-              Spendable.BankMember.Storage.credit_card_balance(socket.assigns.current_scope.user.id) |> Decimal.negate()
-          }
-          | budgets
-        ]
-      else
-        [spendable | budgets]
-      end
-
-    user = Spendable.Api.load!(socket.assigns.current_scope.user, [:spent_by_month, :spendable])
+    budgets = Budgets.list_budgets(scope, search: socket.assigns[:search])
 
     socket
-    |> assign(:spendable, user.spendable)
-    |> assign(:spent_by_month, user.spent_by_month)
+    |> assign(:spendable, Budgets.calculate_spendable(scope))
+    |> assign(:spent, Budgets.calculate_spent(scope, budgets, selected_month))
+    |> assign(:spent_by_month, Budgets.calculate_spent_by_month(scope))
     |> assign(:selected_month, selected_month)
     |> assign(:selected_budgets, [])
-    |> assign(:budgets, budgets)
+    |> assign(:budgets, maybe_add_credit_cards(budgets, scope, current_month_is_selected))
     |> assign(:current_month_is_selected, current_month_is_selected)
-    |> assign(:form, nil)
+    |> assign(:changeset, nil)
   end
+
+  # Card debt is not a budget, but it reads as one on this page: a negative balance to cover.
+  # It only makes sense against the current month, since it is what is owed right now.
+  defp maybe_add_credit_cards(budgets, _scope, false = _current_month_is_selected), do: budgets
+
+  defp maybe_add_credit_cards([spendable | budgets], scope, _current_month_is_selected) do
+    credit_cards = %Budget{
+      name: "Credit Cards",
+      type: :envelope,
+      balance: scope |> Banks.calculate_credit_card_balance() |> Decimal.negate()
+    }
+
+    [spendable, credit_cards | budgets]
+  end
+
+  defp maybe_add_credit_cards([], _scope, _current_month_is_selected), do: []
 
   defp budget_subtext(budget, %{current_month_is_selected: current}) do
     if current and budget.type != :tracking do

@@ -86,6 +86,7 @@ defmodule SpendableWeb do
       # Core UI components and translation
       import SpendableWeb.CoreComponents
       import SpendableWeb.Gettext
+      import SpendableWeb.Utils.SocketReplies
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

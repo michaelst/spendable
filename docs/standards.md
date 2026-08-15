@@ -101,7 +101,7 @@ end
 
 - Utils follow a similar pattern as actions, except they are not exposed and can be referenced only from inside the context.
 - To use a util it should be imported into the action module and called directly.
-- Utils should only be used for functionality that needs to be shared across multiple actions, if it is only used in one action it should be a local private function in the action module.
+- Utils are for **complex logic that needs to be reused**. Both halves have to hold: used by one action only, it is a private function in that action; simple enough to read inline, it stays inline no matter how many actions repeat it. A `where: is_nil(record.archived_at)` is not a util however often it appears - a multi-query batch calculation is.
 
 ```elixir
 defmodule Spendable.Banks.Actions.SyncTransaction do

@@ -1,8 +1,10 @@
 defmodule SpendableWeb.Live.Banks do
   use SpendableWeb, :live_view
 
+  import SpendableWeb.Utils.FormOptions
+
   alias Spendable.BankMember
-  alias Spendable.Budget
+  alias Spendable.Budgets
 
   def mount(_params, _session, socket) do
     {:ok, socket}
@@ -154,7 +156,7 @@ defmodule SpendableWeb.Live.Banks do
   end
 
   defp fetch_data(socket) do
-    budget_form_options = Budget.form_options(socket.assigns.current_scope.user.id)
+    budget_form_options = form_options(Budgets.list_budgets(socket.assigns.current_scope))
 
     bank_members =
       BankMember.list(socket.assigns.current_scope.user.id,
