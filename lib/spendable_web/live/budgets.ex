@@ -58,15 +58,6 @@ defmodule SpendableWeb.Live.Budgets do
               New
             </button>
             <button
-              :if={not Enum.empty?(@selected_budgets)}
-              id="archive"
-              type="button"
-              phx-click="archive"
-              class="text-sm font-semibold leading-6 text-blue-400"
-            >
-              Archive ({length(@selected_budgets)})
-            </button>
-            <button
               :if={not is_nil(@changeset)}
               type="button"
               phx-click={JS.push("close") |> hide_details()}
@@ -76,92 +67,64 @@ defmodule SpendableWeb.Live.Budgets do
             </button>
           </div>
         </header>
-        <!-- Budget list -->
-        <ul role="list" class="divide-y divide-white/5">
+        <!-- Month summary -->
+        <div class="flex flex-wrap items-end justify-between gap-6 border-b border-white/5 px-8 py-6">
+          <div :if={@current_month_is_selected}>
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Spendable</p>
+            <p class={[
+              "mt-1 text-4xl font-semibold",
+              if(Decimal.negative?(@spendable), do: "text-red-400", else: "text-green-400")
+            ]}>
+              {Utils.format_currency(@spendable)}
+            </p>
+          </div>
+          <div class="ml-auto flex items-end gap-x-10 text-right">
+            <div :if={@current_month_is_selected}>
+              <p class="text-2xl font-semibold text-white">{Utils.format_currency(@allocated_total)}</p>
+              <p class="text-xs uppercase tracking-wide text-gray-400">Allocated</p>
+            </div>
+            <div>
+              <p class="text-2xl font-semibold text-white">{Utils.format_currency(@spent_total)}</p>
+              <p class="text-xs uppercase tracking-wide text-gray-400">Spent</p>
+            </div>
+          </div>
+        </div>
+        <!-- Budget cards -->
+        <ul role="list" class="grid grid-cols-1 gap-4 px-8 py-6 md:grid-cols-2 xl:grid-cols-3">
           <li
-            :for={budget <- @budgets}
-            phx-click={JS.push("select_budget") |> show_details()}
-            phx-value-id={budget.id}
-            class="relative flex flex-row items-center justify-between space-x-4 py-6 pr-8"
+            :for={card <- @cards}
+            class="group rounded-xl bg-black/20 p-5 ring-1 ring-inset ring-white/5 hover:bg-white/5 hover:ring-white/10"
           >
-            <div class="min-w-0 flex-auto ml-1">
-              <div class="flex items-center">
-                <div :if={to_string(budget.id) not in @selected_budgets} class="pl-1 pr-2 opacity-0 hover:opacity-100">
-                  <input
-                    type="checkbox"
-                    value="true"
-                    checked={false}
-                    phx-click="check_budget"
-                    phx-value-id={budget.id}
-                    class="rounded-sm border-white/10 bg-white/5 text-white/5"
-                  />
-                </div>
-                <div :if={to_string(budget.id) in @selected_budgets} class="pl-1 pr-2">
-                  <input
-                    type="checkbox"
-                    value="true"
-                    checked={true}
-                    phx-click="uncheck_budget"
-                    phx-value-id={budget.id}
-                    class="rounded-sm border-white/10 bg-white/5 text-white/5"
-                  />
-                </div>
-                <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
-                  <a href="#" class="flex gap-x-2">
-                    <span class="truncate">{budget.name}</span>
-                  </a>
-                </h2>
+            <div class="flex items-center justify-between gap-x-2">
+              <h2 class="truncate text-sm font-semibold leading-6 text-white">{card.budget.name}</h2>
+              <div class="flex flex-none items-center gap-x-2">
+                <span class={["rounded-full py-1 px-2 text-xs font-medium ring-1 ring-inset", card.pill_class]}>
+                  {card.pill}
+                </span>
+                <button
+                  type="button"
+                  aria-label={"Edit #{card.budget.name}"}
+                  phx-click={JS.push("select_budget") |> show_details()}
+                  phx-value-id={card.budget.id}
+                  class="cursor-pointer text-gray-400 hover:text-blue-400"
+                >
+                  <.icon name="pi-pencil-simple" class="size-4" />
+                </button>
               </div>
             </div>
-            <div class="flex items-center">
-              <div class="min-w-0 flex-auto mr-4">
-                <div class="flex items-center gap-x-3">
-                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    <%= if @current_month_is_selected and budget.type != :tracking do %>
-                      <span class="truncate">
-                        {Utils.format_currency(budget.balance)}
-                        <span :if={budget.budgeted_amount}>/ {Utils.format_currency(budget.budgeted_amount)}</span>
-                      </span>
-                    <% else %>
-                      <span class="truncate">{Utils.format_currency(@spent[budget.id])}</span>
-                    <% end %>
-                  </h2>
-                </div>
-                <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
-                  <p class="truncate">{budget_subtext(budget, assigns)}</p>
-                </div>
-              </div>
-
-              <div :if={@current_month_is_selected and to_string(budget.name) == "Spendable"} class="min-w-0 flex-auto mx-4">
-                <div class="flex items-center gap-x-3">
-                  <h2 class="w-full text-sm font-semibold leading-6 text-white text-right">
-                    {Utils.format_currency(@spendable)}
-                  </h2>
-                </div>
-                <div class="mt-1 gap-x-2.5 text-xs leading-5 text-gray-400 text-right uppercase">
-                  <p class="truncate">AVAILABLE</p>
-                </div>
-              </div>
-              <div
-                :if={budget.type == :tracking}
-                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-gray-400 bg-gray-400/10 ring-gray-400/20"
-              >
-                Tracking
-              </div>
-              <div
-                :if={budget.type == :envelope}
-                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-blue-400 bg-blue-400/10 ring-blue-400/20"
-              >
-                Envelope
-              </div>
-              <div
-                :if={budget.type == :goal}
-                class="w-20 text-center rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-400 bg-green-400/10 ring-green-400/20"
-              >
-                Goal
-              </div>
-              <.icon name="pi-caret-right" class="h-5 w-5 flex-none text-gray-400" />
+            <div class="mt-4 flex items-baseline gap-x-2">
+              <span class={[
+                "text-3xl font-semibold",
+                if(Decimal.negative?(card.amount), do: "text-red-400", else: "text-white")
+              ]}>
+                {Utils.format_currency(card.amount)}
+              </span>
+              <span class="text-xs uppercase tracking-wide text-gray-400">{card.label}</span>
             </div>
+            <div :if={card.percent} class="mt-4 h-1 w-full rounded-full bg-white/10">
+              <div class={["h-1 rounded-full", card.bar_class]} style={"width: #{card.percent}%"} />
+            </div>
+            <p class="mt-4 text-xs text-gray-400">{card.footer}</p>
           </li>
         </ul>
       </main>
@@ -199,6 +162,15 @@ defmodule SpendableWeb.Live.Budgets do
               field={f[:budgeted_amount]}
             />
             <.input :if={f[:type].value != :tracking} type="text" label="Allocated" field={f[:balance]} />
+            <button
+              :if={@changeset.data.id}
+              id="archive"
+              type="button"
+              phx-click={JS.push("archive") |> hide_details()}
+              class="cursor-pointer text-sm font-semibold leading-6 text-red-400 hover:text-red-300"
+            >
+              Archive budget
+            </button>
           </div>
         </.simple_form>
       </aside>
@@ -259,25 +231,9 @@ defmodule SpendableWeb.Live.Budgets do
   end
 
   def handle_event("archive", _params, socket) do
-    scope = socket.assigns.current_scope
+    {:ok, _budget} = Budgets.archive_budget(socket.assigns.current_scope, socket.assigns.changeset.data)
 
-    socket.assigns.budgets
-    |> Enum.filter(&(&1.id in socket.assigns.selected_budgets))
-    |> Enum.each(&Budgets.archive_budget(scope, &1))
-
-    {:noreply, fetch_data(socket)}
-  end
-
-  def handle_event("check_budget", %{"id" => id}, socket) do
-    socket
-    |> assign(:selected_budgets, Enum.uniq([id | socket.assigns.selected_budgets]))
-    |> noreply()
-  end
-
-  def handle_event("uncheck_budget", %{"id" => id}, socket) do
-    socket
-    |> assign(:selected_budgets, Enum.filter(socket.assigns.selected_budgets, &(&1 != id)))
-    |> noreply()
+    socket |> fetch_data() |> noreply()
   end
 
   def show_details(js \\ %JS{}) do
@@ -306,14 +262,19 @@ defmodule SpendableWeb.Live.Budgets do
     current_month_is_selected = Date.compare(selected_month, current_month) == :eq
 
     budgets = Budgets.list_budgets(scope, search: socket.assigns[:search])
+    spent = Budgets.calculate_spent(scope, budgets, selected_month)
+    envelopes = Enum.filter(budgets, &(&1.type == :envelope))
+    listed = maybe_add_credit_cards(budgets, scope, current_month_is_selected)
 
     socket
     |> assign(:spendable, Budgets.calculate_spendable(scope))
-    |> assign(:spent, Budgets.calculate_spent(scope, budgets, selected_month))
+    |> assign(:spent, spent)
     |> assign(:spent_by_month, Budgets.calculate_spent_by_month(scope))
     |> assign(:selected_month, selected_month)
-    |> assign(:selected_budgets, [])
-    |> assign(:budgets, maybe_add_credit_cards(budgets, scope, current_month_is_selected))
+    |> assign(:budgets, listed)
+    |> assign(:cards, build_cards(listed, spent, current_month_is_selected))
+    |> assign(:allocated_total, total(envelopes, & &1.budgeted_amount))
+    |> assign(:spent_total, total(envelopes, &Map.get(spent, &1.id)))
     |> assign(:current_month_is_selected, current_month_is_selected)
     |> assign(:changeset, nil)
   end
@@ -334,11 +295,78 @@ defmodule SpendableWeb.Live.Budgets do
 
   defp maybe_add_credit_cards([], _scope, _current_month_is_selected), do: []
 
-  defp budget_subtext(budget, %{current_month_is_selected: current}) do
-    if current and budget.type != :tracking do
-      "ALLOCATED"
-    else
-      "SPENT"
-    end
+  defp build_cards(budgets, spent, current_month_is_selected) do
+    Enum.map(budgets, fn budget ->
+      budget
+      |> build_card(spent |> Map.get(budget.id, Decimal.new(0)) |> Decimal.abs(), current_month_is_selected)
+      |> Map.merge(%{budget: budget, pill: pill(budget.type), pill_class: pill_class(budget.type)})
+    end)
+  end
+
+  # A past month is a record of what was spent, so a balance read now says nothing about it.
+  defp build_card(_budget, spent, false = _current_month_is_selected) do
+    %{amount: spent, label: "SPENT", percent: nil, bar_class: nil, footer: nil}
+  end
+
+  defp build_card(%Budget{type: :tracking}, spent, _current_month_is_selected) do
+    %{amount: spent, label: "SPENT", percent: nil, bar_class: nil, footer: "No limit set"}
+  end
+
+  defp build_card(%Budget{type: :envelope, budgeted_amount: nil} = budget, _spent, _current_month_is_selected) do
+    %{amount: budget.balance, label: "LEFT", percent: nil, bar_class: nil, footer: "No limit set"}
+  end
+
+  defp build_card(%Budget{type: :envelope} = budget, spent, _current_month_is_selected) do
+    over_budget? = Decimal.compare(spent, budget.budgeted_amount) == :gt
+
+    %{
+      amount: budget.balance,
+      label: "LEFT",
+      percent: percent(spent, budget.budgeted_amount),
+      bar_class: if(over_budget?, do: "bg-red-500", else: "bg-blue-500"),
+      footer: "#{Utils.format_currency(spent)} of #{Utils.format_currency(budget.budgeted_amount)} spent"
+    }
+  end
+
+  defp build_card(%Budget{type: :goal, budgeted_amount: nil} = budget, _spent, _current_month_is_selected) do
+    %{amount: budget.balance, label: "SAVED", percent: nil, bar_class: nil, footer: "No goal set"}
+  end
+
+  defp build_card(%Budget{type: :goal} = budget, _spent, _current_month_is_selected) do
+    %{
+      amount: Decimal.sub(budget.budgeted_amount, budget.balance),
+      label: "TO GO",
+      percent: percent(budget.balance, budget.budgeted_amount),
+      bar_class: "bg-green-500",
+      footer: "#{Utils.format_currency(budget.balance)} of #{Utils.format_currency(budget.budgeted_amount)} saved"
+    }
+  end
+
+  defp pill(:tracking), do: "Tracking"
+  defp pill(:envelope), do: "Envelope"
+  defp pill(:goal), do: "Goal"
+
+  defp pill_class(:tracking), do: "text-gray-400 bg-gray-400/10 ring-gray-400/20 group-hover:ring-gray-400/50"
+  defp pill_class(:envelope), do: "text-blue-400 bg-blue-400/10 ring-blue-400/20 group-hover:ring-blue-400/50"
+  defp pill_class(:goal), do: "text-green-400 bg-green-400/10 ring-green-400/20 group-hover:ring-green-400/50"
+
+  defp percent(_part, %Decimal{coef: 0}), do: 0.0
+
+  defp percent(part, whole) do
+    part
+    |> Decimal.div(whole)
+    |> Decimal.mult(100)
+    |> Decimal.to_float()
+    |> max(0.0)
+    |> min(100.0)
+    |> Float.round(1)
+  end
+
+  # Goals save toward a target and tracking budgets reserve nothing, so neither is money
+  # this month was meant to be spent against.
+  defp total(envelopes, amount) do
+    envelopes
+    |> Enum.reduce(Decimal.new(0), &Decimal.add(&2, amount.(&1) || Decimal.new(0)))
+    |> Decimal.abs()
   end
 end

@@ -62,7 +62,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     {:ok, view, _html} = live(conn, ~p"/budgets")
 
-    view |> element(~s(li[phx-value-id="#{budget.id}"])) |> render_click()
+    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
 
     view
     |> element(~s(form[phx-submit="submit"]))
@@ -71,40 +71,24 @@ defmodule SpendableWeb.Live.BudgetsTest do
     assert [%{name: "Food"}] = Budgets.list_budgets(scope)
   end
 
-  test "archives the checked budgets", %{conn: conn, scope: scope} do
+  test "archives the budget being edited", %{conn: conn, scope: scope} do
     {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
 
     {:ok, view, _html} = live(conn, ~p"/budgets")
 
-    view
-    |> element(~s(input[phx-click="check_budget"][phx-value-id="#{budget.id}"]))
-    |> render_click()
-
+    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
     view |> element("#archive") |> render_click()
 
     assert [] = Budgets.list_budgets(scope)
   end
 
-  test "leaves a budget alone when it is checked and then unchecked", %{
-    conn: conn,
-    scope: scope
-  } do
-    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
-
+  # A budget that was never saved has nothing to archive.
+  test "offers no archive button on a new budget", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/budgets")
 
-    view
-    |> element(~s(input[phx-click="check_budget"][phx-value-id="#{budget.id}"]))
-    |> render_click()
+    html = view |> element("#new-budget") |> render_click()
 
-    html =
-      view
-      |> element(~s(input[phx-click="uncheck_budget"][phx-value-id="#{budget.id}"]))
-      |> render_click()
-
-    # Nothing is selected, so there is nothing to archive and the button is gone with it.
     refute html =~ ~s(id="archive")
-    assert [%{name: "Groceries"}] = Budgets.list_budgets(scope)
   end
 
   # Whatever a transaction leaves unallocated waits in Spendable, and the page leads with it.
@@ -118,8 +102,106 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     {:ok, _view, html} = live(conn, ~p"/budgets")
 
-    assert html =~ "AVAILABLE"
+    assert html =~ "Spendable"
     assert html =~ "-$20.00"
+  end
+
+  test "reads an envelope as what is left of its budgeted amount", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Groceries",
+        "type" => "envelope",
+        "budgeted_amount" => "650.00"
+      })
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-488.12",
+        "date" => Date.utc_today(),
+        "name" => "Market",
+        "budget_allocations" => %{"0" => %{"amount" => "-488.12", "budget_id" => budget.id}}
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "LEFT"
+    assert html =~ "$488.12 of $650.00 spent"
+    # The month summary pairs what the envelopes hold against what went out of them.
+    assert html =~ "Allocated"
+    assert html =~ "$650.00"
+    assert html =~ "$488.12"
+  end
+
+  # An envelope with nothing spent against it is not over budget, so its bar stays blue.
+  test "marks an envelope red once it is overspent", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Dining out",
+        "type" => "envelope",
+        "budgeted_amount" => "200.00"
+      })
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-264.50",
+        "date" => Date.utc_today(),
+        "name" => "Dinner",
+        "budget_allocations" => %{"0" => %{"amount" => "-264.50", "budget_id" => budget.id}}
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "bg-red-500"
+    refute html =~ "bg-blue-500"
+  end
+
+  test "reads a goal as what is still to go", %{conn: conn, scope: scope} do
+    {:ok, _budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Emergency fund",
+        "type" => "goal",
+        "budgeted_amount" => "6000.00",
+        "balance" => "4150.00"
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "TO GO"
+    assert html =~ "$1,850.00"
+    assert html =~ "$4,150.00 of $6,000.00 saved"
+  end
+
+  test "reads a goal with no amount as what it has saved", %{conn: conn, scope: scope} do
+    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Vacation", "type" => "goal"})
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "SAVED"
+    assert html =~ "No goal set"
+  end
+
+  test "reads a tracking budget as what was spent", %{conn: conn, scope: scope} do
+    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Shopping", "type" => "tracking"})
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "SPENT"
+    assert html =~ "No limit set"
+  end
+
+  # Dividing by the budgeted amount has to survive a budget set to nothing.
+  test "renders an envelope budgeted at zero", %{conn: conn, scope: scope} do
+    {:ok, _budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Gifts",
+        "type" => "envelope",
+        "budgeted_amount" => "0.00"
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "$0.00 of $0.00 spent"
+    assert html =~ "width: 0.0%"
   end
 
   test "closes the details form", %{conn: conn} do
