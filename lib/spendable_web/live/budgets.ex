@@ -100,10 +100,14 @@ defmodule SpendableWeb.Live.Budgets do
             <div class="flex items-center justify-between gap-x-2">
               <h2 class="truncate text-sm font-semibold leading-6 text-white">{card.budget.name}</h2>
               <div class="flex flex-none items-center gap-x-2">
-                <span class={["rounded-full py-1 px-2 text-xs font-medium ring-1 ring-inset", card.pill_class]}>
+                <span
+                  :if={card.pill}
+                  class={["rounded-full py-1 px-2 text-xs font-medium ring-1 ring-inset", card.pill_class]}
+                >
                   {card.pill}
                 </span>
                 <button
+                  :if={card.editable?}
                   type="button"
                   aria-label={"Edit #{card.budget.name}"}
                   phx-click={JS.push("select_budget") |> show_details()}
@@ -114,14 +118,16 @@ defmodule SpendableWeb.Live.Budgets do
                 </button>
               </div>
             </div>
-            <div class="mt-4 flex items-baseline gap-x-2">
-              <span class={[
+            <!-- What the figure is stands under it rather than beside it, so the eye reads the
+            number first and the word only if it needs to. -->
+            <div class="mt-4">
+              <p class={[
                 "text-3xl font-semibold",
                 if(Decimal.negative?(card.amount), do: "text-red-400", else: "text-white")
               ]}>
                 {Utils.format_currency(card.amount)}
-              </span>
-              <span class="text-xs uppercase tracking-wide text-gray-400">{card.label}</span>
+              </p>
+              <p class="text-xs uppercase tracking-wide text-gray-400">{card.label}</p>
             </div>
             <div :if={card.percent} class="mt-4 h-1 w-full rounded-full bg-white/10">
               <div class={["h-1 rounded-full", bar_class(card.bar)]} style={"width: #{card.percent}%"} />
@@ -261,7 +267,7 @@ defmodule SpendableWeb.Live.Budgets do
     scope = socket.assigns.current_scope
     selected_month = socket.assigns[:selected_month] || Date.beginning_of_month(Date.utc_today())
     summary = Budgets.calculate_month_summary(scope, selected_month, search: socket.assigns[:search])
-    listed = maybe_add_credit_cards(summary.budgets, scope, summary.current_month)
+    listed = listed_budgets(summary.budgets, scope, summary.current_month)
 
     socket
     |> assign(:spendable, summary.spendable)
@@ -276,29 +282,49 @@ defmodule SpendableWeb.Live.Budgets do
     |> assign(:changeset, nil)
   end
 
-  # Card debt is not a budget, but it reads as one on this page: a negative balance to cover.
-  # It only makes sense against the current month, since it is what is owed right now.
-  defp maybe_add_credit_cards(budgets, _scope, false = _current_month_is_selected), do: budgets
+  # A past month has no Spendable figure above the list, so the budget is the only place left to
+  # read what came out of it.
+  defp listed_budgets(budgets, _scope, false = _current_month_is_selected), do: by_type(budgets)
 
-  defp maybe_add_credit_cards([spendable | budgets], scope, _current_month_is_selected) do
+  defp listed_budgets([], _scope, _current_month_is_selected), do: []
+
+  # Card debt is not a budget, but it reads as one on this page: a negative balance to cover, and
+  # no id because there is no row behind it. Spendable is the figure the page opens with, so
+  # listing it again only says the same word twice about two different numbers.
+  defp listed_budgets(budgets, scope, _current_month_is_selected) do
     credit_cards = %Budget{
       name: "Credit Cards",
       type: :envelope,
       balance: scope |> Banks.calculate_credit_card_balance() |> Decimal.negate()
     }
 
-    [spendable, credit_cards | budgets]
+    [credit_cards | budgets |> Enum.reject(&(&1.name == "Spendable")) |> by_type()]
   end
 
-  defp maybe_add_credit_cards([], _scope, _current_month_is_selected), do: []
+  # Envelopes, then what is only tracked, alphabetical inside each. Grouping them by what they are
+  # does the work a heading over each group would, without the headings. Goals go last: a goal is
+  # money going in rather than out, so it is not what the month is about.
+  defp by_type(budgets), do: Enum.sort_by(budgets, &{type_order(&1.type), &1.name})
+
+  defp type_order(:envelope), do: 0
+  defp type_order(:tracking), do: 1
+  defp type_order(:goal), do: 2
 
   defp build_cards(budgets, spent, current_month_is_selected) do
     Enum.map(budgets, fn budget ->
       spent_here = spent |> Map.get(budget.id, Decimal.new(0)) |> Decimal.abs()
+      credit_cards? = is_nil(budget.id)
+      card = build_budget_card(budget, spent_here, current_month_is_selected)
 
-      budget
-      |> build_budget_card(spent_here, current_month_is_selected)
-      |> Map.merge(%{budget: budget, pill: pill(budget.type), pill_class: pill_class(budget.type)})
+      # Card debt is not an envelope with something left in it, it is what is owed right now, and
+      # the pill calling it one is only there to satisfy the card it is built from.
+      Map.merge(card, %{
+        budget: budget,
+        label: if(credit_cards?, do: "BALANCE", else: card.label),
+        pill: if(credit_cards?, do: nil, else: pill(budget.type)),
+        pill_class: pill_class(budget.type),
+        editable?: not credit_cards? and budget.name != "Spendable"
+      })
     end)
   end
 

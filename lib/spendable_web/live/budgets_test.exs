@@ -226,6 +226,67 @@ defmodule SpendableWeb.Live.BudgetsTest do
     refute html =~ "Credit Cards"
   end
 
+  # Spendable is the figure the page opens with, so a card saying it again is the same word twice
+  # about two different numbers.
+  test "leaves the Spendable card off the current month", %{conn: conn, scope: scope} do
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-20.00",
+        "date" => Date.utc_today(),
+        "name" => "Groceries"
+      })
+
+    {:ok, view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "Spendable"
+    refute has_element?(view, "h2", "Spendable")
+  end
+
+  # A past month has no Spendable figure above the list, so the budget is the only place left.
+  test "keeps the Spendable card on a past month", %{conn: conn, scope: scope} do
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-20.00",
+        "date" => Date.utc_today(),
+        "name" => "Groceries"
+      })
+
+    last_month = Date.utc_today() |> Date.beginning_of_month() |> Date.add(-1)
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    render_click(view, "select_month", %{"month" => Date.to_iso8601(last_month)})
+
+    assert has_element?(view, "h2", "Spendable")
+  end
+
+  # Card debt reads the bank accounts and Spendable is whatever is left over. Neither is a card
+  # anyone edits.
+  test "offers no edit on the credit card total", %{conn: conn, scope: scope} do
+    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+
+    {:ok, view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "BALANCE"
+    assert has_element?(view, ~s(button[aria-label="Edit Groceries"]))
+    refute has_element?(view, ~s(button[aria-label="Edit Credit Cards"]))
+  end
+
+  # Envelopes, then what is only tracked, then goals - the grouping does the work a heading would.
+  test "orders the cards by type, with goals last", %{conn: conn, scope: scope} do
+    {:ok, _goal} = Budgets.create_budget(scope, %{"name" => "Vacation", "type" => "goal"})
+    {:ok, _tracking} = Budgets.create_budget(scope, %{"name" => "Amazon", "type" => "tracking"})
+    {:ok, _envelope} = Budgets.create_budget(scope, %{"name" => "Rent", "type" => "envelope"})
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert [rent, amazon, vacation] =
+             Enum.map(["Rent", "Amazon", "Vacation"], &(:binary.match(html, &1) |> elem(0)))
+
+    assert rent < amazon
+    assert amazon < vacation
+  end
+
   test "filters the list by the search box", %{conn: conn, scope: scope} do
     {:ok, _groceries} = Budgets.create_budget(scope, %{"name" => "Groceries"})
     {:ok, _rent} = Budgets.create_budget(scope, %{"name" => "Rent"})

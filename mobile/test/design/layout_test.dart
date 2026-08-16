@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable/api/api_client.dart';
+import 'package:spendable/budgets/budgets_screen.dart';
 import 'package:spendable/design/theme.dart';
 import 'package:spendable/shell.dart';
 import 'package:spendable_api/spendable_api.dart';
@@ -182,8 +183,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Last, because reaching a row further down the list scrolls the large title away and the
-      // band's own buttons go with it.
-      await tester.ensureVisible(find.text('Emergency fund'));
+      // band's own buttons go with it. Scrolled to rather than ensured visible: goals sort to the
+      // end, and a sliver list has not built the rows down there yet.
+      await tester.scrollUntilVisible(
+        find.text('Emergency fund'),
+        200,
+        scrollable: find.descendant(of: find.byType(BudgetsScreen), matching: find.byType(Scrollable)).first,
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Emergency fund'));
       await tester.pumpAndSettle();

@@ -300,6 +300,45 @@ defmodule SpendableWeb.Live.TransactionsTest do
     assert Decimal.eq?(amount, "-5.00")
   end
 
+  # Saying where the whole of a transaction went is the decision the queue is asking for, so
+  # making it is what finishes the row.
+  test "marks a transaction reviewed once the row says what it was spent from", %{
+    conn: conn,
+    scope: scope,
+    budget: budget,
+    attrs: attrs
+  } do
+    {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
+
+    refute transaction.reviewed
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    view
+    |> element("#spend-from-#{transaction.id}")
+    |> render_change(%{"budget_id" => budget.id})
+
+    assert {:ok, %{reviewed: true}} = Transactions.get_transaction(scope, id: transaction.id)
+  end
+
+  # A transfer is settled rather than set aside, so it reads like any other finished row.
+  test "does not dim a transaction that is part of a transfer", %{conn: conn, scope: scope, attrs: attrs} do
+    {:ok, out} = Transactions.create_transaction(scope, Map.put(attrs, "name", "To savings"))
+
+    {:ok, into} =
+      Transactions.create_transaction(
+        scope,
+        attrs |> Map.put("name", "From checking") |> Map.put("amount", "5.00")
+      )
+
+    {:ok, _pair} = Transactions.mark_as_transfer(scope, out, into)
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    assert has_element?(view, "#transactions-#{out.id}")
+    refute has_element?(view, "#transactions-#{out.id}.opacity-40")
+  end
+
   # A split has no single budget to offer, so the row sends the user to the drawer instead.
   test "offers no select for a split transaction", %{
     conn: conn,
