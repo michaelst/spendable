@@ -12,7 +12,8 @@ part of 'api_client.dart';
 @ProviderFor(api)
 final apiProvider = ApiProvider._();
 
-final class ApiProvider extends $FunctionalProvider<SpendableApi, SpendableApi, SpendableApi>
+final class ApiProvider
+    extends $FunctionalProvider<SpendableApi, SpendableApi, SpendableApi>
     with $Provider<SpendableApi> {
   ApiProvider._()
     : super(
@@ -30,7 +31,8 @@ final class ApiProvider extends $FunctionalProvider<SpendableApi, SpendableApi, 
 
   @$internal
   @override
-  $ProviderElement<SpendableApi> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<SpendableApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   SpendableApi create(Ref ref) {
@@ -39,7 +41,10 @@ final class ApiProvider extends $FunctionalProvider<SpendableApi, SpendableApi, 
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(SpendableApi value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<SpendableApi>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SpendableApi>(value),
+    );
   }
 }
 

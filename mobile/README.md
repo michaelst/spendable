@@ -25,10 +25,14 @@ Needs Docker. CI fails if either the spec or the client has drifted.
 ## Gates
 
 ```sh
-dart format --set-exit-if-changed --line-length 110 lib test
+dart run build_runner build
+dart format --line-length 110 $(find lib test -name '*.dart' ! -name '*.g.dart')
 flutter analyze
 flutter test
 ```
+
+Generated `.g.dart` files are committed exactly as build_runner writes them - do not format them,
+or every regeneration will show up as a diff.
 
 ## Setup this repo cannot do for you
 

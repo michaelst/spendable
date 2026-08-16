@@ -12,7 +12,8 @@ part of 'plaid_link_flow.dart';
 @ProviderFor(plaidLinkFlow)
 final plaidLinkFlowProvider = PlaidLinkFlowProvider._();
 
-final class PlaidLinkFlowProvider extends $FunctionalProvider<PlaidLinkFlow, PlaidLinkFlow, PlaidLinkFlow>
+final class PlaidLinkFlowProvider
+    extends $FunctionalProvider<PlaidLinkFlow, PlaidLinkFlow, PlaidLinkFlow>
     with $Provider<PlaidLinkFlow> {
   PlaidLinkFlowProvider._()
     : super(
@@ -30,7 +31,8 @@ final class PlaidLinkFlowProvider extends $FunctionalProvider<PlaidLinkFlow, Pla
 
   @$internal
   @override
-  $ProviderElement<PlaidLinkFlow> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<PlaidLinkFlow> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   PlaidLinkFlow create(Ref ref) {
@@ -39,7 +41,10 @@ final class PlaidLinkFlowProvider extends $FunctionalProvider<PlaidLinkFlow, Pla
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(PlaidLinkFlow value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<PlaidLinkFlow>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PlaidLinkFlow>(value),
+    );
   }
 }
 

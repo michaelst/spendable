@@ -12,7 +12,8 @@ part of 'token_storage.dart';
 @ProviderFor(tokenStorage)
 final tokenStorageProvider = TokenStorageProvider._();
 
-final class TokenStorageProvider extends $FunctionalProvider<TokenStorage, TokenStorage, TokenStorage>
+final class TokenStorageProvider
+    extends $FunctionalProvider<TokenStorage, TokenStorage, TokenStorage>
     with $Provider<TokenStorage> {
   TokenStorageProvider._()
     : super(
@@ -30,7 +31,8 @@ final class TokenStorageProvider extends $FunctionalProvider<TokenStorage, Token
 
   @$internal
   @override
-  $ProviderElement<TokenStorage> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<TokenStorage> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   TokenStorage create(Ref ref) {
@@ -39,7 +41,10 @@ final class TokenStorageProvider extends $FunctionalProvider<TokenStorage, Token
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(TokenStorage value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<TokenStorage>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TokenStorage>(value),
+    );
   }
 }
 

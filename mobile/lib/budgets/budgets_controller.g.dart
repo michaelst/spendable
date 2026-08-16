@@ -18,7 +18,8 @@ final budgetsControllerProvider = BudgetsControllerProvider._();
 /// Writing budgets. Every write re-reads the summary rather than patching the list: changing one
 /// budget's allocation moves what is left on Spendable, so the row that came back is not the only
 /// one that changed.
-final class BudgetsControllerProvider extends $NotifierProvider<BudgetsController, AsyncValue<void>> {
+final class BudgetsControllerProvider
+    extends $NotifierProvider<BudgetsController, AsyncValue<void>> {
   /// Writing budgets. Every write re-reads the summary rather than patching the list: changing one
   /// budget's allocation moves what is left on Spendable, so the row that came back is not the only
   /// one that changed.
@@ -42,7 +43,10 @@ final class BudgetsControllerProvider extends $NotifierProvider<BudgetsControlle
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AsyncValue<void>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
   }
 }
 

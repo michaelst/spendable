@@ -43,11 +43,15 @@ final class TransactionsControllerProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AsyncValue<void>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
   }
 }
 
-String _$transactionsControllerHash() => r'684e2fcfec358b2f01f0a8cc8dc555cd96fa1a24';
+String _$transactionsControllerHash() =>
+    r'684e2fcfec358b2f01f0a8cc8dc555cd96fa1a24';
 
 /// Writing transactions. Every write renders the transaction that came back rather than what was
 /// sent: the server re-runs the allocation split on each save, so the response is the only
