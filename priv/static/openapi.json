@@ -2,6 +2,147 @@
   "components": {
     "responses": {},
     "schemas": {
+      "BankAccount": {
+        "description": "An account inside a connection. Amounts are decimal strings.",
+        "properties": {
+          "balance": {
+            "description": "Negative on a credit card, as a ledger reads.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "description": "When set, this account's balance is that budget's balance.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "number": {
+            "description": "Masked, last digits only.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "sub_type": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "sync": {
+            "description": "Whether activity is pulled and counted.",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "type": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "sub_type",
+          "balance",
+          "sync"
+        ],
+        "title": "BankAccount",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BankAccount",
+        "x-validate": null
+      },
+      "BankAccountRequest": {
+        "description": "The two things a user decides about an account: whether to sync it, and where it belongs.",
+        "example": {
+          "budget_id": "bgt_01j0rent",
+          "sync": true
+        },
+        "properties": {
+          "budget_id": {
+            "description": "Null unassigns, putting the balance back into Spendable.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "sync": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "BankAccountRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BankAccountRequest",
+        "x-validate": null
+      },
+      "BankMember": {
+        "description": "A connection to an institution, and the accounts inside it.",
+        "properties": {
+          "bank_accounts": {
+            "items": {
+              "$ref": "#/components/schemas/BankAccount"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "has_logo": {
+            "description": "Fetch it from `/api/banks/{id}/logo` when true.",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "description": "Who supplies the connection.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "status": {
+            "description": "Anything other than \"CONNECTED\" means the user has to reconnect.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "provider",
+          "has_logo",
+          "bank_accounts"
+        ],
+        "title": "BankMember",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BankMember",
+        "x-validate": null
+      },
       "Budget": {
         "description": "An envelope money is divided into. Amounts are decimal strings.",
         "properties": {
@@ -290,6 +431,23 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkResult",
         "x-validate": null
       },
+      "ConnectRequest": {
+        "description": "The public token Plaid Link returns once the user has picked a bank.",
+        "properties": {
+          "public_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "public_token"
+        ],
+        "title": "ConnectRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.ConnectRequest",
+        "x-validate": null
+      },
       "Errors": {
         "description": "The shape every failed request comes back in.",
         "properties": {
@@ -340,6 +498,23 @@
         "title": "Errors",
         "type": "object",
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.Errors",
+        "x-validate": null
+      },
+      "LinkToken": {
+        "description": "Hand this to the Plaid Link SDK. Short-lived.",
+        "properties": {
+          "link_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "link_token"
+        ],
+        "title": "LinkToken",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.LinkToken",
         "x-validate": null
       },
       "Session": {
@@ -853,6 +1028,346 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/api/bank_accounts/{id}": {
+      "patch": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.BankAccountController.update",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountRequest"
+              }
+            }
+          },
+          "description": "BankAccount",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            },
+            "description": "BankAccount"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Sync an account, or assign it to a budget",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks": {
+      "get": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.BankMemberController.index",
+        "parameters": [
+          {
+            "description": "Matches on institution name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BankMember"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "BankMembers"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List connections and their accounts",
+        "tags": [
+          "banks"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "description": "Exchanges the public token Plaid Link returned. The accounts arrive on the first sync rather\nthan in this response, so the connection comes back with none.\n",
+        "operationId": "SpendableWeb.Api.BankMemberController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectRequest"
+              }
+            }
+          },
+          "description": "Public token",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankMember"
+                }
+              }
+            },
+            "description": "BankMember"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Finish connecting a bank",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/link_token": {
+      "post": {
+        "callbacks": {},
+        "description": "Refused once the user is at their bank limit, before Plaid is called.",
+        "operationId": "SpendableWeb.Api.BankMemberController.link_token",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkToken"
+                }
+              }
+            },
+            "description": "LinkToken"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Start connecting a bank",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/link_token": {
+      "post": {
+        "callbacks": {},
+        "description": "For a connection whose status is not CONNECTED, or to verify micro deposits.",
+        "operationId": "SpendableWeb.Api.BankMemberController.update_link_token",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkToken"
+                }
+              }
+            },
+            "description": "LinkToken"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Reopen an existing connection",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/logo": {
+      "get": {
+        "callbacks": {},
+        "description": "Cacheable and ETagged, so a client can hold it on disk and revalidate for free.",
+        "operationId": "SpendableWeb.Api.BankLogoController.show",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/png": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "PNG"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "An institution's logo",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/sync": {
+      "post": {
+        "callbacks": {},
+        "description": "Queues the work and returns immediately. There is no completion signal - refresh the lists to\npick up whatever has landed.\n",
+        "operationId": "SpendableWeb.Api.BankMemberController.sync",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Queued"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Pull two years of history",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
     "/api/budgets": {
       "get": {
         "callbacks": {},

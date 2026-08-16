@@ -108,6 +108,15 @@ defmodule SpendableWeb.Router do
     delete "/transactions/:id/transfer", TransactionTransferController, :delete
 
     resources "/transactions", TransactionController, only: [:index, :show, :create, :update, :delete]
+
+    get "/banks", BankMemberController, :index
+    post "/banks", BankMemberController, :create
+    post "/banks/link_token", BankMemberController, :link_token
+    post "/banks/:id/link_token", BankMemberController, :update_link_token
+    post "/banks/:id/sync", BankMemberController, :sync
+    get "/banks/:id/logo", BankLogoController, :show
+
+    patch "/bank_accounts/:id", BankAccountController, :update
   end
 
   scope "/auth", SpendableWeb do
