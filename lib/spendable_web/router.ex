@@ -99,6 +99,7 @@ defmodule SpendableWeb.Router do
     # Ahead of "/budgets/:id" so the literal segment is not read as an id.
     get "/budgets/summary", BudgetSummaryController, :show
     resources "/budgets", BudgetController, only: [:index, :show, :create, :update, :delete]
+    resources "/splits", SplitController, only: [:index, :show, :create, :update, :delete]
   end
 
   scope "/auth", SpendableWeb do

@@ -318,6 +318,125 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.SessionRequest",
         "x-validate": null
       },
+      "Split": {
+        "description": "A saved division of a transaction across budgets. Amounts are decimal strings.",
+        "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "split_lines": {
+            "description": "Oldest first.",
+            "items": {
+              "properties": {
+                "amount": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "budget_id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "id",
+                "amount",
+                "budget_id"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "split_lines"
+        ],
+        "title": "Split",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Split",
+        "x-validate": null
+      },
+      "SplitRequest": {
+        "description": "Send the whole set of lines you want the split to end up with. A line with an `id` is kept and\nupdated, one without is added, and any line left out is deleted.\n",
+        "example": {
+          "name": "Payday",
+          "split_lines": [
+            {
+              "amount": "-200.00",
+              "budget_id": "bgt_01j0rent"
+            }
+          ]
+        },
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "split_lines": {
+            "items": {
+              "properties": {
+                "amount": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "budget_id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "id": {
+                  "description": "Omit to add a new line.",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "amount",
+                "budget_id"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "SplitRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitRequest",
+        "x-validate": null
+      },
       "User": {
         "description": "The signed-in user.",
         "properties": {
@@ -893,6 +1012,325 @@
         "summary": "Sign in",
         "tags": [
           "session"
+        ]
+      }
+    },
+    "/api/splits": {
+      "get": {
+        "callbacks": {},
+        "description": "Alphabetical, without their lines. Archived splits are left out.",
+        "operationId": "SpendableWeb.Api.SplitController.index",
+        "parameters": [
+          {
+            "description": "Matches on name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Split"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Splits"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List splits",
+        "tags": [
+          "splits"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.SplitController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitRequest"
+              }
+            }
+          },
+          "description": "Split",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Create a split",
+        "tags": [
+          "splits"
+        ]
+      }
+    },
+    "/api/splits/{id}": {
+      "delete": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.SplitController.delete",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Archive a split",
+        "tags": [
+          "splits"
+        ]
+      },
+      "get": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.SplitController.show",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Get a split and its lines",
+        "tags": [
+          "splits"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.SplitController.update (2)",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitRequest"
+              }
+            }
+          },
+          "description": "Split",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a split",
+        "tags": [
+          "splits"
+        ]
+      },
+      "put": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.SplitController.update",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitRequest"
+              }
+            }
+          },
+          "description": "Split",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a split",
+        "tags": [
+          "splits"
         ]
       }
     }
