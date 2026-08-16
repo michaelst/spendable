@@ -28,9 +28,14 @@ scratch headless Chrome, and signs in by installing a minted session cookie — 
 driven headlessly and no password is ever typed. Run every `qa.sh` command through Bash with the
 sandbox disabled — Mix needs a real TCP socket.
 
+It finds the port the way the app does: `PORT` from the environment, else this worktree's
+`.env.worktree`, else 4000. **In a worktree that means it QAs that worktree's app**, on its own
+database, with its own Chrome and state directory, so two worktrees can QA at once. It refuses to
+start if what answers on that port is not Spendable.
+
 The dev database must already contain at least one user; `qa.sh` signs in as the oldest one unless
-you pass a UXID or Google `external_id`. If it has none, sign in once at http://localhost:4000 in a
-real browser first.
+you pass a UXID or Google `external_id`. If it has none, sign in once in a real browser first, or
+create one through `Accounts` with `mix run` — never by inserting a row directly.
 
 Then each check is a small script run against the still-live browser:
 
@@ -42,7 +47,13 @@ Copy [scripts/example-check.mjs](scripts/example-check.mjs) and rewrite it. The 
 [record-demo-video](../record-demo-video/SKILL.md) CDP driver (`click`, `type`, `typeDate`, `press`,
 `hover`, `goto`, `evaluate`, `expect`) plus `shot(name)`, `text()`, `resize(w, h)`, and
 `drainProblems()`. **Do not use the in-app Browser pane** — its synthetic clicks do not reliably fire
-`phx-click`, so a check that "passes" there proves nothing.
+`phx-click`, so a check that "passes" there proves nothing; it cannot screenshot at all unless the
+pane happens to be on screen; and it cannot be signed in by hand, because the session cookie is
+`httpOnly` and `document.cookie` cannot overwrite one. Reach for `qa.sh`, not for a workaround.
+
+A part of the app that only a non-browser client reaches — an API, a webhook, an MCP endpoint — is
+still QA's job. Drive it with `curl` in the same pass, as the real client would, and check the effect
+in the browser: the point is that the two agree.
 
 `qa.sh log` tails the dev server log. `qa.sh stop` tears down what it started — hold off on it if a
 [record-demo-video](../record-demo-video/SKILL.md) pass is next, since that needs the same server up.

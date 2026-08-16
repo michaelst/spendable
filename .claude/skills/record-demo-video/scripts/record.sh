@@ -15,13 +15,23 @@ SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Users have no email - identify by UXID or Google external_id, or take the oldest one.
 DEV_USER="${3:-${DEV_LOGIN_USER:-}}"
-PORT="${PORT:-4000}"
-DEBUG_PORT="${DEMO_DEBUG_PORT:-9222}"
+
+# shellcheck source=worktree_env.sh
+. "$SKILL_DIR/worktree_env.sh"
+
+DEBUG_PORT="${DEMO_DEBUG_PORT:-$((9222 + WORKTREE_SLOT))}"
 FPS="${DEMO_FPS:-8}"
 FRAME_DIR="${DEMO_FRAME_DIR:-${TMPDIR:-/tmp}/demo-frames-$$}"
 
 if ! curl -fsS -o /dev/null "http://localhost:$PORT/"; then
   echo "no dev server on port $PORT: start it first (mix phx.server)" >&2
+  exit 1
+fi
+
+# Port 4000 is a popular default, and a worktree's app is not on it: make sure whatever answered is
+# this checkout's app before recording a video of someone else's.
+if ! curl -sS "http://localhost:$PORT/" | grep -q 'Spendable'; then
+  echo "the server on port $PORT is not Spendable - stop whatever is squatting the port, or set PORT." >&2
   exit 1
 fi
 

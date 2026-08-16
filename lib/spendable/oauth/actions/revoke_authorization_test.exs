@@ -53,6 +53,29 @@ defmodule Spendable.OAuth.Actions.RevokeAuthorizationTest do
              OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client_id})
   end
 
+  test "cuts off a code the client had not redeemed yet", %{client_id: client_id, scope: scope} do
+    {:ok, code, _redirect_uri} =
+      OAuth.create_authorization_code(scope, %{
+        client: %Client{id: client_id, redirect_uris: ["https://claude.ai/api/mcp/auth_callback"]},
+        redirect_uri: "https://claude.ai/api/mcp/auth_callback",
+        scope: "mcp",
+        code_challenge: Base.url_encode64(:crypto.hash(:sha256, @code_verifier), padding: false),
+        code_challenge_method: :S256,
+        resource: @resource,
+        state: nil
+      })
+
+    assert :ok = OAuth.revoke_authorization(scope, client_id)
+
+    assert {:error, :invalid_grant} =
+             OAuth.exchange_authorization_code(%{
+               "code" => code,
+               "client_id" => client_id,
+               "redirect_uri" => "https://claude.ai/api/mcp/auth_callback",
+               "code_verifier" => @code_verifier
+             })
+  end
+
   test "leaves an authorization that belongs to a different user", %{client_id: client_id, scope: scope, tokens: tokens} do
     {:ok, other_user} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})

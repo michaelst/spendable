@@ -199,8 +199,11 @@ export async function openSession({
       await sleep(ms)
     },
 
+    // A path is relative to the dev app. An absolute URL goes through untouched, for the parts of a
+    // flow that legitimately leave it - an OAuth callback on a loopback port, a link from an email.
     goto: async (path, settleMs = 3500) => {
-      await send('Page.navigate', { url: `http://localhost:${port}${path}` })
+      const url = /^https?:\/\//.test(path) ? path : `http://localhost:${port}${path}`
+      await send('Page.navigate', { url })
       await sleep(settleMs)
     },
 

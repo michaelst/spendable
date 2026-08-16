@@ -12,14 +12,14 @@ defmodule Spendable.OAuth.Actions.ExchangeRefreshToken do
 
   require Logger
 
-  # A rotated token stays usable this long so a client that retried a refresh whose response it
-  # never saw is not treated as an attacker. RFC 9700 requires reuse be detectable, not that it be
-  # punished instantly.
-  @grace_period_seconds 30
-
   @doc """
   Rotates a refresh token: every use issues a new pair and revokes the one presented. A token used
   twice is the signature of a stolen one, so the whole family descended from that grant is revoked.
+
+  There is deliberately no grace period for a client replaying the refresh it just made. Re-issuing
+  for a spent token means not claiming anything, so the same token mints pairs for as long as the
+  window lasts - and reuse detection is the only thing standing between a leaked refresh token and
+  indefinite access. A client that loses a response authorizes again, which costs one consent.
   """
   def exchange_refresh_token(params) do
     refresh_token = params["refresh_token"] || ""
@@ -42,18 +42,6 @@ defmodule Spendable.OAuth.Actions.ExchangeRefreshToken do
            }) do
       {:ok, tokens}
     else
-      {:grace, token} ->
-        Logger.warning("oauth refresh token replayed within the grace period, re-issuing for family #{token.family_id}")
-
-        # the row is already revoked and already points at its successor, so nothing to replace
-        issue_tokens(%{
-          user_id: token.user_id,
-          client_id: token.client_id,
-          scope: token.scope,
-          resource: token.resource,
-          family_id: token.family_id
-        })
-
       {:reuse, token} ->
         revoke_family(token)
         {:error, :invalid_grant}
@@ -72,30 +60,10 @@ defmodule Spendable.OAuth.Actions.ExchangeRefreshToken do
 
   defp usable?(token) do
     cond do
-      is_struct(token.revoked_at, DateTime) and rotation_grace?(token) -> {:grace, token}
       is_struct(token.revoked_at, DateTime) -> {:reuse, token}
       DateTime.compare(token.expires_at, DateTime.utc_now()) != :gt -> :expired
       true -> :ok
     end
-  end
-
-  # Grace covers one case only: the client retried the refresh it just made, and the token it holds
-  # was rotated moments ago. Both bounds matter - a revoked_at in the future (clock skew) has to
-  # fail closed rather than open an unbounded window.
-  defp rotation_grace?(%RefreshToken{revoked_at: revoked_at, replaced_by_id: replaced_by_id}) do
-    elapsed = DateTime.diff(DateTime.utc_now(), revoked_at, :second)
-
-    elapsed >= 0 and elapsed <= @grace_period_seconds and successor_live?(replaced_by_id)
-  end
-
-  # A token that was never rotated has no successor and never earns grace. Requiring a live
-  # successor is also what keeps grace from outliving a revocation: revoking only touches rows
-  # whose revoked_at is still NULL, so an already-rotated token would otherwise stay redeemable for
-  # 30s after the family was revoked or the user disconnected the client.
-  defp successor_live?(nil), do: false
-
-  defp successor_live?(replaced_by_id) do
-    Repo.exists?(from token in RefreshToken, where: token.id == ^replaced_by_id and is_nil(token.revoked_at))
   end
 
   defp revoke_family(%RefreshToken{family_id: family_id}) do

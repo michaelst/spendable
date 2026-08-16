@@ -20,7 +20,17 @@ this reliably:
 - Its synthetic clicks do not always fire `phx-click`. When the pane is hidden, a click can land as a
   focus with no submit, and `element.click()` / `new Event('input')` from `javascript_tool` races
   LiveView's re-render and silently no-ops.
+- **It cannot screenshot at all unless the pane is on screen.** In a session where it is not,
+  `computer{action:"screenshot"}` fails with "the Browser pane is not displayed, so the page is not
+  compositing frames" and no amount of re-fronting the tab fixes it. Headless Chrome over CDP is
+  never subject to this — do not fall back to the pane when it happens, and do not go hunting for a
+  way to display it.
 - It has no way to write frames to disk, so there is nothing to encode.
+
+It also cannot hold the app's session cookie: the pane sets its own `httpOnly` session cookie on the
+first page load, and `document.cookie` from `javascript_tool` cannot overwrite an `httpOnly` cookie,
+so every attempt to sign it in by hand lands back on the login page. `record.sh` installs the cookie
+through CDP, where that restriction does not apply.
 
 CDP's `Input.dispatchMouseEvent` / `Input.dispatchKeyEvent` produce **trusted** events, so LiveView
 reacts exactly as it does for a real user, and `Page.captureScreenshot` gives frames as files.
@@ -38,7 +48,11 @@ reacts exactly as it does for a real user, and `Page.captureScreenshot` gives fr
 
 ### 1. Get the dev app running and seeded
 
-The dev server must already be up on port 4000 (override with `PORT`).
+The dev server must already be up. `record.sh` finds the port the way the app does: `PORT` from the
+environment, else the one in this worktree's `.env.worktree`, else 4000 — so **in a worktree it
+drives that worktree's app, not whatever is on 4000**. It refuses to record if what answers is not
+Spendable. Start the server from the same checkout you are recording, or the video shows code you
+did not write.
 
 Seed whatever the demo needs, and **write a reset script** that puts the data back to the starting
 state. Recording is iterative: expect three or four takes, and every take must start from the same
@@ -115,9 +129,13 @@ say in the PR description in one line that a demo was recorded and where it is, 
 ## Gotchas that cost real time
 
 - **Never type a password, and never drive Google's OAuth screen.** Authenticate with the session
-  cookie [scripts/session_cookie.exs](scripts/session_cookie.exs) mints; `record.sh` handles it. The
-  dev database must already have a user — sign in once at http://localhost:4000 in a real browser if
-  it does not.
+  cookie [scripts/session_cookie.exs](scripts/session_cookie.exs) mints; `record.sh` handles it, and
+  the scenario never needs a `login` step of its own. The dev database must already have a user —
+  sign in once in a real browser if it does not, or create one through `Accounts` with `mix run`.
+- **A demo of a flow that starts outside the app still starts inside the browser.** An OAuth consent
+  screen, a callback, an email link: `goto` the URL the outside system would have sent the user to.
+  Point any redirect at a real page of the app rather than a port with nothing listening, so the
+  video ends on the product instead of Chrome's error page.
 - **Date inputs keep segment focus.** Typing a second date into the same field continues in whichever
   segment was last edited, so the digits pile into the year and overflow it (`07/31/275760`). Walk back
   with three `ArrowLeft` presses first. `typeDate` does this and asserts the resulting value.

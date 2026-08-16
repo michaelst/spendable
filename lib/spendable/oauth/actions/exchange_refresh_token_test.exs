@@ -50,25 +50,17 @@ defmodule Spendable.OAuth.Actions.ExchangeRefreshTokenTest do
     assert refreshed != tokens.refresh_token
   end
 
-  test "re-issues for a client that retried the refresh it just made", %{client: client, tokens: tokens} do
-    assert {:ok, _second} =
-             OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
-
-    assert {:ok, %{access_token: "sp.at." <> _access}} =
-             OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
-  end
-
-  test "revokes the family when a spent refresh token comes back", %{client: client, tokens: tokens} do
+  test "revokes the family the first time a spent refresh token comes back", %{client: client, tokens: tokens} do
     {:ok, second} =
       OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
 
-    {:ok, third} = OAuth.exchange_refresh_token(%{"refresh_token" => second.refresh_token, "client_id" => client.id})
-
     assert {:error, :invalid_grant} =
              OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
 
     assert {:error, :invalid_grant} =
-             OAuth.exchange_refresh_token(%{"refresh_token" => third.refresh_token, "client_id" => client.id})
+             OAuth.exchange_refresh_token(%{"refresh_token" => second.refresh_token, "client_id" => client.id})
+
+    assert {:error, :invalid_token} = OAuth.verify_access_token(second.access_token, @resource)
   end
 
   test "refuses to refresh for a confidential client that cannot produce its secret", %{user: user} do
