@@ -138,6 +138,16 @@
                   <.icon name="pi-bank" class="h-6 w-6 shrink-0" /> Banks
                 </.link>
               </li>
+              <li>
+                <.link
+                  navigate={~p"/settings"}
+                  class={"#{if @active_tab == :settings,
+                    do: "bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                    else: "text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"}"}
+                >
+                  <.icon name="pi-gear" class="h-6 w-6 shrink-0" /> Settings
+                </.link>
+              </li>
             </ul>
           </li>
           <li class="-mx-6 mt-auto">

@@ -1,3 +1,8 @@
+# Secrets, then the gitignored per-worktree assignment written by scripts/setup-worktree.sh, so
+# mix tasks here use this worktree's own database and port. Either file may be missing.
+[env]
+_.file = [".env", ".env.worktree"]
+
 [tools]
 nodejs = "26.7.0"
 pnpm = "10.20.0"

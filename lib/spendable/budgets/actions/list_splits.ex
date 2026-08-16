@@ -11,7 +11,8 @@ defmodule Spendable.Budgets.Actions.ListSplits do
     from(split in Split,
       where: split.user_id == ^user_id,
       where: is_nil(split.archived_at),
-      order_by: split.name
+      order_by: split.name,
+      preload: :split_lines
     )
     |> maybe_search(opts[:search])
     |> Repo.all()

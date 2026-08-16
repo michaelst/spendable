@@ -9,7 +9,10 @@ import Config
 
 config :spendable,
   env: config_env(),
-  ecto_repos: [Spendable.Repo]
+  ecto_repos: [Spendable.Repo],
+  # The OAuth issuer, and the origin of the MCP resource tokens are bound to. Overridden per
+  # environment, since it has to be the URL a client actually reaches this app on.
+  issuer: "http://localhost:4000"
 
 config :spendable, Oban,
   repo: Spendable.Repo,

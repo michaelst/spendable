@@ -37,6 +37,9 @@ npm-debug.log
 
 .env
 
+# Per-worktree database name and port (scripts/setup-worktree.sh).
+.env.worktree
+
 # Credentials for the production stack (scripts/install.sh).
 /.secrets/
 .env.prod

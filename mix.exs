@@ -45,6 +45,7 @@ defmodule Spendable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:anubis_mcp, "~> 2.0"},
       {:bandit, "~> 1.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:spendable_credo, path: "credo", only: [:dev, :test], runtime: false},

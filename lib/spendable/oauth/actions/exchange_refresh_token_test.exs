@@ -1,0 +1,86 @@
+defmodule Spendable.OAuth.Actions.ExchangeRefreshTokenTest do
+  use Spendable.DataCase, async: true
+
+  alias Spendable.Accounts
+  alias Spendable.OAuth
+  alias Spendable.Scope
+
+  @resource "#{Application.compile_env(:spendable, :issuer)}/mcp"
+  @code_verifier "a-secret-only-this-client-knows"
+
+  setup do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    {:ok, client, nil} =
+      OAuth.register_client(%{
+        "client_name" => "Claude",
+        "redirect_uris" => ["https://claude.ai/api/mcp/auth_callback"]
+      })
+
+    {:ok, code, _redirect_uri} =
+      OAuth.create_authorization_code(Scope.for_user(user), %{
+        client: client,
+        redirect_uri: "https://claude.ai/api/mcp/auth_callback",
+        scope: "mcp",
+        code_challenge: Base.url_encode64(:crypto.hash(:sha256, @code_verifier), padding: false),
+        code_challenge_method: :S256,
+        resource: @resource,
+        state: nil
+      })
+
+    {:ok, tokens} =
+      OAuth.exchange_authorization_code(%{
+        "code" => code,
+        "client_id" => client.id,
+        "redirect_uri" => "https://claude.ai/api/mcp/auth_callback",
+        "code_verifier" => @code_verifier
+      })
+
+    %{client: client, tokens: tokens, user: user}
+  end
+
+  test "rotates a refresh token for a fresh pair", %{client: client, tokens: tokens} do
+    assert {:ok, %{access_token: "sp.at." <> _access, refresh_token: refreshed}} =
+             OAuth.exchange_refresh_token(%{
+               "refresh_token" => tokens.refresh_token,
+               "client_id" => client.id
+             })
+
+    assert refreshed != tokens.refresh_token
+  end
+
+  test "re-issues for a client that retried the refresh it just made", %{client: client, tokens: tokens} do
+    assert {:ok, _second} =
+             OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
+
+    assert {:ok, %{access_token: "sp.at." <> _access}} =
+             OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
+  end
+
+  test "revokes the family when a spent refresh token comes back", %{client: client, tokens: tokens} do
+    {:ok, second} =
+      OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
+
+    {:ok, third} = OAuth.exchange_refresh_token(%{"refresh_token" => second.refresh_token, "client_id" => client.id})
+
+    assert {:error, :invalid_grant} =
+             OAuth.exchange_refresh_token(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id})
+
+    assert {:error, :invalid_grant} =
+             OAuth.exchange_refresh_token(%{"refresh_token" => third.refresh_token, "client_id" => client.id})
+  end
+
+  test "refuses a refresh token that is not this client's", %{client: client, tokens: tokens} do
+    for invalid <- [
+          %{"client_id" => "oc_someoneelse"},
+          %{"refresh_token" => "sp.rt.bm90LWEtcmVhbC10b2tlbi4u"},
+          %{"refresh_token" => "not-a-token"}
+        ] do
+      assert {:error, :invalid_grant} =
+               OAuth.exchange_refresh_token(
+                 Map.merge(%{"refresh_token" => tokens.refresh_token, "client_id" => client.id}, invalid)
+               )
+    end
+  end
+end
