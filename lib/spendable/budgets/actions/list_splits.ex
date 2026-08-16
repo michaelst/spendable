@@ -7,6 +7,9 @@ defmodule Spendable.Budgets.Actions.ListSplits do
   alias Spendable.Repo
   alias Spendable.Scope
 
+  @doc """
+  The lines come along because the caller that lists splits is usually about to apply one.
+  """
   def list_splits(%Scope{user: %{id: user_id}}, opts \\ []) do
     from(split in Split,
       where: split.user_id == ^user_id,

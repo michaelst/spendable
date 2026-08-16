@@ -5,10 +5,11 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauthTest do
   alias Spendable.Accounts.Schemas.User
 
   test "creates a user with a prefixed id" do
-    external_id = Ecto.UUID.generate()
-
-    assert {:ok, %User{id: "usr_" <> _uxid, provider: "google", bank_limit: 0}} =
-             Accounts.upsert_user_from_oauth(%{external_id: external_id, provider: "google"})
+    assert {:ok, %User{id: "usr_" <> _uxid, bank_limit: 0}} =
+             Accounts.upsert_user_from_oauth(%{
+               external_id: Ecto.UUID.generate(),
+               provider: "google"
+             })
   end
 
   test "refreshes the profile of a returning user rather than creating a second one" do
@@ -43,16 +44,46 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauthTest do
              Accounts.upsert_user_from_oauth(%{external_id: external_id, provider: "google"})
   end
 
-  test "errors without an external_id" do
-    assert {:error, changeset} = Accounts.upsert_user_from_oauth(%{provider: "google"})
+  # Nothing stored identifies a person across providers, so a second one is always a new account
+  # until the user links it from inside the first.
+  test "an unrecognised subject is always a new account" do
+    {:ok, %{id: user_id}} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
 
-    assert %{external_id: ["can't be blank"]} = errors_on(changeset)
+    {:ok, %User{id: other_id}} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "apple"})
+
+    refute other_id == user_id
   end
 
-  test "errors without a provider" do
-    assert {:error, changeset} =
-             Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate()})
+  test "a provider that omits the picture does not erase the one on record" do
+    external_id = Ecto.UUID.generate()
 
-    assert %{provider: ["can't be blank"]} = errors_on(changeset)
+    {:ok, _first} =
+      Accounts.upsert_user_from_oauth(%{
+        external_id: external_id,
+        provider: "google",
+        image: "https://example.com/photo.png"
+      })
+
+    assert {:ok, %User{image: "https://example.com/photo.png"}} =
+             Accounts.upsert_user_from_oauth(%{external_id: external_id, provider: "google"})
+  end
+
+  test "the same subject from two providers is two identities" do
+    {:ok, %{id: user_id}} =
+      Accounts.upsert_user_from_oauth(%{external_id: "shared-subject", provider: "google"})
+
+    {:ok, %User{id: other_id}} =
+      Accounts.upsert_user_from_oauth(%{external_id: "shared-subject", provider: "apple"})
+
+    refute other_id == user_id
+  end
+
+  # Provider and subject come from our own code, never from user input, so a missing one is a bug.
+  test "crashes without a provider and subject" do
+    assert_raise FunctionClauseError, fn ->
+      Accounts.upsert_user_from_oauth(%{provider: "google"})
+    end
   end
 end

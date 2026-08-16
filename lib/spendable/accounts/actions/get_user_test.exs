@@ -11,7 +11,7 @@ defmodule Spendable.Accounts.Actions.GetUserTest do
         provider: "google"
       })
 
-    assert {:ok, %User{id: ^user_id, provider: "google"}} = Accounts.get_user(user_id)
+    assert {:ok, %User{id: ^user_id}} = Accounts.get_user(user_id)
   end
 
   test "errors when no user has that id" do

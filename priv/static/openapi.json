@@ -1,0 +1,2797 @@
+{
+  "components": {
+    "responses": {},
+    "schemas": {
+      "BankAccount": {
+        "description": "An account inside a connection. Amounts are decimal strings.",
+        "properties": {
+          "balance": {
+            "description": "Negative on a credit card, as a ledger reads.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "description": "When set, this account's balance is that budget's balance.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "number": {
+            "description": "Masked, last digits only.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "sub_type": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "sync": {
+            "description": "Whether activity is pulled and counted.",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "type": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "sub_type",
+          "balance",
+          "sync"
+        ],
+        "title": "BankAccount",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BankAccount",
+        "x-validate": null
+      },
+      "BankAccountRequest": {
+        "description": "The two things a user decides about an account: whether to sync it, and where it belongs.",
+        "example": {
+          "budget_id": "bgt_01j0rent",
+          "sync": true
+        },
+        "properties": {
+          "budget_id": {
+            "description": "Null unassigns, putting the balance back into Spendable.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "sync": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "BankAccountRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BankAccountRequest",
+        "x-validate": null
+      },
+      "BankMember": {
+        "description": "A connection to an institution, and the accounts inside it.",
+        "properties": {
+          "bank_accounts": {
+            "items": {
+              "$ref": "#/components/schemas/BankAccount"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "has_logo": {
+            "description": "Fetch it from `/api/banks/{id}/logo` when true.",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "description": "Who supplies the connection.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "status": {
+            "description": "Anything other than \"CONNECTED\" means the user has to reconnect.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "provider",
+          "has_logo",
+          "bank_accounts"
+        ],
+        "title": "BankMember",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BankMember",
+        "x-validate": null
+      },
+      "Budget": {
+        "description": "An envelope money is divided into. Amounts are decimal strings.",
+        "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "balance": {
+            "description": "What the allocations add up to, or the bank account's balance when assigned.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budgeted_amount": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "type": {
+            "enum": [
+              "tracking",
+              "envelope",
+              "goal"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "balance"
+        ],
+        "title": "Budget",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Budget",
+        "x-validate": null
+      },
+      "BudgetAllocation": {
+        "description": "One budget's share of a transaction.",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "budget_id"
+        ],
+        "title": "BudgetAllocation",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetAllocation",
+        "x-validate": null
+      },
+      "BudgetAllocationRequest": {
+        "description": "An allocation to keep, update or add. Distinct from BudgetAllocation because `id` is optional.\n",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "description": "Omit to add a new allocation.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "amount",
+          "budget_id"
+        ],
+        "title": "BudgetAllocationRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetAllocationRequest",
+        "x-validate": null
+      },
+      "BudgetRequest": {
+        "description": "Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server\nworks out the adjustment that gets it there, so never send `adjustment`.\n",
+        "example": {
+          "budgeted_amount": "400.00",
+          "name": "Groceries",
+          "type": "envelope"
+        },
+        "properties": {
+          "balance": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budgeted_amount": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "type": {
+            "enum": [
+              "tracking",
+              "envelope",
+              "goal"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "BudgetRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetRequest",
+        "x-validate": null
+      },
+      "BudgetSummary": {
+        "description": "Everything the budgets screen shows for one month. Presentation is the client's - this is the\nnumbers behind it.\n",
+        "properties": {
+          "allocated_total": {
+            "description": "Budgeted across envelopes.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budgets": {
+            "items": {
+              "$ref": "#/components/schemas/Budget"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "credit_card_balance": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "current_month": {
+            "description": "Spendable, allocated and credit cards only apply to the current month.",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "month": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spendable": {
+            "description": "Synced money no budget has claimed.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent": {
+            "additionalProperties": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "description": "Spent this month, keyed by budget id. Every listed budget has an entry.",
+            "type": "object",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent_by_month": {
+            "description": "Newest first, for the month picker.",
+            "items": {
+              "$ref": "#/components/schemas/MonthSpend"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent_total": {
+            "description": "Spent across envelopes this month.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "month",
+          "current_month",
+          "spendable",
+          "allocated_total",
+          "spent_total",
+          "credit_card_balance",
+          "budgets",
+          "spent",
+          "spent_by_month"
+        ],
+        "title": "BudgetSummary",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetSummary",
+        "x-validate": null
+      },
+      "BulkFailure": {
+        "description": "One transaction a bulk change did not apply to, and why.",
+        "properties": {
+          "code": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "code"
+        ],
+        "title": "BulkFailure",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkFailure",
+        "x-validate": null
+      },
+      "BulkRequest": {
+        "description": "Applies the same change to several transactions. `budget_id` spends each transaction's whole\namount from that budget, replacing whatever it was allocated to before.\n",
+        "example": {
+          "reviewed": true,
+          "transaction_ids": [
+            "txn_01j0one",
+            "txn_01j0two"
+          ]
+        },
+        "properties": {
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "excluded": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "reviewed": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "transaction_ids": {
+            "items": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "minItems": 1,
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "transaction_ids"
+        ],
+        "title": "BulkRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkRequest",
+        "x-validate": null
+      },
+      "BulkResult": {
+        "description": "A bulk change is applied per transaction rather than all or nothing, so the ones that worked\ncome back alongside the ones that did not.\n",
+        "properties": {
+          "failed": {
+            "items": {
+              "$ref": "#/components/schemas/BulkFailure"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "transactions",
+          "failed"
+        ],
+        "title": "BulkResult",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkResult",
+        "x-validate": null
+      },
+      "ConnectRequest": {
+        "description": "The public token Plaid Link returns once the user has picked a bank.",
+        "properties": {
+          "public_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "public_token"
+        ],
+        "title": "ConnectRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.ConnectRequest",
+        "x-validate": null
+      },
+      "Errors": {
+        "description": "The shape every failed request comes back in.",
+        "properties": {
+          "errors": {
+            "items": {
+              "properties": {
+                "code": {
+                  "description": "Machine-readable reason.",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "detail": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "source": {
+                  "description": "Present on validation errors, pointing at the offending field.",
+                  "properties": {
+                    "pointer": {
+                      "type": "string",
+                      "x-struct": null,
+                      "x-validate": null
+                    }
+                  },
+                  "type": "object",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "code",
+                "detail"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "errors"
+        ],
+        "title": "Errors",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Errors",
+        "x-validate": null
+      },
+      "Identity": {
+        "description": "A way of signing into an account.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "enum": [
+              "apple",
+              "google"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "provider"
+        ],
+        "title": "Identity",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Identity",
+        "x-validate": null
+      },
+      "LinkToken": {
+        "description": "Hand this to the Plaid Link SDK. Short-lived.",
+        "properties": {
+          "link_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "link_token"
+        ],
+        "title": "LinkToken",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.LinkToken",
+        "x-validate": null
+      },
+      "MonthSpend": {
+        "description": "A month the user has spent in, for the month picker.",
+        "properties": {
+          "month": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "month",
+          "spent"
+        ],
+        "title": "MonthSpend",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.MonthSpend",
+        "x-validate": null
+      },
+      "Session": {
+        "description": "An API token. The token itself is returned once and never again.",
+        "properties": {
+          "device_name": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "expires_at": {
+            "format": "date-time",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "token",
+          "expires_at"
+        ],
+        "title": "Session",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Session",
+        "x-validate": null
+      },
+      "SessionRequest": {
+        "description": "An ID token from a native sign-in, exchanged for an API token.",
+        "example": {
+          "device_name": "iPhone",
+          "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMyJ9.eyJzdWIiOiI0MiJ9.signature",
+          "provider": "google"
+        },
+        "properties": {
+          "device_name": {
+            "description": "Shown when managing signed-in devices.",
+            "maxLength": 100,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "enum": [
+              "apple",
+              "google"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "provider",
+          "id_token"
+        ],
+        "title": "SessionRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SessionRequest",
+        "x-validate": null
+      },
+      "Split": {
+        "description": "A saved division of a transaction across budgets. Amounts are decimal strings.",
+        "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "split_lines": {
+            "description": "Oldest first.",
+            "items": {
+              "$ref": "#/components/schemas/SplitLine"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "split_lines"
+        ],
+        "title": "Split",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Split",
+        "x-validate": null
+      },
+      "SplitLine": {
+        "description": "One budget's share of a split.",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "budget_id"
+        ],
+        "title": "SplitLine",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitLine",
+        "x-validate": null
+      },
+      "SplitLineRequest": {
+        "description": "A line to keep, update or add. Distinct from SplitLine because `id` is optional.",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "description": "Omit to add a new line.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "amount",
+          "budget_id"
+        ],
+        "title": "SplitLineRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitLineRequest",
+        "x-validate": null
+      },
+      "SplitRequest": {
+        "description": "Send the whole set of lines you want the split to end up with. A line with an `id` is kept and\nupdated, one without is added, and any line left out is deleted.\n",
+        "example": {
+          "name": "Payday",
+          "split_lines": [
+            {
+              "amount": "-200.00",
+              "budget_id": "bgt_01j0rent"
+            }
+          ]
+        },
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "split_lines": {
+            "items": {
+              "$ref": "#/components/schemas/SplitLineRequest"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "SplitRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitRequest",
+        "x-validate": null
+      },
+      "Transaction": {
+        "description": "A movement of money. Amounts are decimal strings, negative for money going out.\n\n`budget_allocations` is what the server settled on, not what was sent: any part of the amount\nleft unallocated lands on the Spendable budget on every write. Render what comes back.\n",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_allocations": {
+            "items": {
+              "$ref": "#/components/schemas/BudgetAllocation"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "date": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "excluded": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "reviewed": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "source": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TransactionSource"
+              }
+            ],
+            "x-struct": null,
+            "x-validate": null
+          },
+          "transfer_id": {
+            "description": "The other side of a move between the user's own accounts.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "date",
+          "reviewed",
+          "excluded",
+          "budget_allocations"
+        ],
+        "title": "Transaction",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Transaction",
+        "x-validate": null
+      },
+      "TransactionRequest": {
+        "description": "Send the whole set of allocations you want. One with an `id` is kept and updated, one without\nis added, one left out is deleted. Whatever is left of the amount goes to Spendable, so the\nallocations in the response are the ones that count.\n\nThat also means a validation error's pointer indexes the list the server settled on, not the\none that was sent - match the offending line by its `budget_id`, not by position.\n",
+        "example": {
+          "amount": "-30.00",
+          "budget_allocations": [
+            {
+              "amount": "-30.00",
+              "budget_id": "bgt_01j0groceries"
+            }
+          ],
+          "date": "2026-08-15",
+          "name": "Market"
+        },
+        "properties": {
+          "amount": {
+            "description": "Negative for money going out.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_allocations": {
+            "items": {
+              "$ref": "#/components/schemas/BudgetAllocationRequest"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "date": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "excluded": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "reviewed": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "TransactionRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.TransactionRequest",
+        "x-validate": null
+      },
+      "TransactionSource": {
+        "description": "Where a synced transaction came from, flattened for the list row. Null on a transaction the\nuser entered themselves. Fetch the logo from `/api/banks/{member_id}/logo`.\n",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "account_name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "account_number": {
+            "description": "Masked, last digits only.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "member_has_logo": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "member_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "member_name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "pending": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "account_id",
+          "account_name",
+          "member_id",
+          "member_name",
+          "member_has_logo",
+          "pending"
+        ],
+        "title": "TransactionSource",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.TransactionSource",
+        "x-validate": null
+      },
+      "TransferRequest": {
+        "description": "Exactly two transactions: one leaving an account and one arriving in another.",
+        "example": {
+          "transaction_ids": [
+            "txn_01j0out",
+            "txn_01j0in"
+          ]
+        },
+        "properties": {
+          "transaction_ids": {
+            "items": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "transaction_ids"
+        ],
+        "title": "TransferRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.TransferRequest",
+        "x-validate": null
+      },
+      "User": {
+        "description": "The signed-in user.",
+        "properties": {
+          "bank_limit": {
+            "description": "How many banks the user may connect.",
+            "type": "integer",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "identities": {
+            "description": "The ways this account can be signed into.",
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "image": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "bank_limit",
+          "identities"
+        ],
+        "title": "User",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.User",
+        "x-validate": null
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "The API the Spendable mobile app runs on.",
+    "title": "Spendable",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/bank_accounts/{id}": {
+      "patch": {
+        "callbacks": {},
+        "operationId": "updateBankAccount",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountRequest"
+              }
+            }
+          },
+          "description": "BankAccount",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            },
+            "description": "BankAccount"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Sync an account, or assign it to a budget",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks": {
+      "get": {
+        "callbacks": {},
+        "operationId": "listBanks",
+        "parameters": [
+          {
+            "description": "Matches on institution name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BankMember"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "BankMembers"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List connections and their accounts",
+        "tags": [
+          "banks"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "description": "Exchanges the public token Plaid Link returned. The accounts arrive on the first sync rather\nthan in this response, so the connection comes back with none.\n",
+        "operationId": "createBank",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectRequest"
+              }
+            }
+          },
+          "description": "Public token",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankMember"
+                }
+              }
+            },
+            "description": "BankMember"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Finish connecting a bank",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/link_token": {
+      "post": {
+        "callbacks": {},
+        "description": "Refused once the user is at their bank limit, before Plaid is called.",
+        "operationId": "createLinkToken",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkToken"
+                }
+              }
+            },
+            "description": "LinkToken"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Start connecting a bank",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/link_token": {
+      "post": {
+        "callbacks": {},
+        "description": "For a connection whose status is not CONNECTED, or to verify micro deposits.",
+        "operationId": "createUpdateLinkToken",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkToken"
+                }
+              }
+            },
+            "description": "LinkToken"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Reopen an existing connection",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/logo": {
+      "get": {
+        "callbacks": {},
+        "description": "Cacheable and ETagged, so a client can hold it on disk and revalidate for free.",
+        "operationId": "getBankLogo",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/png": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "PNG"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "An institution's logo",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/sync": {
+      "post": {
+        "callbacks": {},
+        "description": "Queues the work and returns immediately. There is no completion signal - refresh the lists to\npick up whatever has landed.\n",
+        "operationId": "syncBank",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Queued"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Pull two years of history",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/budgets": {
+      "get": {
+        "callbacks": {},
+        "description": "Spendable first, then alphabetical. Archived budgets are left out.",
+        "operationId": "listBudgets",
+        "parameters": [
+          {
+            "description": "Matches on name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Budget"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Budgets"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List budgets",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "operationId": "createBudget",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetRequest"
+              }
+            }
+          },
+          "description": "Budget",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Create a budget",
+        "tags": [
+          "budgets"
+        ]
+      }
+    },
+    "/api/budgets/summary": {
+      "get": {
+        "callbacks": {},
+        "description": "Defaults to the current month. Any date in a month selects that whole month.",
+        "operationId": "getBudgetSummary",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "month",
+            "required": false,
+            "schema": {
+              "format": "date",
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "Matches on budget name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetSummary"
+                }
+              }
+            },
+            "description": "BudgetSummary"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "The budgets screen for one month",
+        "tags": [
+          "budgets"
+        ]
+      }
+    },
+    "/api/budgets/{id}": {
+      "delete": {
+        "callbacks": {},
+        "description": "Budgets are archived rather than deleted, so the history they hold survives.",
+        "operationId": "archiveBudget",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Archive a budget",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "get": {
+        "callbacks": {},
+        "operationId": "getBudget",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Get a budget",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "description": "The response carries the recalculated balance, so render it rather than the request.",
+        "operationId": "updateBudget",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetRequest"
+              }
+            }
+          },
+          "description": "Budget",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a budget",
+        "tags": [
+          "budgets"
+        ]
+      }
+    },
+    "/api/identities": {
+      "post": {
+        "callbacks": {},
+        "description": "Attaches a second provider to the account making the request. Nothing about a person is stored\nthat would let the app match them across providers, so this is the only way two sign-in\nmethods reach one account - and it has to be done from inside it.\n",
+        "operationId": "createIdentity",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionRequest"
+              }
+            }
+          },
+          "description": "Credentials",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            },
+            "description": "Identity"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Add another way to sign in",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/identities/{id}": {
+      "delete": {
+        "callbacks": {},
+        "description": "Refused for the last one, which would leave an account nobody can get back into.",
+        "operationId": "deleteIdentity",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Removed"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Remove a way to sign in",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/me": {
+      "get": {
+        "callbacks": {},
+        "description": "Carries the sign-in methods on the account, so the client can offer to add one.",
+        "operationId": "getCurrentUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "User"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "The signed-in user",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/session": {
+      "delete": {
+        "callbacks": {},
+        "description": "Revokes the token the request was made with.",
+        "operationId": "deleteSession",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Signed out"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Sign out",
+        "tags": [
+          "session"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "description": "Exchanges an ID token from a native sign-in for an API token.",
+        "operationId": "createSession",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionRequest"
+              }
+            }
+          },
+          "description": "Credentials",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            },
+            "description": "Session"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "security": [],
+        "summary": "Sign in",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/splits": {
+      "get": {
+        "callbacks": {},
+        "description": "Alphabetical, without their lines. Archived splits are left out.",
+        "operationId": "listSplits",
+        "parameters": [
+          {
+            "description": "Matches on name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Split"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Splits"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List splits",
+        "tags": [
+          "splits"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "operationId": "createSplit",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitRequest"
+              }
+            }
+          },
+          "description": "Split",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Create a split",
+        "tags": [
+          "splits"
+        ]
+      }
+    },
+    "/api/splits/{id}": {
+      "delete": {
+        "callbacks": {},
+        "operationId": "archiveSplit",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Archive a split",
+        "tags": [
+          "splits"
+        ]
+      },
+      "get": {
+        "callbacks": {},
+        "operationId": "getSplit",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Get a split and its lines",
+        "tags": [
+          "splits"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "operationId": "updateSplit",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitRequest"
+              }
+            }
+          },
+          "description": "Split",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Split"
+                }
+              }
+            },
+            "description": "Split"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a split",
+        "tags": [
+          "splits"
+        ]
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "callbacks": {},
+        "description": "Newest first. Reviewed and excluded transactions are hidden unless asked for, because the list\nis a queue of what still needs attention. A page shorter than `per_page` is the last one.\n",
+        "operationId": "listTransactions",
+        "parameters": [
+          {
+            "description": "Matches on name or note.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "show_reviewed",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "show_excluded",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Transactions"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List transactions",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "description": "For money the user is recording themselves; synced activity arrives on its own.",
+        "operationId": "createTransaction",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "description": "Transaction",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Create a transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/bulk": {
+      "patch": {
+        "callbacks": {},
+        "description": "Applied one at a time rather than all or nothing, so a transaction that has since been deleted\ndoes not cost the rest their change. Check `failed` before assuming the whole set landed.\n",
+        "operationId": "updateTransactions",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkRequest"
+              }
+            }
+          },
+          "description": "Change to apply",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResult"
+                }
+              }
+            },
+            "description": "BulkResult"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Change several transactions at once",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/bulk/delete": {
+      "post": {
+        "callbacks": {},
+        "operationId": "deleteTransactions",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkRequest"
+              }
+            }
+          },
+          "description": "Transactions to delete",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResult"
+                }
+              }
+            },
+            "description": "BulkResult"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Delete several transactions at once",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/transfer": {
+      "post": {
+        "callbacks": {},
+        "description": "A transfer moves money between the user's own accounts rather than spending it, so the pair\nhas to be one transaction leaving an account and one arriving in another. Both sides come\nback, with their allocations cleared onto Spendable where the opposite signs cancel.\n",
+        "operationId": "createTransfer",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferRequest"
+              }
+            }
+          },
+          "description": "Transactions to link",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Both sides"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Link two transactions as a transfer",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{id}": {
+      "delete": {
+        "callbacks": {},
+        "description": "Its allocations go with it.",
+        "operationId": "deleteTransaction",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Deleted"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Delete a transaction",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "get": {
+        "callbacks": {},
+        "operationId": "getTransaction",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Get a transaction",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "description": "The response carries the allocations the server settled on. Render those.",
+        "operationId": "updateTransaction",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "description": "Transaction",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{id}/transfer": {
+      "delete": {
+        "callbacks": {},
+        "description": "Both sides count toward budgets again. Their allocations stay where they are.",
+        "operationId": "deleteTransfer",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Unlink a transfer",
+        "tags": [
+          "transactions"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://spendable.money",
+      "variables": {}
+    }
+  ],
+  "tags": []
+}

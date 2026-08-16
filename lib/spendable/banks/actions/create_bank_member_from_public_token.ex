@@ -28,7 +28,8 @@ defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicToken do
     {:ok, %{body: %{"access_token" => plaid_token}}} = Plaid.exchange_public_token(public_token)
     {:ok, %{body: item}} = Plaid.item(plaid_token)
 
-    %BankMember{user_id: user.id, plaid_token: plaid_token}
+    # No accounts until the sync lands, but an empty list is readable where an unloaded one is not.
+    %BankMember{user_id: user.id, plaid_token: plaid_token, bank_accounts: []}
     |> BankMember.changeset(format_bank_member(item))
     |> Repo.insert()
     |> case do

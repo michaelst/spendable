@@ -114,3 +114,37 @@ jobs:
 
       - run: mix do deps.get, compile
       - run: mix credo
+
+  openapi:
+    name: OpenAPI Spec
+    runs-on: ubuntu-latest
+
+    env:
+      MIX_ENV: test
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: jdx/mise-action@v2
+
+      - name: Cache Deps
+        uses: actions/cache@v3
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('mise.toml', 'mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+
+      - name: Cache Build
+        uses: actions/cache@v3
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-${{ hashFiles('mise.toml', 'mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - run: mix do deps.get, compile
+      - run: mix openapi
+
+      # The committed spec is what the Dart client is generated from, so drift is a broken client.
+      - run: git diff --exit-code priv/static/openapi.json

@@ -14,6 +14,12 @@ defmodule SpendableWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug OpenApiSpex.Plug.PutApiSpec, module: SpendableWeb.Api.ApiSpec
+  end
+
+  # A separate pipeline because the Plaid webhook shares `:api` and has to stay unauthenticated.
+  pipeline :api_authenticated do
+    plug SpendableWeb.Plugs.ApiAuth
   end
 
   pipeline :mcp do
@@ -70,6 +76,55 @@ defmodule SpendableWeb.Router do
     pipe_through :api
 
     post "/plaid/webhook", PlaidController, :webhook
+  end
+
+  scope "/api" do
+    pipe_through :api
+
+    get "/openapi.json", OpenApiSpex.Plug.RenderSpec, []
+  end
+
+  scope "/api", SpendableWeb.Api do
+    pipe_through :api
+
+    post "/session", SessionController, :create
+  end
+
+  scope "/api", SpendableWeb.Api do
+    pipe_through [:api, :api_authenticated]
+
+    delete "/session", SessionController, :delete
+    get "/me", MeController, :show
+
+    post "/identities", IdentityController, :create
+    delete "/identities/:id", IdentityController, :delete
+
+    # Ahead of "/budgets/:id" so the literal segment is not read as an id.
+    get "/budgets/summary", BudgetSummaryController, :show
+    # `resources` would route PUT alongside PATCH, which the spec turns into a duplicate operation
+    # and the generated client into a second method doing the same thing.
+    resources "/budgets", BudgetController, only: [:index, :show, :create, :delete]
+    patch "/budgets/:id", BudgetController, :update
+    resources "/splits", SplitController, only: [:index, :show, :create, :delete]
+    patch "/splits/:id", SplitController, :update
+
+    # Ahead of "/transactions/:id" so the literal segments are not read as ids.
+    patch "/transactions/bulk", TransactionBulkController, :update
+    post "/transactions/bulk/delete", TransactionBulkController, :delete
+    post "/transactions/transfer", TransactionTransferController, :create
+    delete "/transactions/:id/transfer", TransactionTransferController, :delete
+
+    resources "/transactions", TransactionController, only: [:index, :show, :create, :delete]
+    patch "/transactions/:id", TransactionController, :update
+
+    get "/banks", BankMemberController, :index
+    post "/banks", BankMemberController, :create
+    post "/banks/link_token", BankMemberController, :link_token
+    post "/banks/:id/link_token", BankMemberController, :update_link_token
+    post "/banks/:id/sync", BankMemberController, :sync
+    get "/banks/:id/logo", BankLogoController, :show
+
+    patch "/bank_accounts/:id", BankAccountController, :update
   end
 
   scope "/auth", SpendableWeb do

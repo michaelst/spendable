@@ -4,6 +4,14 @@
 
 - Tests for code under `lib/spendable/...` use `Spendable.DataCase, async: true` (defined in [test/support/data_case.ex](../test/support/data_case.ex)). It pulls in Hammox, `errors_on/1`, `Spendable.Support.TeslaHelper`, and `verify_on_exit!`.
 - Tests for LiveViews and controllers under `lib/spendable_web/...` use `SpendableWeb.ConnCase, async: true` (defined in [test/support/conn_case.ex](../test/support/conn_case.ex)). Note it hands you a bare `conn` - it does **not** build an authenticated session for you. Authenticate by putting the user's id in the session the way the auth controller does: `init_test_session(conn, %{"current_user_id" => user.id})`.
+- API controllers under `lib/spendable_web/api/...` authenticate with a bearer token instead. Mint a real one through the context - the same path the sign-in endpoint takes - rather than forging a header:
+
+  ```elixir
+  {:ok, api_token} = Accounts.create_api_token(Scope.for_user(user), %{})
+  conn = put_req_header(conn, "authorization", "Bearer " <> api_token.token)
+  ```
+
+  Assert every API response against the spec with `OpenApiSpex.TestAssertions.assert_schema(response, "Budget", @api_spec)`. The Dart client is generated from that spec, so an unasserted response is a contract that can drift without CI noticing.
 - Authentication comes from **scopes**, not tags. Build one the way production does - create the user through `Accounts`, then wrap it:
 
   ```elixir

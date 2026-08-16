@@ -47,6 +47,12 @@ defmodule Spendable.Budgets.Actions.CreateBudgetTest do
     assert Decimal.eq?(budgeted_amount, "500.00")
   end
 
+  test "comes back with its balance filled in", %{scope: scope} do
+    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Holiday", "balance" => "500.00"})
+
+    assert Decimal.eq?(budget.balance, "500.00")
+  end
+
   test "errors without a name", %{scope: scope} do
     assert {:error, changeset} = Budgets.create_budget(scope, %{})
 

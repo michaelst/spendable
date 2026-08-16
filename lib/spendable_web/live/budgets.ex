@@ -257,25 +257,20 @@ defmodule SpendableWeb.Live.Budgets do
 
   defp fetch_data(socket) do
     scope = socket.assigns.current_scope
-    current_month = Date.beginning_of_month(Date.utc_today())
-    selected_month = socket.assigns[:selected_month] || current_month
-    current_month_is_selected = Date.compare(selected_month, current_month) == :eq
-
-    budgets = Budgets.list_budgets(scope, search: socket.assigns[:search])
-    spent = Budgets.calculate_spent(scope, budgets, selected_month)
-    envelopes = Enum.filter(budgets, &(&1.type == :envelope))
-    listed = maybe_add_credit_cards(budgets, scope, current_month_is_selected)
+    selected_month = socket.assigns[:selected_month] || Date.beginning_of_month(Date.utc_today())
+    summary = Budgets.calculate_month_summary(scope, selected_month, search: socket.assigns[:search])
+    listed = maybe_add_credit_cards(summary.budgets, scope, summary.current_month)
 
     socket
-    |> assign(:spendable, Budgets.calculate_spendable(scope))
-    |> assign(:spent, spent)
-    |> assign(:spent_by_month, Budgets.calculate_spent_by_month(scope))
+    |> assign(:spendable, summary.spendable)
+    |> assign(:spent, summary.spent)
+    |> assign(:spent_by_month, summary.spent_by_month)
     |> assign(:selected_month, selected_month)
     |> assign(:budgets, listed)
-    |> assign(:cards, build_cards(listed, spent, current_month_is_selected))
-    |> assign(:allocated_total, total(envelopes, & &1.budgeted_amount))
-    |> assign(:spent_total, total(envelopes, &Map.get(spent, &1.id)))
-    |> assign(:current_month_is_selected, current_month_is_selected)
+    |> assign(:cards, build_cards(listed, summary.spent, summary.current_month))
+    |> assign(:allocated_total, summary.allocated_total)
+    |> assign(:spent_total, summary.spent_total)
+    |> assign(:current_month_is_selected, summary.current_month)
     |> assign(:changeset, nil)
   end
 
@@ -364,9 +359,4 @@ defmodule SpendableWeb.Live.Budgets do
 
   # Goals save toward a target and tracking budgets reserve nothing, so neither is money
   # this month was meant to be spent against.
-  defp total(envelopes, amount) do
-    envelopes
-    |> Enum.reduce(Decimal.new(0), &Decimal.add(&2, amount.(&1) || Decimal.new(0)))
-    |> Decimal.abs()
-  end
 end

@@ -5,6 +5,7 @@ defmodule Spendable.Banks do
 
   defdelegate list_bank_members(scope, opts \\ []), to: Actions.ListBankMembers
   defdelegate get_bank_member(scope, by), to: Actions.GetBankMember
+  defdelegate get_bank_account(scope, id), to: Actions.GetBankAccount
   defdelegate get_bank_member_by_external_id(external_id), to: Actions.GetBankMemberByExternalId
 
   defdelegate create_bank_member_from_public_token(scope, public_token),

@@ -43,6 +43,24 @@ defmodule SpendableWeb do
     end
   end
 
+  def api_controller() do
+    quote do
+      use Phoenix.Controller, formats: [:json]
+      use OpenApiSpex.ControllerSpecs
+
+      import Plug.Conn
+
+      # replace_params: false keeps params string-keyed so they go straight into a changeset, and
+      # so an omitted field stays distinguishable from one explicitly set to null.
+      plug OpenApiSpex.Plug.CastAndValidate,
+        json_render_error_v2: true,
+        replace_params: false,
+        render_error: SpendableWeb.Api.ErrorRenderer
+
+      action_fallback SpendableWeb.Api.FallbackController
+    end
+  end
+
   def live_view() do
     quote do
       use Phoenix.LiveView,

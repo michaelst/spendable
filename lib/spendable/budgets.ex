@@ -12,6 +12,7 @@ defmodule Spendable.Budgets do
   defdelegate calculate_spendable(scope), to: Actions.CalculateSpendable
   defdelegate calculate_spent(scope, budgets, month), to: Actions.CalculateSpent
   defdelegate calculate_spent_by_month(scope), to: Actions.CalculateSpentByMonth
+  defdelegate calculate_month_summary(scope, month, opts \\ []), to: Actions.CalculateMonthSummary
 
   defdelegate list_splits(scope, opts \\ []), to: Actions.ListSplits
   defdelegate get_split(scope, id), to: Actions.GetSplit
