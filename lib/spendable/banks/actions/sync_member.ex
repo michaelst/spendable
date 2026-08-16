@@ -1,16 +1,13 @@
 defmodule Spendable.Banks.Actions.SyncMember do
   @moduledoc false
 
-  import Ecto.Query
   import Spendable.Banks.Utils.FormatBankMember
 
+  alias Spendable.Banks
   alias Spendable.Banks.Clients.Plaid
-  alias Spendable.Banks.Schemas.BankAccount
   alias Spendable.Banks.Schemas.BankMember
-  alias Spendable.Banks.Schemas.BankTransaction
   alias Spendable.Repo
   alias Spendable.Scope
-  alias Spendable.Transactions
 
   @page_size 500
   @default_days 30
@@ -67,15 +64,10 @@ defmodule Spendable.Banks.Actions.SyncMember do
   end
 
   defp upsert_account(details, bank_member, scope) do
-    attrs = format_bank_account(details)
+    {:ok, bank_account} =
+      Banks.upsert_bank_account(scope, bank_member, format_bank_account(details))
 
-    account =
-      Repo.get_by(BankAccount, user_id: scope.user.id, external_id: details["account_id"]) ||
-        %BankAccount{user_id: scope.user.id, bank_member_id: bank_member.id}
-
-    {:ok, account} = account |> BankAccount.changeset(attrs) |> Repo.insert_or_update()
-
-    account
+    bank_account
   end
 
   defp sync_transactions(account, scope, bank_member, start_date, offset \\ 0) do
@@ -83,7 +75,8 @@ defmodule Spendable.Banks.Actions.SyncMember do
 
     case Plaid.account_transactions(bank_member.plaid_token, account.external_id, start_date, opts) do
       {:ok, %{body: %{"transactions" => transactions} = response}} ->
-        Enum.each(transactions, &sync_transaction(&1, account, scope))
+        entries = Enum.map(transactions, &format_bank_transaction/1)
+        {:ok, _ingested} = Banks.ingest_bank_transactions(scope, account, entries)
 
         with %{"total_transactions" => total} when total > offset + @page_size <- response do
           sync_transactions(account, scope, bank_member, start_date, offset + @page_size)
@@ -93,56 +86,6 @@ defmodule Spendable.Banks.Actions.SyncMember do
         :ok
     end
   end
-
-  # Plaid replays transactions we already hold, so a duplicate external id is the normal case and
-  # not an error worth failing the sync over.
-  defp sync_transaction(details, account, scope) do
-    attrs = format_bank_transaction(details)
-
-    %BankTransaction{user_id: scope.user.id, bank_account_id: account.id}
-    |> BankTransaction.changeset(attrs)
-    |> Repo.insert()
-    |> case do
-      {:ok, bank_transaction} -> create_transaction(bank_transaction, details, scope)
-      {:error, _already_synced} -> :ok
-    end
-  end
-
-  defp create_transaction(bank_transaction, details, scope) do
-    {:ok, transaction} =
-      Transactions.create_transaction(scope, %{
-        "amount" => bank_transaction.amount,
-        "date" => bank_transaction.date,
-        "name" => bank_transaction.name,
-        "reviewed" => false,
-        "bank_transaction_id" => bank_transaction.id
-      })
-
-    replace_pending(transaction, details, scope)
-  end
-
-  # A pending transaction is replaced by a settled one under a new id. The user may already have
-  # allocated the pending one, so its allocations move across rather than being asked for twice.
-  defp replace_pending(transaction, %{"pending_transaction_id" => pending_id}, scope)
-       when is_binary(pending_id) do
-    query =
-      from(bank_transaction in BankTransaction,
-        where: bank_transaction.external_id == ^pending_id,
-        where: bank_transaction.pending == true,
-        preload: [:transaction]
-      )
-
-    case Repo.one(query) do
-      %BankTransaction{transaction: %{} = pending} = bank_transaction ->
-        {:ok, _moved} = Transactions.replace_pending(scope, pending, transaction)
-        Repo.delete(bank_transaction)
-
-      _nothing_to_replace ->
-        :ok
-    end
-  end
-
-  defp replace_pending(_transaction, _details, _scope), do: :ok
 
   defp format_bank_account(details) do
     available = Decimal.new("#{details["balances"]["available"] || 0}")
@@ -172,7 +115,8 @@ defmodule Spendable.Banks.Actions.SyncMember do
       date: details["date"],
       external_id: details["transaction_id"],
       name: details["name"],
-      pending: details["pending"]
+      pending: details["pending"],
+      replaces: details["pending_transaction_id"]
     }
   end
 end

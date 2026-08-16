@@ -14,6 +14,11 @@ defmodule Spendable.Banks do
   defdelegate get_link_token(scope), to: Actions.GetLinkToken
   defdelegate get_update_link_token(scope, bank_member), to: Actions.GetUpdateLinkToken
   defdelegate update_bank_account(scope, bank_account, attrs), to: Actions.UpdateBankAccount
+  defdelegate upsert_bank_account(scope, bank_member, attrs), to: Actions.UpsertBankAccount
+
+  defdelegate ingest_bank_transactions(scope, bank_account, entries),
+    to: Actions.IngestBankTransactions
+
   defdelegate calculate_credit_card_balance(scope), to: Actions.CalculateCreditCardBalance
   defdelegate queue_sync(bank_member, opts \\ []), to: Actions.QueueSync
   defdelegate queue_historical_sync(scope, bank_member), to: Actions.QueueHistoricalSync
