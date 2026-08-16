@@ -98,8 +98,10 @@ defmodule Spendable.MixProject do
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
       credo: ["credo --config-file credo/.credo.exs"],
+      # The spec is read off the router and the controller modules, so booting the app - and with
+      # it a database - buys nothing.
       openapi: [
-        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty priv/static/openapi.json"
+        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty --no-start-app priv/static/openapi.json"
       ]
     ]
   end
