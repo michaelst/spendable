@@ -19,9 +19,21 @@ defmodule SpendableWeb.Api.Schemas.TransactionSource do
       member_id: %Schema{type: :string},
       member_name: %Schema{type: :string},
       member_has_logo: %Schema{type: :boolean},
+      member_provider: %Schema{
+        type: :string,
+        description: "`Plaid`, or `FinanceKit` for what was read out of Wallet, which has no logo."
+      },
       pending: %Schema{type: :boolean}
     },
-    required: [:account_id, :account_name, :member_id, :member_name, :member_has_logo, :pending]
+    required: [
+      :account_id,
+      :account_name,
+      :member_id,
+      :member_name,
+      :member_has_logo,
+      :member_provider,
+      :pending
+    ]
   })
 
   def build(%BankTransaction{bank_account: %{bank_member: member} = account} = bank_transaction) do
@@ -32,6 +44,7 @@ defmodule SpendableWeb.Api.Schemas.TransactionSource do
       member_id: member.id,
       member_name: member.name,
       member_has_logo: is_binary(member.logo),
+      member_provider: member.provider,
       pending: bank_transaction.pending
     }
   end

@@ -4,6 +4,10 @@ defmodule SpendableWeb.Api.TransactionTransferControllerTest do
   import OpenApiSpex.TestAssertions
 
   alias Spendable.Accounts
+  alias Spendable.Banks.Schemas.BankAccount
+  alias Spendable.Banks.Schemas.BankMember
+  alias Spendable.Banks.Schemas.BankTransaction
+  alias Spendable.Repo
   alias Spendable.Scope
   alias Spendable.Transactions
   alias SpendableWeb.Api.ApiSpec
@@ -50,6 +54,59 @@ defmodule SpendableWeb.Api.TransactionTransferControllerTest do
 
     assert [%{"id" => ^out_id, "transfer_id" => ^into_id} = one, %{"id" => ^into_id}] = response
     assert_schema(one, "Transaction", @api_spec)
+  end
+
+  # The list carries only the side that left, so that side has to answer for where it went.
+  test "the side that left names the account the money arrived in", %{
+    conn: conn,
+    scope: scope,
+    out: out,
+    into: into
+  } do
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: scope.user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Tartan Bank",
+        provider: "Plaid",
+        plaid_token: "access-sandbox-token"
+      })
+
+    {:ok, bank_account} =
+      Repo.insert(%BankAccount{
+        user_id: scope.user.id,
+        bank_member_id: bank_member.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Savings",
+        number: "9876",
+        balance: Decimal.new("100.00"),
+        sub_type: "savings",
+        type: "depository"
+      })
+
+    {:ok, bank_transaction} =
+      Repo.insert(%BankTransaction{
+        user_id: scope.user.id,
+        bank_account_id: bank_account.id,
+        external_id: Ecto.UUID.generate(),
+        amount: Decimal.new("100.00"),
+        date: ~D[2026-08-15],
+        name: "From checking",
+        pending: false
+      })
+
+    {:ok, into} =
+      Transactions.update_transaction(scope, into, %{"bank_transaction_id" => bank_transaction.id})
+
+    body = %{"transaction_ids" => [out.id, into.id]}
+
+    assert [%{"transfer_to" => %{"account_name" => "Savings"}}, %{"transfer_to" => nil}] =
+             conn |> post(~p"/api/transactions/transfer", body) |> json_response(200)
+
+    response = conn |> get(~p"/api/transactions/#{out.id}") |> json_response(200)
+
+    assert %{"transfer_to" => %{"account_name" => "Savings", "account_number" => "9876"}} = response
+    assert_schema(response, "Transaction", @api_spec)
   end
 
   test "a transfer's allocations are cleared onto Spendable", %{

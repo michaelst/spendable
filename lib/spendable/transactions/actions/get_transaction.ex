@@ -15,7 +15,7 @@ defmodule Spendable.Transactions.Actions.GetTransaction do
         preload: [
           :budget_allocations,
           bank_transaction: [bank_account: :bank_member],
-          transfer: [bank_transaction: :bank_account]
+          transfer: [bank_transaction: [bank_account: :bank_member]]
         ]
       )
 

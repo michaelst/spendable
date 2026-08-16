@@ -20,6 +20,8 @@ class _$TransactionSource extends TransactionSource {
   @override
   final String memberName;
   @override
+  final String memberProvider;
+  @override
   final bool pending;
 
   factory _$TransactionSource(
@@ -33,6 +35,7 @@ class _$TransactionSource extends TransactionSource {
       required this.memberHasLogo,
       required this.memberId,
       required this.memberName,
+      required this.memberProvider,
       required this.pending})
       : super._();
   @override
@@ -53,6 +56,7 @@ class _$TransactionSource extends TransactionSource {
         memberHasLogo == other.memberHasLogo &&
         memberId == other.memberId &&
         memberName == other.memberName &&
+        memberProvider == other.memberProvider &&
         pending == other.pending;
   }
 
@@ -65,6 +69,7 @@ class _$TransactionSource extends TransactionSource {
     _$hash = $jc(_$hash, memberHasLogo.hashCode);
     _$hash = $jc(_$hash, memberId.hashCode);
     _$hash = $jc(_$hash, memberName.hashCode);
+    _$hash = $jc(_$hash, memberProvider.hashCode);
     _$hash = $jc(_$hash, pending.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
@@ -79,6 +84,7 @@ class _$TransactionSource extends TransactionSource {
           ..add('memberHasLogo', memberHasLogo)
           ..add('memberId', memberId)
           ..add('memberName', memberName)
+          ..add('memberProvider', memberProvider)
           ..add('pending', pending))
         .toString();
   }
@@ -114,6 +120,11 @@ class TransactionSourceBuilder
   String? get memberName => _$this._memberName;
   set memberName(String? memberName) => _$this._memberName = memberName;
 
+  String? _memberProvider;
+  String? get memberProvider => _$this._memberProvider;
+  set memberProvider(String? memberProvider) =>
+      _$this._memberProvider = memberProvider;
+
   bool? _pending;
   bool? get pending => _$this._pending;
   set pending(bool? pending) => _$this._pending = pending;
@@ -131,6 +142,7 @@ class TransactionSourceBuilder
       _memberHasLogo = $v.memberHasLogo;
       _memberId = $v.memberId;
       _memberName = $v.memberName;
+      _memberProvider = $v.memberProvider;
       _pending = $v.pending;
       _$v = null;
     }
@@ -164,6 +176,8 @@ class TransactionSourceBuilder
               memberId, r'TransactionSource', 'memberId'),
           memberName: BuiltValueNullFieldError.checkNotNull(
               memberName, r'TransactionSource', 'memberName'),
+          memberProvider: BuiltValueNullFieldError.checkNotNull(
+              memberProvider, r'TransactionSource', 'memberProvider'),
           pending: BuiltValueNullFieldError.checkNotNull(
               pending, r'TransactionSource', 'pending'),
         );

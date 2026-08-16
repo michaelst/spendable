@@ -77,7 +77,7 @@ defmodule SpendableWeb.Live.Transactions do
             id={id}
             class={[
               if(transaction.excluded, do: "opacity-40"),
-              "group flex flex-row items-center gap-x-3 p-2"
+              "group flex flex-row items-center gap-x-3 p-2 hover:bg-white/5"
             ]}
           >
             <input
@@ -105,15 +105,10 @@ defmodule SpendableWeb.Live.Transactions do
               </span>
             </div>
             <div class="hidden min-w-0 flex-1 basis-0 items-center gap-x-2 @2xl:flex">
-              <img
-                :if={bank_member(transaction)}
-                src={~p"/banks/#{bank_member(transaction).id}/logo"}
-                alt={bank_member(transaction).name}
-                class="h-5 w-5 shrink-0 rounded-sm"
-              />
-              <span :if={bank_account(transaction)} class="truncate text-xs text-gray-400">
-                {account_label(bank_account(transaction).name, bank_account(transaction).number)}
-              </span>
+              <.account :if={bank_account(transaction)} account={bank_account(transaction)} />
+              <!-- A transfer is one movement of money, so the row reads from the account it left. -->
+              <span :if={transfer_account(transaction)} class="shrink-0 text-xs text-gray-400">→</span>
+              <.account :if={transfer_account(transaction)} account={transfer_account(transaction)} />
             </div>
             <span class="w-24 shrink-0 text-right text-sm font-semibold tabular-nums text-white">
               {Utils.format_currency(transaction.amount)}
@@ -583,9 +578,14 @@ defmodule SpendableWeb.Live.Transactions do
   end
 
   defp visible?(socket, transaction) do
-    (socket.assigns.show_reviewed or not transaction.reviewed) and
+    listed?(transaction) and
+      (socket.assigns.show_reviewed or not transaction.reviewed) and
       (socket.assigns.show_excluded or not transaction.excluded)
   end
+
+  # Mirrors `list_transactions`: a transfer is one movement, carried by the side that left.
+  defp listed?(%{transfer_id: nil}), do: true
+  defp listed?(transaction), do: Decimal.negative?(transaction.amount)
 
   # Saying where the whole of a transaction was spent is the decision the review queue is asking
   # for, so making it is what finishes the row.
@@ -601,14 +601,34 @@ defmodule SpendableWeb.Live.Transactions do
   defp sole_allocation(%{budget_allocations: [allocation]}), do: allocation
   defp sole_allocation(_transaction), do: nil
 
-  defp bank_member(%{bank_transaction: %{bank_account: %{bank_member: bank_member}}}) do
-    if bank_member.logo, do: bank_member
-  end
+  attr :account, :map, required: true
 
-  defp bank_member(_transaction), do: nil
+  defp account(assigns) do
+    ~H"""
+    <div class="flex min-w-0 items-center gap-x-1.5">
+      <!-- Wallet is not an institution Plaid has a logo for, so Apple's own mark stands in. -->
+      <.apple_mark
+        :if={@account.bank_member.provider == "FinanceKit"}
+        class="size-4 shrink-0 text-white"
+      />
+      <img
+        :if={@account.bank_member.provider != "FinanceKit" and is_binary(@account.bank_member.logo)}
+        src={~p"/banks/#{@account.bank_member.id}/logo"}
+        alt={@account.bank_member.name}
+        class="size-5 shrink-0 rounded-sm"
+      />
+      <span class="truncate text-xs text-gray-400">
+        {account_label(@account.name, @account.number)}
+      </span>
+    </div>
+    """
+  end
 
   defp bank_account(%{bank_transaction: %{bank_account: account}}), do: account
   defp bank_account(_transaction), do: nil
+
+  defp transfer_account(%{transfer: %{bank_transaction: %{bank_account: account}}}), do: account
+  defp transfer_account(_transaction), do: nil
 
   defp transfer_label(%{bank_transaction: %{bank_account: account}}) do
     account_label(account.name, account.number)

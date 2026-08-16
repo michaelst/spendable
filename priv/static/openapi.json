@@ -1109,6 +1109,17 @@
             "type": "string",
             "x-struct": null,
             "x-validate": null
+          },
+          "transfer_to": {
+            "description": "The account a transfer arrived in, which is the source of its other side. The list carries\nonly the side that left, so a row reads as one movement from its own account to this one.\n",
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TransactionSource"
+              }
+            ],
+            "x-struct": null,
+            "x-validate": null
           }
         },
         "required": [
@@ -1221,6 +1232,12 @@
             "x-struct": null,
             "x-validate": null
           },
+          "member_provider": {
+            "description": "`Plaid`, or `FinanceKit` for what was read out of Wallet, which has no logo.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
           "pending": {
             "type": "boolean",
             "x-struct": null,
@@ -1233,6 +1250,7 @@
           "member_id",
           "member_name",
           "member_has_logo",
+          "member_provider",
           "pending"
         ],
         "title": "TransactionSource",

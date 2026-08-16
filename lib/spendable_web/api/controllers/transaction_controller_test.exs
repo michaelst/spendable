@@ -215,6 +215,7 @@ defmodule SpendableWeb.Api.TransactionControllerTest do
                "account_number" => "1234",
                "member_name" => "Tartan Bank",
                "member_has_logo" => true,
+               "member_provider" => "Plaid",
                "pending" => true
              }
            } = response

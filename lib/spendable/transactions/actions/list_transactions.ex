@@ -14,15 +14,24 @@ defmodule Spendable.Transactions.Actions.ListTransactions do
 
   Reviewed and excluded transactions are hidden unless asked for: the list is a queue of what
   still needs attention.
+
+  A transfer is one movement of money, so the list carries the side that left and preloads the
+  side it arrived in. Nothing is hidden until the two are paired, which is what an unreviewed
+  arrival still being listed depends on.
   """
   def list_transactions(%Scope{user: %{id: user_id}}, opts \\ []) do
     per_page = opts[:per_page] || @default_per_page
 
     from(transaction in Transaction,
       where: transaction.user_id == ^user_id,
+      where: is_nil(transaction.transfer_id) or transaction.amount < 0,
       order_by: [desc: transaction.date, desc: transaction.id],
       limit: ^per_page,
-      preload: [:budget_allocations, bank_transaction: [bank_account: :bank_member]]
+      preload: [
+        :budget_allocations,
+        bank_transaction: [bank_account: :bank_member],
+        transfer: [bank_transaction: [bank_account: :bank_member]]
+      ]
     )
     |> maybe_hide_reviewed(opts[:show_reviewed])
     |> maybe_hide_excluded(opts[:show_excluded])

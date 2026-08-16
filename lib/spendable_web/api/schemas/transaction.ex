@@ -31,6 +31,14 @@ defmodule SpendableWeb.Api.Schemas.Transaction do
         description: "The other side of a move between the user's own accounts."
       },
       source: %Schema{oneOf: [TransactionSource], nullable: true},
+      transfer_to: %Schema{
+        oneOf: [TransactionSource],
+        nullable: true,
+        description: """
+        The account a transfer arrived in, which is the source of its other side. The list carries
+        only the side that left, so a row reads as one movement from its own account to this one.
+        """
+      },
       budget_allocations: %Schema{type: :array, items: BudgetAllocation}
     },
     required: [:id, :name, :amount, :date, :reviewed, :excluded, :budget_allocations]
@@ -47,7 +55,14 @@ defmodule SpendableWeb.Api.Schemas.Transaction do
       excluded: transaction.excluded,
       transfer_id: transaction.transfer_id,
       source: TransactionSource.build(transaction.bank_transaction),
+      transfer_to: TransactionSource.build(arriving_side(transaction)),
       budget_allocations: Enum.map(transaction.budget_allocations, &BudgetAllocation.build/1)
     }
   end
+
+  defp arriving_side(%{transfer: %Spendable.Transactions.Schemas.Transaction{} = transfer}) do
+    transfer.bank_transaction
+  end
+
+  defp arriving_side(_transaction), do: nil
 end

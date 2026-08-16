@@ -418,6 +418,130 @@ defmodule SpendableWeb.Live.TransactionsTest do
     assert html =~ "/banks/#{bank_member.id}/logo"
   end
 
+  # Wallet is not an institution Plaid has a logo for, so Apple's own mark stands in.
+  test "marks a transaction read out of Wallet with Apple's own mark", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: scope.user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Apple",
+        provider: "FinanceKit"
+      })
+
+    {:ok, bank_account} =
+      Repo.insert(%BankAccount{
+        user_id: scope.user.id,
+        bank_member_id: bank_member.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Apple Card",
+        balance: Decimal.new("-100.00"),
+        sub_type: "credit card",
+        type: "credit"
+      })
+
+    {:ok, bank_transaction} =
+      Repo.insert(%BankTransaction{
+        user_id: scope.user.id,
+        bank_account_id: bank_account.id,
+        external_id: Ecto.UUID.generate(),
+        amount: Decimal.new("-5.00"),
+        date: ~D[2026-08-15],
+        name: "Coffee",
+        pending: false
+      })
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(
+        scope,
+        attrs |> Map.put("name", "Coffee") |> Map.put("bank_transaction_id", bank_transaction.id)
+      )
+
+    {:ok, _view, html} = live(conn, ~p"/transactions")
+
+    assert html =~ "Apple Card"
+    assert html =~ ~s(viewBox="0 0 1261 1551")
+    refute html =~ "/banks/#{bank_member.id}/logo"
+  end
+
+  # A transfer is one movement of money, so the list says it once and says where it went.
+  test "reads a transfer as one row from one account to the other", %{
+    conn: conn,
+    scope: scope,
+    attrs: attrs
+  } do
+    {:ok, bank_member} =
+      Repo.insert(%BankMember{
+        user_id: scope.user.id,
+        external_id: Ecto.UUID.generate(),
+        name: "Tartan Bank",
+        provider: "Plaid",
+        plaid_token: "access-sandbox-token"
+      })
+
+    [out, into] =
+      for {account_name, number, amount, name} <- [
+            {"Checking", "1234", "-5.00", "To savings"},
+            {"Savings", "9876", "5.00", "From checking"}
+          ] do
+        {:ok, bank_account} =
+          Repo.insert(%BankAccount{
+            user_id: scope.user.id,
+            bank_member_id: bank_member.id,
+            external_id: Ecto.UUID.generate(),
+            name: account_name,
+            number: number,
+            balance: Decimal.new("100.00"),
+            sub_type: "checking",
+            type: "depository"
+          })
+
+        {:ok, bank_transaction} =
+          Repo.insert(%BankTransaction{
+            user_id: scope.user.id,
+            bank_account_id: bank_account.id,
+            external_id: Ecto.UUID.generate(),
+            amount: Decimal.new(amount),
+            date: ~D[2026-08-15],
+            name: name,
+            pending: false
+          })
+
+        {:ok, transaction} =
+          Transactions.create_transaction(
+            scope,
+            attrs
+            |> Map.put("name", name)
+            |> Map.put("amount", amount)
+            |> Map.put("bank_transaction_id", bank_transaction.id)
+          )
+
+        transaction
+      end
+
+    {:ok, view, _html} = live(conn, ~p"/transactions")
+
+    html = render_click(view, "toggle_select_transaction", %{"id" => out.id, "value" => "on"})
+    assert html =~ "Savings"
+
+    render_click(view, "toggle_select_transaction", %{"id" => into.id, "value" => "on"})
+    html = render_click(view, "bulk_transfer", %{})
+
+    # The row that arrived leaves the list as the pair is made, and the one that left says where.
+    refute has_element?(view, "#transactions-#{into.id}")
+    assert html =~ "Checking"
+    assert html =~ "Savings"
+    assert html =~ "→"
+
+    {:ok, _reloaded, html} = live(conn, ~p"/transactions")
+
+    refute html =~ ~s(id="transactions-#{into.id}")
+    assert html =~ "→"
+  end
+
   test "marks the selected transactions reviewed", %{conn: conn, scope: scope, attrs: attrs} do
     {:ok, transaction} = Transactions.create_transaction(scope, Map.put(attrs, "name", "Coffee"))
 

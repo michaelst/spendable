@@ -5,6 +5,7 @@ import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
 import '../banks/account_label.dart';
+import '../banks/banks_providers.dart';
 import '../budgets/budget_picker.dart';
 import '../design/band_button.dart';
 import '../design/glass.dart';
@@ -37,6 +38,23 @@ const _monthAbbreviations = [
 ];
 
 String shortDate(Date date) => '${_monthAbbreviations[date.month - 1]} ${date.day}, ${date.year}';
+
+/// A transfer is one movement of money, so the row reads from the account it left to the one it
+/// arrived in. Only one side of a pair is ever listed, so the other is only ever the destination.
+String? _accounts(Transaction transaction) =>
+    switch ((_account(transaction.source_), _account(transaction.transferTo))) {
+      (final from?, final to?) => '$from → $to',
+      (final from?, null) => from,
+      (null, final to?) => '→ $to',
+      _ => null,
+    };
+
+/// Apple's mark stands in for a logo on the accounts read out of Wallet, which have none. It is
+/// the system font's own glyph at U+F8FF rather than artwork the app has to ship.
+String? _account(TransactionSource? source) => source == null
+    ? null
+    : '${source.memberProvider == financeKitProvider ? '\uF8FF ' : ''}'
+          '${accountLabel(source.accountName, source.accountNumber)}';
 
 class TransactionsScreen extends ConsumerWidget {
   const TransactionsScreen({super.key});
@@ -116,7 +134,7 @@ class _Row extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = SpendableColors.of(context);
     final controller = ref.read(transactionsControllerProvider.notifier);
-    final source = transaction.source_;
+    final accounts = _accounts(transaction);
 
     return LedgerRow(
       key: Key('transaction-${transaction.id}'),
@@ -156,8 +174,9 @@ class _Row extends ConsumerWidget {
                 Text(
                   [
                     shortDate(transaction.date),
-                    if (source != null) accountLabel(source.accountName, source.accountNumber),
-                    if (transaction.transferId != null) 'Transfer',
+                    ?accounts,
+                    // Nothing to name the far side of a transfer with is what the word is for.
+                    if (transaction.transferId != null && transaction.transferTo == null) 'Transfer',
                   ].join(' · '),
                   style: SpendableType.subhead.copyWith(color: colors.secondary),
                   overflow: TextOverflow.ellipsis,

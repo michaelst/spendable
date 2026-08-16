@@ -17,6 +17,7 @@ part 'transaction_source.g.dart';
 /// * [memberHasLogo] 
 /// * [memberId] 
 /// * [memberName] 
+/// * [memberProvider] - `Plaid`, or `FinanceKit` for what was read out of Wallet, which has no logo.
 /// * [pending] 
 @BuiltValue()
 abstract class TransactionSource implements Built<TransactionSource, TransactionSourceBuilder> {
@@ -38,6 +39,10 @@ abstract class TransactionSource implements Built<TransactionSource, Transaction
 
   @BuiltValueField(wireName: r'member_name')
   String get memberName;
+
+  /// `Plaid`, or `FinanceKit` for what was read out of Wallet, which has no logo.
+  @BuiltValueField(wireName: r'member_provider')
+  String get memberProvider;
 
   @BuiltValueField(wireName: r'pending')
   bool get pending;
@@ -95,6 +100,11 @@ class _$TransactionSourceSerializer implements PrimitiveSerializer<TransactionSo
     yield r'member_name';
     yield serializers.serialize(
       object.memberName,
+      specifiedType: const FullType(String),
+    );
+    yield r'member_provider';
+    yield serializers.serialize(
+      object.memberProvider,
       specifiedType: const FullType(String),
     );
     yield r'pending';
@@ -167,6 +177,13 @@ class _$TransactionSourceSerializer implements PrimitiveSerializer<TransactionSo
             specifiedType: const FullType(String),
           ) as String;
           result.memberName = valueDes;
+          break;
+        case r'member_provider':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.memberProvider = valueDes;
           break;
         case r'pending':
           final valueDes = serializers.deserialize(

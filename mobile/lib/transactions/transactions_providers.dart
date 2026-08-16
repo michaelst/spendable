@@ -3,6 +3,7 @@ import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_client.dart';
 import '../api/api_error.dart';
+import '../money.dart';
 
 part 'transactions_providers.g.dart';
 
@@ -24,9 +25,12 @@ class TransactionFilters {
   );
 
   /// Mirrors `visible?/2`: a row leaves the list when a change no longer matches, which is what
-  /// makes reviewing clear the queue.
+  /// makes reviewing clear the queue. A transfer is one movement of money, carried by the side
+  /// that left, so pairing a transaction takes the arriving one off the list.
   bool matches(Transaction transaction) =>
-      (showReviewed || !transaction.reviewed) && (showExcluded || !transaction.excluded);
+      (transaction.transferId == null || money(transaction.amount).sign < 0) &&
+      (showReviewed || !transaction.reviewed) &&
+      (showExcluded || !transaction.excluded);
 }
 
 @riverpod

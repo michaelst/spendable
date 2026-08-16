@@ -89,6 +89,38 @@ class _Api implements HttpClientAdapter {
           'budget_allocations': <Object>[],
           'source': null,
         },
+        // A transfer names two accounts on the line a plain row gives to one.
+        {
+          'id': 't3',
+          'name': 'Moved to savings',
+          'amount': '-500.00',
+          'date': '2026-08-13',
+          'reviewed': true,
+          'excluded': false,
+          'note': null,
+          'transfer_id': 't4',
+          'budget_allocations': <Object>[],
+          'source': {
+            'account_id': 'a1',
+            'account_name': 'Checking',
+            'account_number': '4021',
+            'member_id': 'm1',
+            'member_name': 'Chase',
+            'member_has_logo': false,
+            'member_provider': 'Plaid',
+            'pending': false,
+          },
+          'transfer_to': {
+            'account_id': 'a2',
+            'account_name': 'Apple Savings',
+            'account_number': null,
+            'member_id': 'm2',
+            'member_name': 'Apple',
+            'member_has_logo': false,
+            'member_provider': 'FinanceKit',
+            'pending': false,
+          },
+        },
       ],
       '/api/splits' => [
         {

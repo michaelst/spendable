@@ -25,6 +25,7 @@ part 'transaction.g.dart';
 /// * [reviewed] 
 /// * [source_] 
 /// * [transferId] - The other side of a move between the user's own accounts.
+/// * [transferTo] 
 @BuiltValue()
 abstract class Transaction implements Built<Transaction, TransactionBuilder> {
   @BuiltValueField(wireName: r'amount')
@@ -57,6 +58,9 @@ abstract class Transaction implements Built<Transaction, TransactionBuilder> {
   /// The other side of a move between the user's own accounts.
   @BuiltValueField(wireName: r'transfer_id')
   String? get transferId;
+
+  @BuiltValueField(wireName: r'transfer_to')
+  TransactionSource? get transferTo;
 
   Transaction._();
 
@@ -135,6 +139,13 @@ class _$TransactionSerializer implements PrimitiveSerializer<Transaction> {
       yield serializers.serialize(
         object.transferId,
         specifiedType: const FullType.nullable(String),
+      );
+    }
+    if (object.transferTo != null) {
+      yield r'transfer_to';
+      yield serializers.serialize(
+        object.transferTo,
+        specifiedType: const FullType.nullable(TransactionSource),
       );
     }
   }
@@ -232,6 +243,14 @@ class _$TransactionSerializer implements PrimitiveSerializer<Transaction> {
           ) as String?;
           if (valueDes == null) continue;
           result.transferId = valueDes;
+          break;
+        case r'transfer_to':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType.nullable(TransactionSource),
+          ) as TransactionSource?;
+          if (valueDes == null) continue;
+          result.transferTo.replace(valueDes);
           break;
         default:
           unhandled.add(key);

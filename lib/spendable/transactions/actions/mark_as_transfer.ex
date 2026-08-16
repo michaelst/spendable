@@ -46,5 +46,8 @@ defmodule Spendable.Transactions.Actions.MarkAsTransfer do
       "reviewed" => true
     })
     |> Repo.update!()
+    # The pair is what a row shows once it is one, and the side just linked was loaded as nothing
+    # back when there was no transfer to load.
+    |> Repo.preload([transfer: [bank_transaction: [bank_account: :bank_member]]], force: true)
   end
 end

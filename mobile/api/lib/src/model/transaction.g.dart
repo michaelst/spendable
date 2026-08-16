@@ -27,6 +27,8 @@ class _$Transaction extends Transaction {
   final TransactionSource? source_;
   @override
   final String? transferId;
+  @override
+  final TransactionSource? transferTo;
 
   factory _$Transaction([void Function(TransactionBuilder)? updates]) =>
       (TransactionBuilder()..update(updates))._build();
@@ -41,7 +43,8 @@ class _$Transaction extends Transaction {
       this.note,
       required this.reviewed,
       this.source_,
-      this.transferId})
+      this.transferId,
+      this.transferTo})
       : super._();
   @override
   Transaction rebuild(void Function(TransactionBuilder) updates) =>
@@ -63,7 +66,8 @@ class _$Transaction extends Transaction {
         note == other.note &&
         reviewed == other.reviewed &&
         source_ == other.source_ &&
-        transferId == other.transferId;
+        transferId == other.transferId &&
+        transferTo == other.transferTo;
   }
 
   @override
@@ -79,6 +83,7 @@ class _$Transaction extends Transaction {
     _$hash = $jc(_$hash, reviewed.hashCode);
     _$hash = $jc(_$hash, source_.hashCode);
     _$hash = $jc(_$hash, transferId.hashCode);
+    _$hash = $jc(_$hash, transferTo.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -95,7 +100,8 @@ class _$Transaction extends Transaction {
           ..add('note', note)
           ..add('reviewed', reviewed)
           ..add('source_', source_)
-          ..add('transferId', transferId))
+          ..add('transferId', transferId)
+          ..add('transferTo', transferTo))
         .toString();
   }
 }
@@ -146,6 +152,12 @@ class TransactionBuilder implements Builder<Transaction, TransactionBuilder> {
   String? get transferId => _$this._transferId;
   set transferId(String? transferId) => _$this._transferId = transferId;
 
+  TransactionSourceBuilder? _transferTo;
+  TransactionSourceBuilder get transferTo =>
+      _$this._transferTo ??= TransactionSourceBuilder();
+  set transferTo(TransactionSourceBuilder? transferTo) =>
+      _$this._transferTo = transferTo;
+
   TransactionBuilder() {
     Transaction._defaults(this);
   }
@@ -163,6 +175,7 @@ class TransactionBuilder implements Builder<Transaction, TransactionBuilder> {
       _reviewed = $v.reviewed;
       _source_ = $v.source_?.toBuilder();
       _transferId = $v.transferId;
+      _transferTo = $v.transferTo?.toBuilder();
       _$v = null;
     }
     return this;
@@ -201,6 +214,7 @@ class TransactionBuilder implements Builder<Transaction, TransactionBuilder> {
                 reviewed, r'Transaction', 'reviewed'),
             source_: _source_?.build(),
             transferId: transferId,
+            transferTo: _transferTo?.build(),
           );
     } catch (_) {
       late String _$failedField;
@@ -210,6 +224,9 @@ class TransactionBuilder implements Builder<Transaction, TransactionBuilder> {
 
         _$failedField = 'source_';
         _source_?.build();
+
+        _$failedField = 'transferTo';
+        _transferTo?.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
             r'Transaction', _$failedField, e.toString());

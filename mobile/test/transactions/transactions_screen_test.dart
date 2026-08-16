@@ -15,6 +15,8 @@ Map<String, Object?> _transaction(
   bool reviewed = false,
   bool excluded = false,
   String? transferId,
+  Map<String, Object?>? source,
+  Map<String, Object?>? transferTo,
   List<Map<String, Object?>>? allocations,
 }) => {
   'id': id,
@@ -25,12 +27,24 @@ Map<String, Object?> _transaction(
   'reviewed': reviewed,
   'excluded': excluded,
   'transfer_id': transferId,
-  'source': null,
+  'source': source,
+  'transfer_to': transferTo,
   'budget_allocations':
       allocations ??
       [
         {'id': 'bal_$id', 'amount': amount, 'budget_id': 'bgt_food'},
       ],
+};
+
+Map<String, Object?> _source(String accountName, {String? number, String provider = 'Plaid'}) => {
+  'account_id': 'bac_$accountName',
+  'account_name': accountName,
+  'account_number': number,
+  'member_id': 'bnk_1',
+  'member_name': 'Tartan Bank',
+  'member_has_logo': false,
+  'member_provider': provider,
+  'pending': false,
 };
 
 const _budgets = [
@@ -146,6 +160,90 @@ void main() {
 
     expect(find.text('Market'), findsOneWidget);
     expect(_reviewedMarkers(tester), 1);
+  });
+
+  // A transfer is one movement of money, so the row says where it went rather than naming itself.
+  testWidgets('reads a transfer as one row from one account to the other', (tester) async {
+    await _pump(
+      tester,
+      replies: _replies({
+        'GET /api/transactions': (
+          status: 200,
+          body: [
+            _transaction(
+              'txn_1',
+              'To savings',
+              transferId: 'txn_2',
+              source: _source('Checking', number: '1234'),
+              transferTo: _source('Savings', number: '9876'),
+            ),
+          ],
+        ),
+      }),
+    );
+
+    expect(find.textContaining('Checking ••••1234 → Savings ••••9876'), findsOneWidget);
+    expect(find.textContaining('Transfer'), findsNothing);
+  });
+
+  // Wallet is not an institution Plaid has a logo for, so Apple's own mark stands in.
+  testWidgets('marks an account read out of Wallet with Apple', (tester) async {
+    await _pump(
+      tester,
+      replies: _replies({
+        'GET /api/transactions': (
+          status: 200,
+          body: [
+            _transaction('txn_1', 'Coffee', source: _source('Apple Card', provider: 'FinanceKit')),
+            _transaction('txn_2', 'Market', source: _source('Checking', number: '1234')),
+          ],
+        ),
+      }),
+    );
+
+    expect(find.textContaining('\uF8FF Apple Card'), findsOneWidget);
+    expect(find.textContaining('\uF8FF Checking'), findsNothing);
+  });
+
+  // The list carries only the side that left, so pairing takes the arriving row off it.
+  testWidgets('the arriving side of a transfer leaves the list', (tester) async {
+    await _pump(
+      tester,
+      replies: _replies({
+        'GET /api/transactions': (
+          status: 200,
+          body: [
+            _transaction('txn_1', 'Out'),
+            _transaction('txn_2', 'In', amount: '20.00'),
+          ],
+        ),
+        'POST /api/transactions/transfer': (
+          status: 200,
+          body: [
+            _transaction(
+              'txn_1',
+              'Out',
+              transferId: 'txn_2',
+              source: _source('Checking'),
+              transferTo: _source('Savings'),
+            ),
+            _transaction('txn_2', 'In', amount: '20.00', transferId: 'txn_1'),
+          ],
+        ),
+      }),
+    );
+
+    await tester.longPress(find.byKey(const Key('transaction-txn_1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('select-txn_2')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-more')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-transfer')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('transaction-txn_2')), findsNothing);
+    expect(find.textContaining('Checking → Savings'), findsOneWidget);
   });
 
   testWidgets('selecting two rows offers a transfer', (tester) async {

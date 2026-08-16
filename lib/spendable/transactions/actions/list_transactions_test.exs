@@ -62,6 +62,27 @@ defmodule Spendable.Transactions.Actions.ListTransactionsTest do
     assert [_excluded, _counted] = Transactions.list_transactions(scope, show_excluded: true)
   end
 
+  # A transfer is one movement of money, and nothing is hidden until the pair is made.
+  test "carries a transfer once, as the side that left", %{scope: scope, attrs: attrs} do
+    {:ok, out} =
+      Transactions.create_transaction(
+        scope,
+        Map.merge(attrs, %{"name" => "To savings", "date" => "2026-08-15"})
+      )
+
+    {:ok, into} =
+      Transactions.create_transaction(
+        scope,
+        Map.merge(attrs, %{"name" => "From checking", "date" => "2026-08-15", "amount" => "5.00"})
+      )
+
+    assert [_into, _out] = Transactions.list_transactions(scope, show_reviewed: true)
+
+    {:ok, _pair} = Transactions.mark_as_transfer(scope, out, into)
+
+    assert [%{name: "To savings"}] = Transactions.list_transactions(scope, show_reviewed: true)
+  end
+
   test "excludes other users' transactions", %{scope: scope, attrs: attrs} do
     {:ok, other_user} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
