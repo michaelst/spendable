@@ -50,7 +50,7 @@ final class BanksControllerProvider
   }
 }
 
-String _$banksControllerHash() => r'd41105980e07df6f9e14e0c1bd3e1ca97a18a75e';
+String _$banksControllerHash() => r'fd73319a096c7347cdd8935207dedacca723e2d8';
 
 /// Connecting banks and deciding what each account does. Kept alive because a resumed OAuth
 /// redirect reaches it before any screen is watching, and an auto-disposed notifier would be

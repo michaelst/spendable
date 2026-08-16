@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
+import '../budgets/budgets_providers.dart';
+import '../finance_kit/wallet_sync.dart';
 import '../money.dart';
 import '../theme.dart';
-import '../budgets/budgets_providers.dart';
 import 'banks_controller.dart';
 import 'banks_providers.dart';
 
@@ -28,8 +29,16 @@ class BanksScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Banks'),
         actions: [
+          if (ref.watch(walletAvailableProvider).value ?? false)
+            IconButton(
+              key: const Key('connect-apple'),
+              tooltip: 'Connect Apple Card',
+              icon: const Icon(Icons.wallet),
+              onPressed: busy ? null : ref.read(banksControllerProvider.notifier).connectApple,
+            ),
           IconButton(
             key: const Key('connect-bank'),
+            tooltip: 'Connect a bank',
             icon: const Icon(Icons.add),
             onPressed: busy ? null : ref.read(banksControllerProvider.notifier).connect,
           ),
@@ -67,38 +76,15 @@ class _Member extends ConsumerWidget {
       leading: member.hasLogo ? _Logo(memberId: member.id) : const Icon(Icons.account_balance),
       title: Text(member.name),
       subtitle: connected ? null : const Text('Reconnect', style: TextStyle(color: SpendableColors.negative)),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!connected)
-            TextButton(
+      trailing: connected
+          ? null
+          : TextButton(
               key: Key('reconnect-${member.id}'),
               onPressed: () => controller.reconnect(member.id),
               child: const Text('Reconnect'),
             ),
-          IconButton(
-            key: Key('sync-${member.id}'),
-            tooltip: 'Sync history',
-            icon: const Icon(Icons.history),
-            onPressed: () => _syncHistory(context, ref, member.id),
-          ),
-        ],
-      ),
       children: [for (final account in member.bankAccounts) _Account(account: account)],
     );
-  }
-
-  Future<void> _syncHistory(BuildContext context, WidgetRef ref, String memberId) async {
-    final queued = await ref.read(banksControllerProvider.notifier).syncHistory(memberId);
-
-    if (!queued || !context.mounted) return;
-
-    // The job answers nothing when it finishes, so say so rather than implying a wait.
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        const SnackBar(content: Text('Syncing history. Pull to refresh to see what has landed.')),
-      );
   }
 }
 

@@ -22,6 +22,17 @@ mix openapi && mobile/tool/generate_api.sh
 
 Needs Docker. CI fails if either the spec or the client has drifted.
 
+## Regenerating the platform channel
+
+```sh
+mobile/tool/generate_pigeon.sh
+```
+
+Writes `lib/finance_kit/wallet.g.dart` and `ios/Runner/FinanceKit/Wallet.g.swift` from
+`pigeons/wallet.dart`. Pigeon runs from a global activation rather than a dev dependency: it pins an
+older `analyzer` than build_runner does, and the two cannot share a lockfile. Run it before
+build_runner, which reads what it writes. CI fails if either output has drifted.
+
 ## Gates
 
 ```sh
@@ -44,3 +55,14 @@ Both are external to the codebase and sign-in fails on device without them.
   and its reversed form as a URL scheme. The **server** needs the same value in its
   `GOOGLE_IOS_CLIENT_ID` env var, or it rejects the app's ID tokens on audience - `scripts/install.sh`
   prompts for it.
+
+## Wallet
+
+Apple Card, Apple Cash and Apple Savings come from FinanceKit rather than Plaid, which does not
+carry them. The entitlement is granted for `fiftysevenmedia.Spendable`; there is no sandbox, so it
+only works on a real device, signed in to a US Apple Account with a card in Wallet. The simulator
+reports `isAvailable() == false` and the app simply does not offer it.
+
+`FinanceKitPlugin.swift` is transport and nothing else. Amounts go up unsigned with a
+credit/debit indicator beside them, and the server decides the sign, dedupes, and applies every
+ledger rule - so a money bug has one place to be, not two.
