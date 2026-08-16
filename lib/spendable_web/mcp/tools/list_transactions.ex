@@ -12,8 +12,17 @@ defmodule SpendableWeb.MCP.Tools.ListTransactions do
 
   schema do
     field :search, :string, description: "Only list transactions whose name or note contains this text."
-    field :show_reviewed, :boolean, description: "Include transactions the user has already reviewed."
-    field :show_excluded, :boolean, description: "Include transactions excluded from spending."
+
+    field :show_reviewed, :boolean,
+      description:
+        "Include transactions the user has already looked at and finished with. Left out by default, " <>
+          "so the list reads as a queue of what still needs attention."
+
+    field :show_excluded, :boolean,
+      description:
+        "Include transactions the user decided should not count toward spending, such as a reimbursed " <>
+          "expense. Left out by default."
+
     field :page, :integer, description: "1-based page of results, for reading past the first page."
     field :per_page, :integer, description: "How many transactions to return, 25 by default and 100 at most."
   end

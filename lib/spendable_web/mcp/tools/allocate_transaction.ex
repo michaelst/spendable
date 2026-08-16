@@ -15,12 +15,23 @@ defmodule SpendableWeb.MCP.Tools.AllocateTransaction do
   schema do
     field :transaction_id, {:required, :string}, description: "The id of the transaction to allocate."
 
-    embeds_many :allocations, required: true, description: "The budgets this transaction is divided across." do
-      field :budget_id, {:required, :string}, description: "The id of the budget to allocate to."
-      field :amount, {:required, :string}, description: "Decimal string, negative for spending, e.g. \"-40.00\"."
+    embeds_many :allocations,
+      required: true,
+      description:
+        "How the transaction is divided across budgets. This replaces the division it already had, " <>
+          "so send every part of it, and whatever these do not add up to stays in Spendable." do
+      field :budget_id, {:required, :string}, description: "The id of the budget this part of the transaction goes to."
+
+      field :amount, {:required, :string},
+        description:
+          "How much of the transaction this budget takes, signed the way the transaction is - negative " <>
+            "for money spent. Decimal string, e.g. \"-40.00\"."
     end
 
-    field :reviewed, :boolean, description: "Mark the transaction as reviewed."
+    field :reviewed, :boolean,
+      description:
+        "Mark the transaction as one the user is done with, which takes it out of the list of " <>
+          "transactions still needing attention."
   end
 
   @impl true

@@ -12,10 +12,24 @@ defmodule SpendableWeb.MCP.Tools.CreateBudget do
   alias Spendable.Budgets
 
   schema do
-    field :name, {:required, :string}, description: "What the budget is called."
-    field :type, {:enum, [:envelope, :goal, :tracking]}, description: "Defaults to envelope."
-    field :budgeted_amount, :string, description: "Decimal string, e.g. \"250.00\"."
-    field :balance, :string, description: "Decimal string the balance should read, e.g. \"40.00\"."
+    field :name, {:required, :string}, description: "What the budget is called, e.g. \"Groceries\"."
+
+    field :type, {:enum, [:envelope, :goal, :tracking]},
+      description:
+        "envelope reserves money for a purpose, goal saves toward a target, tracking records spending " <>
+          "without reserving anything. Defaults to envelope."
+
+    field :budgeted_amount, :string,
+      description:
+        "What the user intends this budget to hold - the figure its balance is read against. It is a " <>
+          "target, not money moved in, so it never changes the balance. Decimal string, e.g. \"250.00\"."
+
+    field :balance, :string,
+      description:
+        "What the budget should read right now, for a budget that already holds something. Spendable " <>
+          "records the gap between this and what its transactions add up to as an adjustment, so this " <>
+          "corrects a balance rather than moving money. Leave it out to start at zero. Decimal string, " <>
+          "e.g. \"40.00\"."
   end
 
   @impl true

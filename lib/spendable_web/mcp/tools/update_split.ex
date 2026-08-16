@@ -13,9 +13,16 @@ defmodule SpendableWeb.MCP.Tools.UpdateSplit do
     field :split_id, {:required, :string}, description: "The id of the split to change."
     field :name, :string, description: "What the split is called."
 
-    embeds_many :lines, description: "The budgets and amounts this split fills in, replacing the current ones." do
+    embeds_many :lines,
+      description:
+        "The budgets and amounts this split fills in. These replace the lines it already had, so send " <>
+          "the whole set; leave the field out to rename the split alone." do
       field :budget_id, {:required, :string}, description: "The id of the budget this line fills."
-      field :amount, {:required, :string}, description: "Decimal string, negative for spending, e.g. \"-40.00\"."
+
+      field :amount, {:required, :string},
+        description:
+          "How much this budget takes when the split is applied, signed the way the transaction will " <>
+            "be - negative for money spent. Decimal string, e.g. \"-40.00\"."
     end
   end
 
