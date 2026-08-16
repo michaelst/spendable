@@ -43,3 +43,7 @@ npm-debug.log
 # Credentials for the production stack (scripts/install.sh).
 /.secrets/
 .env.prod
+
+# The Flutter build tree, ignored here as well as in mobile/.gitignore so a branch that predates
+# mobile/ cannot sweep 800MB of it into a commit.
+/mobile/build/
