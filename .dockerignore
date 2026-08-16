@@ -2,5 +2,6 @@
 /deps/
 /.elixir_ls/
 /test/
+/mobile/
 assets/node_modules/**/*
 assets/node_modules/

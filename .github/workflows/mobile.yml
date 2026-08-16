@@ -1,0 +1,44 @@
+name: Mobile
+
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - 'priv/static/openapi.json'
+      - '.github/workflows/mobile.yml'
+  push:
+    branches:
+      - main
+
+defaults:
+  run:
+    working-directory: mobile
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: jdx/mise-action@v2
+
+      - run: flutter pub get
+      - run: dart format --set-exit-if-changed --line-length 110 lib test
+      - run: flutter analyze
+      - run: flutter test
+
+  client:
+    name: Generated Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: jdx/mise-action@v2
+
+      # The client is committed so normal CI needs no Java, which leaves drift as the thing to
+      # catch: an endpoint changed without the client being regenerated.
+      - run: ./tool/generate_api.sh
+      - run: git diff --exit-code api
