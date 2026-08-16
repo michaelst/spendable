@@ -3,6 +3,7 @@ defmodule SpendableWeb.Api.Schemas.SplitRequest do
   require OpenApiSpex
 
   alias OpenApiSpex.Schema
+  alias SpendableWeb.Api.Schemas.SplitLineRequest
 
   OpenApiSpex.schema(%{
     title: "SplitRequest",
@@ -13,18 +14,7 @@ defmodule SpendableWeb.Api.Schemas.SplitRequest do
     type: :object,
     properties: %{
       name: %Schema{type: :string},
-      split_lines: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            id: %Schema{type: :string, description: "Omit to add a new line."},
-            amount: %Schema{type: :string},
-            budget_id: %Schema{type: :string}
-          },
-          required: [:amount, :budget_id]
-        }
-      }
+      split_lines: %Schema{type: :array, items: SplitLineRequest}
     },
     example: %{
       "name" => "Payday",

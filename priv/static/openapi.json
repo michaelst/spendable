@@ -197,6 +197,64 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.Budget",
         "x-validate": null
       },
+      "BudgetAllocation": {
+        "description": "One budget's share of a transaction.",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "budget_id"
+        ],
+        "title": "BudgetAllocation",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetAllocation",
+        "x-validate": null
+      },
+      "BudgetAllocationRequest": {
+        "description": "An allocation to keep, update or add. Distinct from BudgetAllocation because `id` is optional.\n",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "description": "Omit to add a new allocation.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "amount",
+          "budget_id"
+        ],
+        "title": "BudgetAllocationRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetAllocationRequest",
+        "x-validate": null
+      },
       "BudgetRequest": {
         "description": "Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server\nworks out the adjustment that gets it there, so never send `adjustment`.\n",
         "example": {
@@ -291,26 +349,7 @@
           "spent_by_month": {
             "description": "Newest first, for the month picker.",
             "items": {
-              "properties": {
-                "month": {
-                  "format": "date",
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "spent": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "month",
-                "spent"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/MonthSpend"
             },
             "type": "array",
             "x-struct": null,
@@ -337,6 +376,29 @@
         "title": "BudgetSummary",
         "type": "object",
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetSummary",
+        "x-validate": null
+      },
+      "BulkFailure": {
+        "description": "One transaction a bulk change did not apply to, and why.",
+        "properties": {
+          "code": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "code"
+        ],
+        "title": "BulkFailure",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkFailure",
         "x-validate": null
       },
       "BulkRequest": {
@@ -389,25 +451,7 @@
         "properties": {
           "failed": {
             "items": {
-              "properties": {
-                "code": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "id",
-                "code"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/BulkFailure"
             },
             "type": "array",
             "x-struct": null,
@@ -544,6 +588,30 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.LinkToken",
         "x-validate": null
       },
+      "MonthSpend": {
+        "description": "A month the user has spent in, for the month picker.",
+        "properties": {
+          "month": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "month",
+          "spent"
+        ],
+        "title": "MonthSpend",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.MonthSpend",
+        "x-validate": null
+      },
       "Session": {
         "description": "An API token. The token itself is returned once and never again.",
         "properties": {
@@ -636,31 +704,7 @@
           "split_lines": {
             "description": "Oldest first.",
             "items": {
-              "properties": {
-                "amount": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "budget_id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "id",
-                "amount",
-                "budget_id"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/SplitLine"
             },
             "type": "array",
             "x-struct": null,
@@ -675,6 +719,64 @@
         "title": "Split",
         "type": "object",
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.Split",
+        "x-validate": null
+      },
+      "SplitLine": {
+        "description": "One budget's share of a split.",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "budget_id"
+        ],
+        "title": "SplitLine",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitLine",
+        "x-validate": null
+      },
+      "SplitLineRequest": {
+        "description": "A line to keep, update or add. Distinct from SplitLine because `id` is optional.",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "description": "Omit to add a new line.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "amount",
+          "budget_id"
+        ],
+        "title": "SplitLineRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitLineRequest",
         "x-validate": null
       },
       "SplitRequest": {
@@ -696,31 +798,7 @@
           },
           "split_lines": {
             "items": {
-              "properties": {
-                "amount": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "budget_id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "id": {
-                  "description": "Omit to add a new line.",
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "amount",
-                "budget_id"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/SplitLineRequest"
             },
             "type": "array",
             "x-struct": null,
@@ -742,31 +820,7 @@
           },
           "budget_allocations": {
             "items": {
-              "properties": {
-                "amount": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "budget_id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "id",
-                "amount",
-                "budget_id"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/BudgetAllocation"
             },
             "type": "array",
             "x-struct": null,
@@ -858,31 +912,7 @@
           },
           "budget_allocations": {
             "items": {
-              "properties": {
-                "amount": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "budget_id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "id": {
-                  "description": "Omit to add a new allocation.",
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "amount",
-                "budget_id"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/BudgetAllocationRequest"
             },
             "type": "array",
             "x-struct": null,
@@ -1022,29 +1052,7 @@
           "identities": {
             "description": "The ways this account can be signed into.",
             "items": {
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                },
-                "provider": {
-                  "enum": [
-                    "apple",
-                    "google"
-                  ],
-                  "type": "string",
-                  "x-struct": null,
-                  "x-validate": null
-                }
-              },
-              "required": [
-                "id",
-                "provider"
-              ],
-              "type": "object",
-              "x-struct": null,
-              "x-validate": null
+              "$ref": "#/components/schemas/Identity"
             },
             "type": "array",
             "x-struct": null,

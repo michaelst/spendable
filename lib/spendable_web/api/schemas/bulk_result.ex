@@ -3,6 +3,7 @@ defmodule SpendableWeb.Api.Schemas.BulkResult do
   require OpenApiSpex
 
   alias OpenApiSpex.Schema
+  alias SpendableWeb.Api.Schemas.BulkFailure
   alias SpendableWeb.Api.Schemas.Transaction
 
   OpenApiSpex.schema(%{
@@ -14,17 +15,7 @@ defmodule SpendableWeb.Api.Schemas.BulkResult do
     type: :object,
     properties: %{
       transactions: %Schema{type: :array, items: Transaction},
-      failed: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            id: %Schema{type: :string},
-            code: %Schema{type: :string}
-          },
-          required: [:id, :code]
-        }
-      }
+      failed: %Schema{type: :array, items: BulkFailure}
     },
     required: [:transactions, :failed]
   })
@@ -34,7 +25,7 @@ defmodule SpendableWeb.Api.Schemas.BulkResult do
 
     %__MODULE__{
       transactions: Enum.map(applied, fn {:ok, transaction} -> Transaction.build(transaction) end),
-      failed: Enum.map(failed, fn {:error, id, code} -> %{id: id, code: code} end)
+      failed: Enum.map(failed, fn {:error, id, code} -> BulkFailure.build(id, code) end)
     }
   end
 end

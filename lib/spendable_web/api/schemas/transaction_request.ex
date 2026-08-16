@@ -3,6 +3,7 @@ defmodule SpendableWeb.Api.Schemas.TransactionRequest do
   require OpenApiSpex
 
   alias OpenApiSpex.Schema
+  alias SpendableWeb.Api.Schemas.BudgetAllocationRequest
 
   OpenApiSpex.schema(%{
     title: "TransactionRequest",
@@ -22,18 +23,7 @@ defmodule SpendableWeb.Api.Schemas.TransactionRequest do
       note: %Schema{type: :string, nullable: true},
       reviewed: %Schema{type: :boolean},
       excluded: %Schema{type: :boolean},
-      budget_allocations: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            id: %Schema{type: :string, description: "Omit to add a new allocation."},
-            amount: %Schema{type: :string},
-            budget_id: %Schema{type: :string}
-          },
-          required: [:amount, :budget_id]
-        }
-      }
+      budget_allocations: %Schema{type: :array, items: BudgetAllocationRequest}
     },
     example: %{
       "name" => "Market",

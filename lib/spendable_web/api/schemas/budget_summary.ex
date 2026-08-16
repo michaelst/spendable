@@ -6,6 +6,7 @@ defmodule SpendableWeb.Api.Schemas.BudgetSummary do
 
   alias OpenApiSpex.Schema
   alias SpendableWeb.Api.Schemas.Budget
+  alias SpendableWeb.Api.Schemas.MonthSpend
 
   OpenApiSpex.schema(%{
     title: "BudgetSummary",
@@ -33,14 +34,7 @@ defmodule SpendableWeb.Api.Schemas.BudgetSummary do
       spent_by_month: %Schema{
         type: :array,
         description: "Newest first, for the month picker.",
-        items: %Schema{
-          type: :object,
-          properties: %{
-            month: %Schema{type: :string, format: :date},
-            spent: %Schema{type: :string}
-          },
-          required: [:month, :spent]
-        }
+        items: MonthSpend
       }
     },
     required: [
@@ -66,7 +60,7 @@ defmodule SpendableWeb.Api.Schemas.BudgetSummary do
       credit_card_balance: amount(fields.credit_card_balance),
       budgets: Enum.map(fields.budgets, &Budget.build/1),
       spent: Map.new(fields.spent, fn {id, spent} -> {id, amount(spent)} end),
-      spent_by_month: Enum.map(fields.spent_by_month, &%{month: &1.month, spent: amount(&1.spent)})
+      spent_by_month: Enum.map(fields.spent_by_month, &MonthSpend.build/1)
     }
   end
 end

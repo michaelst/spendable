@@ -2,9 +2,8 @@ defmodule SpendableWeb.Api.Schemas.Split do
   @moduledoc false
   require OpenApiSpex
 
-  import SpendableWeb.Utils.Money
-
   alias OpenApiSpex.Schema
+  alias SpendableWeb.Api.Schemas.SplitLine
 
   OpenApiSpex.schema(%{
     title: "Split",
@@ -14,19 +13,7 @@ defmodule SpendableWeb.Api.Schemas.Split do
       id: %Schema{type: :string},
       name: %Schema{type: :string},
       archived_at: %Schema{type: :string, format: :"date-time", nullable: true},
-      split_lines: %Schema{
-        type: :array,
-        description: "Oldest first.",
-        items: %Schema{
-          type: :object,
-          properties: %{
-            id: %Schema{type: :string},
-            amount: %Schema{type: :string},
-            budget_id: %Schema{type: :string}
-          },
-          required: [:id, :amount, :budget_id]
-        }
-      }
+      split_lines: %Schema{type: :array, description: "Oldest first.", items: SplitLine}
     },
     required: [:id, :name, :split_lines]
   })
@@ -36,11 +23,7 @@ defmodule SpendableWeb.Api.Schemas.Split do
       id: split.id,
       name: split.name,
       archived_at: split.archived_at,
-      split_lines:
-        Enum.map(
-          split.split_lines,
-          &%{id: &1.id, amount: amount(&1.amount), budget_id: &1.budget_id}
-        )
+      split_lines: Enum.map(split.split_lines, &SplitLine.build/1)
     }
   end
 end

@@ -3,6 +3,7 @@ defmodule SpendableWeb.Api.Schemas.User do
   require OpenApiSpex
 
   alias OpenApiSpex.Schema
+  alias SpendableWeb.Api.Schemas.Identity
 
   OpenApiSpex.schema(%{
     title: "User",
@@ -15,14 +16,7 @@ defmodule SpendableWeb.Api.Schemas.User do
       identities: %Schema{
         type: :array,
         description: "The ways this account can be signed into.",
-        items: %Schema{
-          type: :object,
-          properties: %{
-            id: %Schema{type: :string},
-            provider: %Schema{type: :string, enum: ["apple", "google"]}
-          },
-          required: [:id, :provider]
-        }
+        items: Identity
       }
     },
     required: [:id, :bank_limit, :identities]
@@ -33,7 +27,7 @@ defmodule SpendableWeb.Api.Schemas.User do
       id: user.id,
       image: user.image,
       bank_limit: user.bank_limit,
-      identities: Enum.map(identities, &%{id: &1.id, provider: &1.provider})
+      identities: Enum.map(identities, &Identity.build/1)
     }
   end
 end

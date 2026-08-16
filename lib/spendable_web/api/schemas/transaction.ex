@@ -5,6 +5,7 @@ defmodule SpendableWeb.Api.Schemas.Transaction do
   import SpendableWeb.Utils.Money
 
   alias OpenApiSpex.Schema
+  alias SpendableWeb.Api.Schemas.BudgetAllocation
   alias SpendableWeb.Api.Schemas.TransactionSource
 
   OpenApiSpex.schema(%{
@@ -30,18 +31,7 @@ defmodule SpendableWeb.Api.Schemas.Transaction do
         description: "The other side of a move between the user's own accounts."
       },
       source: %Schema{oneOf: [TransactionSource], nullable: true},
-      budget_allocations: %Schema{
-        type: :array,
-        items: %Schema{
-          type: :object,
-          properties: %{
-            id: %Schema{type: :string},
-            amount: %Schema{type: :string},
-            budget_id: %Schema{type: :string}
-          },
-          required: [:id, :amount, :budget_id]
-        }
-      }
+      budget_allocations: %Schema{type: :array, items: BudgetAllocation}
     },
     required: [:id, :name, :amount, :date, :reviewed, :excluded, :budget_allocations]
   })
@@ -57,11 +47,7 @@ defmodule SpendableWeb.Api.Schemas.Transaction do
       excluded: transaction.excluded,
       transfer_id: transaction.transfer_id,
       source: TransactionSource.build(transaction.bank_transaction),
-      budget_allocations:
-        Enum.map(
-          transaction.budget_allocations,
-          &%{id: &1.id, amount: amount(&1.amount), budget_id: &1.budget_id}
-        )
+      budget_allocations: Enum.map(transaction.budget_allocations, &BudgetAllocation.build/1)
     }
   end
 end
