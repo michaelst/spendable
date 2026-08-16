@@ -1,0 +1,168 @@
+{
+  "_comment": [
+    "What a budget reads as on the budgets screen, and how money is written.",
+    "Both clients compute this locally, so this table is the only thing keeping them honest.",
+    "Elixir: lib/spendable_web/utils/budget_card_test.exs. Dart: mobile/test/budgets/budget_card_test.dart."
+  ],
+  "cards": [
+    {
+      "name": "a past month is a record of what was spent",
+      "current_month": false,
+      "budget": { "type": "envelope", "balance": "50.00", "budgeted_amount": "200.00" },
+      "spent": "45.50",
+      "card": { "amount": "45.50", "label": "SPENT", "percent": null, "bar": null, "footer": null }
+    },
+    {
+      "name": "a tracking budget only ever reports the spend",
+      "current_month": true,
+      "budget": { "type": "tracking", "balance": "0.00", "budgeted_amount": null },
+      "spent": "12.34",
+      "card": {
+        "amount": "12.34",
+        "label": "SPENT",
+        "percent": null,
+        "bar": null,
+        "footer": "No limit set"
+      }
+    },
+    {
+      "name": "an envelope with no amount budgeted has nothing to be a fraction of",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "80.00", "budgeted_amount": null },
+      "spent": "10.00",
+      "card": {
+        "amount": "80.00",
+        "label": "LEFT",
+        "percent": null,
+        "bar": null,
+        "footer": "No limit set"
+      }
+    },
+    {
+      "name": "an envelope under budget",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "50.00", "budgeted_amount": "200.00" },
+      "spent": "150.00",
+      "card": {
+        "amount": "50.00",
+        "label": "LEFT",
+        "percent": 75.0,
+        "bar": "under",
+        "footer": "$150.00 of $200.00 spent"
+      }
+    },
+    {
+      "name": "spending exactly the budget is not over it",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "0.00", "budgeted_amount": "200.00" },
+      "spent": "200.00",
+      "card": {
+        "amount": "0.00",
+        "label": "LEFT",
+        "percent": 100.0,
+        "bar": "under",
+        "footer": "$200.00 of $200.00 spent"
+      }
+    },
+    {
+      "name": "an envelope over budget keeps the bar full",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "-25.00", "budgeted_amount": "200.00" },
+      "spent": "225.00",
+      "card": {
+        "amount": "-25.00",
+        "label": "LEFT",
+        "percent": 100.0,
+        "bar": "over",
+        "footer": "$225.00 of $200.00 spent"
+      }
+    },
+    {
+      "name": "a budget of zero divides by nothing and is over the moment anything is spent",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "10.00", "budgeted_amount": "0.00" },
+      "spent": "5.00",
+      "card": {
+        "amount": "10.00",
+        "label": "LEFT",
+        "percent": 0.0,
+        "bar": "over",
+        "footer": "$5.00 of $0.00 spent"
+      }
+    },
+    {
+      "name": "a percentage that does not divide evenly rounds to one place",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "100.00", "budgeted_amount": "300.00" },
+      "spent": "200.00",
+      "card": {
+        "amount": "100.00",
+        "label": "LEFT",
+        "percent": 66.7,
+        "bar": "under",
+        "footer": "$200.00 of $300.00 spent"
+      }
+    },
+    {
+      "name": "thousands are grouped on both sides of the footer",
+      "current_month": true,
+      "budget": { "type": "envelope", "balance": "-1500.75", "budgeted_amount": "1000.00" },
+      "spent": "2500.75",
+      "card": {
+        "amount": "-1500.75",
+        "label": "LEFT",
+        "percent": 100.0,
+        "bar": "over",
+        "footer": "$2,500.75 of $1,000.00 spent"
+      }
+    },
+    {
+      "name": "a goal with no target has nothing to go",
+      "current_month": true,
+      "budget": { "type": "goal", "balance": "500.00", "budgeted_amount": null },
+      "spent": "0.00",
+      "card": {
+        "amount": "500.00",
+        "label": "SAVED",
+        "percent": null,
+        "bar": null,
+        "footer": "No goal set"
+      }
+    },
+    {
+      "name": "a goal counts down to the target rather than up from zero",
+      "current_month": true,
+      "budget": { "type": "goal", "balance": "250.00", "budgeted_amount": "1000.00" },
+      "spent": "0.00",
+      "card": {
+        "amount": "750.00",
+        "label": "TO GO",
+        "percent": 25.0,
+        "bar": "goal",
+        "footer": "$250.00 of $1,000.00 saved"
+      }
+    },
+    {
+      "name": "saving past the goal goes negative and the bar stops at full",
+      "current_month": true,
+      "budget": { "type": "goal", "balance": "1200.00", "budgeted_amount": "1000.00" },
+      "spent": "0.00",
+      "card": {
+        "amount": "-200.00",
+        "label": "TO GO",
+        "percent": 100.0,
+        "bar": "goal",
+        "footer": "$1,200.00 of $1,000.00 saved"
+      }
+    }
+  ],
+  "currency": [
+    { "amount": null, "formatted": "$0.00" },
+    { "amount": "0", "formatted": "$0.00" },
+    { "amount": "7.5", "formatted": "$7.50" },
+    { "amount": "-0.005", "formatted": "-$0.01" },
+    { "amount": "999.999", "formatted": "$1,000.00" },
+    { "amount": "1000", "formatted": "$1,000.00" },
+    { "amount": "-1234567.891", "formatted": "-$1,234,567.89" }
+  ]
+}

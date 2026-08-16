@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'mobile/**'
+      - 'shared/**'
       - 'priv/static/openapi.json'
       - '.github/workflows/mobile.yml'
   push:
