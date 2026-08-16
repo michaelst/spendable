@@ -36,8 +36,7 @@ Both are external to the codebase and sign-in fails on device without them.
 
 - **Sign in with Apple** needs the capability enabled on `fiftysevenmedia.Spendable` in the Apple
   Developer portal. `ios/Runner/Runner.entitlements` already declares it.
-- **Google Sign-In** needs an iOS OAuth client in Google Cloud Console. Pass its id as
-  `--dart-define=GOOGLE_IOS_CLIENT_ID=...`, add the same value to the server's
-  `GOOGLE_IOS_CLIENT_ID` env var so the audience check accepts it, and add its reversed form to
-  `ios/Runner/Info.plist` as a `CFBundleURLTypes` scheme - the OAuth callback has nowhere to land
-  otherwise.
+- **Google Sign-In** works on device from `ios/Runner/Info.plist`, which carries the iOS client id
+  and its reversed form as a URL scheme. The **server** needs the same value in its
+  `GOOGLE_IOS_CLIENT_ID` env var, or it rejects the app's ID tokens on audience - `scripts/install.sh`
+  prompts for it.

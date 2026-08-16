@@ -32,3 +32,7 @@ Runner/GeneratedPluginRegistrant.*
 !default.mode2v3
 !default.pbxuser
 !default.perspectivev3
+
+# Regenerated from pubspec.lock on every build, and different on every branch of a stack because
+# it only lists the packages the current plugin set pulls in.
+**/xcshareddata/swiftpm/Package.resolved

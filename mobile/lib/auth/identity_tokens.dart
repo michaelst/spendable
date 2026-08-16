@@ -23,10 +23,6 @@ abstract class IdentityTokens {
 }
 
 class PlatformIdentityTokens implements IdentityTokens {
-  // The Google iOS OAuth client id is a public identifier, not a secret. Info.plist also needs
-  // its reversed form as a URL scheme - see README.md.
-  static const _googleClientId = String.fromEnvironment('GOOGLE_IOS_CLIENT_ID');
-
   var _googleInitialized = false;
 
   @override
@@ -51,8 +47,10 @@ class PlatformIdentityTokens implements IdentityTokens {
 
   Future<String?> _google() async {
     try {
+      // No client id passed: the plugin reads GIDClientID out of Info.plist, which keeps it in
+      // one place rather than one place per build command.
       if (!_googleInitialized) {
-        await GoogleSignIn.instance.initialize(clientId: _googleClientId.isEmpty ? null : _googleClientId);
+        await GoogleSignIn.instance.initialize();
 
         _googleInitialized = true;
       }

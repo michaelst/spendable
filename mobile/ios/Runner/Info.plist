@@ -22,6 +22,22 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<!-- Read by google_sign_in, so nothing has to be passed at build time. A client id is a
+	     public identifier, not a secret, and ships inside the app either way. -->
+	<key>GIDClientID</key>
+	<string>639137892495-ubgq2uml273ikum45ou4l1bcodsmdi5q.apps.googleusercontent.com</string>
+	<!-- Where Google's OAuth callback lands: the same id with its halves swapped. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.639137892495-ubgq2uml273ikum45ou4l1bcodsmdi5q</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
