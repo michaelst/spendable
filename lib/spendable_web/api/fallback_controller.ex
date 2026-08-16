@@ -9,6 +9,7 @@ defmodule SpendableWeb.Api.FallbackController do
     :identity_claimed,
     :last_identity,
     :not_a_transfer,
+    :not_supported,
     :transfer_not_allowed
   ]
 

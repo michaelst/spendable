@@ -99,9 +99,11 @@ defmodule Spendable.MixProject do
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
       credo: ["credo --config-file credo/.credo.exs"],
       # The spec is read off the router and the controller modules, so booting the app - and with
-      # it a database - buys nothing.
+      # it a database - buys nothing. Both the destination and `start-app` have to be given in
+      # their `--flag=value` form: a bare `--no-start-app` swallows the positional filename, and
+      # the spec silently lands in the repo root instead.
       openapi: [
-        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty --no-start-app priv/static/openapi.json"
+        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty=true --start-app=false --filename priv/static/openapi.json"
       ]
     ]
   end

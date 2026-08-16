@@ -207,7 +207,7 @@ class BanksApi {
   }
 
   /// Reopen an existing connection
-  /// For a connection whose status is not CONNECTED, or to verify micro deposits.
+  /// For a connection whose status is not CONNECTED, or to verify micro deposits. Plaid only. 
   ///
   /// Parameters:
   /// * [id] - 
@@ -453,7 +453,7 @@ class BanksApi {
   }
 
   /// Pull two years of history
-  /// Queues the work and returns immediately. There is no completion signal - refresh the lists to pick up whatever has landed. 
+  /// Queues the work and returns immediately. There is no completion signal - refresh the lists to pick up whatever has landed. Plaid only: a FinanceKit connection is read on the device. 
   ///
   /// Parameters:
   /// * [id] - 

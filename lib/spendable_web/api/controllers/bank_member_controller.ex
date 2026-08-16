@@ -67,10 +67,13 @@ defmodule SpendableWeb.Api.BankMemberController do
   operation :update_link_token,
     operation_id: "createUpdateLinkToken",
     summary: "Reopen an existing connection",
-    description: "For a connection whose status is not CONNECTED, or to verify micro deposits.",
+    description: """
+    For a connection whose status is not CONNECTED, or to verify micro deposits. Plaid only.
+    """,
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [
       ok: {"LinkToken", "application/json", LinkToken},
+      conflict: {"Errors", "application/json", Errors},
       not_found: {"Errors", "application/json", Errors}
     ]
 
@@ -88,11 +91,12 @@ defmodule SpendableWeb.Api.BankMemberController do
     summary: "Pull two years of history",
     description: """
     Queues the work and returns immediately. There is no completion signal - refresh the lists to
-    pick up whatever has landed.
+    pick up whatever has landed. Plaid only: a FinanceKit connection is read on the device.
     """,
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [
       accepted: {"Queued", "application/json", nil},
+      conflict: {"Errors", "application/json", Errors},
       not_found: {"Errors", "application/json", Errors}
     ]
 

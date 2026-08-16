@@ -210,6 +210,14 @@ defmodule Spendable.Banks.Actions.SyncMemberTest do
     assert [] = Transactions.list_transactions(scope)
   end
 
+  # The job queue is the only caller, so a FinanceKit member reaching it is a bug rather than a
+  # request, but it must not be handed to Plaid with no token.
+  test "syncs nothing for a connection Plaid does not hold", %{scope: scope} do
+    {:ok, member} = Banks.upsert_finance_kit_member(scope)
+
+    assert {:error, :not_supported} = Banks.sync_member(member.id)
+  end
+
   test "errors when no member has that id" do
     assert {:error, :bank_member_not_found} =
              Banks.sync_member("bkm_01M036GTQ48JXS0A2AXFNV6H5P")

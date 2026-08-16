@@ -1,7 +1,7 @@
 defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicToken do
   @moduledoc false
 
-  import Ecto.Query
+  import Spendable.Banks.Utils.CountPlaidMembers
   import Spendable.Banks.Utils.FormatBankMember
 
   alias Spendable.Banks
@@ -15,9 +15,7 @@ defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicToken do
   sync so the accounts and their history arrive without the user waiting on them.
   """
   def create_bank_member_from_public_token(%Scope{user: user} = scope, public_token) do
-    connected = Repo.aggregate(from(m in BankMember, where: m.user_id == ^user.id), :count, :id)
-
-    if connected < user.bank_limit do
+    if count_plaid_members(user) < user.bank_limit do
       exchange_and_insert(scope, public_token)
     else
       {:error, :bank_limit_reached}

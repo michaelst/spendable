@@ -4,6 +4,7 @@ defmodule SpendableWeb.Api.BankMemberControllerTest do
   import OpenApiSpex.TestAssertions
 
   alias Spendable.Accounts
+  alias Spendable.Banks
   alias Spendable.Banks.Schemas.BankAccount
   alias Spendable.Banks.Schemas.BankMember
   alias Spendable.Repo
@@ -180,6 +181,17 @@ defmodule SpendableWeb.Api.BankMemberControllerTest do
       worker: Spendable.Banks.Jobs.SyncMember,
       args: %{bank_member_id: bank_member.id}
     )
+  end
+
+  # Wallet is read on the device, so neither reopening nor pulling history means anything here.
+  test "refuses to reopen or sync a connection Plaid does not hold", %{conn: conn, scope: scope} do
+    {:ok, member} = Banks.upsert_finance_kit_member(scope)
+
+    assert %{"errors" => [%{"code" => "not_supported"}]} =
+             conn |> post(~p"/api/banks/#{member.id}/link_token") |> json_response(409)
+
+    assert %{"errors" => [%{"code" => "not_supported"}]} =
+             conn |> post(~p"/api/banks/#{member.id}/sync") |> json_response(409)
   end
 
   test "another user's connection is not found", %{conn: conn} do
