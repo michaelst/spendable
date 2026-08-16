@@ -569,6 +569,7 @@
           },
           "provider": {
             "enum": [
+              "apple",
               "google"
             ],
             "type": "string",
@@ -986,6 +987,13 @@
             "x-struct": null,
             "x-validate": null
           },
+          "email": {
+            "description": "What ties a Google and an Apple sign-in to one account.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
           "id": {
             "type": "string",
             "x-struct": null,
@@ -996,16 +1004,10 @@
             "type": "string",
             "x-struct": null,
             "x-validate": null
-          },
-          "provider": {
-            "type": "string",
-            "x-struct": null,
-            "x-validate": null
           }
         },
         "required": [
           "id",
-          "provider",
           "bank_limit"
         ],
         "title": "User",

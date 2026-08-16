@@ -14,7 +14,7 @@ defmodule Spendable.Accounts.Actions.SignInWithGoogleTest do
   end
 
   test "creates a user on first sign-in" do
-    assert {:ok, %User{external_id: "104829376510394827561", provider: "google"}} =
+    assert {:ok, %User{email: "michael@dishbooks.com"}} =
              Accounts.sign_in_with_google(TestData.Google.id_token())
   end
 
@@ -67,6 +67,16 @@ defmodule Spendable.Accounts.Actions.SignInWithGoogleTest do
     token = TestData.Google.id_token(%{"sub" => nil})
 
     assert {:error, :invalid_id_token} = Accounts.sign_in_with_google(token)
+  end
+
+  # Google answering with anything but a key set is a refused sign-in, not a crashed request.
+  test "rejects a sign-in when the key set cannot be read" do
+    stub(TeslaMock, :call, fn %{url: "https://www.googleapis.com/oauth2/v3/certs"}, _opts ->
+      TeslaHelper.response(status: 503, body: %{"error" => "unavailable"})
+    end)
+
+    assert {:error, :invalid_id_token} =
+             Accounts.sign_in_with_google(TestData.Google.id_token())
   end
 
   test "rejects a value that is not a token" do

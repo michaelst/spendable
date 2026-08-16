@@ -9,7 +9,7 @@ defmodule SpendableWeb.Api.Schemas.SessionRequest do
     description: "An ID token from a native sign-in, exchanged for an API token.",
     type: :object,
     properties: %{
-      provider: %Schema{type: :string, enum: ["google"]},
+      provider: %Schema{type: :string, enum: ["apple", "google"]},
       id_token: %Schema{type: :string},
       device_name: %Schema{
         type: :string,

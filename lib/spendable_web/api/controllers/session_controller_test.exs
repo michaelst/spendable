@@ -11,8 +11,12 @@ defmodule SpendableWeb.Api.SessionControllerTest do
   @api_spec ApiSpec.spec()
 
   setup %{conn: conn} do
-    stub(TeslaMock, :call, fn %{url: "https://www.googleapis.com/oauth2/v3/certs"}, _opts ->
-      TeslaHelper.response(body: TestData.Google.certs())
+    stub(TeslaMock, :call, fn
+      %{url: "https://www.googleapis.com/oauth2/v3/certs"}, _opts ->
+        TeslaHelper.response(body: TestData.Google.certs())
+
+      %{url: "https://appleid.apple.com/auth/keys"}, _opts ->
+        TeslaHelper.response(body: TestData.Apple.certs())
     end)
 
     %{conn: put_req_header(conn, "content-type", "application/json")}
@@ -35,6 +39,27 @@ defmodule SpendableWeb.Api.SessionControllerTest do
     }
 
     assert %{"device_name" => "iPhone"} = conn |> post(~p"/api/session", body) |> json_response(201)
+  end
+
+  test "signs in with an Apple ID token", %{conn: conn} do
+    body = %{"provider" => "apple", "id_token" => TestData.Apple.id_token()}
+
+    response = conn |> post(~p"/api/session", body) |> json_response(201)
+
+    assert_schema(response, "Session", @api_spec)
+    assert {:ok, _api_token} = Accounts.authenticate_api_token(response["token"])
+  end
+
+  test "signing in with either provider reaches the same account", %{conn: conn} do
+    google = %{"provider" => "google", "id_token" => TestData.Google.id_token()}
+    apple = %{"provider" => "apple", "id_token" => TestData.Apple.id_token()}
+
+    %{"token" => google_token} = conn |> post(~p"/api/session", google) |> json_response(201)
+    %{"token" => apple_token} = conn |> post(~p"/api/session", apple) |> json_response(201)
+
+    {:ok, %{user: %{id: user_id}}} = Accounts.authenticate_api_token(google_token)
+
+    assert {:ok, %{user: %{id: ^user_id}}} = Accounts.authenticate_api_token(apple_token)
   end
 
   test "rejects an ID token Google did not sign", %{conn: conn} do

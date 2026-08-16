@@ -27,7 +27,7 @@ defmodule SpendableWeb.AuthControllerTest do
 
     assert response(conn, 302)
 
-    assert {:ok, %User{id: "usr_" <> _uxid, provider: "google", external_id: "1"}} =
+    assert {:ok, %User{id: "usr_" <> _uxid}} =
              conn |> Plug.Conn.get_session(:current_user_id) |> Accounts.get_user()
   end
 

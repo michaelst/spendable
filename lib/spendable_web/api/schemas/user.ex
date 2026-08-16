@@ -10,18 +10,22 @@ defmodule SpendableWeb.Api.Schemas.User do
     type: :object,
     properties: %{
       id: %Schema{type: :string},
+      email: %Schema{
+        type: :string,
+        nullable: true,
+        description: "What ties a Google and an Apple sign-in to one account."
+      },
       image: %Schema{type: :string, nullable: true},
-      provider: %Schema{type: :string},
       bank_limit: %Schema{type: :integer, description: "How many banks the user may connect."}
     },
-    required: [:id, :provider, :bank_limit]
+    required: [:id, :bank_limit]
   })
 
   def build(%Spendable.Accounts.Schemas.User{} = user) do
     %__MODULE__{
       id: user.id,
+      email: user.email,
       image: user.image,
-      provider: user.provider,
       bank_limit: user.bank_limit
     }
   end
