@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart' hide Split;
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
+import '../design/band_button.dart';
+import '../design/glass_sheet.dart';
+import '../design/glyph_icon.dart';
+import '../design/ledger_row.dart';
+import '../design/ledger_screen.dart';
+import '../design/money_text.dart';
+import '../design/nav_band.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import '../money.dart';
-import '../theme.dart';
 import 'split_form.dart';
 import 'splits_controller.dart';
 import 'splits_providers.dart';
@@ -26,71 +35,95 @@ class SplitsScreen extends ConsumerWidget {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Splits'),
+    return LedgerScreen(
+      onRefresh: () async => ref.invalidate(splitsProvider),
+      band: NavBand(
+        title: 'Splits',
         actions: [
           if (selection.isNotEmpty)
-            TextButton(
+            BandButton(
               key: const Key('archive-selected'),
+              label: 'Archive (${selection.length})',
               onPressed: () => ref.read(splitsControllerProvider.notifier).archive(selection),
-              child: Text('Archive (${selection.length})'),
             ),
-          IconButton(
-            key: const Key('new-split'),
-            icon: const Icon(Icons.add),
-            onPressed: () => openSplitForm(context),
-          ),
+          BandButton(key: const Key('new-split'), icon: Glyph.plus, onPressed: () => openSplitForm(context)),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(splitsProvider),
-        child: switch (splits) {
-          AsyncData(value: final splits) when splits.isEmpty => const _Message('No splits yet.'),
-          AsyncData(value: final splits) => ListView.separated(
+      slivers: switch (splits) {
+        AsyncData(value: final splits) when splits.isEmpty => const [_Message('No splits yet.')],
+        AsyncData(value: final splits) => [
+          SliverList.builder(
             itemCount: splits.length,
-            separatorBuilder: (_, _) => const Divider(height: 1),
-            itemBuilder: (_, index) =>
-                _Row(split: splits[index], selected: selection.contains(splits[index].id)),
+            itemBuilder: (_, index) => _Row(
+              split: splits[index],
+              selected: selection.contains(splits[index].id),
+              selecting: selection.isNotEmpty,
+            ),
           ),
-          AsyncError(:final error) => _Message('$error'),
-          _ => const Center(child: CircularProgressIndicator()),
-        },
-      ),
+        ],
+        AsyncError(:final error) => [_Message('$error')],
+        _ => const [
+          SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
+        ],
+      },
     );
   }
 }
 
-Future<void> openSplitForm(BuildContext context, {Split? split}) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  builder: (_) => SplitForm(split: split),
-);
+Future<void> openSplitForm(BuildContext context, {Split? split}) =>
+    showGlassSheet<void>(context, (_) => SplitForm(split: split));
 
 class _Row extends ConsumerWidget {
-  const _Row({required this.split, required this.selected});
+  const _Row({required this.split, required this.selected, required this.selecting});
 
   final Split split;
   final bool selected;
+  final bool selecting;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = SpendableColors.of(context);
     final total = split.splitLines.fold(money('0'), (sum, line) => sum + money(line.amount));
 
-    return ListTile(
+    return LedgerRow(
       key: Key('split-${split.id}'),
+      selected: selected,
       onTap: () => openSplitForm(context, split: split),
-      leading: Checkbox(
-        key: Key('select-split-${split.id}'),
-        value: selected,
-        onChanged: (_) => ref.read(splitSelectionProvider.notifier).toggle(split.id),
+      onLongPress: () {
+        HapticFeedback.selectionClick();
+        ref.read(splitSelectionProvider.notifier).toggle(split.id);
+      },
+      child: Row(
+        children: [
+          if (selecting)
+            GestureDetector(
+              key: Key('select-split-${split.id}'),
+              behavior: HitTestBehavior.opaque,
+              onTap: () => ref.read(splitSelectionProvider.notifier).toggle(split.id),
+              child: Padding(
+                padding: const EdgeInsets.only(right: SpendableSpace.step),
+                child: GlyphIcon(
+                  selected ? Glyph.checkCircleFill : Glyph.circle,
+                  size: 22,
+                  color: selected ? colors.accent : colors.tertiary,
+                ),
+              ),
+            ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(split.name, style: SpendableType.title.copyWith(color: colors.primary)),
+                Text(
+                  '${split.splitLines.length} ${split.splitLines.length == 1 ? 'line' : 'lines'}',
+                  style: SpendableType.subhead.copyWith(color: colors.secondary),
+                ),
+              ],
+            ),
+          ),
+          MoneyText(total, style: SpendableType.moneyRow),
+        ],
       ),
-      title: Text(split.name),
-      subtitle: Text(
-        '${split.splitLines.length} ${split.splitLines.length == 1 ? 'line' : 'lines'}',
-        style: const TextStyle(color: SpendableColors.muted, fontSize: 12),
-      ),
-      trailing: Text(formatCurrency(total), style: const TextStyle(fontWeight: FontWeight.w600)),
     );
   }
 }
@@ -102,13 +135,18 @@ class _Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(text, textAlign: TextAlign.center),
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.all(SpendableSpace.block),
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: SpendableType.body.copyWith(color: SpendableColors.of(context).secondary),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

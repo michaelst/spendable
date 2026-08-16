@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spendable/design/theme.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/budgets/budgets_screen.dart';
 
@@ -52,7 +53,7 @@ Future<FakeApi> _pump(WidgetTester tester, {Map<String, ({int status, Object? bo
   await tester.pumpWidget(
     ProviderScope(
       overrides: [apiProvider.overrideWithValue(api.build())],
-      child: const MaterialApp(home: BudgetsScreen()),
+      child: MaterialApp(theme: spendableTheme(Brightness.light), home: const BudgetsScreen()),
     ),
   );
 
@@ -80,7 +81,7 @@ void main() {
   });
 
   // Card debt reads as a budget here, but only against the current month.
-  testWidgets('slots credit cards in behind Spendable as a negative balance', (tester) async {
+  testWidgets('sets credit cards apart as a negative balance', (tester) async {
     await _pump(
       tester,
       replies: {'GET /api/budgets/summary': (status: 200, body: _summary(creditCardBalance: '325.50'))},

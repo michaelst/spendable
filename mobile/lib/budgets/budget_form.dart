@@ -1,14 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
+import '../design/primary_button.dart';
+import '../design/sheet_header.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import 'budgets_controller.dart';
 
 const _types = {
   BudgetRequestTypeEnum.envelope: 'Envelope',
   BudgetRequestTypeEnum.goal: 'Goal',
-  BudgetRequestTypeEnum.tracking: 'Track spending only',
+  BudgetRequestTypeEnum.tracking: 'Tracking',
 };
 
 /// Editing one budget. `balance` is what the user wants allocated; the server diffs it into an
@@ -43,6 +48,7 @@ class _BudgetFormState extends ConsumerState<BudgetForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = SpendableColors.of(context);
     final state = ref.watch(budgetsControllerProvider);
     final errors = state.error is ApiError
         ? (state.error! as ApiError).fieldErrors
@@ -51,68 +57,72 @@ class _BudgetFormState extends ConsumerState<BudgetForm> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+        left: SpendableSpace.gutter,
+        right: SpendableSpace.gutter,
+        top: SpendableSpace.step,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + SpendableSpace.block,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.budget == null ? 'New budget' : 'Edit budget',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
+          SheetHeader(title: widget.budget == null ? 'New budget' : 'Edit budget'),
+          const SizedBox(height: SpendableSpace.step),
           TextField(
             key: const Key('budget-name'),
             controller: _name,
+            style: SpendableType.body.copyWith(color: colors.primary),
             decoration: InputDecoration(labelText: 'Name', errorText: errors['/name']),
           ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField(
+          const SizedBox(height: SpendableSpace.gutter),
+          CupertinoSlidingSegmentedControl<BudgetRequestTypeEnum>(
             key: const Key('budget-type'),
-            initialValue: _type,
-            decoration: const InputDecoration(labelText: 'Budget type'),
-            items: [
+            groupValue: _type,
+            backgroundColor: colors.separator,
+            thumbColor: colors.ground,
+            children: {
               for (final entry in _types.entries)
-                DropdownMenuItem(value: entry.key, child: Text(entry.value)),
-            ],
-            onChanged: (value) => setState(() => _type = value ?? _type),
+                entry.key: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: SpendableSpace.tight),
+                  child: Text(entry.value, style: SpendableType.body.copyWith(color: colors.primary)),
+                ),
+            },
+            onValueChanged: (value) => setState(() => _type = value ?? _type),
           ),
           if (!tracking) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: SpendableSpace.tight),
             TextField(
               key: const Key('budget-amount'),
               controller: _budgetedAmount,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: SpendableType.moneyInline.copyWith(color: colors.primary),
               decoration: InputDecoration(
                 labelText: _type == BudgetRequestTypeEnum.goal ? 'Goal amount' : 'Budgeted amount',
                 errorText: errors['/budgeted_amount'],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: SpendableSpace.gutter),
             TextField(
               key: const Key('budget-balance'),
               controller: _balance,
               keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+              style: SpendableType.moneyInline.copyWith(color: colors.primary),
               decoration: InputDecoration(labelText: 'Allocated', errorText: errors['/balance']),
             ),
           ],
-          const SizedBox(height: 24),
-          FilledButton(
+          const SizedBox(height: SpendableSpace.block),
+          PrimaryButton(
             key: const Key('budget-save'),
+            label: 'Save',
             onPressed: state.isLoading ? null : _save,
-            child: const Text('Save'),
           ),
           if (widget.budget case final budget?) ...[
-            const SizedBox(height: 8),
-            TextButton(
+            const SizedBox(height: SpendableSpace.tight),
+            PrimaryButton(
               key: const Key('budget-archive'),
+              label: 'Archive budget',
+              variant: ButtonVariant.destructive,
               onPressed: state.isLoading ? null : () => _archive(budget.id),
-              style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
-              child: const Text('Archive budget'),
             ),
           ],
         ],

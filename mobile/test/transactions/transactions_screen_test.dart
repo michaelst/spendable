@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spendable/design/glyph_icon.dart';
+import 'package:spendable/design/theme.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/transactions/transactions_screen.dart';
 
@@ -75,7 +77,7 @@ Future<FakeApi> _pump(WidgetTester tester, {Map<String, ({int status, Object? bo
   await tester.pumpWidget(
     ProviderScope(
       overrides: [apiProvider.overrideWithValue(api.build())],
-      child: const MaterialApp(home: TransactionsScreen()),
+      child: MaterialApp(theme: spendableTheme(Brightness.light), home: const TransactionsScreen()),
     ),
   );
 
@@ -83,6 +85,12 @@ Future<FakeApi> _pump(WidgetTester tester, {Map<String, ({int status, Object? bo
 
   return api;
 }
+
+/// The filled circle a reviewed row carries, wherever it is drawn.
+int _reviewedMarkers(WidgetTester tester) => tester
+    .widgetList<GlyphIcon>(find.byType(GlyphIcon))
+    .where((icon) => icon.glyph == Glyph.checkCircleFill)
+    .length;
 
 void main() {
   // The API hides reviewed rows unless asked; the screen is a queue and wants them shown.
@@ -137,7 +145,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Market'), findsOneWidget);
-    expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    expect(_reviewedMarkers(tester), 1);
   });
 
   testWidgets('selecting two rows offers a transfer', (tester) async {
@@ -161,7 +169,7 @@ void main() {
       }),
     );
 
-    await tester.tap(find.byKey(const Key('select-txn_1')));
+    await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('bulk-transfer')), findsNothing);
@@ -194,7 +202,7 @@ void main() {
       }),
     );
 
-    await tester.tap(find.byKey(const Key('select-txn_1')));
+    await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-txn_2')));
     await tester.pumpAndSettle();
@@ -225,7 +233,7 @@ void main() {
       }),
     );
 
-    await tester.tap(find.byKey(const Key('select-txn_1')));
+    await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-txn_2')));
     await tester.pumpAndSettle();
@@ -234,7 +242,7 @@ void main() {
 
     expect(api.requests.last.data, containsPair('reviewed', true));
     expect(find.byKey(const Key('bulk-review')), findsNothing);
-    expect(find.byIcon(Icons.check_circle), findsNWidgets(2));
+    expect(_reviewedMarkers(tester), 2);
   });
 
   // A bulk delete is applied per transaction, so the ones that failed have to stay on screen.
@@ -258,7 +266,7 @@ void main() {
       }),
     );
 
-    await tester.tap(find.byKey(const Key('select-txn_1')));
+    await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-txn_2')));
     await tester.pumpAndSettle();

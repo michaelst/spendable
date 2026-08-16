@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
+import '../budgets/budget_picker.dart';
 import '../budgets/budgets_providers.dart';
+import '../design/band_button.dart';
+import '../design/caption.dart';
+import '../design/glyph_icon.dart';
+import '../design/ledger_row.dart';
+import '../design/ledger_screen.dart';
+import '../design/money_text.dart';
+import '../design/nav_band.dart';
+import '../design/picker_field.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import '../finance_kit/wallet_sync.dart';
 import '../money.dart';
-import '../theme.dart';
 import 'banks_controller.dart';
 import 'banks_providers.dart';
 
@@ -25,65 +35,104 @@ class BanksScreen extends ConsumerWidget {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Banks'),
+    return LedgerScreen(
+      onRefresh: () async => ref.invalidate(bankMembersProvider),
+      band: NavBand(
+        title: 'Banks',
         actions: [
           if (ref.watch(walletAvailableProvider).value ?? false)
-            IconButton(
+            BandButton(
               key: const Key('connect-apple'),
-              tooltip: 'Connect Apple Card',
-              icon: const Icon(Icons.wallet),
+              icon: Glyph.wallet,
               onPressed: busy ? null : ref.read(banksControllerProvider.notifier).connectApple,
             ),
-          IconButton(
+          BandButton(
             key: const Key('connect-bank'),
-            tooltip: 'Connect a bank',
-            icon: const Icon(Icons.add),
+            icon: Glyph.plus,
             onPressed: busy ? null : ref.read(banksControllerProvider.notifier).connect,
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(bankMembersProvider),
-        child: switch (members) {
-          AsyncData(value: final members) when members.isEmpty => const _Message('No banks connected.'),
-          AsyncData(value: final members) => ListView(
-            children: [for (final member in members) _Member(member: member)],
+      slivers: switch (members) {
+        AsyncData(value: final members) when members.isEmpty => const [_Message('No banks connected.')],
+        AsyncData(value: final members) => [
+          SliverList.builder(
+            itemCount: members.length,
+            itemBuilder: (_, index) => _Member(member: members[index]),
           ),
-          AsyncError(:final error) => _Message('$error'),
-          _ => const Center(child: CircularProgressIndicator()),
-        },
-      ),
+        ],
+        AsyncError(:final error) => [_Message('$error')],
+        _ => const [
+          SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
+        ],
+      },
     );
   }
 }
 
-class _Member extends ConsumerWidget {
+/// A bank and the accounts under it, which stay folded away until the bank is opened.
+class _Member extends ConsumerStatefulWidget {
   const _Member({required this.member});
 
   final BankMember member;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_Member> createState() => _MemberState();
+}
+
+class _MemberState extends ConsumerState<_Member> {
+  var _open = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = SpendableColors.of(context);
     final controller = ref.read(banksControllerProvider.notifier);
+    final member = widget.member;
 
     // Anything other than CONNECTED means Plaid needs the user to go back through Link.
     final connected = member.status == 'CONNECTED';
 
-    return ExpansionTile(
-      key: Key('member-${member.id}'),
-      leading: member.hasLogo ? _Logo(memberId: member.id) : const Icon(Icons.account_balance),
-      title: Text(member.name),
-      subtitle: connected ? null : const Text('Reconnect', style: TextStyle(color: SpendableColors.negative)),
-      trailing: connected
-          ? null
-          : TextButton(
-              key: Key('reconnect-${member.id}'),
-              onPressed: () => controller.reconnect(member.id),
-              child: const Text('Reconnect'),
-            ),
-      children: [for (final account in member.bankAccounts) _Account(account: account)],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LedgerRow(
+          key: Key('member-${member.id}'),
+          onTap: () => setState(() => _open = !_open),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 32,
+                height: 32,
+                child: member.hasLogo
+                    ? _Logo(memberId: member.id)
+                    : GlyphIcon(Glyph.bank, size: 24, color: colors.secondary),
+              ),
+              const SizedBox(width: SpendableSpace.step),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(member.name, style: SpendableType.title.copyWith(color: colors.primary)),
+                    if (!connected) Caption('Reconnect', color: colors.negative),
+                  ],
+                ),
+              ),
+              if (!connected)
+                BandButton(
+                  key: Key('reconnect-${member.id}'),
+                  label: 'Reconnect',
+                  onPressed: () => controller.reconnect(member.id),
+                ),
+              RotatedBox(
+                quarterTurns: _open ? 1 : 0,
+                child: GlyphIcon(Glyph.caretRight, size: 14, color: colors.tertiary),
+              ),
+            ],
+          ),
+        ),
+        if (_open)
+          for (final account in member.bankAccounts) _Account(account: account),
+      ],
     );
   }
 }
@@ -95,14 +144,10 @@ class _Logo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      width: 32,
-      height: 32,
-      child: switch (ref.watch(bankLogoProvider(memberId))) {
-        AsyncData(value: final bytes) => Image.memory(bytes, fit: BoxFit.contain),
-        _ => const Icon(Icons.account_balance),
-      },
-    );
+    return switch (ref.watch(bankLogoProvider(memberId))) {
+      AsyncData(value: final bytes) => Image.memory(bytes, fit: BoxFit.contain),
+      _ => GlyphIcon(Glyph.bank, size: 24, color: SpendableColors.of(context).secondary),
+    };
   }
 }
 
@@ -113,14 +158,20 @@ class _Account extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = SpendableColors.of(context);
     final controller = ref.read(banksControllerProvider.notifier);
     final budgets = ref.watch(budgetOptionsProvider).value ?? const <Budget>[];
 
-    // An account that is not synced counts toward nothing, and reads that way.
-    final color = account.sync_ ? Colors.white : SpendableColors.muted;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+    return LedgerRow(
+      // An account that is not synced counts toward nothing, and reads that way.
+      dimmed: !account.sync_,
+      ruleInset: SpendableSpace.block,
+      padding: const EdgeInsets.fromLTRB(
+        SpendableSpace.block,
+        SpendableSpace.tight,
+        SpendableSpace.gutter,
+        SpendableSpace.tight,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -132,38 +183,31 @@ class _Account extends ConsumerWidget {
                   children: [
                     Text(
                       '${account.name} ••••${account.number ?? ''}',
-                      style: TextStyle(color: color, fontWeight: FontWeight.w600),
+                      style: SpendableType.body.copyWith(color: colors.primary),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      account.subType.toUpperCase(),
-                      style: const TextStyle(color: SpendableColors.muted, fontSize: 11),
-                    ),
+                    Caption(account.subType),
                   ],
                 ),
               ),
-              Text(formatCurrency(money(account.balance)), style: TextStyle(color: color)),
-              Switch(
+              MoneyText(money(account.balance), style: SpendableType.moneyInline),
+              const SizedBox(width: SpendableSpace.tight),
+              Switch.adaptive(
                 key: Key('sync-account-${account.id}'),
                 value: account.sync_,
                 onChanged: (value) => controller.setSync(account, sync: value),
               ),
             ],
           ),
-          DropdownButtonFormField<String?>(
+          PickerField(
             key: Key('budget-for-${account.id}'),
-            initialValue: account.budgetId,
-            isExpanded: true,
-            decoration: const InputDecoration(isDense: true),
-            items: [
-              const DropdownMenuItem(child: Text('Assign to budget')),
-              for (final budget in budgets)
-                DropdownMenuItem(
-                  value: budget.id,
-                  child: Text(budget.name, overflow: TextOverflow.ellipsis),
-                ),
-            ],
-            onChanged: (value) => controller.assignBudget(account, value),
+            label: 'Assign to budget',
+            value: budgets.where((budget) => budget.id == account.budgetId).firstOrNull?.name,
+            onTap: () async {
+              final chosen = await pickBudget(context, ref);
+
+              if (chosen != null) await controller.assignBudget(account, chosen.id);
+            },
           ),
         ],
       ),
@@ -178,13 +222,18 @@ class _Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(text, textAlign: TextAlign.center),
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.all(SpendableSpace.block),
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: SpendableType.body.copyWith(color: SpendableColors.of(context).secondary),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

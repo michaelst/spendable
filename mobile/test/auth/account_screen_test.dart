@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spendable/design/theme.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/auth/account_screen.dart';
 import 'package:spendable/auth/auth_controller.dart';
@@ -30,7 +31,7 @@ Future<void> _pump(
         deviceNameProvider.overrideWith((ref) async => 'iPhone'),
         apiProvider.overrideWithValue(api.build()),
       ],
-      child: const MaterialApp(home: AccountScreen()),
+      child: MaterialApp(theme: spendableTheme(Brightness.light), home: const AccountScreen()),
     ),
   );
 

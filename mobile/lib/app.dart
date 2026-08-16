@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth/auth_controller.dart';
 import 'auth/sign_in_screen.dart';
 import 'banks/plaid_oauth_links.dart';
+import 'design/theme.dart';
 import 'shell.dart';
-import 'theme.dart';
 
 class SpendableApp extends ConsumerWidget {
   const SpendableApp({super.key});
@@ -19,7 +19,9 @@ class SpendableApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'Spendable',
-      theme: spendableTheme(),
+      theme: spendableTheme(Brightness.light),
+      darkTheme: spendableTheme(Brightness.dark),
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       // Null only while the first Keychain read is in flight. Signing in and out never puts this
       // back into loading, so the screen cannot fall back to the splash mid-flow.
