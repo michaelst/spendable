@@ -16,7 +16,8 @@ final splitsControllerProvider = SplitsControllerProvider._();
 
 /// Writing splits. Archiving several is N requests rather than a bulk endpoint, because a user
 /// has a handful of splits, not a page of them.
-final class SplitsControllerProvider extends $NotifierProvider<SplitsController, AsyncValue<void>> {
+final class SplitsControllerProvider
+    extends $NotifierProvider<SplitsController, AsyncValue<void>> {
   /// Writing splits. Archiving several is N requests rather than a bulk endpoint, because a user
   /// has a handful of splits, not a page of them.
   SplitsControllerProvider._()
@@ -39,7 +40,10 @@ final class SplitsControllerProvider extends $NotifierProvider<SplitsController,
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AsyncValue<void>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
   }
 }
 

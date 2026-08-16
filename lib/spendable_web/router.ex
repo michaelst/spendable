@@ -46,6 +46,7 @@ defmodule SpendableWeb.Router do
     # before the resource path, but clients still probe the bare one.
     get "/oauth-protected-resource", WellKnownController, :oauth_protected_resource
     get "/oauth-protected-resource/mcp", WellKnownController, :oauth_protected_resource
+    get "/apple-app-site-association", WellKnownController, :apple_app_site_association
   end
 
   scope "/oauth", SpendableWeb do
@@ -68,6 +69,10 @@ defmodule SpendableWeb.Router do
     delete "/logout", AuthController, :delete
 
     get "/privacy-policy", PageController, :privacy_policy
+
+    # The iOS app claims this as a universal link, so this route only answers when the app is not
+    # there to intercept it.
+    get "/plaid-oauth", PageController, :plaid_oauth
 
     get "/banks/:id/logo", BankLogoController, :show
   end

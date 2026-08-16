@@ -29,5 +29,23 @@ defmodule SpendableWeb.WellKnownController do
     })
   end
 
+  @doc """
+  Claims `/plaid-oauth` for the iOS app, so the bank's OAuth page returns to Link rather than to
+  Safari. Apple fetches this itself over https and caches it, so a change takes a while to reach
+  devices that have already seen the old one.
+  """
+  def apple_app_site_association(conn, _params) do
+    json(conn, %{
+      applinks: %{
+        details: [
+          %{
+            appIDs: [Application.get_env(:spendable, :ios_app_id)],
+            components: [%{"/" => "/plaid-oauth*"}]
+          }
+        ]
+      }
+    })
+  end
+
   defp issuer, do: :spendable |> Application.get_env(:issuer) |> String.trim_trailing("/")
 end

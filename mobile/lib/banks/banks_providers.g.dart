@@ -13,7 +13,12 @@ part of 'banks_providers.dart';
 final bankMembersProvider = BankMembersProvider._();
 
 final class BankMembersProvider
-    extends $FunctionalProvider<AsyncValue<List<BankMember>>, List<BankMember>, FutureOr<List<BankMember>>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<BankMember>>,
+          List<BankMember>,
+          FutureOr<List<BankMember>>
+        >
     with $FutureModifier<List<BankMember>>, $FutureProvider<List<BankMember>> {
   BankMembersProvider._()
     : super(
@@ -31,8 +36,9 @@ final class BankMembersProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<BankMember>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<List<BankMember>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<BankMember>> create(Ref ref) {
@@ -52,18 +58,25 @@ final bankLogoProvider = BankLogoFamily._();
 /// the same client and held per member instead of by an image cache.
 
 final class BankLogoProvider
-    extends $FunctionalProvider<AsyncValue<Uint8List>, Uint8List, FutureOr<Uint8List>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<Uint8List>,
+          Uint8List,
+          FutureOr<Uint8List>
+        >
     with $FutureModifier<Uint8List>, $FutureProvider<Uint8List> {
   /// Logos come down the authenticated API rather than a public URL, so they are fetched through
   /// the same client and held per member instead of by an image cache.
-  BankLogoProvider._({required BankLogoFamily super.from, required String super.argument})
-    : super(
-        retry: null,
-        name: r'bankLogoProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  BankLogoProvider._({
+    required BankLogoFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'bankLogoProvider',
+         isAutoDispose: false,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$bankLogoHash();
@@ -102,7 +115,8 @@ String _$bankLogoHash() => r'38aa22032bc1b610fa9d253aeab30c015aba8a83';
 /// Logos come down the authenticated API rather than a public URL, so they are fetched through
 /// the same client and held per member instead of by an image cache.
 
-final class BankLogoFamily extends $Family with $FunctionalFamilyOverride<FutureOr<Uint8List>, String> {
+final class BankLogoFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Uint8List>, String> {
   BankLogoFamily._()
     : super(
         retry: null,
@@ -115,7 +129,8 @@ final class BankLogoFamily extends $Family with $FunctionalFamilyOverride<Future
   /// Logos come down the authenticated API rather than a public URL, so they are fetched through
   /// the same client and held per member instead of by an image cache.
 
-  BankLogoProvider call(String memberId) => BankLogoProvider._(argument: memberId, from: this);
+  BankLogoProvider call(String memberId) =>
+      BankLogoProvider._(argument: memberId, from: this);
 
   @override
   String toString() => r'bankLogoProvider';

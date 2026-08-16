@@ -15,7 +15,8 @@ final currentUserProvider = CurrentUserProvider._();
 
 /// The account behind the stored token. Invalidate after anything that changes it.
 
-final class CurrentUserProvider extends $FunctionalProvider<AsyncValue<User>, User, FutureOr<User>>
+final class CurrentUserProvider
+    extends $FunctionalProvider<AsyncValue<User>, User, FutureOr<User>>
     with $FutureModifier<User>, $FutureProvider<User> {
   /// The account behind the stored token. Invalidate after anything that changes it.
   CurrentUserProvider._()
@@ -34,7 +35,8 @@ final class CurrentUserProvider extends $FunctionalProvider<AsyncValue<User>, Us
 
   @$internal
   @override
-  $FutureProviderElement<User> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<User> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<User> create(Ref ref) {

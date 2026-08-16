@@ -12,7 +12,8 @@ part of 'transactions_providers.dart';
 @ProviderFor(Filters)
 final filtersProvider = FiltersProvider._();
 
-final class FiltersProvider extends $NotifierProvider<Filters, TransactionFilters> {
+final class FiltersProvider
+    extends $NotifierProvider<Filters, TransactionFilters> {
   FiltersProvider._()
     : super(
         from: null,
@@ -33,7 +34,10 @@ final class FiltersProvider extends $NotifierProvider<Filters, TransactionFilter
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(TransactionFilters value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<TransactionFilters>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TransactionFilters>(value),
+    );
   }
 }
 
@@ -63,7 +67,8 @@ abstract class _$Filters extends $Notifier<TransactionFilters> {
 final transactionsProvider = TransactionsProvider._();
 
 /// Pages append rather than replace. A page shorter than what was asked for is the last one.
-final class TransactionsProvider extends $AsyncNotifierProvider<Transactions, TransactionPage> {
+final class TransactionsProvider
+    extends $AsyncNotifierProvider<Transactions, TransactionPage> {
   /// Pages append rather than replace. A page shorter than what was asked for is the last one.
   TransactionsProvider._()
     : super(
@@ -109,7 +114,8 @@ abstract class _$Transactions extends $AsyncNotifier<TransactionPage> {
 @ProviderFor(Selection)
 final selectionProvider = SelectionProvider._();
 
-final class SelectionProvider extends $NotifierProvider<Selection, Set<String>> {
+final class SelectionProvider
+    extends $NotifierProvider<Selection, Set<String>> {
   SelectionProvider._()
     : super(
         from: null,
@@ -130,7 +136,10 @@ final class SelectionProvider extends $NotifierProvider<Selection, Set<String>> 
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Set<String> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Set<String>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
   }
 }
 
@@ -144,7 +153,12 @@ abstract class _$Selection extends $Notifier<Set<String>> {
     final ref = this.ref as $Ref<Set<String>, Set<String>>;
     final element =
         ref.element
-            as $ClassProviderElement<AnyNotifier<Set<String>, Set<String>>, Set<String>, Object?, Object?>;
+            as $ClassProviderElement<
+              AnyNotifier<Set<String>, Set<String>>,
+              Set<String>,
+              Object?,
+              Object?
+            >;
     return element.handleCreate(ref, build);
   }
 }

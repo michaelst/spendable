@@ -15,7 +15,8 @@ final deviceNameProvider = DeviceNameProvider._();
 
 /// Labels the token row so the account screen can tell one device from another.
 
-final class DeviceNameProvider extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
+final class DeviceNameProvider
+    extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
     with $FutureModifier<String?>, $FutureProvider<String?> {
   /// Labels the token row so the account screen can tell one device from another.
   DeviceNameProvider._()
@@ -34,7 +35,8 @@ final class DeviceNameProvider extends $FunctionalProvider<AsyncValue<String?>, 
 
   @$internal
   @override
-  $FutureProviderElement<String?> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<String?> create(Ref ref) {
@@ -91,7 +93,12 @@ abstract class _$AuthState extends $AsyncNotifier<bool> {
     final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
     final element =
         ref.element
-            as $ClassProviderElement<AnyNotifier<AsyncValue<bool>, bool>, AsyncValue<bool>, Object?, Object?>;
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<bool>, bool>,
+              AsyncValue<bool>,
+              Object?,
+              Object?
+            >;
     return element.handleCreate(ref, build);
   }
 }
@@ -102,7 +109,8 @@ abstract class _$AuthState extends $AsyncNotifier<bool> {
 final authControllerProvider = AuthControllerProvider._();
 
 /// Signing in and out. Its own state is the progress and failure of the attempt.
-final class AuthControllerProvider extends $NotifierProvider<AuthController, AsyncValue<void>> {
+final class AuthControllerProvider
+    extends $NotifierProvider<AuthController, AsyncValue<void>> {
   /// Signing in and out. Its own state is the progress and failure of the attempt.
   AuthControllerProvider._()
     : super(
@@ -124,7 +132,10 @@ final class AuthControllerProvider extends $NotifierProvider<AuthController, Asy
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AsyncValue<void>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
   }
 }
 

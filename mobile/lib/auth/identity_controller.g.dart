@@ -16,7 +16,8 @@ final identityControllerProvider = IdentityControllerProvider._();
 
 /// Attaching and removing ways of signing in. Linking is an authenticated action rather than
 /// something inferred from a shared email, because Spendable stores no email to match on.
-final class IdentityControllerProvider extends $NotifierProvider<IdentityController, AsyncValue<void>> {
+final class IdentityControllerProvider
+    extends $NotifierProvider<IdentityController, AsyncValue<void>> {
   /// Attaching and removing ways of signing in. Linking is an authenticated action rather than
   /// something inferred from a shared email, because Spendable stores no email to match on.
   IdentityControllerProvider._()
@@ -39,11 +40,15 @@ final class IdentityControllerProvider extends $NotifierProvider<IdentityControl
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AsyncValue<void>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
   }
 }
 
-String _$identityControllerHash() => r'8d5b40c89972809f4bb7778c039b065531b3fe3e';
+String _$identityControllerHash() =>
+    r'8d5b40c89972809f4bb7778c039b065531b3fe3e';
 
 /// Attaching and removing ways of signing in. Linking is an authenticated action rather than
 /// something inferred from a shared email, because Spendable stores no email to match on.

@@ -14,7 +14,8 @@ part of 'budgets_providers.dart';
 final selectedMonthProvider = SelectedMonthProvider._();
 
 /// Null leaves the choice to the server, which answers for the current month.
-final class SelectedMonthProvider extends $NotifierProvider<SelectedMonth, Date?> {
+final class SelectedMonthProvider
+    extends $NotifierProvider<SelectedMonth, Date?> {
   /// Null leaves the choice to the server, which answers for the current month.
   SelectedMonthProvider._()
     : super(
@@ -36,7 +37,10 @@ final class SelectedMonthProvider extends $NotifierProvider<SelectedMonth, Date?
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Date? value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Date?>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Date?>(value),
+    );
   }
 }
 
@@ -50,7 +54,14 @@ abstract class _$SelectedMonth extends $Notifier<Date?> {
   @override
   WhenComplete runBuild() {
     final ref = this.ref as $Ref<Date?, Date?>;
-    final element = ref.element as $ClassProviderElement<AnyNotifier<Date?, Date?>, Date?, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Date?, Date?>,
+              Date?,
+              Object?,
+              Object?
+            >;
     return element.handleCreate(ref, build);
   }
 }
@@ -58,7 +69,8 @@ abstract class _$SelectedMonth extends $Notifier<Date?> {
 @ProviderFor(BudgetSearch)
 final budgetSearchProvider = BudgetSearchProvider._();
 
-final class BudgetSearchProvider extends $NotifierProvider<BudgetSearch, String?> {
+final class BudgetSearchProvider
+    extends $NotifierProvider<BudgetSearch, String?> {
   BudgetSearchProvider._()
     : super(
         from: null,
@@ -79,7 +91,10 @@ final class BudgetSearchProvider extends $NotifierProvider<BudgetSearch, String?
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String? value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String?>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
   }
 }
 
@@ -92,7 +107,13 @@ abstract class _$BudgetSearch extends $Notifier<String?> {
   WhenComplete runBuild() {
     final ref = this.ref as $Ref<String?, String?>;
     final element =
-        ref.element as $ClassProviderElement<AnyNotifier<String?, String?>, String?, Object?, Object?>;
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
     return element.handleCreate(ref, build);
   }
 }
@@ -101,7 +122,12 @@ abstract class _$BudgetSearch extends $Notifier<String?> {
 final budgetSummaryProvider = BudgetSummaryProvider._();
 
 final class BudgetSummaryProvider
-    extends $FunctionalProvider<AsyncValue<BudgetSummary>, BudgetSummary, FutureOr<BudgetSummary>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<BudgetSummary>,
+          BudgetSummary,
+          FutureOr<BudgetSummary>
+        >
     with $FutureModifier<BudgetSummary>, $FutureProvider<BudgetSummary> {
   BudgetSummaryProvider._()
     : super(
@@ -119,8 +145,9 @@ final class BudgetSummaryProvider
 
   @$internal
   @override
-  $FutureProviderElement<BudgetSummary> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<BudgetSummary> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<BudgetSummary> create(Ref ref) {
@@ -138,7 +165,12 @@ final budgetOptionsProvider = BudgetOptionsProvider._();
 /// The budget picker every other screen offers.
 
 final class BudgetOptionsProvider
-    extends $FunctionalProvider<AsyncValue<List<Budget>>, List<Budget>, FutureOr<List<Budget>>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Budget>>,
+          List<Budget>,
+          FutureOr<List<Budget>>
+        >
     with $FutureModifier<List<Budget>>, $FutureProvider<List<Budget>> {
   /// The budget picker every other screen offers.
   BudgetOptionsProvider._()
@@ -157,8 +189,9 @@ final class BudgetOptionsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<Budget>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<List<Budget>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<Budget>> create(Ref ref) {

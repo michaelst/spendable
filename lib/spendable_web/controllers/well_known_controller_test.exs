@@ -25,4 +25,21 @@ defmodule SpendableWeb.WellKnownControllerTest do
              } = json_response(get(conn, path), 200)
     end
   end
+
+  # Apple reads this to decide whether the app may claim spendable.money links, which is what
+  # lets a bank's OAuth page return to Plaid Link rather than to Safari.
+  test "hands the iOS app the paths it may claim", %{conn: conn} do
+    response = json_response(get(conn, ~p"/.well-known/apple-app-site-association"), 200)
+
+    assert %{
+             "applinks" => %{
+               "details" => [
+                 %{
+                   "appIDs" => ["A4TA99R8XM.fiftysevenmedia.Spendable"],
+                   "components" => [%{"/" => "/plaid-oauth*"}]
+                 }
+               ]
+             }
+           } = response
+  end
 end

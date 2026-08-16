@@ -13,7 +13,12 @@ part of 'splits_providers.dart';
 final splitsProvider = SplitsProvider._();
 
 final class SplitsProvider
-    extends $FunctionalProvider<AsyncValue<List<Split>>, List<Split>, FutureOr<List<Split>>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Split>>,
+          List<Split>,
+          FutureOr<List<Split>>
+        >
     with $FutureModifier<List<Split>>, $FutureProvider<List<Split>> {
   SplitsProvider._()
     : super(
@@ -31,8 +36,9 @@ final class SplitsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<Split>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<List<Split>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<Split>> create(Ref ref) {
@@ -45,7 +51,8 @@ String _$splitsHash() => r'88eea8e32b6a3b092b45352388a91742265c0fd6';
 @ProviderFor(SplitSelection)
 final splitSelectionProvider = SplitSelectionProvider._();
 
-final class SplitSelectionProvider extends $NotifierProvider<SplitSelection, Set<String>> {
+final class SplitSelectionProvider
+    extends $NotifierProvider<SplitSelection, Set<String>> {
   SplitSelectionProvider._()
     : super(
         from: null,
@@ -66,7 +73,10 @@ final class SplitSelectionProvider extends $NotifierProvider<SplitSelection, Set
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(Set<String> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<Set<String>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
   }
 }
 
@@ -80,7 +90,12 @@ abstract class _$SplitSelection extends $Notifier<Set<String>> {
     final ref = this.ref as $Ref<Set<String>, Set<String>>;
     final element =
         ref.element
-            as $ClassProviderElement<AnyNotifier<Set<String>, Set<String>>, Set<String>, Object?, Object?>;
+            as $ClassProviderElement<
+              AnyNotifier<Set<String>, Set<String>>,
+              Set<String>,
+              Object?,
+              Object?
+            >;
     return element.handleCreate(ref, build);
   }
 }
