@@ -15,7 +15,7 @@ defmodule SpendableWeb.MCP.Tools.ListTransactions do
     field :show_reviewed, :boolean, description: "Include transactions the user has already reviewed."
     field :show_excluded, :boolean, description: "Include transactions excluded from spending."
     field :page, :integer, description: "1-based page of results, for reading past the first page."
-    field :per_page, :integer, description: "How many transactions to return, 25 by default."
+    field :per_page, :integer, description: "How many transactions to return, 25 by default and 100 at most."
   end
 
   @impl true
@@ -27,7 +27,7 @@ defmodule SpendableWeb.MCP.Tools.ListTransactions do
         show_reviewed: params[:show_reviewed],
         show_excluded: params[:show_excluded],
         page: params[:page],
-        per_page: params[:per_page]
+        per_page: per_page(params[:per_page])
       )
       |> Enum.map(
         &%{
@@ -50,4 +50,8 @@ defmodule SpendableWeb.MCP.Tools.ListTransactions do
 
     {:reply, Response.structured(Response.tool(), %{transactions: transactions}), frame}
   end
+
+  # An agent asking for a hundred thousand rows should get a page, not the whole table.
+  defp per_page(nil), do: nil
+  defp per_page(per_page), do: per_page |> max(1) |> min(100)
 end

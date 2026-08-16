@@ -74,6 +74,23 @@ defmodule SpendableWeb.MCP.Tools.ListTransactionsTest do
              ListTransactions.execute(%{page: 2, per_page: 1}, frame)
   end
 
+  test "will not hand over the whole table however much is asked for", %{frame: frame, scope: scope} do
+    for day <- 1..3 do
+      {:ok, _transaction} =
+        Transactions.create_transaction(scope, %{
+          "name" => "Market",
+          "amount" => "-40.00",
+          "date" => "2026-08-0#{day}"
+        })
+    end
+
+    assert {:reply, %Response{structured_content: %{transactions: [_one, _two, _three]}}, ^frame} =
+             ListTransactions.execute(%{per_page: 1_000_000}, frame)
+
+    assert {:reply, %Response{structured_content: %{transactions: [_only]}}, ^frame} =
+             ListTransactions.execute(%{per_page: 0}, frame)
+  end
+
   test "does not list another user's transactions", %{frame: frame} do
     {:ok, other_user} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
