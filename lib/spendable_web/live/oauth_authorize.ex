@@ -3,9 +3,7 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
 
   alias Spendable.OAuth
 
-  # What approving actually hands over, in the order it matters. The last row is the boundary rather
-  # than a permission: there are no bank tools, and someone deciding whether to trust an app wants
-  # that said out loud rather than inferred from a list it is missing from.
+  # What approving actually hands over, in the order it matters.
   @permissions [
     %{
       icon: "pi-money",
@@ -21,11 +19,6 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
       icon: "pi-copy",
       title: "Change budgets, splits and allocations",
       detail: "Create and rename them, and decide how a transaction is divided."
-    },
-    %{
-      icon: "pi-bank",
-      title: "Never your bank connections",
-      detail: "It cannot see or change a linked bank, and never reaches a credential."
     }
   ]
 
@@ -53,7 +46,7 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
 
     ~H"""
     <.auth_backdrop />
-    <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32 bg-white h-full">
+    <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32 bg-white min-h-screen">
       <div class="mx-auto max-w-xl lg:mx-0">
         <img class="h-12" src={~p"/images/full-logo.svg"} alt="Spendable" />
 
@@ -73,7 +66,7 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
   def render(assigns) do
     ~H"""
     <.auth_backdrop />
-    <div class="px-4 py-10 sm:px-6 sm:py-12 lg:px-8 xl:px-28 xl:py-14 bg-white h-full">
+    <div class="px-4 py-10 sm:px-6 sm:py-12 lg:px-8 xl:px-28 xl:py-14 bg-white min-h-screen">
       <div class="mx-auto max-w-xl lg:mx-0">
         <img class="h-12" src={~p"/images/full-logo.svg"} alt="Spendable" />
 

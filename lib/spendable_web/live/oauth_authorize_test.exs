@@ -40,7 +40,7 @@ defmodule SpendableWeb.Live.OAuthAuthorizeTest do
 
     assert html =~ "Claude wants access to your Spendable account"
     assert html =~ "https://claude.ai/api/mcp/auth_callback"
-    assert html =~ "Never your bank connections"
+    assert html =~ "Change budgets, splits and allocations"
 
     assert {:error, {:redirect, %{to: redirect_uri}}} =
              view |> element("#approve") |> render_click()
