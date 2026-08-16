@@ -10,7 +10,11 @@ defmodule SpendableWeb.Live.OAuthAuthorizeTest do
 
   setup %{conn: conn} do
     {:ok, user} =
-      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+      Accounts.upsert_user_from_oauth(%{
+        external_id: Ecto.UUID.generate(),
+        provider: "google",
+        image: "https://example.test/avatar.png"
+      })
 
     {:ok, client, nil} =
       OAuth.register_client(%{
@@ -65,6 +69,30 @@ defmodule SpendableWeb.Live.OAuthAuthorizeTest do
       live(conn, ~p"/oauth/authorize?#{%{request | "client_id" => "oc_nosuchclient"}}")
 
     assert html =~ "not registered with Spendable"
+  end
+
+  test "reports a request that names neither an app nor where to return", %{conn: conn, request: request} do
+    {:ok, _view, html} = live(conn, ~p"/oauth/authorize")
+    assert html =~ "did not say which app"
+
+    {:ok, _view, html} = live(conn, ~p"/oauth/authorize?#{Map.delete(request, "redirect_uri")}")
+    assert html =~ "did not say where to send you"
+  end
+
+  test "names the port a local client will be sent back on", %{conn: conn} do
+    {:ok, client, nil} =
+      OAuth.register_client(%{
+        "client_name" => "Editor",
+        "redirect_uris" => ["http://localhost:8123/callback"]
+      })
+
+    {:ok, _view, html} =
+      live(
+        conn,
+        ~p"/oauth/authorize?#{%{"client_id" => client.id, "redirect_uri" => "http://localhost:8123/callback", "response_type" => "code", "code_challenge" => "abc123", "code_challenge_method" => "S256", "resource" => @resource}}"
+      )
+
+    assert html =~ "localhost:8123"
   end
 
   test "sends a request the client can be told about straight back to it", %{conn: conn, request: request} do

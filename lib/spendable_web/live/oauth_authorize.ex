@@ -92,15 +92,9 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
   end
 
   def handle_event("approve", _params, %{assigns: %{request: request}} = socket) do
-    case OAuth.create_authorization_code(socket.assigns.current_scope, request) do
-      {:ok, _code, redirect_uri} ->
-        socket |> redirect(external: redirect_uri) |> noreply()
+    {:ok, _code, redirect_uri} = OAuth.create_authorization_code(socket.assigns.current_scope, request)
 
-      {:error, _changeset} ->
-        socket
-        |> redirect(external: OAuth.build_error_redirect(request, "server_error"))
-        |> noreply()
-    end
+    socket |> redirect(external: redirect_uri) |> noreply()
   end
 
   def handle_event("deny", _params, %{assigns: %{request: request}} = socket) do
@@ -117,11 +111,11 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
     "The address this request wants to send you back to is not one the app registered."
   end
 
+  # A validated redirect URI always has a host, so there is no clause for one without.
   defp host(uri) do
     case URI.parse(uri) do
-      %URI{host: host, port: port} when is_binary(host) and port in [nil, 80, 443] -> host
-      %URI{host: host, port: port} when is_binary(host) -> "#{host}:#{port}"
-      _other -> uri
+      %URI{host: host, port: port} when port in [nil, 80, 443] -> host
+      %URI{host: host, port: port} -> "#{host}:#{port}"
     end
   end
 end

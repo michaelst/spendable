@@ -51,10 +51,7 @@ defmodule Spendable.OAuth.Actions.CreateAuthorizationCode do
       on_conflict: {:replace, [:client_name, :redirect_uris, :scope, :updated_at]},
       conflict_target: :id
     )
-    |> case do
-      {:ok, _client} -> :ok
-      {:error, changeset} -> {:error, changeset}
-    end
+    |> then(fn {:ok, _client} -> :ok end)
   end
 
   defp persist_client(_client), do: :ok

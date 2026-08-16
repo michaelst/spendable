@@ -13,11 +13,7 @@ defmodule SpendableWeb.Utils.ToolReply do
   def reply_error(frame, %Ecto.Changeset{} = changeset) do
     message =
       changeset
-      |> Ecto.Changeset.traverse_errors(fn {message, opts} ->
-        Regex.replace(~r"%{(\w+)}", message, fn _match, key ->
-          opts |> Keyword.get(String.to_existing_atom(key), "") |> to_string()
-        end)
-      end)
+      |> Ecto.Changeset.traverse_errors(&SpendableWeb.CoreComponents.translate_error/1)
       |> describe()
 
     reply_error(frame, message)

@@ -98,6 +98,8 @@ defmodule Spendable.OAuth.Actions.ExchangeAuthorizationCodeTest do
       "code_verifier" => @code_verifier
     }
 
+    assert {:error, :invalid_client} = OAuth.exchange_authorization_code(params)
+
     assert {:error, :invalid_client} =
              OAuth.exchange_authorization_code(Map.put(params, "client_secret", "sp.cs.wrong"))
 

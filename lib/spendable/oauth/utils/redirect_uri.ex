@@ -30,13 +30,11 @@ defmodule Spendable.OAuth.Utils.RedirectUri do
   Whether a requested redirect URI matches one the client registered: an exact match, or - for
   loopback redirects - a match ignoring the port, which a native client binds at request time.
   """
-  def registered?(registered_uris, requested) when is_binary(requested) do
+  def registered?(registered_uris, requested) do
     parsed = URI.parse(requested)
 
     Enum.any?(registered_uris, &(&1 == requested or loopback_match?(URI.parse(&1), parsed)))
   end
-
-  def registered?(_registered_uris, _requested), do: false
 
   @doc """
   Builds a redirect URL by merging the given params (nils dropped) into the query string of

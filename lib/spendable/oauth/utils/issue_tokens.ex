@@ -69,8 +69,12 @@ defmodule Spendable.OAuth.Utils.IssueTokens do
            scope: scope
          }}
 
+      # coveralls-ignore-start only reachable when a concurrent request rotates the same refresh
+      # token between this one's read and its write; the suite runs against a single serialized
+      # sandbox connection, so that interleaving cannot be produced from a test.
       {:error, reason} ->
         {:error, reason}
+        # coveralls-ignore-stop
     end
   end
 
@@ -78,9 +82,14 @@ defmodule Spendable.OAuth.Utils.IssueTokens do
     query = from token in RefreshToken, where: token.id == ^replaces.id and is_nil(token.revoked_at)
 
     case Repo.update_all(query, set: [revoked_at: now, replaced_by_id: refresh_token.id, updated_at: now]) do
-      {1, _records} -> :ok
-      # someone else rotated this token first; the caller decides how to recover
-      _none -> Repo.rollback(:rotation_conflict)
+      {1, _records} ->
+        :ok
+
+      # coveralls-ignore-start someone else rotated this token first, which a single serialized
+      # sandbox connection cannot produce; the caller decides how to recover.
+      _none ->
+        Repo.rollback(:rotation_conflict)
+        # coveralls-ignore-stop
     end
   end
 end

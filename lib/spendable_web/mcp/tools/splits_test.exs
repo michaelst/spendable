@@ -100,4 +100,14 @@ defmodule SpendableWeb.MCP.Tools.SplitsTest do
     assert {:reply, %Response{isError: true, content: [%{"text" => "name can't be blank"}]}, ^frame} =
              CreateSplit.execute(%{name: "", lines: [%{budget_id: budget_id, amount: "-40.00"}]}, frame)
   end
+
+  test "reports which line of a split is wrong", %{frame: frame} do
+    error = "split_lines budget_id does not exist"
+
+    assert {:reply, %Response{isError: true, content: [%{"text" => ^error}]}, ^frame} =
+             CreateSplit.execute(
+               %{name: "Weekly shop", lines: [%{budget_id: "bgt_nosuchbudget", amount: "-40.00"}]},
+               frame
+             )
+  end
 end

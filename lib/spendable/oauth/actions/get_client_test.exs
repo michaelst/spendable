@@ -51,7 +51,37 @@ defmodule Spendable.OAuth.Actions.GetClientTest do
     assert {:error, :client_not_found} = OAuth.get_client("https://client.invalid/mcp.json")
   end
 
-  test "refuses a url client id that resolves to a private address" do
-    assert {:error, :client_not_found} = OAuth.get_client("https://localhost/mcp.json")
+  test "refuses a url client id that resolves to an address inside the network" do
+    for host <- [
+          "localhost",
+          "127.0.0.1",
+          "0.0.0.0",
+          "10.1.2.3",
+          "172.16.0.1",
+          "192.168.1.1",
+          "169.254.169.254",
+          "100.64.0.1",
+          "198.18.0.1",
+          "239.0.0.1",
+          "[::1]",
+          "[::]",
+          "[fd00::1]",
+          "[fe80::1]",
+          "[::ffff:10.0.0.1]"
+        ] do
+      assert {:error, :client_not_found} = OAuth.get_client("https://#{host}/mcp.json")
+    end
+  end
+
+  test "refuses a client id that is not an https url it can fetch" do
+    assert {:error, :client_not_found} = OAuth.get_client("https:///mcp.json")
+  end
+
+  test "does fetch a url client id out on the public internet" do
+    for host <- ["8.8.8.8", "[2001:4860:4860::8888]"] do
+      expect(TeslaMock, :call, fn _env, _opts -> TeslaHelper.response(status: 404) end)
+
+      assert {:error, :client_not_found} = OAuth.get_client("https://#{host}/mcp.json")
+    end
   end
 end

@@ -30,6 +30,14 @@ defmodule Spendable.OAuth.Actions.RegisterClientTest do
 
     assert %{redirect_uris: ["must be absolute https (or http loopback) URIs"]} = errors_on(changeset)
 
+    assert {:error, changeset} =
+             OAuth.register_client(%{
+               "client_name" => "Editor",
+               "redirect_uris" => ["https://claude.ai/callback#fragment"]
+             })
+
+    assert %{redirect_uris: ["must be absolute https (or http loopback) URIs"]} = errors_on(changeset)
+
     assert {:error, changeset} = OAuth.register_client(%{"client_name" => "Editor"})
     assert %{redirect_uris: ["can't be blank"]} = errors_on(changeset)
   end

@@ -71,6 +71,49 @@ defmodule Spendable.OAuth.Actions.ExchangeRefreshTokenTest do
              OAuth.exchange_refresh_token(%{"refresh_token" => third.refresh_token, "client_id" => client.id})
   end
 
+  test "refuses to refresh for a confidential client that cannot produce its secret", %{user: user} do
+    {:ok, client, secret} =
+      OAuth.register_client(%{
+        "client_name" => "Editor",
+        "redirect_uris" => ["http://localhost:8123/callback"],
+        "token_endpoint_auth_method" => "client_secret_post"
+      })
+
+    {:ok, code, _redirect_uri} =
+      OAuth.create_authorization_code(Scope.for_user(user), %{
+        client: client,
+        redirect_uri: "http://localhost:8123/callback",
+        scope: "mcp",
+        code_challenge: Base.url_encode64(:crypto.hash(:sha256, @code_verifier), padding: false),
+        code_challenge_method: :S256,
+        resource: @resource,
+        state: nil
+      })
+
+    {:ok, tokens} =
+      OAuth.exchange_authorization_code(%{
+        "code" => code,
+        "client_id" => client.id,
+        "client_secret" => secret,
+        "redirect_uri" => "http://localhost:8123/callback",
+        "code_verifier" => @code_verifier
+      })
+
+    assert {:error, :invalid_client} =
+             OAuth.exchange_refresh_token(%{
+               "refresh_token" => tokens.refresh_token,
+               "client_id" => client.id,
+               "client_secret" => "sp.cs.wrong"
+             })
+
+    assert {:ok, _rotated} =
+             OAuth.exchange_refresh_token(%{
+               "refresh_token" => tokens.refresh_token,
+               "client_id" => client.id,
+               "client_secret" => secret
+             })
+  end
+
   test "refuses a refresh token that is not this client's", %{client: client, tokens: tokens} do
     for invalid <- [
           %{"client_id" => "oc_someoneelse"},

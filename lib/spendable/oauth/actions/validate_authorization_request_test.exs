@@ -52,6 +52,30 @@ defmodule Spendable.OAuth.Actions.ValidateAuthorizationRequestTest do
              })
   end
 
+  test "lets a native client come back on whatever local port it bound" do
+    {:ok, client, nil} =
+      OAuth.register_client(%{
+        "client_name" => "Editor",
+        "redirect_uris" => ["http://localhost:8123/callback"]
+      })
+
+    assert {:ok, %{redirect_uri: "http://localhost:52341/callback"}} =
+             OAuth.validate_authorization_request(%{
+               "client_id" => client.id,
+               "redirect_uri" => "http://localhost:52341/callback",
+               "response_type" => "code",
+               "code_challenge" => "abc123",
+               "code_challenge_method" => "S256",
+               "resource" => @resource
+             })
+
+    assert {:error, :invalid_redirect_uri} =
+             OAuth.validate_authorization_request(%{
+               "client_id" => client.id,
+               "redirect_uri" => "http://localhost:52341/somewhere-else"
+             })
+  end
+
   test "reports anything else on the client's own redirect uri", %{client: client} do
     request = %{
       "client_id" => client.id,
