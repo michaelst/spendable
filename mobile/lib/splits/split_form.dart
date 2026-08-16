@@ -4,7 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
+import '../budgets/budget_picker.dart';
 import '../budgets/budgets_providers.dart';
+import '../design/band_button.dart';
+import '../design/glyph_icon.dart';
+import '../design/picker_field.dart';
+import '../design/primary_button.dart';
+import '../design/sheet_header.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import 'splits_controller.dart';
 
 class _Line {
@@ -46,6 +54,7 @@ class _SplitFormState extends ConsumerState<SplitForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = SpendableColors.of(context);
     final state = ref.watch(splitsControllerProvider);
     final errors = state.error is ApiError
         ? (state.error! as ApiError).fieldErrors
@@ -54,29 +63,22 @@ class _SplitFormState extends ConsumerState<SplitForm> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        left: SpendableSpace.gutter,
+        right: SpendableSpace.gutter,
+        top: SpendableSpace.step,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + SpendableSpace.block,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  widget.split == null ? 'New split' : 'Edit split',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              TextButton(
-                key: const Key('split-save'),
-                onPressed: state.isLoading ? null : _save,
-                child: const Text('Save'),
-              ),
-            ],
+          SheetHeader(
+            title: widget.split == null ? 'New split' : 'Edit split',
+            action: BandButton(
+              key: const Key('split-save'),
+              label: 'Save',
+              onPressed: state.isLoading ? null : _save,
+            ),
           ),
           Flexible(
             child: SingleChildScrollView(
@@ -84,35 +86,32 @@ class _SplitFormState extends ConsumerState<SplitForm> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 8),
                   TextField(
                     key: const Key('split-name'),
                     controller: _name,
+                    style: SpendableType.body.copyWith(color: colors.primary),
                     decoration: InputDecoration(labelText: 'Name', errorText: errors['/name']),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: SpendableSpace.gutter),
                   for (final (index, line) in _lines.indexed)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.only(bottom: SpendableSpace.tight),
                       child: Row(
                         children: [
                           Expanded(
                             flex: 3,
-                            child: DropdownButtonFormField<String>(
+                            child: PickerField(
                               key: Key('split-budget-$index'),
-                              initialValue: line.budgetId,
-                              isExpanded: true,
-                              items: [
-                                for (final budget in budgets)
-                                  DropdownMenuItem(
-                                    value: budget.id,
-                                    child: Text(budget.name, overflow: TextOverflow.ellipsis),
-                                  ),
-                              ],
-                              onChanged: (value) => setState(() => line.budgetId = value),
+                              label: 'Budget',
+                              value: budgets.where((budget) => budget.id == line.budgetId).firstOrNull?.name,
+                              onTap: () async {
+                                final chosen = await pickBudget(context, ref);
+
+                                if (chosen != null) setState(() => line.budgetId = chosen.id);
+                              },
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: SpendableSpace.tight),
                           Expanded(
                             flex: 2,
                             child: TextField(
@@ -122,32 +121,43 @@ class _SplitFormState extends ConsumerState<SplitForm> {
                                 decimal: true,
                                 signed: true,
                               ),
+                              textAlign: TextAlign.right,
+                              style: SpendableType.moneyInline.copyWith(color: colors.primary),
                               decoration: InputDecoration(errorText: errors['/split_lines/$index/amount']),
                             ),
                           ),
-                          IconButton(
+                          GestureDetector(
                             key: Key('split-remove-$index'),
-                            icon: const Icon(Icons.remove_circle_outline),
-                            onPressed: () => setState(() => _lines = [..._lines]..removeAt(index)),
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => setState(() => _lines = [..._lines]..removeAt(index)),
+                            child: SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Center(
+                                child: GlyphIcon(Glyph.minusCircle, size: 20, color: colors.tertiary),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: TextButton(
+                    child: BandButton(
                       key: const Key('split-add-line'),
+                      label: 'Add line',
                       onPressed: () => setState(() => _lines = [..._lines, _Line(amount: '')]),
-                      child: const Text('Add line'),
                     ),
                   ),
-                  if (widget.split case final split?)
-                    TextButton(
+                  if (widget.split case final split?) ...[
+                    const SizedBox(height: SpendableSpace.step),
+                    PrimaryButton(
                       key: const Key('split-archive'),
+                      label: 'Archive split',
+                      variant: ButtonVariant.destructive,
                       onPressed: state.isLoading ? null : () => _archive(split.id),
-                      style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
-                      child: const Text('Archive split'),
                     ),
+                  ],
                 ],
               ),
             ),

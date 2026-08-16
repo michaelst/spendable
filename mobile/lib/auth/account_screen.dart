@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
-import '../theme.dart';
+import '../design/band_button.dart';
+import '../design/caption.dart';
+import '../design/glyph_icon.dart';
+import '../design/ledger_row.dart';
+import '../design/ledger_screen.dart';
+import '../design/nav_band.dart';
+import '../design/section_rule.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import 'auth_controller.dart';
 import 'current_user.dart';
 import 'identity_controller.dart';
@@ -19,24 +27,26 @@ class AccountScreen extends ConsumerWidget {
       if (next case AsyncError(:final error)) _showError(context, error);
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Account'),
+    return LedgerScreen(
+      onRefresh: () async => ref.invalidate(currentUserProvider),
+      band: NavBand(
+        title: 'Account',
+        leading: BandButton(
+          key: const Key('account-back'),
+          icon: Glyph.caretLeft,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
-          TextButton(
-            onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
-            child: const Text('Sign out'),
-          ),
+          BandButton(label: 'Sign out', onPressed: () => ref.read(authControllerProvider.notifier).signOut()),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(currentUserProvider),
-        child: switch (user) {
-          AsyncData(value: final user) => _Identities(user: user),
-          AsyncError(:final error) => _Message('$error'),
-          _ => const Center(child: CircularProgressIndicator()),
-        },
-      ),
+      slivers: switch (user) {
+        AsyncData(value: final user) => [SliverToBoxAdapter(child: _Identities(user: user))],
+        AsyncError(:final error) => [_Message('$error')],
+        _ => const [
+          SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
+        ],
+      },
     );
   }
 
@@ -54,58 +64,91 @@ class _Identities extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = SpendableColors.of(context);
     final linked = {for (final identity in user.identities) identity.provider.name: identity};
     final busy = ref.watch(identityControllerProvider).isLoading;
 
-    return ListView(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _SectionHeader('Ways to sign in'),
+        const SectionRule('Ways to sign in'),
         for (final provider in AuthProvider.values)
           switch (linked[provider.name]) {
-            final Identity identity => ListTile(
-              title: Text(provider.name),
-              subtitle: const Text('Linked', style: TextStyle(color: SpendableColors.positive)),
-              trailing: TextButton(
+            final Identity identity => _Identity(
+              provider: provider,
+              status: 'Linked',
+              statusColor: colors.positive,
+              action: BandButton(
                 // Removing the last one is refused by the server, which answers 409.
                 key: Key('unlink-${provider.name}'),
+                label: 'Remove',
                 onPressed: busy
                     ? null
                     : () => ref.read(identityControllerProvider.notifier).unlink(identity.id),
-                child: const Text('Remove'),
               ),
             ),
-            null => ListTile(
-              title: Text(provider.name),
-              subtitle: const Text('Not linked', style: TextStyle(color: SpendableColors.muted)),
-              trailing: TextButton(
+            null => _Identity(
+              provider: provider,
+              status: 'Not linked',
+              statusColor: colors.tertiary,
+              action: BandButton(
                 key: Key('link-${provider.name}'),
+                label: 'Add',
                 onPressed: busy ? null : () => ref.read(identityControllerProvider.notifier).link(provider),
-                child: const Text('Add'),
               ),
             ),
           },
-        const _SectionHeader('Banks'),
-        ListTile(
-          title: const Text('Connections allowed'),
-          trailing: Text('${user.bankLimit}', style: const TextStyle(color: SpendableColors.muted)),
+        const SectionRule('Banks'),
+        LedgerRow(
+          child: Row(
+            children: [
+              Expanded(
+                child: Text('Connections allowed', style: SpendableType.body.copyWith(color: colors.primary)),
+              ),
+              Text('${user.bankLimit}', style: SpendableType.moneyInline.copyWith(color: colors.secondary)),
+            ],
+          ),
         ),
       ],
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.title);
+class _Identity extends StatelessWidget {
+  const _Identity({
+    required this.provider,
+    required this.status,
+    required this.statusColor,
+    required this.action,
+  });
 
-  final String title;
+  final AuthProvider provider;
+  final String status;
+  final Color statusColor;
+  final Widget action;
+
+  /// The enum is the wire name; the screen says it the way a person would.
+  String _name(AuthProvider provider) => provider.name[0].toUpperCase() + provider.name.substring(1);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(
-        title.toUpperCase(),
-        style: const TextStyle(color: SpendableColors.muted, fontSize: 12, letterSpacing: 0.8),
+    final colors = SpendableColors.of(context);
+
+    return LedgerRow(
+      padding: const EdgeInsets.only(left: SpendableSpace.gutter, right: SpendableSpace.hair),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_name(provider), style: SpendableType.title.copyWith(color: colors.primary)),
+                Caption(status, color: statusColor),
+              ],
+            ),
+          ),
+          action,
+        ],
       ),
     );
   }
@@ -118,13 +161,18 @@ class _Message extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(text, textAlign: TextAlign.center),
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.all(SpendableSpace.block),
+        child: Center(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: SpendableType.body.copyWith(color: SpendableColors.of(context).secondary),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

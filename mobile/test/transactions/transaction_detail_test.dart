@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spendable/design/theme.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/transactions/transactions_screen.dart';
 
@@ -74,7 +75,7 @@ Future<FakeApi> _open(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [apiProvider.overrideWithValue(api.build())],
-      child: const MaterialApp(home: TransactionsScreen()),
+      child: MaterialApp(theme: spendableTheme(Brightness.light), home: const TransactionsScreen()),
     ),
   );
 
@@ -92,13 +93,13 @@ void main() {
 
     expect(find.byKey(const Key('allocation-budget-0')), findsOneWidget);
     expect(find.byKey(const Key('allocation-amount-0')), findsNothing);
-    expect(find.text('Spend from'), findsOneWidget);
+    expect(find.text('SPEND FROM'), findsOneWidget);
   });
 
   testWidgets('money coming in reads as adding to a budget', (tester) async {
     await _open(tester, transaction: _transaction(amount: '20.00'));
 
-    expect(find.text('Add to'), findsOneWidget);
+    expect(find.text('ADD TO'), findsOneWidget);
   });
 
   testWidgets('a split transaction shows an amount against each budget', (tester) async {

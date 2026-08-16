@@ -1,14 +1,26 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:decimal/decimal.dart';
+import 'package:flutter/cupertino.dart' hide Split;
 import 'package:flutter/material.dart' hide Split;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
-import '../theme.dart';
+import '../budgets/budget_picker.dart';
 import '../budgets/budgets_providers.dart';
+import '../design/band_button.dart';
+import '../design/caption.dart';
+import '../design/glass.dart';
+import '../design/glass_sheet.dart';
+import '../design/glyph_icon.dart';
+import '../design/ledger_row.dart';
+import '../design/picker_field.dart';
+import '../design/sheet_header.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import '../splits/splits_providers.dart';
 import 'transactions_controller.dart';
+import 'transactions_screen.dart';
 
 /// One allocation being edited. Kept apart from the wire type because a line the user is still
 /// typing has no valid amount yet.
@@ -58,6 +70,7 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = SpendableColors.of(context);
     final state = ref.watch(transactionsControllerProvider);
     final errors = state.error is ApiError
         ? (state.error! as ApiError).fieldErrors
@@ -69,10 +82,10 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        left: SpendableSpace.gutter,
+        right: SpendableSpace.gutter,
+        top: SpendableSpace.step,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + SpendableSpace.block,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -80,15 +93,13 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
         children: [
           // Save stays put: the fields below it scroll, and on a phone the button would
           // otherwise sit past the fold.
-          Row(
-            children: [
-              Expanded(child: Text('Edit transaction', style: Theme.of(context).textTheme.titleLarge)),
-              TextButton(
-                key: const Key('transaction-save'),
-                onPressed: state.isLoading ? null : _save,
-                child: const Text('Save'),
-              ),
-            ],
+          SheetHeader(
+            title: 'Edit transaction',
+            action: BandButton(
+              key: const Key('transaction-save'),
+              label: 'Save',
+              onPressed: state.isLoading ? null : _save,
+            ),
           ),
           Flexible(
             child: SingleChildScrollView(
@@ -96,70 +107,67 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 8),
                   TextField(
                     key: const Key('transaction-name'),
                     controller: _name,
+                    style: SpendableType.body.copyWith(color: colors.primary),
                     decoration: InputDecoration(labelText: 'Name', errorText: errors['/name']),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: SpendableSpace.gutter),
                   TextField(
                     key: const Key('transaction-amount'),
                     controller: _amount,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    style: SpendableType.moneyInline.copyWith(color: colors.primary),
                     onChanged: (_) => setState(() {}),
                     decoration: InputDecoration(labelText: 'Amount', errorText: errors['/amount']),
                   ),
-                  const SizedBox(height: 8),
-                  ListTile(
+                  const SizedBox(height: SpendableSpace.tight),
+                  PickerField(
                     key: const Key('transaction-date'),
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Date'),
-                    trailing: Text('$_date'),
+                    label: 'Date',
+                    value: shortDate(_date),
                     onTap: _pickDate,
                   ),
-                  const Divider(height: 24),
+                  const SizedBox(height: SpendableSpace.block),
                   _allocations(budgets, splits, errors),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: SpendableSpace.gutter),
                   TextField(
                     key: const Key('transaction-note'),
                     controller: _note,
                     maxLines: 3,
+                    style: SpendableType.body.copyWith(color: colors.primary),
                     decoration: const InputDecoration(labelText: 'Note'),
                   ),
-                  if (widget.transaction.transferId != null) ...[
-                    const SizedBox(height: 8),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Part of a transfer'),
-                      trailing: TextButton(
-                        key: const Key('remove-transfer'),
-                        onPressed: state.isLoading ? null : _removeTransfer,
-                        child: const Text('Remove'),
+                  if (widget.transaction.transferId != null)
+                    LedgerRow(
+                      ruleInset: 0,
+                      padding: const EdgeInsets.symmetric(vertical: SpendableSpace.tight),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Part of a transfer',
+                              style: SpendableType.body.copyWith(color: colors.primary),
+                            ),
+                          ),
+                          BandButton(
+                            key: const Key('remove-transfer'),
+                            label: 'Remove',
+                            onPressed: state.isLoading ? null : _removeTransfer,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CheckboxListTile(
-                          key: const Key('transaction-reviewed'),
-                          contentPadding: EdgeInsets.zero,
-                          title: const Text('Reviewed'),
-                          value: _reviewed,
-                          onChanged: (value) => setState(() => _reviewed = value ?? false),
-                        ),
-                      ),
-                      Expanded(
-                        child: CheckboxListTile(
-                          key: const Key('transaction-excluded'),
-                          contentPadding: EdgeInsets.zero,
-                          title: const Text('Excluded'),
-                          value: _excluded,
-                          onChanged: (value) => setState(() => _excluded = value ?? false),
-                        ),
-                      ),
-                    ],
+                  _Toggle(
+                    label: 'Reviewed',
+                    value: _reviewed,
+                    onChanged: (value) => setState(() => _reviewed = value),
+                  ),
+                  _Toggle(
+                    label: 'Excluded',
+                    value: _excluded,
+                    onChanged: (value) => setState(() => _excluded = value),
                   ),
                 ],
               ),
@@ -175,48 +183,53 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
     // only the budget is worth asking about.
     final single = _lines.length <= 1;
     final negative = (Decimal.tryParse(_amount.text.trim()) ?? Decimal.zero).sign < 0;
+    final colors = SpendableColors.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(negative ? 'Spend from' : 'Add to', style: const TextStyle(color: SpendableColors.muted)),
-        const SizedBox(height: 8),
+        Caption(negative ? 'Spend from' : 'Add to'),
+        const SizedBox(height: SpendableSpace.tight),
         for (final (index, line) in _lines.indexed)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: SpendableSpace.tight),
             child: Row(
               children: [
                 Expanded(
                   flex: 3,
-                  child: DropdownButtonFormField<String>(
+                  child: PickerField(
                     key: Key('allocation-budget-$index'),
-                    initialValue: line.budgetId,
-                    isExpanded: true,
-                    items: [
-                      for (final budget in budgets)
-                        DropdownMenuItem(
-                          value: budget.id,
-                          child: Text(budget.name, overflow: TextOverflow.ellipsis),
-                        ),
-                    ],
-                    onChanged: (value) => setState(() => line.budgetId = value),
+                    label: 'Budget',
+                    value: budgets.where((budget) => budget.id == line.budgetId).firstOrNull?.name,
+                    onTap: () async {
+                      final chosen = await pickBudget(context, ref);
+
+                      if (chosen != null) setState(() => line.budgetId = chosen.id);
+                    },
                   ),
                 ),
                 if (!single) ...[
-                  const SizedBox(width: 8),
+                  const SizedBox(width: SpendableSpace.tight),
                   Expanded(
                     flex: 2,
                     child: TextField(
                       key: Key('allocation-amount-$index'),
                       controller: line.amount,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      textAlign: TextAlign.right,
+                      style: SpendableType.moneyInline.copyWith(color: colors.primary),
                       decoration: InputDecoration(errorText: errors['/budget_allocations/$index/amount']),
                     ),
                   ),
-                  IconButton(
+                  GestureDetector(
                     key: Key('allocation-remove-$index'),
-                    icon: const Icon(Icons.remove_circle_outline),
-                    onPressed: () => setState(() => _lines = [..._lines]..removeAt(index)),
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _lines = [..._lines]..removeAt(index)),
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Center(child: GlyphIcon(Glyph.minusCircle, size: 20, color: colors.tertiary)),
+                    ),
                   ),
                 ],
               ],
@@ -225,11 +238,11 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton(key: const Key('add-line'), onPressed: _addLine, child: const Text('Add line')),
-            TextButton(
+            BandButton(key: const Key('add-line'), label: 'Add line', onPressed: _addLine),
+            BandButton(
               key: const Key('apply-split'),
+              label: 'Apply split',
               onPressed: () => _pickSplit(splits),
-              child: const Text('Apply split'),
             ),
           ],
         ),
@@ -239,28 +252,48 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
 
   void _addLine() => setState(() => _lines = [..._lines, _Line(budgetId: null, amount: '')]);
 
+  /// The wheel, on the same glass as everything else, rather than the Material calendar.
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _date.toDateTime(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+    final colors = SpendableColors.of(context);
 
-    if (picked != null) setState(() => _date = Date(picked.year, picked.month, picked.day));
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) => GlassPanel(
+        blur: SpendableChrome.menuBlur,
+        tint: colors.menu,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(SpendableRadius.menu)),
+        shadow: true,
+        child: SizedBox(
+          height: 260,
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _date.toDateTime(),
+            minimumYear: 2000,
+            maximumYear: 2100,
+            onDateTimeChanged: (picked) =>
+                setState(() => _date = Date(picked.year, picked.month, picked.day)),
+          ),
+        ),
+      ),
+    );
   }
 
   /// Applying a split only rewrites the lines here; the server sees them on save like any others.
   Future<void> _pickSplit(List<Split> splits) async {
-    final chosen = await showModalBottomSheet<Split>(
-      context: context,
-      builder: (_) => ListView(
+    final chosen = await showGlassSheet<Split>(
+      context,
+      (context) => ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         children: [
           for (final split in splits)
-            ListTile(
+            LedgerRow(
               key: Key('split-${split.id}'),
-              title: Text(split.name),
               onTap: () => Navigator.of(context).pop(split),
+              child: Text(
+                split.name,
+                style: SpendableType.title.copyWith(color: SpendableColors.of(context).primary),
+              ),
             ),
         ],
       ),
@@ -308,5 +341,33 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
         .removeTransfer(widget.transaction);
 
     if (removed && mounted) Navigator.of(context).pop();
+  }
+}
+
+class _Toggle extends StatelessWidget {
+  const _Toggle({required this.label, required this.value, required this.onChanged});
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = SpendableColors.of(context);
+
+    return LedgerRow(
+      key: Key('transaction-${label.toLowerCase()}'),
+      ruleInset: 0,
+      padding: const EdgeInsets.symmetric(vertical: SpendableSpace.hair),
+      onTap: () => onChanged(!value),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(label, style: SpendableType.body.copyWith(color: colors.primary)),
+          ),
+          Switch.adaptive(value: value, onChanged: onChanged),
+        ],
+      ),
+    );
   }
 }

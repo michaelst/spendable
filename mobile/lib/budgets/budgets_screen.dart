@@ -4,8 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../auth/account_screen.dart';
+import '../design/band_button.dart';
+import '../design/caption.dart';
+import '../design/glass_menu.dart';
+import '../design/glass_sheet.dart';
+import '../design/glyph_icon.dart';
+import '../design/ledger_row.dart';
+import '../design/ledger_screen.dart';
+import '../design/money_text.dart';
+import '../design/nav_band.dart';
+import '../design/section_rule.dart';
+import '../design/tokens.dart';
+import '../design/typography.dart';
 import '../money.dart';
-import '../theme.dart';
 import 'budget_card.dart';
 import 'budget_form.dart';
 import 'budgets_providers.dart';
@@ -34,43 +45,66 @@ class BudgetsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summary = ref.watch(budgetSummaryProvider);
 
-    return Scaffold(
-      appBar: AppBar(
+    return LedgerScreen(
+      onRefresh: () async => ref.invalidate(budgetSummaryProvider),
+      band: NavBand(
         title: switch (summary) {
+          AsyncData(value: final summary) => monthName(summary.month),
+          _ => 'Budgets',
+        },
+        largeTitle: switch (summary) {
           AsyncData(value: final summary) => _MonthPicker(summary: summary),
-          _ => const Text('Budgets'),
+          _ => null,
         },
         actions: [
-          IconButton(
+          BandButton(
             key: const Key('open-account'),
-            icon: const Icon(Icons.person_outline),
+            icon: Glyph.user,
             onPressed: () =>
                 Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const AccountScreen())),
           ),
-          IconButton(
+          BandButton(
             key: const Key('new-budget'),
-            icon: const Icon(Icons.add),
+            icon: Glyph.plus,
             onPressed: () => openBudgetForm(context),
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(budgetSummaryProvider),
-        child: switch (summary) {
-          AsyncData(value: final summary) => _Budgets(summary: summary),
-          AsyncError(:final error) => _Retry(message: '$error'),
-          _ => const Center(child: CircularProgressIndicator()),
-        },
-      ),
+      slivers: switch (summary) {
+        AsyncData(value: final summary) => _budgets(summary),
+        AsyncError(:final error) => [_Retry(message: '$error')],
+        _ => const [
+          SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator())),
+        ],
+      },
     );
+  }
+
+  List<Widget> _budgets(BudgetSummary summary) {
+    final listed = listedBudgets(summary);
+    final owned = listed.where((budget) => budget.id != creditCardsId).toList();
+    final creditCards = listed.where((budget) => budget.id == creditCardsId).firstOrNull;
+
+    return [
+      SliverToBoxAdapter(child: _Totals(summary: summary)),
+      SliverList.builder(
+        itemCount: owned.length,
+        itemBuilder: (_, index) => _Row(budget: owned[index], summary: summary),
+      ),
+      // Card debt is read off the connected accounts rather than allocated, so it is set apart from
+      // the budgets the user keeps.
+      if (creditCards case final creditCards?) ...[
+        const SliverToBoxAdapter(child: SectionRule('From connected accounts')),
+        SliverToBoxAdapter(
+          child: _Row(budget: creditCards, summary: summary),
+        ),
+      ],
+    ];
   }
 }
 
-Future<void> openBudgetForm(BuildContext context, {Budget? budget}) => showModalBottomSheet<void>(
-  context: context,
-  isScrollControlled: true,
-  builder: (_) => BudgetForm(budget: budget),
-);
+Future<void> openBudgetForm(BuildContext context, {Budget? budget}) =>
+    showGlassSheet<void>(context, (_) => BudgetForm(budget: budget));
 
 class _MonthPicker extends ConsumerWidget {
   const _MonthPicker({required this.summary});
@@ -79,64 +113,45 @@ class _MonthPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PopupMenuButton<Date>(
+    final colors = SpendableColors.of(context);
+
+    return GestureDetector(
       key: const Key('month-picker'),
-      onSelected: (month) => ref.read(selectedMonthProvider.notifier).select(month),
-      itemBuilder: (_) => [
-        for (final entry in summary.spentByMonth)
-          PopupMenuItem(
-            value: entry.month,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(monthName(entry.month)),
-                Text(
-                  'spent: ${formatCurrency(money(entry.spent))}',
-                  style: const TextStyle(color: SpendableColors.muted, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-      ],
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(monthName(summary.month), style: Theme.of(context).textTheme.titleLarge),
-          const Icon(Icons.unfold_more, size: 18, color: SpendableColors.muted),
-        ],
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _pick(context, ref),
+      // A long month at a large size runs past a narrow phone, and the title is worth more whole
+      // and a little smaller than it is truncated.
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(monthName(summary.month), style: SpendableType.largeTitle.copyWith(color: colors.primary)),
+            const SizedBox(width: SpendableSpace.tight),
+            GlyphIcon(Glyph.caretDown, size: 17, color: colors.tertiary),
+          ],
+        ),
       ),
     );
   }
-}
 
-class _Budgets extends StatelessWidget {
-  const _Budgets({required this.summary});
+  Future<void> _pick(BuildContext context, WidgetRef ref) async {
+    final chosen = await showGlassMenu<Date>(context, [
+      for (final entry in summary.spentByMonth)
+        GlassMenuItem(
+          value: entry.month,
+          title: monthName(entry.month),
+          subtitle: 'spent: ${formatCurrency(money(entry.spent).abs())}',
+          selected: entry.month == summary.month,
+        ),
+    ]);
 
-  final BudgetSummary summary;
-
-  @override
-  Widget build(BuildContext context) {
-    final budgets = listedBudgets(summary);
-
-    return ListView.separated(
-      padding: const EdgeInsets.only(bottom: 24),
-      itemCount: budgets.length + 1,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        if (index == 0) return _Totals(summary: summary);
-
-        final budget = budgets[index - 1];
-
-        return _Card(
-          budget: budget,
-          spent: money(summary.spent[budget.id] ?? '0').abs(),
-          currentMonth: summary.currentMonth,
-        );
-      },
-    );
+    if (chosen != null) ref.read(selectedMonthProvider.notifier).select(chosen);
   }
 }
 
+/// The answer the app exists to give, and the two figures it is worked out from.
 class _Totals extends StatelessWidget {
   const _Totals({required this.summary});
 
@@ -144,37 +159,45 @@ class _Totals extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final spendable = money(summary.spendable);
+    final colors = SpendableColors.of(context);
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.white10)),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        SpendableSpace.gutter,
+        SpendableSpace.tight,
+        SpendableSpace.gutter,
+        0,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (summary.currentMonth)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const _Caption('Spendable'),
-                  Text(
-                    formatCurrency(spendable),
-                    key: const Key('spendable-total'),
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w600,
-                      color: spendable.sign < 0 ? SpendableColors.negative : SpendableColors.positive,
-                    ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (summary.currentMonth)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Caption('Spendable'),
+                      MoneyText(
+                        money(summary.spendable),
+                        key: const Key('spendable-total'),
+                        style: SpendableType.moneyHero,
+                        creditIsPositive: true,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          if (summary.currentMonth) _Total(label: 'Allocated', amount: money(summary.allocatedTotal)),
-          const SizedBox(width: 24),
-          _Total(label: 'Spent', amount: money(summary.spentTotal)),
+                ),
+              if (summary.currentMonth) ...[
+                _Total(label: 'Allocated', amount: money(summary.allocatedTotal)),
+                const SizedBox(width: SpendableSpace.gutter),
+              ],
+              _Total(label: 'Spent', amount: money(summary.spentTotal)),
+            ],
+          ),
+          const SizedBox(height: SpendableSpace.step),
+          Container(height: 1, color: colors.separator),
         ],
       ),
     );
@@ -192,138 +215,111 @@ class _Total extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(formatCurrency(amount), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
-        _Caption(label),
+        Caption(label),
+        const SizedBox(height: 1),
+        MoneyText(amount, style: SpendableType.moneyInline),
       ],
     );
   }
 }
 
-class _Caption extends StatelessWidget {
-  const _Caption(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text.toUpperCase(),
-      style: const TextStyle(color: SpendableColors.muted, fontSize: 11, letterSpacing: 0.8),
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  const _Card({required this.budget, required this.spent, required this.currentMonth});
-
-  static const _barColors = {
-    CardBar.under: SpendableColors.accent,
-    CardBar.over: SpendableColors.negative,
-    CardBar.goal: SpendableColors.positive,
-  };
+class _Row extends StatelessWidget {
+  const _Row({required this.budget, required this.summary});
 
   final Budget budget;
-  final Decimal spent;
-  final bool currentMonth;
+  final BudgetSummary summary;
 
   @override
   Widget build(BuildContext context) {
-    final card = BudgetCard.build(budget: budget, spent: spent, currentMonth: currentMonth);
+    final colors = SpendableColors.of(context);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      color: SpendableColors.surface,
-      child: InkWell(
-        // The credit card total is a reading of the bank accounts, not a row anyone can edit.
-        onTap: budget.id == creditCardsId ? null : () => openBudgetForm(context, budget: budget),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final card = BudgetCard.build(
+      budget: budget,
+      spent: money(summary.spent[budget.id] ?? '0').abs(),
+      currentMonth: summary.currentMonth,
+    );
+
+    final barColors = {
+      CardBar.under: colors.accent,
+      CardBar.over: colors.negative,
+      CardBar.goal: colors.positive,
+    };
+
+    return LedgerRow(
+      // The credit card total is a reading of the bank accounts, not a row anyone can edit.
+      onTap: budget.id == creditCardsId ? null : () => openBudgetForm(context, budget: budget),
+      ruleInset: 0,
+      progress: card.percent == null ? null : card.percent! / 100,
+      progressColor: barColors[card.bar],
+      padding: const EdgeInsets.fromLTRB(
+        SpendableSpace.gutter,
+        SpendableSpace.step,
+        SpendableSpace.gutter,
+        SpendableSpace.step,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      budget.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        budget.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: SpendableType.title.copyWith(color: colors.primary),
+                      ),
                     ),
-                  ),
-                  _Pill(type: budget.type),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    formatCurrency(card.amount),
-                    key: Key('amount-${budget.id}'),
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: card.amount.sign < 0 ? SpendableColors.negative : Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  _Caption(card.label),
-                ],
-              ),
-              if (card.percent case final percent?) ...[
-                const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    key: Key('bar-${budget.id}'),
-                    value: percent / 100,
-                    minHeight: 4,
-                    backgroundColor: Colors.white10,
-                    valueColor: AlwaysStoppedAnimation(_barColors[card.bar]),
-                  ),
+                    const SizedBox(width: SpendableSpace.tight),
+                    _Kind(type: budget.type),
+                  ],
                 ),
-              ],
-              if (card.footer case final footer?) ...[
-                const SizedBox(height: 10),
-                Text(footer, style: const TextStyle(color: SpendableColors.muted, fontSize: 12)),
-              ],
+              ),
+              MoneyText(card.amount, key: Key('amount-${budget.id}'), style: SpendableType.moneyRow),
+              const SizedBox(width: SpendableSpace.hair),
+              Caption(card.label),
             ],
           ),
-        ),
+          if (card.footer case final footer?) ...[
+            const SizedBox(height: 1),
+            Text(footer, style: SpendableType.subhead.copyWith(color: colors.secondary)),
+          ],
+        ],
       ),
     );
   }
 }
 
-class _Pill extends StatelessWidget {
-  const _Pill({required this.type});
+/// The budget's kind, said in the margin next to its name rather than badged.
+class _Kind extends StatelessWidget {
+  const _Kind({required this.type});
 
   static const _labels = {
-    BudgetTypeEnum.envelope: ('Envelope', SpendableColors.accent),
-    BudgetTypeEnum.goal: ('Goal', SpendableColors.positive),
-    BudgetTypeEnum.tracking: ('Tracking', SpendableColors.muted),
+    BudgetTypeEnum.envelope: 'Envelope',
+    BudgetTypeEnum.goal: 'Goal',
+    BudgetTypeEnum.tracking: 'Tracking',
   };
 
   final BudgetTypeEnum type;
 
   @override
   Widget build(BuildContext context) {
-    final (label, color) = _labels[type] ?? ('Envelope', SpendableColors.accent);
+    final colors = SpendableColors.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w500),
-      ),
-    );
+    final color = switch (type) {
+      BudgetTypeEnum.goal => colors.positive,
+      BudgetTypeEnum.tracking => colors.trackingPill,
+      _ => colors.accent,
+    };
+
+    return Caption(_labels[type] ?? 'Envelope', color: color);
   }
 }
 
@@ -334,22 +330,23 @@ class _Retry extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            children: [
-              Text(message, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => ref.invalidate(budgetSummaryProvider),
-                child: const Text('Try again'),
-              ),
-            ],
-          ),
+    final colors = SpendableColors.of(context);
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(SpendableSpace.block),
+        child: Column(
+          children: [
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: SpendableType.body.copyWith(color: colors.secondary),
+            ),
+            const SizedBox(height: SpendableSpace.gutter),
+            BandButton(label: 'Try again', onPressed: () => ref.invalidate(budgetSummaryProvider)),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spendable/design/theme.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/banks/banks_screen.dart';
 import 'package:spendable/banks/pending_plaid_session.dart';
@@ -157,7 +158,7 @@ Future<(FakeApi, FakePlaidLinkFlow)> _pump(
         pendingPlaidSessionProvider.overrideWithValue(session ?? FakePendingPlaidSession()),
         walletProvider.overrideWithValue(wallet ?? FakeWallet(available: false)),
       ],
-      child: const MaterialApp(home: BanksScreen()),
+      child: MaterialApp(theme: spendableTheme(Brightness.light), home: const BanksScreen()),
     ),
   );
 
@@ -177,6 +178,9 @@ void main() {
 
     expect(find.text('Checking ••••4321'), findsOneWidget);
     expect(find.text(r'$120.00'), findsOneWidget);
+
+    // Opening the bank is what first asks for the budget list, so let that land.
+    await tester.pumpAndSettle();
   });
 
   // Anything other than CONNECTED means Plaid needs the user to go back through Link.

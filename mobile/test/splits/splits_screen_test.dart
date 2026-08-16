@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spendable/design/theme.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/splits/splits_screen.dart';
 
@@ -49,7 +50,7 @@ Future<FakeApi> _pump(WidgetTester tester, {Map<String, ({int status, Object? bo
   await tester.pumpWidget(
     ProviderScope(
       overrides: [apiProvider.overrideWithValue(api.build())],
-      child: const MaterialApp(home: SplitsScreen()),
+      child: MaterialApp(theme: spendableTheme(Brightness.light), home: const SplitsScreen()),
     ),
   );
 
@@ -121,7 +122,7 @@ void main() {
       }),
     );
 
-    await tester.tap(find.byKey(const Key('select-split-spl_1')));
+    await tester.longPress(find.byKey(const Key('split-spl_1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-split-spl_2')));
     await tester.pumpAndSettle();
