@@ -105,7 +105,7 @@ class _SplitFormState extends ConsumerState<SplitForm> {
                               label: 'Budget',
                               value: budgets.where((budget) => budget.id == line.budgetId).firstOrNull?.name,
                               onTap: () async {
-                                final chosen = await pickBudget(context, ref);
+                                final chosen = await pickBudget(context);
 
                                 if (chosen != null) setState(() => line.budgetId = chosen.id);
                               },

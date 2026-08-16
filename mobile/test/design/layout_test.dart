@@ -176,14 +176,18 @@ void main() {
       await tester.tapAt(const Offset(200, 60));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Emergency fund'));
-      await tester.pumpAndSettle();
-      await tester.tapAt(const Offset(200, 60));
-      await tester.pumpAndSettle();
-
       await tester.tap(find.byKey(const Key('open-account')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('account-back')));
+      await tester.pumpAndSettle();
+
+      // Last, because reaching a row further down the list scrolls the large title away and the
+      // band's own buttons go with it.
+      await tester.ensureVisible(find.text('Emergency fund'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Emergency fund'));
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(200, 60));
       await tester.pumpAndSettle();
 
       // The transaction detail sheet, the filters sheet, and the bulk bar.

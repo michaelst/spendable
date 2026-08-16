@@ -22,7 +22,7 @@
         "label": "SPENT",
         "percent": null,
         "bar": null,
-        "footer": "No limit set"
+        "footer": null
       }
     },
     {
@@ -35,7 +35,7 @@
         "label": "LEFT",
         "percent": null,
         "bar": null,
-        "footer": "No limit set"
+        "footer": null
       }
     },
     {

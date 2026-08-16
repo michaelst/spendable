@@ -16,7 +16,7 @@ class BudgetCard {
     if (!currentMonth) return BudgetCard(amount: spent, label: 'SPENT');
 
     if (budget.type == BudgetTypeEnum.tracking) {
-      return BudgetCard(amount: spent, label: 'SPENT', footer: 'No limit set');
+      return BudgetCard(amount: spent, label: 'SPENT');
     }
 
     final goal = budget.type == BudgetTypeEnum.goal;
@@ -26,7 +26,7 @@ class BudgetCard {
     if (budgeted == null) {
       return goal
           ? BudgetCard(amount: balance, label: 'SAVED', footer: 'No goal set')
-          : BudgetCard(amount: balance, label: 'LEFT', footer: 'No limit set');
+          : BudgetCard(amount: balance, label: 'LEFT');
     }
 
     if (goal) {

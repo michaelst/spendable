@@ -186,7 +186,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
     {:ok, _view, html} = live(conn, ~p"/budgets")
 
     assert html =~ "SPENT"
-    assert html =~ "No limit set"
+    refute html =~ "No limit set"
   end
 
   # Dividing by the budgeted amount has to survive a budget set to nothing.

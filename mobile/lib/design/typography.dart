@@ -30,6 +30,15 @@ abstract final class SpendableType {
     fontFeatures: _tabular,
   );
 
+  /// A transaction's amount, a step down from a budget's because it sits beside a name and a date
+  /// rather than heading a card of its own.
+  static const moneyListRow = TextStyle(
+    fontSize: 21,
+    fontWeight: FontWeight.w500,
+    letterSpacing: -0.46,
+    fontFeatures: _tabular,
+  );
+
   /// A figure that has to line up in a column but is not the row's headline.
   static const moneyInline = TextStyle(
     fontSize: 15,

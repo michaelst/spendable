@@ -7,17 +7,31 @@ import 'banks/plaid_oauth_links.dart';
 import 'design/theme.dart';
 import 'shell.dart';
 
-class SpendableApp extends ConsumerWidget {
+class SpendableApp extends ConsumerStatefulWidget {
   const SpendableApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SpendableApp> createState() => _SpendableAppState();
+}
+
+class _SpendableAppState extends ConsumerState<SpendableApp> {
+  final _navigator = GlobalKey<NavigatorState>();
+
+  @override
+  Widget build(BuildContext context) {
     final auth = ref.watch(authStateProvider);
 
     // Nothing renders it; it just has to be alive to catch a bank's OAuth redirect on launch.
     ref.watch(plaidOAuthResumeProvider);
 
+    // Signing out swaps the home screen underneath whatever was pushed on top of it, so the
+    // account screen would otherwise stay up over the sign-in screen.
+    ref.listen(authStateProvider, (_, next) {
+      if (next.value == false) _navigator.currentState?.popUntil((route) => route.isFirst);
+    });
+
     return MaterialApp(
+      navigatorKey: _navigator,
       title: 'Spendable',
       theme: spendableTheme(Brightness.light),
       darkTheme: spendableTheme(Brightness.dark),

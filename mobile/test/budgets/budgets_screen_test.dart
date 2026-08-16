@@ -185,4 +185,78 @@ void main() {
 
     expect(find.byKey(const Key('budget-save')), findsNothing);
   });
+
+  // The figure over the list is Spendable, so a row saying it again is the same word twice about
+  // two different numbers.
+  testWidgets('says Spendable once on the current month', (tester) async {
+    await _pump(tester);
+
+    expect(find.text('Spendable'), findsNothing);
+    expect(find.byKey(const Key('spendable-total')), findsOneWidget);
+  });
+
+  // A past month has no figure over the list, so the budget is the only place left to read it.
+  testWidgets('keeps the Spendable row on a past month', (tester) async {
+    await _pump(
+      tester,
+      replies: {'GET /api/budgets/summary': (status: 200, body: _summary(currentMonth: false))},
+    );
+
+    expect(find.text('Spendable'), findsOneWidget);
+    expect(find.byKey(const Key('spendable-total')), findsNothing);
+  });
+
+  // Card debt is not an envelope with something left in it, it is what is owed right now.
+  testWidgets('reads the credit card total as a balance rather than what is left', (tester) async {
+    await _pump(
+      tester,
+      replies: {'GET /api/budgets/summary': (status: 200, body: _summary(creditCardBalance: '325.50'))},
+    );
+
+    expect(find.text('BALANCE'), findsOneWidget);
+  });
+
+  testWidgets('no budget says it has no limit set', (tester) async {
+    await _pump(
+      tester,
+      replies: {
+        'GET /api/budgets/summary': (
+          status: 200,
+          body: _summary(
+            budgets: [
+              _budget('bgt_spendable', 'Spendable'),
+              _budget('bgt_amazon', 'Amazon', type: 'tracking'),
+            ],
+          ),
+        ),
+      },
+    );
+
+    expect(find.text('No limit set'), findsNothing);
+  });
+
+  // Envelopes, then goals, then what is only tracked - the grouping does the work a heading would.
+  testWidgets('orders the budgets by type with no heading over each group', (tester) async {
+    await _pump(
+      tester,
+      replies: {
+        'GET /api/budgets/summary': (
+          status: 200,
+          body: _summary(
+            budgets: [
+              _budget('bgt_spendable', 'Spendable'),
+              _budget('bgt_amazon', 'Amazon', type: 'tracking'),
+              _budget('bgt_vacation', 'Vacation', type: 'goal'),
+              _budget('bgt_rent', 'Rent'),
+              _budget('bgt_food', 'Food'),
+            ],
+          ),
+        ),
+      },
+    );
+
+    final rows = ['Food', 'Rent', 'Vacation', 'Amazon'].map((name) => tester.getTopLeft(find.text(name)).dy);
+
+    expect(rows, orderedEquals(rows.toList()..sort()));
+  });
 }

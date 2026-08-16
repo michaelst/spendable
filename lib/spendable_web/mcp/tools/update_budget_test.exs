@@ -33,6 +33,13 @@ defmodule SpendableWeb.MCP.Tools.UpdateBudgetTest do
     assert Decimal.eq?(balance, "40.00")
   end
 
+  test "turns an envelope into a tracking budget", %{budget: budget, frame: frame, scope: scope} do
+    assert {:reply, %Response{structured_content: %{budget: %{type: :tracking}}}, ^frame} =
+             UpdateBudget.execute(%{budget_id: budget.id, type: "tracking"}, frame)
+
+    assert [%{type: :tracking}] = Budgets.list_budgets(scope)
+  end
+
   test "cannot reach a budget belonging to another user", %{frame: frame} do
     {:ok, other_user} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})

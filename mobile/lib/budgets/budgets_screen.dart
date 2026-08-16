@@ -239,6 +239,11 @@ class _Row extends StatelessWidget {
       currentMonth: summary.currentMonth,
     );
 
+    // Card debt is not an envelope with something left in it, it is what is owed right now, and
+    // calling it an envelope in the margin is only there to satisfy the card it is built from.
+    final creditCards = budget.id == creditCardsId;
+    final label = creditCards ? 'BALANCE' : card.label;
+
     final barColors = {
       CardBar.under: colors.accent,
       CardBar.over: colors.negative,
@@ -246,8 +251,9 @@ class _Row extends StatelessWidget {
     };
 
     return LedgerRow(
-      // The credit card total is a reading of the bank accounts, not a row anyone can edit.
-      onTap: budget.id == creditCardsId ? null : () => openBudgetForm(context, budget: budget),
+      // The credit card total reads the bank accounts and Spendable is whatever is left over.
+      // Neither is a row anyone edits.
+      onTap: isEditable(budget) ? () => openBudgetForm(context, budget: budget) : null,
       ruleInset: 0,
       progress: card.percent == null ? null : card.percent! / 100,
       progressColor: barColors[card.bar],
@@ -257,15 +263,14 @@ class _Row extends StatelessWidget {
         SpendableSpace.gutter,
         SpendableSpace.step,
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Expanded(
-                child: Row(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
@@ -277,20 +282,34 @@ class _Row extends StatelessWidget {
                         style: SpendableType.title.copyWith(color: colors.primary),
                       ),
                     ),
-                    const SizedBox(width: SpendableSpace.tight),
-                    _Kind(type: budget.type),
+                    if (!creditCards) ...[
+                      const SizedBox(width: SpendableSpace.tight),
+                      _Kind(type: budget.type),
+                    ],
                   ],
                 ),
-              ),
+                if (card.footer case final footer?) ...[
+                  const SizedBox(height: 1),
+                  Text(
+                    footer,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: SpendableType.subhead.copyWith(color: colors.secondary),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: SpendableSpace.step),
+          // What the figure is stands under it rather than beside it, so the eye reads the number
+          // first and the word only if it needs to.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
               MoneyText(card.amount, key: Key('amount-${budget.id}'), style: SpendableType.moneyRow),
-              const SizedBox(width: SpendableSpace.hair),
-              Caption(card.label),
+              Caption(label),
             ],
           ),
-          if (card.footer case final footer?) ...[
-            const SizedBox(height: 1),
-            Text(footer, style: SpendableType.subhead.copyWith(color: colors.secondary)),
-          ],
         ],
       ),
     );
