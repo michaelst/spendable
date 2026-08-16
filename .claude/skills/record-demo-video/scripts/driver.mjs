@@ -68,6 +68,25 @@ export async function openSession({
   let frames = 0
   let inFlight = false
   let ticker = null
+  let lastCaption = null
+
+  // The caption is a node injected into the page, so every navigation throws it away. Painting is
+  // separate from setting so a fresh page can be re-captioned without the scenario narrating twice.
+  const paintCaption = (text) =>
+    evaluate(`
+      (() => {
+        let bar = document.getElementById('demo-caption')
+        if (!bar) {
+          bar = document.createElement('div')
+          bar.id = 'demo-caption'
+          bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;' +
+            'background:rgba(10,10,12,.92);color:#e8e8ea;padding:14px 22px;letter-spacing:.2px;' +
+            'font:500 20px ui-monospace,SFMono-Regular,Menlo,monospace;border-top:2px solid #6c7cf5'
+          document.body.appendChild(bar)
+        }
+        bar.textContent = ${JSON.stringify(text)}
+      })()
+    `)
 
   // Frames come off a timer for the whole run rather than one per action, so the video carries the
   // app's real response times instead of a slideshow of end states.
@@ -177,21 +196,10 @@ export async function openSession({
     },
 
     // Deliberately styled as an obvious overlay: narration must never be mistakable for app UI.
-    caption: (text) =>
-      evaluate(`
-        (() => {
-          let bar = document.getElementById('demo-caption')
-          if (!bar) {
-            bar = document.createElement('div')
-            bar.id = 'demo-caption'
-            bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;' +
-              'background:rgba(10,10,12,.92);color:#e8e8ea;padding:14px 22px;letter-spacing:.2px;' +
-              'font:500 20px ui-monospace,SFMono-Regular,Menlo,monospace;border-top:2px solid #6c7cf5'
-            document.body.appendChild(bar)
-          }
-          bar.textContent = ${JSON.stringify(text)}
-        })()
-      `),
+    caption: (text) => {
+      lastCaption = text
+      return paintCaption(text)
+    },
 
     // Narrate and hold, so there is time to read the caption before the next action.
     async step(text, ms = 2400) {
@@ -199,8 +207,11 @@ export async function openSession({
       await sleep(ms)
     },
 
+    // A path is relative to the dev app. An absolute URL goes through untouched, for the parts of a
+    // flow that legitimately leave it - an OAuth callback on a loopback port, a link from an email.
     goto: async (path, settleMs = 3500) => {
-      await send('Page.navigate', { url: `http://localhost:${port}${path}` })
+      const url = /^https?:\/\//.test(path) ? path : `http://localhost:${port}${path}`
+      await send('Page.navigate', { url })
       await sleep(settleMs)
     },
 
@@ -235,6 +246,13 @@ export async function openSession({
 
   await send('Page.enable')
   await send('Runtime.enable')
+
+  // Put the caption back after any navigation - a goto, or a click that followed a redirect - so
+  // the narration does not blink out for a second or two every time the page changes.
+  session.on('Page.loadEventFired', () => {
+    if (lastCaption) paintCaption(lastCaption).catch(() => {})
+  })
+
   await send('Emulation.setDeviceMetricsOverride', {
     width,
     height,

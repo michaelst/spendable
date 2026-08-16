@@ -1,5 +1,7 @@
 import Config
 
+config :spendable, issuer: "http://localhost:4002"
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used
@@ -9,7 +11,7 @@ config :spendable, Spendable.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "spendable_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "spendable_test#{System.get_env("DB_NAME_SUFFIX", "")}#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 

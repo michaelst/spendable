@@ -35,10 +35,13 @@ defmodule SpendableWeb.AuthController do
         image: image
       })
 
+    return_to = get_session(conn, "return_to") || ~p"/budgets"
+
     conn
+    |> delete_session("return_to")
     |> put_session(:current_user_id, user.id)
     |> configure_session(renew: true)
-    |> redirect(to: ~p"/budgets")
+    |> redirect(to: return_to)
   end
 
   def delete(conn, _params) do

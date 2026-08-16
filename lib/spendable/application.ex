@@ -13,6 +13,9 @@ defmodule Spendable.Application do
       Spendable.Repo,
       {Oban, Application.fetch_env!(:spendable, Oban)},
       {Phoenix.PubSub, name: Spendable.PubSub},
+      # start: true because Anubis otherwise skips startup when no Phoenix server is running, which
+      # leaves the MCP registry down in tests.
+      {SpendableWeb.MCP.Server, transport: {:streamable_http, start: true}},
       SpendableWeb.Endpoint
     ]
 

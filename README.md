@@ -15,6 +15,18 @@ mix phx.server
 Then visit [`localhost:4000`](http://localhost:4000). Sign-in is Google OAuth, so `.env` needs
 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `PLAID_CLIENT_ID` and `PLAID_SECRET_KEY`.
 
+### Worktrees
+
+In a git worktree, run this first:
+
+```bash
+scripts/setup-worktree.sh
+```
+
+It gives the worktree its own database (`spendable_dev_wt1`) and port (`4100`, `4200`, ...) on the
+one shared postgres, writes them to a gitignored `.env.worktree` that mise and docker compose both
+read, and copies `.env` over from the main checkout. Then `mix setup` and `mix phx.server` as usual.
+
 Gates before anything is done:
 
 ```bash

@@ -14,10 +14,13 @@ CMD="${1:?usage: qa.sh start|run|log|stop [...]}"
 ROOT="$(git rev-parse --show-toplevel)"
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-PORT="${PORT:-4000}"
-DEBUG_PORT="${QA_DEBUG_PORT:-9322}"
+# shellcheck source=../../record-demo-video/scripts/worktree_env.sh
+. "$SKILL_DIR/../../record-demo-video/scripts/worktree_env.sh"
 
-STATE="${TMPDIR:-/tmp}/spendable-qa"
+DEBUG_PORT="${QA_DEBUG_PORT:-$((9322 + WORKTREE_SLOT))}"
+
+# Keyed by slot so a QA session in one worktree does not adopt another's Chrome and screenshots.
+STATE="${TMPDIR:-/tmp}/spendable-qa-$WORKTREE_SLOT"
 ENV_FILE="$STATE/session.env"
 SERVER_LOG="$STATE/server.log"
 

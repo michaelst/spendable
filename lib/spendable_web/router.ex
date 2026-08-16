@@ -16,6 +16,45 @@ defmodule SpendableWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :mcp do
+    plug SpendableWeb.Plugs.VerifyMcpToken
+  end
+
+  pipeline :remember_return_to do
+    plug SpendableWeb.Plugs.RememberReturnTo
+  end
+
+  live_session :oauth_consent, on_mount: [{SpendableWeb.Live.UserAuth, :ensure_authenticated}] do
+    scope "/oauth", SpendableWeb.Live do
+      pipe_through [:browser, :remember_return_to]
+
+      live "/authorize", OAuthAuthorize
+    end
+  end
+
+  scope "/.well-known", SpendableWeb do
+    pipe_through :api
+
+    get "/oauth-authorization-server", WellKnownController, :oauth_authorization_server
+    # Both paths: the spec derives the resource's metadata URL by inserting the well-known prefix
+    # before the resource path, but clients still probe the bare one.
+    get "/oauth-protected-resource", WellKnownController, :oauth_protected_resource
+    get "/oauth-protected-resource/mcp", WellKnownController, :oauth_protected_resource
+  end
+
+  scope "/oauth", SpendableWeb do
+    pipe_through :api
+
+    post "/token", OAuthController, :token
+    post "/register", OAuthController, :register
+  end
+
+  scope "/mcp" do
+    pipe_through :mcp
+
+    forward "/", Anubis.Server.Transport.StreamableHTTP.Plug, server: SpendableWeb.MCP.Server
+  end
+
   scope "/", SpendableWeb do
     pipe_through :browser
 
@@ -52,6 +91,7 @@ defmodule SpendableWeb.Router do
       live "/transactions", Transactions
       live "/splits", Splits
       live "/banks", Banks
+      live "/settings", Settings
     end
   end
 end

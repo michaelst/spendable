@@ -13,7 +13,8 @@ defmodule SpendableWeb.Live.Nav do
     SpendableWeb.Live.Budgets => :budgets,
     SpendableWeb.Live.Transactions => :transactions,
     SpendableWeb.Live.Splits => :splits,
-    SpendableWeb.Live.Banks => :banks
+    SpendableWeb.Live.Banks => :banks,
+    SpendableWeb.Live.Settings => :settings
   }
 
   defp set_active_tab(_params, _url, socket) do
