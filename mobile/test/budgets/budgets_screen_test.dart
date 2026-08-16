@@ -235,8 +235,8 @@ void main() {
     expect(find.text('No limit set'), findsNothing);
   });
 
-  // Envelopes, then goals, then what is only tracked - the grouping does the work a heading would.
-  testWidgets('orders the budgets by type with no heading over each group', (tester) async {
+  // Envelopes, then what is only tracked, then goals - the grouping does the work a heading would.
+  testWidgets('orders the budgets by type, with goals last', (tester) async {
     await _pump(
       tester,
       replies: {
@@ -255,7 +255,7 @@ void main() {
       },
     );
 
-    final rows = ['Food', 'Rent', 'Vacation', 'Amazon'].map((name) => tester.getTopLeft(find.text(name)).dy);
+    final rows = ['Food', 'Rent', 'Amazon', 'Vacation'].map((name) => tester.getTopLeft(find.text(name)).dy);
 
     expect(rows, orderedEquals(rows.toList()..sort()));
   });

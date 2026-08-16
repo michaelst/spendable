@@ -301,13 +301,14 @@ defmodule SpendableWeb.Live.Budgets do
     [credit_cards | budgets |> Enum.reject(&(&1.name == "Spendable")) |> by_type()]
   end
 
-  # Envelopes, then goals, then what is only tracked, alphabetical inside each. Grouping them by
-  # what they are does the work a heading over each group would, without the headings.
+  # Envelopes, then what is only tracked, alphabetical inside each. Grouping them by what they are
+  # does the work a heading over each group would, without the headings. Goals go last: a goal is
+  # money going in rather than out, so it is not what the month is about.
   defp by_type(budgets), do: Enum.sort_by(budgets, &{type_order(&1.type), &1.name})
 
   defp type_order(:envelope), do: 0
-  defp type_order(:goal), do: 1
-  defp type_order(:tracking), do: 2
+  defp type_order(:tracking), do: 1
+  defp type_order(:goal), do: 2
 
   defp build_cards(budgets, spent, current_month_is_selected) do
     Enum.map(budgets, fn budget ->

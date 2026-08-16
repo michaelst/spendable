@@ -51,8 +51,9 @@ List<Budget> listedBudgets(BudgetSummary summary) {
 
   final spendable = summary.budgets.where((budget) => budget.name == spendableName).firstOrNull;
 
-  // Envelopes, then goals, then what is only tracked, alphabetical inside each. Grouping them by
-  // what they are does the work a heading over each group would, without the headings.
+  // Envelopes, then what is only tracked, alphabetical inside each. Grouping them by what they are
+  // does the work a heading over each group would, without the headings. Goals go last: a goal is
+  // money going in rather than out, so it is not what the month is about.
   final rest = summary.budgets.where((budget) => budget.id != spendable?.id).toList()
     ..sort((a, b) {
       final byType = _typeOrder(a.type).compareTo(_typeOrder(b.type));
@@ -79,8 +80,8 @@ List<Budget> listedBudgets(BudgetSummary summary) {
 
 int _typeOrder(BudgetTypeEnum type) => switch (type) {
   BudgetTypeEnum.envelope => 0,
-  BudgetTypeEnum.goal => 1,
-  _ => 2,
+  BudgetTypeEnum.goal => 2,
+  _ => 1,
 };
 
 /// The budget picker every other screen offers.

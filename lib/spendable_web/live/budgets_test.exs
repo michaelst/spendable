@@ -272,19 +272,19 @@ defmodule SpendableWeb.Live.BudgetsTest do
     refute has_element?(view, ~s(button[aria-label="Edit Credit Cards"]))
   end
 
-  # Envelopes, then goals, then what is only tracked - the grouping does the work a heading would.
-  test "orders the cards by type", %{conn: conn, scope: scope} do
-    {:ok, _tracking} = Budgets.create_budget(scope, %{"name" => "Amazon", "type" => "tracking"})
+  # Envelopes, then what is only tracked, then goals - the grouping does the work a heading would.
+  test "orders the cards by type, with goals last", %{conn: conn, scope: scope} do
     {:ok, _goal} = Budgets.create_budget(scope, %{"name" => "Vacation", "type" => "goal"})
+    {:ok, _tracking} = Budgets.create_budget(scope, %{"name" => "Amazon", "type" => "tracking"})
     {:ok, _envelope} = Budgets.create_budget(scope, %{"name" => "Rent", "type" => "envelope"})
 
     {:ok, _view, html} = live(conn, ~p"/budgets")
 
-    assert [rent, vacation, amazon] =
-             Enum.map(["Rent", "Vacation", "Amazon"], &(:binary.match(html, &1) |> elem(0)))
+    assert [rent, amazon, vacation] =
+             Enum.map(["Rent", "Amazon", "Vacation"], &(:binary.match(html, &1) |> elem(0)))
 
-    assert rent < vacation
-    assert vacation < amazon
+    assert rent < amazon
+    assert amazon < vacation
   end
 
   test "filters the list by the search box", %{conn: conn, scope: scope} do
