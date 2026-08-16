@@ -26,7 +26,15 @@ jobs:
       - uses: jdx/mise-action@v2
 
       - run: flutter pub get
-      - run: dart format --set-exit-if-changed --line-length 110 lib test
+
+      # Regenerated rather than trusted, so a .g.dart left behind by a change to the file it is
+      # generated from fails here instead of confusing the next person to run build_runner.
+      - run: dart run build_runner build
+      - run: git diff --exit-code lib
+
+      # Generated files are excluded: build_runner writes them at its own width, so formatting
+      # them would put every regeneration at odds with the check above.
+      - run: dart format --set-exit-if-changed --line-length 110 $(find lib test -name '*.dart' ! -name '*.g.dart')
       - run: flutter analyze
       - run: flutter test
 

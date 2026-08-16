@@ -12,7 +12,8 @@ part of 'identity_tokens.dart';
 @ProviderFor(identityTokens)
 final identityTokensProvider = IdentityTokensProvider._();
 
-final class IdentityTokensProvider extends $FunctionalProvider<IdentityTokens, IdentityTokens, IdentityTokens>
+final class IdentityTokensProvider
+    extends $FunctionalProvider<IdentityTokens, IdentityTokens, IdentityTokens>
     with $Provider<IdentityTokens> {
   IdentityTokensProvider._()
     : super(
@@ -30,7 +31,8 @@ final class IdentityTokensProvider extends $FunctionalProvider<IdentityTokens, I
 
   @$internal
   @override
-  $ProviderElement<IdentityTokens> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<IdentityTokens> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   IdentityTokens create(Ref ref) {
@@ -39,7 +41,10 @@ final class IdentityTokensProvider extends $FunctionalProvider<IdentityTokens, I
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(IdentityTokens value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<IdentityTokens>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<IdentityTokens>(value),
+    );
   }
 }
 

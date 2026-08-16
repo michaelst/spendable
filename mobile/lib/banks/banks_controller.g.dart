@@ -14,7 +14,8 @@ part of 'banks_controller.dart';
 final banksControllerProvider = BanksControllerProvider._();
 
 /// Connecting banks and deciding what each account does.
-final class BanksControllerProvider extends $NotifierProvider<BanksController, AsyncValue<void>> {
+final class BanksControllerProvider
+    extends $NotifierProvider<BanksController, AsyncValue<void>> {
   /// Connecting banks and deciding what each account does.
   BanksControllerProvider._()
     : super(
@@ -36,7 +37,10 @@ final class BanksControllerProvider extends $NotifierProvider<BanksController, A
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AsyncValue<void>>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
   }
 }
 
