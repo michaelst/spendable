@@ -536,6 +536,10 @@ defmodule SpendableWeb.Live.TransactionsTest do
     assert html =~ "Savings"
     assert html =~ "→"
 
+    # A transfer is not spending, so there is no budget for it to come out of.
+    refute has_element?(view, "#spend-from-#{out.id}")
+    refute has_element?(view, "#transactions-#{out.id} button", "Split")
+
     {:ok, _reloaded, html} = live(conn, ~p"/transactions")
 
     refute html =~ ~s(id="transactions-#{into.id}")

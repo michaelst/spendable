@@ -114,8 +114,9 @@ defmodule SpendableWeb.Live.Transactions do
               {Utils.format_currency(transaction.amount)}
             </span>
             <div class="hidden w-36 shrink-0 @lg:block">
+              <!-- A transfer is not spending, so there is no budget for it to come out of. -->
               <form
-                :if={sole_allocation(transaction)}
+                :if={not transfer?(transaction) and sole_allocation(transaction)}
                 id={"spend-from-#{transaction.id}"}
                 phx-change="set_spend_from"
               >
@@ -131,7 +132,7 @@ defmodule SpendableWeb.Live.Transactions do
                 </select>
               </form>
               <button
-                :if={is_nil(sole_allocation(transaction))}
+                :if={not transfer?(transaction) and is_nil(sole_allocation(transaction))}
                 type="button"
                 phx-click={JS.push("select_transaction") |> show_details()}
                 phx-value-id={transaction.id}
@@ -600,6 +601,8 @@ defmodule SpendableWeb.Live.Transactions do
   # budget and the row can offer it directly.
   defp sole_allocation(%{budget_allocations: [allocation]}), do: allocation
   defp sole_allocation(_transaction), do: nil
+
+  defp transfer?(%{transfer_id: transfer_id}), do: is_binary(transfer_id)
 
   attr :account, :map, required: true
 
