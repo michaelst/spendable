@@ -21,12 +21,10 @@ defmodule SpendableWeb.Api.SessionController do
     ]
   )
 
-  def create(conn, _params) do
-    %SessionRequest{id_token: id_token, device_name: device_name} = conn.body_params
-
-    with {:ok, user} <- Accounts.sign_in_with_google(id_token),
+  def create(conn, params) do
+    with {:ok, user} <- Accounts.sign_in_with_google(params["id_token"]),
          {:ok, api_token} <-
-           Accounts.create_api_token(Scope.for_user(user), %{"device_name" => device_name}) do
+           Accounts.create_api_token(Scope.for_user(user), Map.take(params, ["device_name"])) do
       conn
       |> put_status(:created)
       |> json(Session.build(api_token))

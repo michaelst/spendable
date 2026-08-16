@@ -2,6 +2,202 @@
   "components": {
     "responses": {},
     "schemas": {
+      "Budget": {
+        "description": "An envelope money is divided into. Amounts are decimal strings.",
+        "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "balance": {
+            "description": "What the allocations add up to, or the bank account's balance when assigned.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budgeted_amount": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "type": {
+            "enum": [
+              "tracking",
+              "envelope",
+              "goal"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "balance"
+        ],
+        "title": "Budget",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Budget",
+        "x-validate": null
+      },
+      "BudgetRequest": {
+        "description": "Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server\nworks out the adjustment that gets it there, so never send `adjustment`.\n",
+        "example": {
+          "budgeted_amount": "400.00",
+          "name": "Groceries",
+          "type": "envelope"
+        },
+        "properties": {
+          "balance": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budgeted_amount": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "type": {
+            "enum": [
+              "tracking",
+              "envelope",
+              "goal"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "BudgetRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetRequest",
+        "x-validate": null
+      },
+      "BudgetSummary": {
+        "description": "Everything the budgets screen shows for one month. Presentation is the client's - this is the\nnumbers behind it.\n",
+        "properties": {
+          "allocated_total": {
+            "description": "Budgeted across envelopes.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budgets": {
+            "items": {
+              "$ref": "#/components/schemas/Budget"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "credit_card_balance": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "current_month": {
+            "description": "Spendable, allocated and credit cards only apply to the current month.",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "month": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spendable": {
+            "description": "Synced money no budget has claimed.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent": {
+            "additionalProperties": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "description": "Spent this month, keyed by budget id. Every listed budget has an entry.",
+            "type": "object",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent_by_month": {
+            "description": "Newest first, for the month picker.",
+            "items": {
+              "properties": {
+                "month": {
+                  "format": "date",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "spent": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "month",
+                "spent"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "spent_total": {
+            "description": "Spent across envelopes this month.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "month",
+          "current_month",
+          "spendable",
+          "allocated_total",
+          "spent_total",
+          "credit_card_balance",
+          "budgets",
+          "spent",
+          "spent_by_month"
+        ],
+        "title": "BudgetSummary",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetSummary",
+        "x-validate": null
+      },
       "Errors": {
         "description": "The shape every failed request comes back in.",
         "properties": {
@@ -173,6 +369,416 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/api/budgets": {
+      "get": {
+        "callbacks": {},
+        "description": "Spendable first, then alphabetical. Archived budgets are left out.",
+        "operationId": "SpendableWeb.Api.BudgetController.index",
+        "parameters": [
+          {
+            "description": "Matches on name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Budget"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Budgets"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List budgets",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.BudgetController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetRequest"
+              }
+            }
+          },
+          "description": "Budget",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Create a budget",
+        "tags": [
+          "budgets"
+        ]
+      }
+    },
+    "/api/budgets/summary": {
+      "get": {
+        "callbacks": {},
+        "description": "Defaults to the current month. Any date in a month selects that whole month.",
+        "operationId": "SpendableWeb.Api.BudgetSummaryController.show",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "month",
+            "required": false,
+            "schema": {
+              "format": "date",
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "Matches on budget name.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetSummary"
+                }
+              }
+            },
+            "description": "BudgetSummary"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "The budgets screen for one month",
+        "tags": [
+          "budgets"
+        ]
+      }
+    },
+    "/api/budgets/{id}": {
+      "delete": {
+        "callbacks": {},
+        "description": "Budgets are archived rather than deleted, so the history they hold survives.",
+        "operationId": "SpendableWeb.Api.BudgetController.delete",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Archive a budget",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "get": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.BudgetController.show",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Get a budget",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "description": "The response carries the recalculated balance, so render it rather than the request.",
+        "operationId": "SpendableWeb.Api.BudgetController.update (2)",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetRequest"
+              }
+            }
+          },
+          "description": "Budget",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a budget",
+        "tags": [
+          "budgets"
+        ]
+      },
+      "put": {
+        "callbacks": {},
+        "description": "The response carries the recalculated balance, so render it rather than the request.",
+        "operationId": "SpendableWeb.Api.BudgetController.update",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetRequest"
+              }
+            }
+          },
+          "description": "Budget",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Budget"
+                }
+              }
+            },
+            "description": "Budget"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a budget",
+        "tags": [
+          "budgets"
+        ]
+      }
+    },
     "/api/me": {
       "get": {
         "callbacks": {},
