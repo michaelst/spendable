@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:spendable/auth/identity_tokens.dart';
 import 'package:spendable/auth/token_storage.dart';
+import 'package:spendable/push/push_channel.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 class FakeTokenStorage implements TokenStorage {
@@ -38,6 +40,28 @@ class FakeIdentityTokens implements IdentityTokens {
 
     return token;
   }
+}
+
+class FakePushChannel implements PushChannel {
+  FakePushChannel({this.granted = true});
+
+  final bool granted;
+  final _events = StreamController<PushEvent>.broadcast();
+
+  var registered = 0;
+
+  @override
+  Stream<PushEvent> get events => _events.stream;
+
+  @override
+  Future<bool> register() async {
+    registered += 1;
+
+    return granted;
+  }
+
+  /// Stands in for the device: what iOS would have sent up the channel.
+  void send(PushEvent event) => _events.add(event);
 }
 
 /// One canned reply per `METHOD /path`, so a test states only the calls it cares about.

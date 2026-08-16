@@ -93,12 +93,10 @@ class _Member extends ConsumerWidget {
 
     if (!queued || !context.mounted) return;
 
-    // The job answers nothing when it finishes, so say so rather than implying a wait.
+    // The request only queues the job; the silent push at the end of the run is what refreshes.
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
-      ..showSnackBar(
-        const SnackBar(content: Text('Syncing history. Pull to refresh to see what has landed.')),
-      );
+      ..showSnackBar(const SnackBar(content: Text('Syncing history. The lists update when it finishes.')));
   }
 }
 

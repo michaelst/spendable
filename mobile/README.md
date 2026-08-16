@@ -36,7 +36,8 @@ or every regeneration will show up as a diff.
 
 ## Setup this repo cannot do for you
 
-Both are external to the codebase and sign-in fails on device without them.
+All external to the codebase. The first two fail sign-in on device; the third silently sends no
+pushes.
 
 - **Sign in with Apple** needs the capability enabled on `fiftysevenmedia.Spendable` in the Apple
   Developer portal. `ios/Runner/Runner.entitlements` already declares it.
@@ -44,3 +45,7 @@ Both are external to the codebase and sign-in fails on device without them.
   and its reversed form as a URL scheme. The **server** needs the same value in its
   `GOOGLE_IOS_CLIENT_ID` env var, or it rejects the app's ID tokens on audience - `scripts/install.sh`
   prompts for it.
+- **Push notifications** need the capability enabled on the same App ID and an APNs key (a `.p8`)
+  created under Keys. The **server** reads it, its key id and the team id from `.secrets/` -
+  `scripts/install.sh` prompts for all three. There is no push on the simulator: APNs issues no
+  device token there, and registration fails as a matter of course.

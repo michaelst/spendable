@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'banks/banks_screen.dart';
 import 'budgets/budgets_screen.dart';
+import 'selected_tab.dart';
 import 'splits/splits_screen.dart';
 import 'transactions/transactions_screen.dart';
 
 /// IndexedStack rather than a swapped child, so switching tabs keeps each screen's scroll
 /// position and its loaded pages.
-class Shell extends StatefulWidget {
+class Shell extends ConsumerWidget {
   const Shell({super.key});
 
   @override
-  State<Shell> createState() => _ShellState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tab = ref.watch(selectedTabProvider);
 
-class _ShellState extends State<Shell> {
-  var _tab = 0;
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
-        index: _tab,
+        index: tab.index,
         children: const [BudgetsScreen(), TransactionsScreen(), SplitsScreen(), BanksScreen()],
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (index) => setState(() => _tab = index),
+        selectedIndex: tab.index,
+        onDestinationSelected: (index) => ref.read(selectedTabProvider.notifier).select(AppTab.values[index]),
         destinations: const [
           NavigationDestination(
             key: Key('tab-budgets'),

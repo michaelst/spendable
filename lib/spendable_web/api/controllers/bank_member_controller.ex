@@ -87,8 +87,8 @@ defmodule SpendableWeb.Api.BankMemberController do
     operation_id: "syncBank",
     summary: "Pull two years of history",
     description: """
-    Queues the work and returns immediately. There is no completion signal - refresh the lists to
-    pick up whatever has landed.
+    Queues the work and returns immediately. A silent push goes out when the run finishes, which
+    is the signal to re-read whatever the client is showing.
     """,
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [

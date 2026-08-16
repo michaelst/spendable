@@ -453,7 +453,7 @@ class BanksApi {
   }
 
   /// Pull two years of history
-  /// Queues the work and returns immediately. There is no completion signal - refresh the lists to pick up whatever has landed. 
+  /// Queues the work and returns immediately. A silent push goes out when the run finishes, which is the signal to re-read whatever the client is showing. 
   ///
   /// Parameters:
   /// * [id] - 

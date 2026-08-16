@@ -62,7 +62,8 @@ class BanksController extends _$BanksController {
   Future<bool> assignBudget(BankAccount account, String? budgetId) =>
       _updateAccount(account.id, BankAccountRequest((builder) => builder.budgetId = budgetId));
 
-  /// Two years of history, queued. There is no completion signal, so the user pulls to refresh.
+  /// Two years of history, queued. The silent push at the end of the run is what refreshes the
+  /// lists, so there is nothing to wait on here.
   Future<bool> syncHistory(String memberId) => _write(() => _api.syncBank(id: memberId).orApiError());
 
   BanksApi get _api => ref.read(apiProvider).getBanksApi();
