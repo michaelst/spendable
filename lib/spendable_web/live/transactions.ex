@@ -1,6 +1,7 @@
 defmodule SpendableWeb.Live.Transactions do
   use SpendableWeb, :live_view
 
+  import SpendableWeb.Utils.AccountLabel
   import SpendableWeb.Utils.FormOptions
 
   alias Spendable.Budgets
@@ -75,7 +76,7 @@ defmodule SpendableWeb.Live.Transactions do
             :for={{id, transaction} <- @streams.transactions}
             id={id}
             class={[
-              if(transaction.excluded or transaction.transfer_id, do: "opacity-40"),
+              if(transaction.excluded, do: "opacity-40"),
               "group flex flex-row items-center gap-x-3 p-2"
             ]}
           >
@@ -111,10 +112,7 @@ defmodule SpendableWeb.Live.Transactions do
                 class="h-5 w-5 shrink-0 rounded-sm"
               />
               <span :if={bank_account(transaction)} class="truncate text-xs text-gray-400">
-                {bank_account(transaction).name}
-              </span>
-              <span :if={bank_account(transaction)} class="shrink-0 text-xs text-gray-500">
-                {mask(bank_account(transaction).number)}
+                {account_label(bank_account(transaction).name, bank_account(transaction).number)}
               </span>
             </div>
             <span class="w-24 shrink-0 text-right text-sm font-semibold tabular-nums text-white">
@@ -589,8 +587,13 @@ defmodule SpendableWeb.Live.Transactions do
       (socket.assigns.show_excluded or not transaction.excluded)
   end
 
+  # Saying where the whole of a transaction was spent is the decision the review queue is asking
+  # for, so making it is what finishes the row.
   defp whole_amount_to(transaction, budget_id) do
-    %{"budget_allocations" => [%{"amount" => transaction.amount, "budget_id" => budget_id}]}
+    %{
+      "budget_allocations" => [%{"amount" => transaction.amount, "budget_id" => budget_id}],
+      "reviewed" => true
+    }
   end
 
   # A transaction with one allocation splits nothing, so the whole amount is spent from that
@@ -607,12 +610,8 @@ defmodule SpendableWeb.Live.Transactions do
   defp bank_account(%{bank_transaction: %{bank_account: account}}), do: account
   defp bank_account(_transaction), do: nil
 
-  # The dots stand in for the digits the bank does not give us, so the number reads as an account
-  # rather than as a footnote.
-  defp mask(number), do: "••••#{number}"
-
   defp transfer_label(%{bank_transaction: %{bank_account: account}}) do
-    "#{account.name} #{mask(account.number)}"
+    account_label(account.name, account.number)
   end
 
   defp transfer_label(transfer), do: transfer.name

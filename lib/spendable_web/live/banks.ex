@@ -1,6 +1,7 @@
 defmodule SpendableWeb.Live.Banks do
   use SpendableWeb, :live_view
 
+  import SpendableWeb.Utils.AccountLabel
   import SpendableWeb.Utils.FormOptions
 
   alias Spendable.Banks
@@ -91,7 +92,7 @@ defmodule SpendableWeb.Live.Banks do
                     if(bank_account.sync, do: "text-white", else: "text-gray-500"),
                     "min-w-0 text-sm font-semibold leading-6 flex flex-col"
                   ]}>
-                    <span class="truncate">{bank_account.name} *{bank_account.number}</span>
+                    <span class="truncate">{account_label(bank_account.name, bank_account.number)}</span>
                     <span class="truncate uppercase mt-1 text-xs text-gray-400">{bank_account.sub_type}</span>
                   </h2>
                 </div>

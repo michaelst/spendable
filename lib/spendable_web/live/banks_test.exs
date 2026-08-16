@@ -58,6 +58,17 @@ defmodule SpendableWeb.Live.BanksTest do
     assert html =~ "Tartan Bank"
   end
 
+  # An Apple Cash balance has no number to print, and dots with nothing after them say less than
+  # the name on its own.
+  test "reads an account with no number as just its name", %{conn: conn, member: member} do
+    {:ok, view, _html} = live(conn, ~p"/banks")
+
+    html = render_click(view, "select_bank_member", %{"id" => member.id})
+
+    assert html =~ "Checking"
+    refute html =~ "••••"
+  end
+
   test "pushes a link token when opening Plaid Link", %{conn: conn} do
     {:ok, view, _html} = live(conn, ~p"/banks")
 
