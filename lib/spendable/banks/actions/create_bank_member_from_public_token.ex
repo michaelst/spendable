@@ -34,7 +34,8 @@ defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicToken do
     |> Repo.insert()
     |> case do
       {:ok, bank_member} ->
-        {:ok, _job} = Banks.queue_sync(bank_member)
+        # Silently: a month of history landing at once is not news the user wants pushed at them.
+        {:ok, _job} = Banks.queue_sync(bank_member, notify: false)
         {:ok, bank_member}
 
       {:error, changeset} ->

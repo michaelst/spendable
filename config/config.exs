@@ -18,7 +18,7 @@ config :spendable,
 
 config :spendable, Oban,
   repo: Spendable.Repo,
-  queues: [banks: 5]
+  queues: [banks: 5, notifications: 5]
 
 config :spendable, Spendable.Repo,
   migration_primary_key: [type: :text],
@@ -79,6 +79,12 @@ config :spendable, Spendable.Accounts.Clients.Google, base_url: "https://www.goo
 config :spendable, Spendable.Accounts.Clients.Apple,
   base_url: "https://appleid.apple.com",
   audiences: ["fiftysevenmedia.Spendable"]
+
+# An APNs topic is the bundle id. The signing key, its id and the team id come from runtime.exs;
+# without them the client answers `{:error, :not_configured}` and nothing else changes.
+config :spendable, Spendable.Accounts.Clients.Apns,
+  base_url: "https://api.push.apple.com",
+  topic: "fiftysevenmedia.Spendable"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

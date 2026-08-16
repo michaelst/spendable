@@ -4,6 +4,7 @@ defmodule Spendable.Banks.Actions.SyncMember do
   import Ecto.Query
   import Spendable.Banks.Utils.FormatBankMember
 
+  alias Spendable.Accounts
   alias Spendable.Banks.Clients.Plaid
   alias Spendable.Banks.Schemas.BankAccount
   alias Spendable.Banks.Schemas.BankMember
@@ -22,6 +23,10 @@ defmodule Spendable.Banks.Actions.SyncMember do
   Takes an id rather than a record because the only caller is the job queue, which carries ids.
   Runs under a system scope: the work is ours, but the rows are still the member's owner's.
   Activity is pulled from `:start_date`, defaulting to the last #{@default_days} days.
+
+  Notifies the user once at the end, never per charge. `notify: false` keeps the alert back on a
+  run that is expected to be large - the first sync of a connection, or a backfill the user is
+  already watching - while still telling the app the run finished.
   """
   def sync_member(bank_member_id, opts \\ []) when is_binary(bank_member_id) do
     case Repo.get(BankMember, bank_member_id) do
@@ -34,13 +39,25 @@ defmodule Spendable.Banks.Actions.SyncMember do
         |> sync_item(scope)
         |> sync_accounts(scope)
         |> Enum.filter(& &1.sync)
-        |> Enum.each(&sync_transactions(&1, scope, bank_member, start_date))
-
-        :ok
+        |> Enum.flat_map(&sync_transactions(&1, scope, bank_member, start_date))
+        |> notify(scope, opts)
 
       nil ->
         {:error, :bank_member_not_found}
     end
+  end
+
+  defp notify(bank_transactions, scope, opts) do
+    total = Enum.reduce(bank_transactions, Decimal.new(0), &Decimal.add(&2, &1.amount))
+
+    {:ok, _job} =
+      Accounts.notify_user(scope, %{
+        count: length(bank_transactions),
+        total: total,
+        alert: Keyword.get(opts, :notify, true)
+      })
+
+    :ok
   end
 
   defp sync_item(bank_member, _scope) do
@@ -83,19 +100,25 @@ defmodule Spendable.Banks.Actions.SyncMember do
 
     case Plaid.account_transactions(bank_member.plaid_token, account.external_id, start_date, opts) do
       {:ok, %{body: %{"transactions" => transactions} = response}} ->
-        Enum.each(transactions, &sync_transaction(&1, account, scope))
+        synced = Enum.flat_map(transactions, &sync_transaction(&1, account, scope))
 
-        with %{"total_transactions" => total} when total > offset + @page_size <- response do
-          sync_transactions(account, scope, bank_member, start_date, offset + @page_size)
-        end
+        rest =
+          with %{"total_transactions" => total} when total > offset + @page_size <- response do
+            sync_transactions(account, scope, bank_member, start_date, offset + @page_size)
+          else
+            _last_page -> []
+          end
+
+        synced ++ rest
 
       {:ok, %{body: %{"error_code" => "PRODUCT_NOT_READY"}}} ->
-        :ok
+        []
     end
   end
 
   # Plaid replays transactions we already hold, so a duplicate external id is the normal case and
-  # not an error worth failing the sync over.
+  # not an error worth failing the sync over. Returns the inserts, which are what the user is told
+  # about.
   defp sync_transaction(details, account, scope) do
     attrs = format_bank_transaction(details)
 
@@ -103,8 +126,13 @@ defmodule Spendable.Banks.Actions.SyncMember do
     |> BankTransaction.changeset(attrs)
     |> Repo.insert()
     |> case do
-      {:ok, bank_transaction} -> create_transaction(bank_transaction, details, scope)
-      {:error, _already_synced} -> :ok
+      {:ok, bank_transaction} ->
+        create_transaction(bank_transaction, details, scope)
+
+        [bank_transaction]
+
+      {:error, _already_synced} ->
+        []
     end
   end
 

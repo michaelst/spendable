@@ -37,6 +37,19 @@ config :spendable, Spendable.Accounts.Clients.Google,
   base_url: "https://www.googleapis.com",
   audiences: ["spendable-ios.apps.googleusercontent.com"]
 
+# A throwaway P-256 key, here rather than in test/support because config is read before anything
+# is compiled. It signs nothing that leaves the test run - Tesla is mocked.
+config :spendable, Spendable.Accounts.Clients.Apns,
+  key_id: "ABC1234567",
+  team_id: "DEF8901234",
+  private_key: """
+  -----BEGIN PRIVATE KEY-----
+  MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgqSgwFjvegbhHedz/
+  5v5WvWxfgUEv8GI5uci7vhcAJvGhRANCAATFnAuzQDfLCiZ4ei706S5hE/tCwwUw
+  Pb1xcx7n5+asgl4/cpbFp0N3mrIUi5Vdg/SSncErF+OL18UIlcnaUX3Y
+  -----END PRIVATE KEY-----
+  """
+
 config :tesla, adapter: TeslaMock
 
 # Jobs run inline in tests so a sync is asserted on, not waited for.

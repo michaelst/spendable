@@ -33,6 +33,13 @@ defmodule Spendable.Banks.Actions.QueueHistoricalSyncTest do
     )
   end
 
+  # Two years of history is not news, so the app is told and the user is not.
+  test "queues it silently", %{scope: scope, bank_member: bank_member} do
+    {:ok, _job} = Banks.queue_historical_sync(scope, bank_member)
+
+    assert_enqueued(worker: Spendable.Banks.Jobs.SyncMember, args: %{notify: false})
+  end
+
   test "refuses another user's connection", %{bank_member: bank_member} do
     {:ok, other} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})

@@ -12,6 +12,18 @@ defmodule Secret do
       System.get_env(name, non_prod_default)
     end
   end
+
+  # For credentials the app runs without. A missing file is the answer, not a failure to boot.
+  def read(name) do
+    if config_env() == :prod do
+      case File.read("/etc/secrets/" <> name) do
+        {:ok, value} -> value
+        {:error, :enoent} -> nil
+      end
+    else
+      System.get_env(name)
+    end
+  end
 end
 
 config :spendable, Spendable.Banks.Clients.Plaid,
@@ -22,9 +34,17 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: Secret.read!("GOOGLE_CLIENT_ID"),
   client_secret: Secret.read!("GOOGLE_CLIENT_SECRET")
 
+# Both pin values that config/test.exs sets for itself, which these would otherwise blank out.
 # An OAuth client id is a public identifier, not a secret, so the iOS one is a plain env var.
-# Test pins its own audience in config/test.exs, which this would otherwise blank out.
+# Push notifications are optional: with no signing key the client refuses to send and everything
+# else is unchanged, so a machine without a `.p8` still runs.
 if config_env() != :test do
+  config :spendable, Spendable.Accounts.Clients.Apns,
+    base_url: System.get_env("APNS_BASE_URL", "https://api.push.apple.com"),
+    key_id: Secret.read("APNS_KEY_ID"),
+    private_key: Secret.read("APNS_PRIVATE_KEY"),
+    team_id: Secret.read("APNS_TEAM_ID")
+
   config :spendable, Spendable.Accounts.Clients.Google,
     base_url: "https://www.googleapis.com",
     audiences:

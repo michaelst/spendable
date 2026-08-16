@@ -26,6 +26,10 @@ defmodule Spendable.Accounts.Schemas.ApiToken do
     |> cast(attrs, [:device_name, :apns_token])
     |> validate_required([:token_hash, :last_used_at, :expires_at])
     |> validate_length(:device_name, max: 100)
+    # Apple's device token is hex. Its length is 32 bytes today but has grown before, so only the
+    # floor is pinned - rejecting a longer one would silently stop every device registering.
+    |> validate_format(:apns_token, ~r/\A[0-9a-f]+\z/i)
+    |> validate_length(:apns_token, min: 64, max: 256)
     |> unique_constraint(:token_hash)
   end
 

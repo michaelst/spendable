@@ -2,6 +2,7 @@ defmodule Spendable.Banks.Actions.SyncMemberTest do
   use Spendable.DataCase, async: true
 
   alias Spendable.Accounts
+  alias Spendable.Accounts.Jobs.SendNotification
   alias Spendable.Banks
   alias Spendable.Banks.Schemas.BankMember
   alias Spendable.Scope
@@ -208,6 +209,74 @@ defmodule Spendable.Banks.Actions.SyncMemberTest do
     :ok = Banks.sync_member(bank_member.id)
 
     assert [] = Transactions.list_transactions(scope)
+  end
+
+  # Fifty charges are one thing that happened, and the user hears about it once.
+  test "notifies once for the run, not once per charge", %{bank_member: bank_member} do
+    :ok = Banks.sync_member(bank_member.id)
+
+    assert [%Oban.Job{args: %{"count" => count, "alert" => true}}] =
+             all_enqueued(worker: SendNotification)
+
+    assert count > 1
+  end
+
+  # Plaid replays charges we already hold, and a replay is not something to be told about.
+  test "counts only what the run was the first to see", %{bank_member: bank_member} do
+    page = TestData.Plaid.account_transactions("zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP")
+    [transaction | _rest] = page["transactions"]
+
+    stub(TeslaMock, :call, fn
+      %{method: :post, url: "https://sandbox.plaid.com/item/get"}, _opts ->
+        TeslaHelper.response(body: TestData.Plaid.item())
+
+      %{method: :post, url: "https://sandbox.plaid.com/institutions/get_by_id"}, _opts ->
+        TeslaHelper.response(body: TestData.Plaid.institution())
+
+      %{method: :post, url: "https://sandbox.plaid.com/accounts/get"}, _opts ->
+        TeslaHelper.response(body: TestData.Plaid.accounts())
+
+      %{method: :post, url: "https://sandbox.plaid.com/transactions/get"}, _opts ->
+        TeslaHelper.response(body: %{page | "transactions" => [transaction], "total_transactions" => 1})
+    end)
+
+    :ok = Banks.sync_member(bank_member.id)
+    :ok = Banks.sync_member(bank_member.id)
+
+    assert [%Oban.Job{args: %{"count" => 0}}, %Oban.Job{args: %{"count" => 1}}] =
+             all_enqueued(worker: SendNotification)
+  end
+
+  # The silent half is the only signal the app gets that a sync it asked for has finished.
+  test "notifies when the run found nothing", %{bank_member: bank_member} do
+    page = TestData.Plaid.account_transactions("zyBMmKBpeZcDVZgqEx3ACKveJjvwmBHomPbyP")
+
+    stub(TeslaMock, :call, fn
+      %{method: :post, url: "https://sandbox.plaid.com/item/get"}, _opts ->
+        TeslaHelper.response(body: TestData.Plaid.item())
+
+      %{method: :post, url: "https://sandbox.plaid.com/institutions/get_by_id"}, _opts ->
+        TeslaHelper.response(body: TestData.Plaid.institution())
+
+      %{method: :post, url: "https://sandbox.plaid.com/accounts/get"}, _opts ->
+        TeslaHelper.response(body: TestData.Plaid.accounts())
+
+      %{method: :post, url: "https://sandbox.plaid.com/transactions/get"}, _opts ->
+        TeslaHelper.response(body: %{page | "transactions" => [], "total_transactions" => 0})
+    end)
+
+    :ok = Banks.sync_member(bank_member.id)
+
+    assert [%Oban.Job{args: %{"count" => 0, "alert" => true}}] =
+             all_enqueued(worker: SendNotification)
+  end
+
+  test "holds the alert back on a run that was not the user's to hear about", %{
+    bank_member: bank_member
+  } do
+    :ok = Banks.sync_member(bank_member.id, notify: false)
+
+    assert [%Oban.Job{args: %{"alert" => false}}] = all_enqueued(worker: SendNotification)
   end
 
   test "errors when no member has that id" do

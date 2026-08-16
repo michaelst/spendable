@@ -54,4 +54,13 @@ defmodule Spendable.Banks.Jobs.SyncMemberTest do
 
     assert_received {:transactions_request, %{"start_date" => "2024-01-01"}}
   end
+
+  test "carries the alert the job was queued with", %{bank_member: bank_member} do
+    args = %{"bank_member_id" => bank_member.id, "start_date" => "2024-01-01", "notify" => false}
+
+    assert :ok = perform_job(SyncMember, args)
+
+    assert [%Oban.Job{args: %{"alert" => false}}] =
+             all_enqueued(worker: Spendable.Accounts.Jobs.SendNotification)
+  end
 end

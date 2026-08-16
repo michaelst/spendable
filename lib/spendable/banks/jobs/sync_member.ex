@@ -10,6 +10,10 @@ defmodule Spendable.Banks.Jobs.SyncMember do
     Banks.sync_member(bank_member_id, sync_opts(args))
   end
 
-  defp sync_opts(%{"start_date" => start_date}), do: [start_date: Date.from_iso8601!(start_date)]
-  defp sync_opts(_args), do: []
+  defp sync_opts(%{"start_date" => start_date} = args),
+    do: [notify: notify?(args), start_date: Date.from_iso8601!(start_date)]
+
+  defp sync_opts(args), do: [notify: notify?(args)]
+
+  defp notify?(args), do: Map.get(args, "notify", true)
 end

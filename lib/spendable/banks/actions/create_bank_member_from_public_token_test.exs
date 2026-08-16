@@ -47,6 +47,14 @@ defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicTokenTest do
     assert_enqueued(worker: SyncMember, args: %{bank_member_id: bank_member.id})
   end
 
+  # A month of history arriving at once is not news the user wants pushed at them.
+  test "queues it silently", %{scope: scope} do
+    {:ok, bank_member} =
+      Banks.create_bank_member_from_public_token(scope, "public-sandbox-token")
+
+    assert_enqueued(worker: SyncMember, args: %{bank_member_id: bank_member.id, notify: false})
+  end
+
   # Reconnecting a bank the user already holds would be a second copy of the same connection.
   test "errors when the same connection is added twice" do
     {:ok, user} =

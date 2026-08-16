@@ -83,6 +83,7 @@ Class | Method | HTTP request | Description
 [*SessionApi*](doc/SessionApi.md) | [**deleteIdentity**](doc/SessionApi.md#deleteidentity) | **DELETE** /api/identities/{id} | Remove a way to sign in
 [*SessionApi*](doc/SessionApi.md) | [**deleteSession**](doc/SessionApi.md#deletesession) | **DELETE** /api/session | Sign out
 [*SessionApi*](doc/SessionApi.md) | [**getCurrentUser**](doc/SessionApi.md#getcurrentuser) | **GET** /api/me | The signed-in user
+[*SessionApi*](doc/SessionApi.md) | [**updateSession**](doc/SessionApi.md#updatesession) | **PATCH** /api/session | Register this device for push
 [*SplitsApi*](doc/SplitsApi.md) | [**archiveSplit**](doc/SplitsApi.md#archivesplit) | **DELETE** /api/splits/{id} | Archive a split
 [*SplitsApi*](doc/SplitsApi.md) | [**createSplit**](doc/SplitsApi.md#createsplit) | **POST** /api/splits | Create a split
 [*SplitsApi*](doc/SplitsApi.md) | [**getSplit**](doc/SplitsApi.md#getsplit) | **GET** /api/splits/{id} | Get a split and its lines
@@ -121,6 +122,7 @@ Class | Method | HTTP request | Description
  - [MonthSpend](doc/MonthSpend.md)
  - [Session](doc/Session.md)
  - [SessionRequest](doc/SessionRequest.md)
+ - [SessionUpdateRequest](doc/SessionUpdateRequest.md)
  - [Split](doc/Split.md)
  - [SplitLine](doc/SplitLine.md)
  - [SplitLineRequest](doc/SplitLineRequest.md)
