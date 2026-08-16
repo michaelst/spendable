@@ -51,7 +51,7 @@ final class TransactionsControllerProvider
 }
 
 String _$transactionsControllerHash() =>
-    r'684e2fcfec358b2f01f0a8cc8dc555cd96fa1a24';
+    r'8bff76a2e6a6e703215fee2301e3b54ff42f05aa';
 
 /// Writing transactions. Every write renders the transaction that came back rather than what was
 /// sent: the server re-runs the allocation split on each save, so the response is the only
