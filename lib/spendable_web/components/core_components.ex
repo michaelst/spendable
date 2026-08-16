@@ -19,6 +19,7 @@ defmodule SpendableWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   use Gettext, backend: SpendableWeb.Gettext
 
+  defdelegate auth_backdrop(assigns), to: SpendableWeb.Components.AuthBackdrop
   defdelegate bulk_actions(assigns), to: SpendableWeb.Components.BulkActions
 
   attr :id, :string, required: true

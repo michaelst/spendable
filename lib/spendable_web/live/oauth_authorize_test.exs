@@ -38,8 +38,9 @@ defmodule SpendableWeb.Live.OAuthAuthorizeTest do
   test "connecting sends the client back a code", %{conn: conn, request: request} do
     {:ok, view, html} = live(conn, ~p"/oauth/authorize?#{request}")
 
-    assert html =~ "Connect Claude"
-    assert html =~ "claude.ai"
+    assert html =~ "Claude wants access to your Spendable account"
+    assert html =~ "https://claude.ai/api/mcp/auth_callback"
+    assert html =~ "Never your bank connections"
 
     assert {:error, {:redirect, %{to: redirect_uri}}} =
              view |> element("#approve") |> render_click()

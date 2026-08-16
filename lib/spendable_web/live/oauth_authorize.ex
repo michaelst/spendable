@@ -3,10 +3,37 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
 
   alias Spendable.OAuth
 
+  # What approving actually hands over, in the order it matters. The last row is the boundary rather
+  # than a permission: there are no bank tools, and someone deciding whether to trust an app wants
+  # that said out loud rather than inferred from a list it is missing from.
+  @permissions [
+    %{
+      icon: "pi-money",
+      title: "Read your budgets and balances",
+      detail: "Names, what each one holds, and what it is meant to hold."
+    },
+    %{
+      icon: "pi-credit-card",
+      title: "Read your transactions",
+      detail: "Name, amount, date, note, and the budgets they are divided across."
+    },
+    %{
+      icon: "pi-copy",
+      title: "Change budgets, splits and allocations",
+      detail: "Create and rename them, and decide how a transaction is divided."
+    },
+    %{
+      icon: "pi-bank",
+      title: "Never your bank connections",
+      detail: "It cannot see or change a linked bank, and never reaches a credential."
+    }
+  ]
+
   def mount(_params, _session, socket) do
     socket =
       socket
       |> assign(:page_title, "Authorize")
+      |> assign(:permissions, @permissions)
       |> assign(:request, nil)
       |> assign(:error, nil)
 
@@ -25,11 +52,17 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
     assigns = assign(assigns, :message, message(assigns.error))
 
     ~H"""
-    <div class="flex h-screen flex-col justify-center bg-gray-900 px-6">
-      <div class="w-full max-w-md mx-auto rounded-lg bg-gray-800 p-8 text-center">
-        <h1 class="text-lg font-semibold text-white">This app could not be verified</h1>
-        <p class="mt-2 text-sm leading-6 text-gray-400">{@message}</p>
-        <.link navigate={~p"/budgets"} class="mt-6 inline-block text-sm font-semibold text-blue-400">
+    <.auth_backdrop />
+    <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32 bg-white h-full">
+      <div class="mx-auto max-w-xl lg:mx-0">
+        <img class="h-12" src={~p"/images/full-logo.svg"} alt="Spendable" />
+
+        <h1 class="mt-8 text-3xl font-bold tracking-tight text-zinc-900">
+          This app could not be verified
+        </h1>
+        <p class="text-base/7 mt-4 text-zinc-600">{@message}</p>
+
+        <.link navigate={~p"/budgets"} class="mt-8 inline-block text-sm font-semibold text-brand">
           Go to Spendable
         </.link>
       </div>
@@ -39,53 +72,53 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
 
   def render(assigns) do
     ~H"""
-    <div class="flex h-screen flex-col justify-center bg-gray-900 px-6">
-      <div class="w-full max-w-md mx-auto rounded-lg bg-gray-800 p-8">
-        <img class="h-8 mx-auto w-auto" src={~p"/images/full-logo-white.svg"} alt="Spendable" />
+    <.auth_backdrop />
+    <div class="px-4 py-10 sm:px-6 sm:py-12 lg:px-8 xl:px-28 xl:py-14 bg-white h-full">
+      <div class="mx-auto max-w-xl lg:mx-0">
+        <img class="h-12" src={~p"/images/full-logo.svg"} alt="Spendable" />
 
-        <h1 class="mt-6 text-center text-lg font-semibold text-white">
-          Connect {@request.client.client_name}
+        <h1 class="mt-8 text-3xl font-bold tracking-tight text-zinc-900">
+          {@request.client.client_name} wants access to your Spendable account
         </h1>
 
-        <div class="mt-6 flex items-center gap-x-3 rounded-lg bg-gray-900 px-4 py-3">
-          <img
-            :if={@current_scope.user.image}
-            class="h-8 w-8 rounded-full"
-            src={@current_scope.user.image}
-            alt=""
+        <dl class="mt-8 divide-y divide-zinc-200 border-y border-zinc-200">
+          <.permission
+            :for={permission <- @permissions}
+            icon={permission.icon}
+            title={permission.title}
+            detail={permission.detail}
           />
-          <p class="truncate text-sm text-gray-300">Signed in as you</p>
-        </div>
+        </dl>
 
-        <ul class="mt-4 space-y-2 rounded-lg bg-gray-900 p-4 text-sm text-gray-300">
-          <li>Read your budgets, transactions and splits</li>
-          <li>Create and change budgets, splits, and how transactions are allocated</li>
-          <li>Nothing it cannot already do as you, signed in</li>
-        </ul>
-
-        <p class="mt-4 text-xs text-gray-500">
-          Sends you back to <span class="text-gray-400">{host(@request.redirect_uri)}</span>. You can
-          disconnect it at any time from settings.
+        <p class="mt-8 text-xs font-semibold uppercase tracking-wider text-zinc-500">Redirects to</p>
+        <p class="mt-2 flex items-center gap-x-2 text-zinc-900">
+          <.icon name="pi-caret-right" class="h-4 w-4 shrink-0 text-zinc-400" />
+          <span class="break-all font-mono text-sm">{@request.redirect_uri}</span>
         </p>
 
-        <div class="mt-6 grid grid-cols-2 gap-4">
-          <button
-            id="deny"
-            type="button"
-            phx-click="deny"
-            class="rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white"
-          >
-            Deny
-          </button>
+        <div class="mt-8 flex items-center gap-x-6">
           <button
             id="approve"
             type="button"
             phx-click="approve"
-            class="rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white"
+            class="rounded-lg bg-zinc-900 px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-700"
           >
-            Connect
+            Allow access
+          </button>
+          <button id="deny" type="button" phx-click="deny" class="text-sm font-semibold text-brand">
+            Deny
           </button>
         </div>
+
+        <p class="text-sm/6 mt-8 text-zinc-500">
+          {@request.client.client_name} is not operated by Spendable. You can revoke this access at any
+          time. Spendable is open source - you can read exactly what it does at <a
+            href="https://github.com/michaelst/spendable"
+            target="_blank"
+            class="text-brand"
+          >
+            github.com/michaelst/spendable</a>.
+        </p>
       </div>
     </div>
     """
@@ -103,19 +136,27 @@ defmodule SpendableWeb.Live.OAuthAuthorize do
     |> noreply()
   end
 
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
+  attr :detail, :string, required: true
+
+  defp permission(assigns) do
+    ~H"""
+    <div class="flex items-start gap-x-4 py-5">
+      <.icon name={@icon} class="h-6 w-6 mt-0.5 shrink-0 text-zinc-400" />
+      <div>
+        <dt class="text-base font-semibold text-zinc-900">{@title}</dt>
+        <dd class="mt-1 text-sm text-zinc-600">{@detail}</dd>
+      </div>
+    </div>
+    """
+  end
+
   defp message(:missing_client_id), do: "The request did not say which app is asking for access."
   defp message(:unknown_client), do: "The app asking for access is not registered with Spendable."
   defp message(:missing_redirect_uri), do: "The request did not say where to send you afterwards."
 
   defp message(:invalid_redirect_uri) do
     "The address this request wants to send you back to is not one the app registered."
-  end
-
-  # A validated redirect URI always has a host, so there is no clause for one without.
-  defp host(uri) do
-    case URI.parse(uri) do
-      %URI{host: host, port: port} when port in [nil, 80, 443] -> host
-      %URI{host: host, port: port} -> "#{host}:#{port}"
-    end
   end
 end
