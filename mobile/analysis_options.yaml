@@ -1,0 +1,22 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - ios/**
+    # Generated from the OpenAPI spec, and not ours to lint.
+    - api/**
+    - android/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+  errors:
+    # The .g.dart files are build_runner output, so a stale one is a build problem, not a review one.
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    - prefer_single_quotes
+    - require_trailing_commas
+    - unawaited_futures
