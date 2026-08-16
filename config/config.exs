@@ -12,7 +12,9 @@ config :spendable,
   ecto_repos: [Spendable.Repo],
   # The OAuth issuer, and the origin of the MCP resource tokens are bound to. Overridden per
   # environment, since it has to be the URL a client actually reaches this app on.
-  issuer: "http://localhost:4000"
+  issuer: "http://localhost:4000",
+  # Team id and bundle id, which is what an apple-app-site-association names. Both are public.
+  ios_app_id: "A4TA99R8XM.fiftysevenmedia.Spendable"
 
 config :spendable, Oban,
   repo: Spendable.Repo,

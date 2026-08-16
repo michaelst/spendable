@@ -70,4 +70,30 @@ defmodule Spendable.Banks.Actions.GetLinkTokenTest do
     assert {:error, :not_authorized} =
              Banks.get_update_link_token(Scope.for_user(user), bank_member)
   end
+
+  # The webhook follows the host the app is running on, so an item linked against a dev server
+  # does not deliver its activity to production. A redirect URI has to be a universal link, which
+  # http://localhost cannot be, so this environment sends none.
+  test "the link token points its webhook at this host and asks for no redirect" do
+    test_process = self()
+
+    stub(TeslaMock, :call, fn %{method: :post, body: body}, _opts ->
+      send(test_process, {:link_token, Jason.decode!(body)})
+
+      TeslaHelper.response(body: %{"link_token" => "link-sandbox-token"})
+    end)
+
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{
+        external_id: Ecto.UUID.generate(),
+        provider: "google",
+        bank_limit: 1
+      })
+
+    {:ok, _token} = Banks.get_link_token(Scope.for_user(user))
+
+    assert_received {:link_token, body}
+    assert body["webhook"] == "http://localhost:4002/plaid/webhook"
+    refute Map.has_key?(body, "redirect_uri")
+  end
 end
