@@ -24,6 +24,14 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..add(Errors.serializer)
       ..add(ErrorsErrorsInner.serializer)
       ..add(ErrorsErrorsInnerSource.serializer)
+      ..add(FinanceKitAccount.serializer)
+      ..add(FinanceKitAccountCreditDebitIndicatorEnum.serializer)
+      ..add(FinanceKitAccountKindEnum.serializer)
+      ..add(FinanceKitChanges.serializer)
+      ..add(FinanceKitCharge.serializer)
+      ..add(FinanceKitChargeCreditDebitIndicatorEnum.serializer)
+      ..add(FinanceKitConnection.serializer)
+      ..add(FinanceKitResult.serializer)
       ..add(Identity.serializer)
       ..add(IdentityProviderEnum.serializer)
       ..add(LinkToken.serializer)
@@ -40,6 +48,9 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..add(TransactionSource.serializer)
       ..add(TransferRequest.serializer)
       ..add(User.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(BankAccount)]),
+          () => ListBuilder<BankAccount>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(BankAccount)]),
           () => ListBuilder<BankAccount>())
@@ -69,6 +80,18 @@ Serializers _$serializers = (Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(ErrorsErrorsInner)]),
           () => ListBuilder<ErrorsErrorsInner>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(FinanceKitAccount)]),
+          () => ListBuilder<FinanceKitAccount>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(FinanceKitCharge)]),
+          () => ListBuilder<FinanceKitCharge>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(FinanceKitCharge)]),
+          () => ListBuilder<FinanceKitCharge>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Identity)]),
           () => ListBuilder<Identity>())

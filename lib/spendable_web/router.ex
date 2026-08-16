@@ -125,6 +125,9 @@ defmodule SpendableWeb.Router do
     get "/banks", BankMemberController, :index
     post "/banks", BankMemberController, :create
     post "/banks/link_token", BankMemberController, :link_token
+    # Before `/banks/:id/...`, or the literal segment is read as a connection id.
+    post "/banks/finance_kit", FinanceKitController, :create
+    post "/banks/:id/finance_kit/changes", FinanceKitController, :changes
     post "/banks/:id/link_token", BankMemberController, :update_link_token
     post "/banks/:id/sync", BankMemberController, :sync
     get "/banks/:id/logo", BankLogoController, :show

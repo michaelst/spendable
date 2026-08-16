@@ -544,6 +544,241 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.Errors",
         "x-validate": null
       },
+      "FinanceKitAccount": {
+        "description": "One account in the user's Wallet. The kind is mapped onto the vocabulary the rest of the API\nalready uses, so an Apple Card reads as a credit card and Apple Cash as a checking account.\n",
+        "properties": {
+          "balance": {
+            "description": "Unsigned. The indicator decides the sign.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "credit_debit_indicator": {
+            "description": "A card's balance is a debit, because it is owed.",
+            "enum": [
+              "credit",
+              "debit"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "external_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "kind": {
+            "enum": [
+              "credit_card",
+              "cash",
+              "savings"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "external_id",
+          "name",
+          "kind",
+          "balance",
+          "credit_debit_indicator"
+        ],
+        "title": "FinanceKitAccount",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.FinanceKitAccount",
+        "x-validate": null
+      },
+      "FinanceKitChanges": {
+        "description": "One batch of what the device read out of Wallet. Send `history_token_before` as the token the\nlast batch returned, or null on a full backfill; a mismatch is refused rather than applied.\n",
+        "properties": {
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceKitAccount"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "deleted": {
+            "description": "External ids of charges that were reversed or declined.",
+            "items": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "history_token_after": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "history_token_before": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "inserted": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceKitCharge"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "updated": {
+            "description": "A charge keeps its id when it settles, so these are applied in place.",
+            "items": {
+              "$ref": "#/components/schemas/FinanceKitCharge"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "history_token_after",
+          "accounts"
+        ],
+        "title": "FinanceKitChanges",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.FinanceKitChanges",
+        "x-validate": null
+      },
+      "FinanceKitCharge": {
+        "description": "One charge exactly as Wallet reported it.",
+        "properties": {
+          "account_external_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "amount": {
+            "description": "Unsigned. The indicator decides the sign.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "credit_debit_indicator": {
+            "description": "Which way the money went. Debits are stored negative.",
+            "enum": [
+              "credit",
+              "debit"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "date": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "external_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "pending": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "account_external_id",
+          "external_id",
+          "amount",
+          "credit_debit_indicator",
+          "date",
+          "name",
+          "pending"
+        ],
+        "title": "FinanceKitCharge",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.FinanceKitCharge",
+        "x-validate": null
+      },
+      "FinanceKitConnection": {
+        "description": "The connection everything read out of Wallet belongs to.",
+        "properties": {
+          "bank_accounts": {
+            "items": {
+              "$ref": "#/components/schemas/BankAccount"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "history_token": {
+            "description": "Where the last read left off. Null means nothing has been read yet.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "bank_accounts"
+        ],
+        "title": "FinanceKitConnection",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.FinanceKitConnection",
+        "x-validate": null
+      },
+      "FinanceKitResult": {
+        "description": "What a batch changed, and where to resume from.",
+        "properties": {
+          "applied": {
+            "description": "Rows changed. Lower than what was sent when a batch is replayed.",
+            "type": "integer",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "history_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "applied",
+          "history_token"
+        ],
+        "title": "FinanceKitResult",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.FinanceKitResult",
+        "x-validate": null
+      },
       "Identity": {
         "description": "A way of signing into an account.",
         "properties": {
@@ -1259,6 +1494,40 @@
         ]
       }
     },
+    "/api/banks/finance_kit": {
+      "post": {
+        "callbacks": {},
+        "description": "Idempotent. Call it once the user has authorized FinanceKit, and again to find out where the\nlast read left off - the `history_token` here is what a refused batch has to be resent against.\n",
+        "operationId": "connectFinanceKit",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinanceKitConnection"
+                }
+              }
+            },
+            "description": "FinanceKitConnection"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Claim the connection Wallet reports into",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
     "/api/banks/link_token": {
       "post": {
         "callbacks": {},
@@ -1288,6 +1557,83 @@
           }
         },
         "summary": "Start connecting a bank",
+        "tags": [
+          "banks"
+        ]
+      }
+    },
+    "/api/banks/{id}/finance_kit/changes": {
+      "post": {
+        "callbacks": {},
+        "description": "Refused with 409 when `history_token_before` is not where the server thinks the device left\noff; re-read the token from `POST /api/banks/finance_kit` and resend from there. Replaying a\nbatch that did land is safe - the accounts and charges dedupe on their external ids.\n",
+        "operationId": "applyFinanceKitChanges",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinanceKitChanges"
+              }
+            }
+          },
+          "description": "One batch of changes",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinanceKitResult"
+                }
+              }
+            },
+            "description": "FinanceKitResult"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Send what the device read out of Wallet",
         "tags": [
           "banks"
         ]
