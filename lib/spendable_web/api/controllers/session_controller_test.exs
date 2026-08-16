@@ -64,6 +64,34 @@ defmodule SpendableWeb.Api.SessionControllerTest do
     refute apple_user_id == user_id
   end
 
+  test "registers the device for push", %{conn: conn} do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    {:ok, api_token} = Accounts.create_api_token(Scope.for_user(user), %{})
+    apns_token = String.duplicate("ab", 32)
+
+    conn = put_req_header(conn, "authorization", "Bearer " <> api_token.token)
+
+    assert conn |> patch(~p"/api/session", %{"apns_token" => apns_token}) |> response(204)
+    assert {:ok, %{apns_token: ^apns_token}} = Accounts.authenticate_api_token(api_token.token)
+  end
+
+  test "rejects a device token that is not one", %{conn: conn} do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    {:ok, api_token} = Accounts.create_api_token(Scope.for_user(user), %{})
+
+    response =
+      conn
+      |> put_req_header("authorization", "Bearer " <> api_token.token)
+      |> patch(~p"/api/session", %{"apns_token" => "nope"})
+      |> json_response(422)
+
+    assert_schema(response, "Errors", @api_spec)
+  end
+
   test "rejects an ID token Google did not sign", %{conn: conn} do
     body = %{"provider" => "google", "id_token" => TestData.Google.id_token_from_unknown_key()}
 

@@ -98,6 +98,7 @@ defmodule SpendableWeb.Router do
   scope "/api", SpendableWeb.Api do
     pipe_through [:api, :api_authenticated]
 
+    patch "/session", SessionController, :update
     delete "/session", SessionController, :delete
     get "/me", MeController, :show
 

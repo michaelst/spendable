@@ -8,7 +8,14 @@ defmodule Spendable.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Finch, name: Spendable.Finch},
+      # APNs speaks HTTP/2 only, and Finch's default pool is HTTP/1. Both hosts are named because
+      # a build signed for development registers against the sandbox one.
+      {Finch,
+       name: Spendable.Finch,
+       pools: %{
+         "https://api.push.apple.com" => [protocols: [:http2], count: 1],
+         "https://api.sandbox.push.apple.com" => [protocols: [:http2], count: 1]
+       }},
       SpendableWeb.Telemetry,
       Spendable.Repo,
       {Oban, Application.fetch_env!(:spendable, Oban)},

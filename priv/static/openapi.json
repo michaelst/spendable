@@ -681,6 +681,27 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.SessionRequest",
         "x-validate": null
       },
+      "SessionUpdateRequest": {
+        "description": "The device this token was issued to, so the server can push to it.",
+        "properties": {
+          "apns_token": {
+            "description": "The hex device token iOS handed the app.",
+            "maxLength": 256,
+            "minLength": 64,
+            "pattern": "\\A[0-9a-f]+\\z",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "apns_token"
+        ],
+        "title": "SessionUpdateRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SessionUpdateRequest",
+        "x-validate": null
+      },
       "Split": {
         "description": "A saved division of a transaction across budgets. Amounts are decimal strings.",
         "properties": {
@@ -1931,6 +1952,55 @@
           }
         },
         "summary": "Sign out",
+        "tags": [
+          "session"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "description": "Sends the APNs device token iOS issued the app. It is held against the token the request was\nmade with, so signing out stops the pushes with it.\n",
+        "operationId": "updateSession",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionUpdateRequest"
+              }
+            }
+          },
+          "description": "Device token",
+          "required": false
+        },
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Registered"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Register this device for push",
         "tags": [
           "session"
         ]

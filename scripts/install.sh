@@ -54,6 +54,26 @@ ask_secret() {
   write_secret "$name" "$value"
 }
 
+# A .p8 signing key is a file rather than a line, so it is copied in rather than typed. A blank
+# answer leaves push unconfigured, which the app runs fine without. $1 name, $2 prompt.
+ask_secret_file() {
+  local name="$1" label="$2" suffix="" path=""
+
+  [ -s "$SECRETS/$name" ] && suffix=" [keep existing]"
+
+  read -rp "$label$suffix: " path
+
+  # Strip the quotes a file dragged into the terminal arrives wrapped in, then expand a leading ~.
+  path="${path%\"}"
+  path="${path#\"}"
+  path="${path/#\~/$HOME}"
+
+  [ -n "$path" ] || return 0
+  [ -f "$path" ] || { echo "$path is not a file" >&2; exit 1; }
+
+  install -m 600 "$path" "$SECRETS/$name"
+}
+
 # A public identifier rather than a credential, so it stays out of .secrets and lands in
 # .env.prod, which is where compose reads it from. Answers may be empty. $1 name, $2 prompt.
 ask_public() {
@@ -86,6 +106,18 @@ echo
 echo "Plaid (dashboard.plaid.com)"
 ask_secret PLAID_CLIENT_ID "  Client ID"
 ask_secret PLAID_SECRET_KEY "  Secret key" hidden
+
+echo
+echo "Apple push notifications (developer.apple.com > Keys, an APNs key)"
+echo "  Skip the key path to leave push off; everything else runs without it."
+# All three live in .secrets rather than .env.prod: the key id and team id are useless without the
+# key, and keeping the set together is what makes it obvious when one is missing.
+ask_secret_file APNS_PRIVATE_KEY "  Path to the .p8 key file"
+
+if [ -s "$SECRETS/APNS_PRIVATE_KEY" ]; then
+  ask_secret APNS_KEY_ID "  Key ID"
+  ask_secret APNS_TEAM_ID "  Team ID"
+fi
 
 echo
 echo "Database"

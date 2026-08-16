@@ -34,6 +34,7 @@ import 'package:spendable_api/src/model/link_token.dart';
 import 'package:spendable_api/src/model/month_spend.dart';
 import 'package:spendable_api/src/model/session.dart';
 import 'package:spendable_api/src/model/session_request.dart';
+import 'package:spendable_api/src/model/session_update_request.dart';
 import 'package:spendable_api/src/model/split.dart';
 import 'package:spendable_api/src/model/split_line.dart';
 import 'package:spendable_api/src/model/split_line_request.dart';
@@ -67,6 +68,7 @@ part 'serializers.g.dart';
   MonthSpend,
   Session,
   SessionRequest,
+  SessionUpdateRequest,
   Split,
   SplitLine,
   SplitLineRequest,

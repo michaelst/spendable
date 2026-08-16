@@ -36,6 +36,7 @@ export 'package:spendable_api/src/model/link_token.dart';
 export 'package:spendable_api/src/model/month_spend.dart';
 export 'package:spendable_api/src/model/session.dart';
 export 'package:spendable_api/src/model/session_request.dart';
+export 'package:spendable_api/src/model/session_update_request.dart';
 export 'package:spendable_api/src/model/split.dart';
 export 'package:spendable_api/src/model/split_line.dart';
 export 'package:spendable_api/src/model/split_line_request.dart';

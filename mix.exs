@@ -101,7 +101,7 @@ defmodule Spendable.MixProject do
       # The spec is read off the router and the controller modules, so booting the app - and with
       # it a database - buys nothing.
       openapi: [
-        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty --no-start-app priv/static/openapi.json"
+        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty --no-start-app --filename priv/static/openapi.json"
       ]
     ]
   end
