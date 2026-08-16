@@ -22,6 +22,17 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: Secret.read!("GOOGLE_CLIENT_ID"),
   client_secret: Secret.read!("GOOGLE_CLIENT_SECRET")
 
+# An OAuth client id is a public identifier, not a secret, so the iOS one is a plain env var.
+# Test pins its own audience in config/test.exs, which this would otherwise blank out.
+if config_env() != :test do
+  config :spendable, Spendable.Accounts.Actions.SignInWithGoogle,
+    audiences:
+      Enum.filter(
+        [Secret.read!("GOOGLE_CLIENT_ID"), System.get_env("GOOGLE_IOS_CLIENT_ID")],
+        &is_binary/1
+      )
+end
+
 if config_env() == :prod do
   # On by default because every deployed database requires it; the docker compose prod profile
   # turns it off, since the postgres it runs against is on the same bridge network.

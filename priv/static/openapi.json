@@ -1,0 +1,306 @@
+{
+  "components": {
+    "responses": {},
+    "schemas": {
+      "Errors": {
+        "description": "The shape every failed request comes back in.",
+        "properties": {
+          "errors": {
+            "items": {
+              "properties": {
+                "code": {
+                  "description": "Machine-readable reason.",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "detail": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "source": {
+                  "description": "Present on validation errors, pointing at the offending field.",
+                  "properties": {
+                    "pointer": {
+                      "type": "string",
+                      "x-struct": null,
+                      "x-validate": null
+                    }
+                  },
+                  "type": "object",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "code",
+                "detail"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "errors"
+        ],
+        "title": "Errors",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Errors",
+        "x-validate": null
+      },
+      "Session": {
+        "description": "An API token. The token itself is returned once and never again.",
+        "properties": {
+          "device_name": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "expires_at": {
+            "format": "date-time",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "token",
+          "expires_at"
+        ],
+        "title": "Session",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Session",
+        "x-validate": null
+      },
+      "SessionRequest": {
+        "description": "An ID token from a native sign-in, exchanged for an API token.",
+        "example": {
+          "device_name": "iPhone",
+          "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMyJ9.eyJzdWIiOiI0MiJ9.signature",
+          "provider": "google"
+        },
+        "properties": {
+          "device_name": {
+            "description": "Shown when managing signed-in devices.",
+            "maxLength": 100,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id_token": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "enum": [
+              "google"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "provider",
+          "id_token"
+        ],
+        "title": "SessionRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.SessionRequest",
+        "x-validate": null
+      },
+      "User": {
+        "description": "The signed-in user.",
+        "properties": {
+          "bank_limit": {
+            "description": "How many banks the user may connect.",
+            "type": "integer",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "image": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "provider",
+          "bank_limit"
+        ],
+        "title": "User",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.User",
+        "x-validate": null
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "The API the Spendable mobile app runs on.",
+    "title": "Spendable",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/me": {
+      "get": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.MeController.show",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "User"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "The signed-in user",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/session": {
+      "delete": {
+        "callbacks": {},
+        "description": "Revokes the token the request was made with.",
+        "operationId": "SpendableWeb.Api.SessionController.delete",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Signed out"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Sign out",
+        "tags": [
+          "session"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "description": "Exchanges an ID token from a native sign-in for an API token.",
+        "operationId": "SpendableWeb.Api.SessionController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionRequest"
+              }
+            }
+          },
+          "description": "Credentials",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            },
+            "description": "Session"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "security": [],
+        "summary": "Sign in",
+        "tags": [
+          "session"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://spendable.money",
+      "variables": {}
+    }
+  ],
+  "tags": []
+}

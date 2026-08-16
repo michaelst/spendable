@@ -43,6 +43,21 @@ defmodule SpendableWeb do
     end
   end
 
+  def api_controller() do
+    quote do
+      use Phoenix.Controller, formats: [:json]
+      use OpenApiSpex.ControllerSpecs
+
+      import Plug.Conn
+
+      plug OpenApiSpex.Plug.CastAndValidate,
+        json_render_error_v2: true,
+        render_error: SpendableWeb.Api.ErrorRenderer
+
+      action_fallback SpendableWeb.Api.FallbackController
+    end
+  end
+
   def live_view() do
     quote do
       use Phoenix.LiveView,

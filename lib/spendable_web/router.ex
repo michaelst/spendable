@@ -14,6 +14,12 @@ defmodule SpendableWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug OpenApiSpex.Plug.PutApiSpec, module: SpendableWeb.Api.ApiSpec
+  end
+
+  # A separate pipeline because the Plaid webhook shares `:api` and has to stay unauthenticated.
+  pipeline :api_authenticated do
+    plug SpendableWeb.Plugs.ApiAuth
   end
 
   pipeline :mcp do
@@ -70,6 +76,25 @@ defmodule SpendableWeb.Router do
     pipe_through :api
 
     post "/plaid/webhook", PlaidController, :webhook
+  end
+
+  scope "/api" do
+    pipe_through :api
+
+    get "/openapi.json", OpenApiSpex.Plug.RenderSpec, []
+  end
+
+  scope "/api", SpendableWeb.Api do
+    pipe_through :api
+
+    post "/session", SessionController, :create
+  end
+
+  scope "/api", SpendableWeb.Api do
+    pipe_through [:api, :api_authenticated]
+
+    delete "/session", SessionController, :delete
+    get "/me", MeController, :show
   end
 
   scope "/auth", SpendableWeb do

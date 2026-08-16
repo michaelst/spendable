@@ -58,7 +58,9 @@ defmodule Spendable.MixProject do
       {:gettext, "~> 1.0"},
       {:hammox, "~> 1.0", only: :test},
       {:jason, "~> 1.2"},
+      {:joken, "~> 2.6"},
       {:oban, "~> 2.19"},
+      {:open_api_spex, "~> 3.21"},
       {:logger_json, "~> 7.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 4.0"},
@@ -95,7 +97,10 @@ defmodule Spendable.MixProject do
       ],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-      credo: ["credo --config-file credo/.credo.exs"]
+      credo: ["credo --config-file credo/.credo.exs"],
+      openapi: [
+        "openapi.spec.json --spec SpendableWeb.Api.ApiSpec --pretty priv/static/openapi.json"
+      ]
     ]
   end
 end
