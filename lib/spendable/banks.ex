@@ -11,6 +11,7 @@ defmodule Spendable.Banks do
   defdelegate create_bank_member_from_public_token(scope, public_token),
     to: Actions.CreateBankMemberFromPublicToken
 
+  defdelegate upsert_finance_kit_member(scope), to: Actions.UpsertFinanceKitMember
   defdelegate get_link_token(scope), to: Actions.GetLinkToken
   defdelegate get_update_link_token(scope, bank_member), to: Actions.GetUpdateLinkToken
   defdelegate update_bank_account(scope, bank_account, attrs), to: Actions.UpdateBankAccount
