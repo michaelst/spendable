@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spendable/api/api_client.dart';
 import 'package:spendable/banks/banks_screen.dart';
+import 'package:spendable/banks/pending_plaid_session.dart';
 import 'package:spendable/banks/plaid_link_flow.dart';
 
 import '../support/fakes.dart';
@@ -14,6 +15,7 @@ class FakePlaidLinkFlow implements PlaidLinkFlow {
   final String? publicToken;
 
   final opened = <String>[];
+  final resumed = <String>[];
 
   @override
   Future<String?> open(String linkToken) async {
@@ -21,6 +23,28 @@ class FakePlaidLinkFlow implements PlaidLinkFlow {
 
     return publicToken;
   }
+
+  @override
+  Future<String?> resume(String redirectUri) async {
+    resumed.add(redirectUri);
+
+    return publicToken;
+  }
+}
+
+class FakePendingPlaidSession implements PendingPlaidSession {
+  FakePendingPlaidSession([this.kind]);
+
+  PlaidSessionKind? kind;
+
+  @override
+  Future<PlaidSessionKind?> read() async => kind;
+
+  @override
+  Future<void> start(PlaidSessionKind value) async => kind = value;
+
+  @override
+  Future<void> clear() async => kind = null;
 }
 
 Map<String, Object?> _account(
@@ -70,13 +94,18 @@ Future<(FakeApi, FakePlaidLinkFlow)> _pump(
   WidgetTester tester, {
   Map<String, ({int status, Object? body})>? replies,
   FakePlaidLinkFlow? plaid,
+  FakePendingPlaidSession? session,
 }) async {
   final api = FakeApi(replies ?? _replies());
   final link = plaid ?? FakePlaidLinkFlow();
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [apiProvider.overrideWithValue(api.build()), plaidLinkFlowProvider.overrideWithValue(link)],
+      overrides: [
+        apiProvider.overrideWithValue(api.build()),
+        plaidLinkFlowProvider.overrideWithValue(link),
+        pendingPlaidSessionProvider.overrideWithValue(session ?? FakePendingPlaidSession()),
+      ],
       child: const MaterialApp(home: BanksScreen()),
     ),
   );

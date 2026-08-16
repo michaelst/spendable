@@ -6,5 +6,12 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<!-- Lets the app claim spendable.money links, which is how a bank's OAuth page returns to
+	     Plaid Link instead of stranding the user in Safari. The server answers the matching
+	     apple-app-site-association. -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:spendable.money</string>
+	</array>
 </dict>
 </plist>

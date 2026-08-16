@@ -8,22 +8,28 @@ part of 'banks_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Connecting banks and deciding what each account does.
+/// Connecting banks and deciding what each account does. Kept alive because a resumed OAuth
+/// redirect reaches it before any screen is watching, and an auto-disposed notifier would be
+/// collected out from under the write.
 
 @ProviderFor(BanksController)
 final banksControllerProvider = BanksControllerProvider._();
 
-/// Connecting banks and deciding what each account does.
+/// Connecting banks and deciding what each account does. Kept alive because a resumed OAuth
+/// redirect reaches it before any screen is watching, and an auto-disposed notifier would be
+/// collected out from under the write.
 final class BanksControllerProvider
     extends $NotifierProvider<BanksController, AsyncValue<void>> {
-  /// Connecting banks and deciding what each account does.
+  /// Connecting banks and deciding what each account does. Kept alive because a resumed OAuth
+  /// redirect reaches it before any screen is watching, and an auto-disposed notifier would be
+  /// collected out from under the write.
   BanksControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'banksControllerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -44,9 +50,11 @@ final class BanksControllerProvider
   }
 }
 
-String _$banksControllerHash() => r'713c7e4a5bf21210234f0c49a844c830c9a6b09f';
+String _$banksControllerHash() => r'd41105980e07df6f9e14e0c1bd3e1ca97a18a75e';
 
-/// Connecting banks and deciding what each account does.
+/// Connecting banks and deciding what each account does. Kept alive because a resumed OAuth
+/// redirect reaches it before any screen is watching, and an auto-disposed notifier would be
+/// collected out from under the write.
 
 abstract class _$BanksController extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();
