@@ -263,6 +263,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(api.requests.map((request) => request.path), contains('/api/banks/bkm_1/sync'));
-    expect(find.textContaining('Pull to refresh'), findsOneWidget);
+    expect(find.textContaining('when it finishes'), findsOneWidget);
   });
 }

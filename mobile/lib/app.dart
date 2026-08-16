@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth/auth_controller.dart';
 import 'auth/sign_in_screen.dart';
 import 'banks/plaid_oauth_links.dart';
+import 'push/push_controller.dart';
 import 'shell.dart';
 import 'theme.dart';
 
@@ -14,8 +15,10 @@ class SpendableApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authStateProvider);
 
-    // Nothing renders it; it just has to be alive to catch a bank's OAuth redirect on launch.
+    // Nothing renders these; they just have to be alive to catch a bank's OAuth redirect on
+    // launch, and to answer what APNs sends.
     ref.watch(plaidOAuthResumeProvider);
+    ref.watch(pushControllerProvider);
 
     return MaterialApp(
       title: 'Spendable',

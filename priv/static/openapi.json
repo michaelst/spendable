@@ -1412,7 +1412,7 @@
     "/api/banks/{id}/sync": {
       "post": {
         "callbacks": {},
-        "description": "Queues the work and returns immediately. There is no completion signal - refresh the lists to\npick up whatever has landed.\n",
+        "description": "Queues the work and returns immediately. A silent push goes out when the run finishes, which\nis the signal to re-read whatever the client is showing.\n",
         "operationId": "syncBank",
         "parameters": [
           {
