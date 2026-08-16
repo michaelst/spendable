@@ -1,6 +1,8 @@
 defmodule SpendableWeb.Live.Budgets do
   use SpendableWeb, :live_view
 
+  import SpendableWeb.Utils.BudgetCard
+
   alias Spendable.Banks
   alias Spendable.Budgets
   alias Spendable.Budgets.Schemas.Budget
@@ -122,7 +124,7 @@ defmodule SpendableWeb.Live.Budgets do
               <span class="text-xs uppercase tracking-wide text-gray-400">{card.label}</span>
             </div>
             <div :if={card.percent} class="mt-4 h-1 w-full rounded-full bg-white/10">
-              <div class={["h-1 rounded-full", card.bar_class]} style={"width: #{card.percent}%"} />
+              <div class={["h-1 rounded-full", bar_class(card.bar)]} style={"width: #{card.percent}%"} />
             </div>
             <p class="mt-3 text-xs text-gray-400">{card.footer}</p>
           </li>
@@ -292,50 +294,18 @@ defmodule SpendableWeb.Live.Budgets do
 
   defp build_cards(budgets, spent, current_month_is_selected) do
     Enum.map(budgets, fn budget ->
+      spent_here = spent |> Map.get(budget.id, Decimal.new(0)) |> Decimal.abs()
+
       budget
-      |> build_card(spent |> Map.get(budget.id, Decimal.new(0)) |> Decimal.abs(), current_month_is_selected)
+      |> build_budget_card(spent_here, current_month_is_selected)
       |> Map.merge(%{budget: budget, pill: pill(budget.type), pill_class: pill_class(budget.type)})
     end)
   end
 
-  # A past month is a record of what was spent, so a balance read now says nothing about it.
-  defp build_card(_budget, spent, false = _current_month_is_selected) do
-    %{amount: spent, label: "SPENT", percent: nil, bar_class: nil, footer: nil}
-  end
-
-  defp build_card(%Budget{type: :tracking}, spent, _current_month_is_selected) do
-    %{amount: spent, label: "SPENT", percent: nil, bar_class: nil, footer: "No limit set"}
-  end
-
-  defp build_card(%Budget{type: :envelope, budgeted_amount: nil} = budget, _spent, _current_month_is_selected) do
-    %{amount: budget.balance, label: "LEFT", percent: nil, bar_class: nil, footer: "No limit set"}
-  end
-
-  defp build_card(%Budget{type: :envelope} = budget, spent, _current_month_is_selected) do
-    over_budget? = Decimal.compare(spent, budget.budgeted_amount) == :gt
-
-    %{
-      amount: budget.balance,
-      label: "LEFT",
-      percent: percent(spent, budget.budgeted_amount),
-      bar_class: if(over_budget?, do: "bg-red-500", else: "bg-blue-500"),
-      footer: "#{Utils.format_currency(spent)} of #{Utils.format_currency(budget.budgeted_amount)} spent"
-    }
-  end
-
-  defp build_card(%Budget{type: :goal, budgeted_amount: nil} = budget, _spent, _current_month_is_selected) do
-    %{amount: budget.balance, label: "SAVED", percent: nil, bar_class: nil, footer: "No goal set"}
-  end
-
-  defp build_card(%Budget{type: :goal} = budget, _spent, _current_month_is_selected) do
-    %{
-      amount: Decimal.sub(budget.budgeted_amount, budget.balance),
-      label: "TO GO",
-      percent: percent(budget.balance, budget.budgeted_amount),
-      bar_class: "bg-green-500",
-      footer: "#{Utils.format_currency(budget.balance)} of #{Utils.format_currency(budget.budgeted_amount)} saved"
-    }
-  end
+  # Only reached when there is a percent to draw, and a card has a bar exactly when it has one.
+  defp bar_class("over"), do: "bg-red-500"
+  defp bar_class("under"), do: "bg-blue-500"
+  defp bar_class("goal"), do: "bg-green-500"
 
   defp pill(:tracking), do: "Tracking"
   defp pill(:envelope), do: "Envelope"
@@ -344,19 +314,4 @@ defmodule SpendableWeb.Live.Budgets do
   defp pill_class(:tracking), do: "text-gray-400 bg-gray-400/10 ring-gray-400/20 group-hover:ring-gray-400/50"
   defp pill_class(:envelope), do: "text-blue-400 bg-blue-400/10 ring-blue-400/20 group-hover:ring-blue-400/50"
   defp pill_class(:goal), do: "text-green-400 bg-green-400/10 ring-green-400/20 group-hover:ring-green-400/50"
-
-  defp percent(_part, %Decimal{coef: 0}), do: 0.0
-
-  defp percent(part, whole) do
-    part
-    |> Decimal.div(whole)
-    |> Decimal.mult(100)
-    |> Decimal.to_float()
-    |> max(0.0)
-    |> min(100.0)
-    |> Float.round(1)
-  end
-
-  # Goals save toward a target and tracking budgets reserve nothing, so neither is money
-  # this month was meant to be spent against.
 end
