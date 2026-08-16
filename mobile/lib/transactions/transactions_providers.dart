@@ -128,21 +128,6 @@ class Transactions extends _$Transactions {
   }
 }
 
-/// The budget and split pickers the rows and the detail sheet offer.
-@riverpod
-Future<List<Budget>> budgetOptions(Ref ref) async {
-  final response = await ref.watch(apiProvider).getBudgetsApi().listBudgets().orApiError();
-
-  return response.data!.toList();
-}
-
-@riverpod
-Future<List<Split>> splitOptions(Ref ref) async {
-  final response = await ref.watch(apiProvider).getSplitsApi().listSplits().orApiError();
-
-  return response.data!.toList();
-}
-
 @riverpod
 class Selection extends _$Selection {
   @override

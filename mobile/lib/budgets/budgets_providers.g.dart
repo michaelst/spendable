@@ -129,3 +129,41 @@ final class BudgetSummaryProvider
 }
 
 String _$budgetSummaryHash() => r'1605faaf2008480baa76429a5292bbcccd393c08';
+
+/// The budget picker every other screen offers.
+
+@ProviderFor(budgetOptions)
+final budgetOptionsProvider = BudgetOptionsProvider._();
+
+/// The budget picker every other screen offers.
+
+final class BudgetOptionsProvider
+    extends $FunctionalProvider<AsyncValue<List<Budget>>, List<Budget>, FutureOr<List<Budget>>>
+    with $FutureModifier<List<Budget>>, $FutureProvider<List<Budget>> {
+  /// The budget picker every other screen offers.
+  BudgetOptionsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'budgetOptionsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$budgetOptionsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Budget>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Budget>> create(Ref ref) {
+    return budgetOptions(ref);
+  }
+}
+
+String _$budgetOptionsHash() => r'064a5f67d9ec443f9f5436be2ef8d35721a31d60';
