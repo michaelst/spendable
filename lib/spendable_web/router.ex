@@ -100,6 +100,14 @@ defmodule SpendableWeb.Router do
     get "/budgets/summary", BudgetSummaryController, :show
     resources "/budgets", BudgetController, only: [:index, :show, :create, :update, :delete]
     resources "/splits", SplitController, only: [:index, :show, :create, :update, :delete]
+
+    # Ahead of "/transactions/:id" so the literal segments are not read as ids.
+    patch "/transactions/bulk", TransactionBulkController, :update
+    post "/transactions/bulk/delete", TransactionBulkController, :delete
+    post "/transactions/transfer", TransactionTransferController, :create
+    delete "/transactions/:id/transfer", TransactionTransferController, :delete
+
+    resources "/transactions", TransactionController, only: [:index, :show, :create, :update, :delete]
   end
 
   scope "/auth", SpendableWeb do

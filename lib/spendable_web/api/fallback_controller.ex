@@ -5,6 +5,7 @@ defmodule SpendableWeb.Api.FallbackController do
     :already_archived,
     :already_transferred,
     :bank_limit_reached,
+    :not_a_transfer,
     :transfer_not_allowed
   ]
 

@@ -198,6 +198,98 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.BudgetSummary",
         "x-validate": null
       },
+      "BulkRequest": {
+        "description": "Applies the same change to several transactions. `budget_id` spends each transaction's whole\namount from that budget, replacing whatever it was allocated to before.\n",
+        "example": {
+          "reviewed": true,
+          "transaction_ids": [
+            "txn_01j0one",
+            "txn_01j0two"
+          ]
+        },
+        "properties": {
+          "budget_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "excluded": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "reviewed": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "transaction_ids": {
+            "items": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "minItems": 1,
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "transaction_ids"
+        ],
+        "title": "BulkRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkRequest",
+        "x-validate": null
+      },
+      "BulkResult": {
+        "description": "A bulk change is applied per transaction rather than all or nothing, so the ones that worked\ncome back alongside the ones that did not.\n",
+        "properties": {
+          "failed": {
+            "items": {
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "id",
+                "code"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "transactions",
+          "failed"
+        ],
+        "title": "BulkResult",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.BulkResult",
+        "x-validate": null
+      },
       "Errors": {
         "description": "The shape every failed request comes back in.",
         "properties": {
@@ -435,6 +527,279 @@
         "title": "SplitRequest",
         "type": "object",
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.SplitRequest",
+        "x-validate": null
+      },
+      "Transaction": {
+        "description": "A movement of money. Amounts are decimal strings, negative for money going out.\n\n`budget_allocations` is what the server settled on, not what was sent: any part of the amount\nleft unallocated lands on the Spendable budget on every write. Render what comes back.\n",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_allocations": {
+            "items": {
+              "properties": {
+                "amount": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "budget_id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "id",
+                "amount",
+                "budget_id"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "date": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "excluded": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "reviewed": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "source": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TransactionSource"
+              }
+            ],
+            "x-struct": null,
+            "x-validate": null
+          },
+          "transfer_id": {
+            "description": "The other side of a move between the user's own accounts.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "date",
+          "reviewed",
+          "excluded",
+          "budget_allocations"
+        ],
+        "title": "Transaction",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Transaction",
+        "x-validate": null
+      },
+      "TransactionRequest": {
+        "description": "Send the whole set of allocations you want. One with an `id` is kept and updated, one without\nis added, one left out is deleted. Whatever is left of the amount goes to Spendable, so the\nallocations in the response are the ones that count.\n\nThat also means a validation error's pointer indexes the list the server settled on, not the\none that was sent - match the offending line by its `budget_id`, not by position.\n",
+        "example": {
+          "amount": "-30.00",
+          "budget_allocations": [
+            {
+              "amount": "-30.00",
+              "budget_id": "bgt_01j0groceries"
+            }
+          ],
+          "date": "2026-08-15",
+          "name": "Market"
+        },
+        "properties": {
+          "amount": {
+            "description": "Negative for money going out.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "budget_allocations": {
+            "items": {
+              "properties": {
+                "amount": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "budget_id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "id": {
+                  "description": "Omit to add a new allocation.",
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "amount",
+                "budget_id"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "date": {
+            "format": "date",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "excluded": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "reviewed": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "title": "TransactionRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.TransactionRequest",
+        "x-validate": null
+      },
+      "TransactionSource": {
+        "description": "Where a synced transaction came from, flattened for the list row. Null on a transaction the\nuser entered themselves. Fetch the logo from `/api/banks/{member_id}/logo`.\n",
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "account_name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "account_number": {
+            "description": "Masked, last digits only.",
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "member_has_logo": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "member_id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "member_name": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "pending": {
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "account_id",
+          "account_name",
+          "member_id",
+          "member_name",
+          "member_has_logo",
+          "pending"
+        ],
+        "title": "TransactionSource",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.TransactionSource",
+        "x-validate": null
+      },
+      "TransferRequest": {
+        "description": "Exactly two transactions: one leaving an account and one arriving in another.",
+        "example": {
+          "transaction_ids": [
+            "txn_01j0out",
+            "txn_01j0in"
+          ]
+        },
+        "properties": {
+          "transaction_ids": {
+            "items": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "transaction_ids"
+        ],
+        "title": "TransferRequest",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.TransferRequest",
         "x-validate": null
       },
       "User": {
@@ -1331,6 +1696,607 @@
         "summary": "Update a split",
         "tags": [
           "splits"
+        ]
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "callbacks": {},
+        "description": "Newest first. Reviewed and excluded transactions are hidden unless asked for, because the list\nis a queue of what still needs attention. A page shorter than `per_page` is the last one.\n",
+        "operationId": "SpendableWeb.Api.TransactionController.index",
+        "parameters": [
+          {
+            "description": "Matches on name or note.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "show_reviewed",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "x-struct": null,
+              "x-validate": null
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "show_excluded",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Transactions"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "List transactions",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "post": {
+        "callbacks": {},
+        "description": "For money the user is recording themselves; synced activity arrives on its own.",
+        "operationId": "SpendableWeb.Api.TransactionController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "description": "Transaction",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Create a transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/bulk": {
+      "patch": {
+        "callbacks": {},
+        "description": "Applied one at a time rather than all or nothing, so a transaction that has since been deleted\ndoes not cost the rest their change. Check `failed` before assuming the whole set landed.\n",
+        "operationId": "SpendableWeb.Api.TransactionBulkController.update",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkRequest"
+              }
+            }
+          },
+          "description": "Change to apply",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResult"
+                }
+              }
+            },
+            "description": "BulkResult"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Change several transactions at once",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/bulk/delete": {
+      "post": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.TransactionBulkController.delete",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkRequest"
+              }
+            }
+          },
+          "description": "Transactions to delete",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResult"
+                }
+              }
+            },
+            "description": "BulkResult"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Delete several transactions at once",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/transfer": {
+      "post": {
+        "callbacks": {},
+        "description": "A transfer moves money between the user's own accounts rather than spending it, so the pair\nhas to be one transaction leaving an account and one arriving in another. Both sides come\nback, with their allocations cleared onto Spendable where the opposite signs cancel.\n",
+        "operationId": "SpendableWeb.Api.TransactionTransferController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferRequest"
+              }
+            }
+          },
+          "description": "Transactions to link",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "type": "array",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              }
+            },
+            "description": "Both sides"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Link two transactions as a transfer",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{id}": {
+      "delete": {
+        "callbacks": {},
+        "description": "Its allocations go with it.",
+        "operationId": "SpendableWeb.Api.TransactionController.delete",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Deleted"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Delete a transaction",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "get": {
+        "callbacks": {},
+        "operationId": "SpendableWeb.Api.TransactionController.show",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Get a transaction",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "patch": {
+        "callbacks": {},
+        "description": "The response carries the allocations the server settled on. Render those.",
+        "operationId": "SpendableWeb.Api.TransactionController.update (2)",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "description": "Transaction",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a transaction",
+        "tags": [
+          "transactions"
+        ]
+      },
+      "put": {
+        "callbacks": {},
+        "description": "The response carries the allocations the server settled on. Render those.",
+        "operationId": "SpendableWeb.Api.TransactionController.update",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "description": "Transaction",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Update a transaction",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{id}/transfer": {
+      "delete": {
+        "callbacks": {},
+        "description": "Both sides count toward budgets again. Their allocations stay where they are.",
+        "operationId": "SpendableWeb.Api.TransactionTransferController.delete",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            },
+            "description": "Transaction"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Unlink a transfer",
+        "tags": [
+          "transactions"
         ]
       }
     }
