@@ -13,6 +13,7 @@ defmodule SpendableWeb.Api.TransactionController do
   tags ["transactions"]
 
   operation :index,
+    operation_id: "listTransactions",
     summary: "List transactions",
     description: """
     Newest first. Reviewed and excluded transactions are hidden unless asked for, because the list
@@ -45,6 +46,7 @@ defmodule SpendableWeb.Api.TransactionController do
   end
 
   operation :show,
+    operation_id: "getTransaction",
     summary: "Get a transaction",
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [
@@ -59,6 +61,7 @@ defmodule SpendableWeb.Api.TransactionController do
   end
 
   operation :create,
+    operation_id: "createTransaction",
     summary: "Create a transaction",
     description: "For money the user is recording themselves; synced activity arrives on its own.",
     request_body: {"Transaction", "application/json", TransactionRequest},
@@ -76,6 +79,7 @@ defmodule SpendableWeb.Api.TransactionController do
   end
 
   operation :update,
+    operation_id: "updateTransaction",
     summary: "Update a transaction",
     description: "The response carries the allocations the server settled on. Render those.",
     parameters: [id: [in: :path, type: :string, required: true]],
@@ -97,6 +101,7 @@ defmodule SpendableWeb.Api.TransactionController do
   end
 
   operation :delete,
+    operation_id: "deleteTransaction",
     summary: "Delete a transaction",
     description: "Its allocations go with it.",
     parameters: [id: [in: :path, type: :string, required: true]],

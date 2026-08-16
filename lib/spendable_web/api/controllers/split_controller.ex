@@ -10,6 +10,7 @@ defmodule SpendableWeb.Api.SplitController do
   tags ["splits"]
 
   operation :index,
+    operation_id: "listSplits",
     summary: "List splits",
     description: "Alphabetical, without their lines. Archived splits are left out.",
     parameters: [search: [in: :query, type: :string, description: "Matches on name."]],
@@ -25,6 +26,7 @@ defmodule SpendableWeb.Api.SplitController do
   end
 
   operation :show,
+    operation_id: "getSplit",
     summary: "Get a split and its lines",
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [
@@ -39,6 +41,7 @@ defmodule SpendableWeb.Api.SplitController do
   end
 
   operation :create,
+    operation_id: "createSplit",
     summary: "Create a split",
     request_body: {"Split", "application/json", SplitRequest},
     responses: [
@@ -55,6 +58,7 @@ defmodule SpendableWeb.Api.SplitController do
   end
 
   operation :update,
+    operation_id: "updateSplit",
     summary: "Update a split",
     parameters: [id: [in: :path, type: :string, required: true]],
     request_body: {"Split", "application/json", SplitRequest},
@@ -74,6 +78,7 @@ defmodule SpendableWeb.Api.SplitController do
   end
 
   operation :delete,
+    operation_id: "archiveSplit",
     summary: "Archive a split",
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [

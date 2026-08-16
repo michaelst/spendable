@@ -9,6 +9,7 @@ defmodule SpendableWeb.Api.TransactionBulkController do
   tags ["transactions"]
 
   operation :update,
+    operation_id: "updateTransactions",
     summary: "Change several transactions at once",
     description: """
     Applied one at a time rather than all or nothing, so a transaction that has since been deleted
@@ -28,6 +29,7 @@ defmodule SpendableWeb.Api.TransactionBulkController do
   end
 
   operation :delete,
+    operation_id: "deleteTransactions",
     summary: "Delete several transactions at once",
     request_body: {"Transactions to delete", "application/json", BulkRequest},
     responses: [

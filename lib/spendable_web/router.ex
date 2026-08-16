@@ -101,8 +101,12 @@ defmodule SpendableWeb.Router do
 
     # Ahead of "/budgets/:id" so the literal segment is not read as an id.
     get "/budgets/summary", BudgetSummaryController, :show
-    resources "/budgets", BudgetController, only: [:index, :show, :create, :update, :delete]
-    resources "/splits", SplitController, only: [:index, :show, :create, :update, :delete]
+    # `resources` would route PUT alongside PATCH, which the spec turns into a duplicate operation
+    # and the generated client into a second method doing the same thing.
+    resources "/budgets", BudgetController, only: [:index, :show, :create, :delete]
+    patch "/budgets/:id", BudgetController, :update
+    resources "/splits", SplitController, only: [:index, :show, :create, :delete]
+    patch "/splits/:id", SplitController, :update
 
     # Ahead of "/transactions/:id" so the literal segments are not read as ids.
     patch "/transactions/bulk", TransactionBulkController, :update
@@ -110,7 +114,8 @@ defmodule SpendableWeb.Router do
     post "/transactions/transfer", TransactionTransferController, :create
     delete "/transactions/:id/transfer", TransactionTransferController, :delete
 
-    resources "/transactions", TransactionController, only: [:index, :show, :create, :update, :delete]
+    resources "/transactions", TransactionController, only: [:index, :show, :create, :delete]
+    patch "/transactions/:id", TransactionController, :update
 
     get "/banks", BankMemberController, :index
     post "/banks", BankMemberController, :create

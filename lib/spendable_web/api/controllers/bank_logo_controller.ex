@@ -10,6 +10,7 @@ defmodule SpendableWeb.Api.BankLogoController do
   tags ["banks"]
 
   operation :show,
+    operation_id: "getBankLogo",
     summary: "An institution's logo",
     description: "Cacheable and ETagged, so a client can hold it on disk and revalidate for free.",
     parameters: [id: [in: :path, type: :string, required: true]],

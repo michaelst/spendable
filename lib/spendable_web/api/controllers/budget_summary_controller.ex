@@ -9,6 +9,7 @@ defmodule SpendableWeb.Api.BudgetSummaryController do
   tags ["budgets"]
 
   operation :show,
+    operation_id: "getBudgetSummary",
     summary: "The budgets screen for one month",
     description: "Defaults to the current month. Any date in a month selects that whole month.",
     parameters: [

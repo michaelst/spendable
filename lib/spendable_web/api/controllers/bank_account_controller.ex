@@ -9,6 +9,7 @@ defmodule SpendableWeb.Api.BankAccountController do
   tags ["banks"]
 
   operation :update,
+    operation_id: "updateBankAccount",
     summary: "Sync an account, or assign it to a budget",
     parameters: [id: [in: :path, type: :string, required: true]],
     request_body: {"BankAccount", "application/json", BankAccountRequest},

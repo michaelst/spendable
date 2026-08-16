@@ -9,6 +9,7 @@ defmodule SpendableWeb.Api.IdentityController do
   tags ["session"]
 
   operation :create,
+    operation_id: "createIdentity",
     summary: "Add another way to sign in",
     description: """
     Attaches a second provider to the account making the request. Nothing about a person is stored
@@ -34,6 +35,7 @@ defmodule SpendableWeb.Api.IdentityController do
   end
 
   operation :delete,
+    operation_id: "deleteIdentity",
     summary: "Remove a way to sign in",
     description: "Refused for the last one, which would leave an account nobody can get back into.",
     parameters: [id: [in: :path, type: :string, required: true]],

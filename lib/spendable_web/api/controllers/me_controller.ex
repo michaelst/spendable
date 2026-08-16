@@ -8,6 +8,7 @@ defmodule SpendableWeb.Api.MeController do
   tags ["session"]
 
   operation :show,
+    operation_id: "getCurrentUser",
     summary: "The signed-in user",
     description: "Carries the sign-in methods on the account, so the client can offer to add one.",
     responses: [

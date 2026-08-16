@@ -10,6 +10,7 @@ defmodule SpendableWeb.Api.SessionController do
   tags(["session"])
 
   operation(:create,
+    operation_id: "createSession",
     summary: "Sign in",
     description: "Exchanges an ID token from a native sign-in for an API token.",
     security: [],
@@ -32,6 +33,7 @@ defmodule SpendableWeb.Api.SessionController do
   end
 
   operation(:delete,
+    operation_id: "deleteSession",
     summary: "Sign out",
     description: "Revokes the token the request was made with.",
     responses: [

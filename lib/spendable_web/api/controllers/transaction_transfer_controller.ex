@@ -10,6 +10,7 @@ defmodule SpendableWeb.Api.TransactionTransferController do
   tags ["transactions"]
 
   operation :create,
+    operation_id: "createTransfer",
     summary: "Link two transactions as a transfer",
     description: """
     A transfer moves money between the user's own accounts rather than spending it, so the pair
@@ -35,6 +36,7 @@ defmodule SpendableWeb.Api.TransactionTransferController do
   end
 
   operation :delete,
+    operation_id: "deleteTransfer",
     summary: "Unlink a transfer",
     description: "Both sides count toward budgets again. Their allocations stay where they are.",
     parameters: [id: [in: :path, type: :string, required: true]],

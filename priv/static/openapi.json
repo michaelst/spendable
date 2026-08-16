@@ -1085,7 +1085,7 @@
     "/api/bank_accounts/{id}": {
       "patch": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.BankAccountController.update",
+        "operationId": "updateBankAccount",
         "parameters": [
           {
             "description": "",
@@ -1151,7 +1151,7 @@
     "/api/banks": {
       "get": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.BankMemberController.index",
+        "operationId": "listBanks",
         "parameters": [
           {
             "description": "Matches on institution name.",
@@ -1200,7 +1200,7 @@
       "post": {
         "callbacks": {},
         "description": "Exchanges the public token Plaid Link returned. The accounts arrive on the first sync rather\nthan in this response, so the connection comes back with none.\n",
-        "operationId": "SpendableWeb.Api.BankMemberController.create",
+        "operationId": "createBank",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1255,7 +1255,7 @@
       "post": {
         "callbacks": {},
         "description": "Refused once the user is at their bank limit, before Plaid is called.",
-        "operationId": "SpendableWeb.Api.BankMemberController.link_token",
+        "operationId": "createLinkToken",
         "parameters": [],
         "responses": {
           "200": {
@@ -1289,7 +1289,7 @@
       "post": {
         "callbacks": {},
         "description": "For a connection whose status is not CONNECTED, or to verify micro deposits.",
-        "operationId": "SpendableWeb.Api.BankMemberController.update_link_token",
+        "operationId": "createUpdateLinkToken",
         "parameters": [
           {
             "description": "",
@@ -1335,7 +1335,7 @@
       "get": {
         "callbacks": {},
         "description": "Cacheable and ETagged, so a client can hold it on disk and revalidate for free.",
-        "operationId": "SpendableWeb.Api.BankLogoController.show",
+        "operationId": "getBankLogo",
         "parameters": [
           {
             "description": "",
@@ -1384,7 +1384,7 @@
       "post": {
         "callbacks": {},
         "description": "Queues the work and returns immediately. There is no completion signal - refresh the lists to\npick up whatever has landed.\n",
-        "operationId": "SpendableWeb.Api.BankMemberController.sync",
+        "operationId": "syncBank",
         "parameters": [
           {
             "description": "",
@@ -1426,7 +1426,7 @@
       "get": {
         "callbacks": {},
         "description": "Spendable first, then alphabetical. Archived budgets are left out.",
-        "operationId": "SpendableWeb.Api.BudgetController.index",
+        "operationId": "listBudgets",
         "parameters": [
           {
             "description": "Matches on name.",
@@ -1474,7 +1474,7 @@
       },
       "post": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.BudgetController.create",
+        "operationId": "createBudget",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1519,7 +1519,7 @@
       "get": {
         "callbacks": {},
         "description": "Defaults to the current month. Any date in a month selects that whole month.",
-        "operationId": "SpendableWeb.Api.BudgetSummaryController.show",
+        "operationId": "getBudgetSummary",
         "parameters": [
           {
             "description": "",
@@ -1587,7 +1587,7 @@
       "delete": {
         "callbacks": {},
         "description": "Budgets are archived rather than deleted, so the history they hold survives.",
-        "operationId": "SpendableWeb.Api.BudgetController.delete",
+        "operationId": "archiveBudget",
         "parameters": [
           {
             "description": "",
@@ -1640,7 +1640,7 @@
       },
       "get": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.BudgetController.show",
+        "operationId": "getBudget",
         "parameters": [
           {
             "description": "",
@@ -1684,82 +1684,7 @@
       "patch": {
         "callbacks": {},
         "description": "The response carries the recalculated balance, so render it rather than the request.",
-        "operationId": "SpendableWeb.Api.BudgetController.update (2)",
-        "parameters": [
-          {
-            "description": "",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "x-struct": null,
-              "x-validate": null
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BudgetRequest"
-              }
-            }
-          },
-          "description": "Budget",
-          "required": false
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Budget"
-                }
-              }
-            },
-            "description": "Budget"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          }
-        },
-        "summary": "Update a budget",
-        "tags": [
-          "budgets"
-        ]
-      },
-      "put": {
-        "callbacks": {},
-        "description": "The response carries the recalculated balance, so render it rather than the request.",
-        "operationId": "SpendableWeb.Api.BudgetController.update",
+        "operationId": "updateBudget",
         "parameters": [
           {
             "description": "",
@@ -1836,7 +1761,7 @@
       "post": {
         "callbacks": {},
         "description": "Attaches a second provider to the account making the request. Nothing about a person is stored\nthat would let the app match them across providers, so this is the only way two sign-in\nmethods reach one account - and it has to be done from inside it.\n",
-        "operationId": "SpendableWeb.Api.IdentityController.create",
+        "operationId": "createIdentity",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1891,7 +1816,7 @@
       "delete": {
         "callbacks": {},
         "description": "Refused for the last one, which would leave an account nobody can get back into.",
-        "operationId": "SpendableWeb.Api.IdentityController.delete",
+        "operationId": "deleteIdentity",
         "parameters": [
           {
             "description": "",
@@ -1943,7 +1868,7 @@
       "get": {
         "callbacks": {},
         "description": "Carries the sign-in methods on the account, so the client can offer to add one.",
-        "operationId": "SpendableWeb.Api.MeController.show",
+        "operationId": "getCurrentUser",
         "parameters": [],
         "responses": {
           "200": {
@@ -1977,7 +1902,7 @@
       "delete": {
         "callbacks": {},
         "description": "Revokes the token the request was made with.",
-        "operationId": "SpendableWeb.Api.SessionController.delete",
+        "operationId": "deleteSession",
         "parameters": [],
         "responses": {
           "204": {
@@ -2005,7 +1930,7 @@
       "post": {
         "callbacks": {},
         "description": "Exchanges an ID token from a native sign-in for an API token.",
-        "operationId": "SpendableWeb.Api.SessionController.create",
+        "operationId": "createSession",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2061,7 +1986,7 @@
       "get": {
         "callbacks": {},
         "description": "Alphabetical, without their lines. Archived splits are left out.",
-        "operationId": "SpendableWeb.Api.SplitController.index",
+        "operationId": "listSplits",
         "parameters": [
           {
             "description": "Matches on name.",
@@ -2109,7 +2034,7 @@
       },
       "post": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.SplitController.create",
+        "operationId": "createSplit",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2153,7 +2078,7 @@
     "/api/splits/{id}": {
       "delete": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.SplitController.delete",
+        "operationId": "archiveSplit",
         "parameters": [
           {
             "description": "",
@@ -2206,7 +2131,7 @@
       },
       "get": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.SplitController.show",
+        "operationId": "getSplit",
         "parameters": [
           {
             "description": "",
@@ -2249,71 +2174,7 @@
       },
       "patch": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.SplitController.update (2)",
-        "parameters": [
-          {
-            "description": "",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "x-struct": null,
-              "x-validate": null
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SplitRequest"
-              }
-            }
-          },
-          "description": "Split",
-          "required": false
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Split"
-                }
-              }
-            },
-            "description": "Split"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          }
-        },
-        "summary": "Update a split",
-        "tags": [
-          "splits"
-        ]
-      },
-      "put": {
-        "callbacks": {},
-        "operationId": "SpendableWeb.Api.SplitController.update",
+        "operationId": "updateSplit",
         "parameters": [
           {
             "description": "",
@@ -2380,7 +2241,7 @@
       "get": {
         "callbacks": {},
         "description": "Newest first. Reviewed and excluded transactions are hidden unless asked for, because the list\nis a queue of what still needs attention. A page shorter than `per_page` is the last one.\n",
-        "operationId": "SpendableWeb.Api.TransactionController.index",
+        "operationId": "listTransactions",
         "parameters": [
           {
             "description": "Matches on name or note.",
@@ -2486,7 +2347,7 @@
       "post": {
         "callbacks": {},
         "description": "For money the user is recording themselves; synced activity arrives on its own.",
-        "operationId": "SpendableWeb.Api.TransactionController.create",
+        "operationId": "createTransaction",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2531,7 +2392,7 @@
       "patch": {
         "callbacks": {},
         "description": "Applied one at a time rather than all or nothing, so a transaction that has since been deleted\ndoes not cost the rest their change. Check `failed` before assuming the whole set landed.\n",
-        "operationId": "SpendableWeb.Api.TransactionBulkController.update",
+        "operationId": "updateTransactions",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2585,7 +2446,7 @@
     "/api/transactions/bulk/delete": {
       "post": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.TransactionBulkController.delete",
+        "operationId": "deleteTransactions",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2640,7 +2501,7 @@
       "post": {
         "callbacks": {},
         "description": "A transfer moves money between the user's own accounts rather than spending it, so the pair\nhas to be one transaction leaving an account and one arriving in another. Both sides come\nback, with their allocations cleared onto Spendable where the opposite signs cancel.\n",
-        "operationId": "SpendableWeb.Api.TransactionTransferController.create",
+        "operationId": "createTransfer",
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2710,7 +2571,7 @@
       "delete": {
         "callbacks": {},
         "description": "Its allocations go with it.",
-        "operationId": "SpendableWeb.Api.TransactionController.delete",
+        "operationId": "deleteTransaction",
         "parameters": [
           {
             "description": "",
@@ -2749,7 +2610,7 @@
       },
       "get": {
         "callbacks": {},
-        "operationId": "SpendableWeb.Api.TransactionController.show",
+        "operationId": "getTransaction",
         "parameters": [
           {
             "description": "",
@@ -2793,72 +2654,7 @@
       "patch": {
         "callbacks": {},
         "description": "The response carries the allocations the server settled on. Render those.",
-        "operationId": "SpendableWeb.Api.TransactionController.update (2)",
-        "parameters": [
-          {
-            "description": "",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "x-struct": null,
-              "x-validate": null
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransactionRequest"
-              }
-            }
-          },
-          "description": "Transaction",
-          "required": false
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Transaction"
-                }
-              }
-            },
-            "description": "Transaction"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              }
-            },
-            "description": "Errors"
-          }
-        },
-        "summary": "Update a transaction",
-        "tags": [
-          "transactions"
-        ]
-      },
-      "put": {
-        "callbacks": {},
-        "description": "The response carries the allocations the server settled on. Render those.",
-        "operationId": "SpendableWeb.Api.TransactionController.update",
+        "operationId": "updateTransaction",
         "parameters": [
           {
             "description": "",
@@ -2925,7 +2721,7 @@
       "delete": {
         "callbacks": {},
         "description": "Both sides count toward budgets again. Their allocations stay where they are.",
-        "operationId": "SpendableWeb.Api.TransactionTransferController.delete",
+        "operationId": "deleteTransfer",
         "parameters": [
           {
             "description": "",

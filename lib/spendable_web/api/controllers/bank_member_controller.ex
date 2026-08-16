@@ -11,6 +11,7 @@ defmodule SpendableWeb.Api.BankMemberController do
   tags ["banks"]
 
   operation :index,
+    operation_id: "listBanks",
     summary: "List connections and their accounts",
     parameters: [search: [in: :query, type: :string, description: "Matches on institution name."]],
     responses: [
@@ -25,6 +26,7 @@ defmodule SpendableWeb.Api.BankMemberController do
   end
 
   operation :create,
+    operation_id: "createBank",
     summary: "Finish connecting a bank",
     description: """
     Exchanges the public token Plaid Link returned. The accounts arrive on the first sync rather
@@ -48,6 +50,7 @@ defmodule SpendableWeb.Api.BankMemberController do
   end
 
   operation :link_token,
+    operation_id: "createLinkToken",
     summary: "Start connecting a bank",
     description: "Refused once the user is at their bank limit, before Plaid is called.",
     responses: [
@@ -62,6 +65,7 @@ defmodule SpendableWeb.Api.BankMemberController do
   end
 
   operation :update_link_token,
+    operation_id: "createUpdateLinkToken",
     summary: "Reopen an existing connection",
     description: "For a connection whose status is not CONNECTED, or to verify micro deposits.",
     parameters: [id: [in: :path, type: :string, required: true]],
@@ -80,6 +84,7 @@ defmodule SpendableWeb.Api.BankMemberController do
   end
 
   operation :sync,
+    operation_id: "syncBank",
     summary: "Pull two years of history",
     description: """
     Queues the work and returns immediately. There is no completion signal - refresh the lists to

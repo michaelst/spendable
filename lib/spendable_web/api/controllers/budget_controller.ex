@@ -10,6 +10,7 @@ defmodule SpendableWeb.Api.BudgetController do
   tags ["budgets"]
 
   operation :index,
+    operation_id: "listBudgets",
     summary: "List budgets",
     description: "Spendable first, then alphabetical. Archived budgets are left out.",
     parameters: [search: [in: :query, type: :string, description: "Matches on name."]],
@@ -25,6 +26,7 @@ defmodule SpendableWeb.Api.BudgetController do
   end
 
   operation :show,
+    operation_id: "getBudget",
     summary: "Get a budget",
     parameters: [id: [in: :path, type: :string, required: true]],
     responses: [
@@ -39,6 +41,7 @@ defmodule SpendableWeb.Api.BudgetController do
   end
 
   operation :create,
+    operation_id: "createBudget",
     summary: "Create a budget",
     request_body: {"Budget", "application/json", BudgetRequest},
     responses: [
@@ -55,6 +58,7 @@ defmodule SpendableWeb.Api.BudgetController do
   end
 
   operation :update,
+    operation_id: "updateBudget",
     summary: "Update a budget",
     description: "The response carries the recalculated balance, so render it rather than the request.",
     parameters: [id: [in: :path, type: :string, required: true]],
@@ -76,6 +80,7 @@ defmodule SpendableWeb.Api.BudgetController do
   end
 
   operation :delete,
+    operation_id: "archiveBudget",
     summary: "Archive a budget",
     description: "Budgets are archived rather than deleted, so the history they hold survives.",
     parameters: [id: [in: :path, type: :string, required: true]],
