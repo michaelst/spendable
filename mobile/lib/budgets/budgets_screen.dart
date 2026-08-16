@@ -263,15 +263,14 @@ class _Row extends StatelessWidget {
         SpendableSpace.gutter,
         SpendableSpace.step,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Expanded(
-                child: Row(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
@@ -289,24 +288,28 @@ class _Row extends StatelessWidget {
                     ],
                   ],
                 ),
-              ),
+                if (card.footer case final footer?) ...[
+                  const SizedBox(height: 1),
+                  Text(
+                    footer,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: SpendableType.subhead.copyWith(color: colors.secondary),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: SpendableSpace.step),
+          // What the figure is stands under it rather than beside it, so the eye reads the number
+          // first and the word only if it needs to.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
               MoneyText(card.amount, key: Key('amount-${budget.id}'), style: SpendableType.moneyRow),
-              const SizedBox(width: SpendableSpace.hair),
               Caption(label),
             ],
           ),
-          // Ranged right, under the figure it explains, but laid out across the whole row so it
-          // never decides how much room the name gets.
-          if (card.footer case final footer?) ...[
-            const SizedBox(height: 1),
-            Text(
-              footer,
-              textAlign: TextAlign.end,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: SpendableType.subhead.copyWith(color: colors.secondary),
-            ),
-          ],
         ],
       ),
     );
