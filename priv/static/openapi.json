@@ -1296,7 +1296,7 @@
     "/api/banks/{id}/link_token": {
       "post": {
         "callbacks": {},
-        "description": "For a connection whose status is not CONNECTED, or to verify micro deposits.",
+        "description": "For a connection whose status is not CONNECTED, or to verify micro deposits. Plaid only.\n",
         "operationId": "createUpdateLinkToken",
         "parameters": [
           {
@@ -1323,6 +1323,16 @@
             "description": "LinkToken"
           },
           "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1391,7 +1401,7 @@
     "/api/banks/{id}/sync": {
       "post": {
         "callbacks": {},
-        "description": "Queues the work and returns immediately. There is no completion signal - refresh the lists to\npick up whatever has landed.\n",
+        "description": "Queues the work and returns immediately. There is no completion signal - refresh the lists to\npick up whatever has landed. Plaid only: a FinanceKit connection is read on the device.\n",
         "operationId": "syncBank",
         "parameters": [
           {
@@ -1414,6 +1424,16 @@
             "description": "Queued"
           },
           "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
             "content": {
               "application/json": {
                 "schema": {

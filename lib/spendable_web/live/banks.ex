@@ -59,7 +59,9 @@ defmodule SpendableWeb.Live.Banks do
                   </h2>
                 </div>
               </div>
+              <!-- Only Plaid history can be pulled from here; FinanceKit is read on the device. -->
               <button
+                :if={bank_member.provider == "Plaid"}
                 type="button"
                 phx-click="historical_sync"
                 phx-value-id={bank_member.id}

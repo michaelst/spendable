@@ -34,6 +34,33 @@ defmodule Spendable.Banks.Actions.GetLinkTokenTest do
     assert {:error, :bank_limit_reached} = Banks.get_link_token(Scope.for_user(user))
   end
 
+  # The limit is about what a Plaid connection costs us, and FinanceKit reads from the device.
+  test "a FinanceKit connection takes no slot" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{
+        external_id: Ecto.UUID.generate(),
+        provider: "google",
+        bank_limit: 1
+      })
+
+    scope = Scope.for_user(user)
+    {:ok, _member} = Banks.upsert_finance_kit_member(scope)
+
+    assert {:ok, "link-sandbox-token"} = Banks.get_link_token(scope)
+  end
+
+  # A connection with no Plaid token falls through to Plaid's new-item clause, which mints a token
+  # that opens the wrong flow rather than reopening anything.
+  test "refuses an update token for a connection Plaid does not hold" do
+    {:ok, user} =
+      Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
+
+    scope = Scope.for_user(user)
+    {:ok, member} = Banks.upsert_finance_kit_member(scope)
+
+    assert {:error, :not_supported} = Banks.get_update_link_token(scope, member)
+  end
+
   test "returns an update token for an existing connection" do
     {:ok, user} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})

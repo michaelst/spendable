@@ -33,6 +33,13 @@ defmodule Spendable.Banks.Actions.QueueHistoricalSyncTest do
     )
   end
 
+  # Wallet is read on the device, so the server has nothing to pull and the app backfills instead.
+  test "refuses a connection the server cannot pull", %{scope: scope} do
+    {:ok, member} = Banks.upsert_finance_kit_member(scope)
+
+    assert {:error, :not_supported} = Banks.queue_historical_sync(scope, member)
+  end
+
   test "refuses another user's connection", %{bank_member: bank_member} do
     {:ok, other} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})

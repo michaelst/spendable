@@ -19,10 +19,12 @@ defmodule Spendable.Banks.Actions.SyncMember do
   Takes an id rather than a record because the only caller is the job queue, which carries ids.
   Runs under a system scope: the work is ours, but the rows are still the member's owner's.
   Activity is pulled from `:start_date`, defaulting to the last #{@default_days} days.
+
+  Plaid only. A FinanceKit connection is read on the device, so there is nothing to pull here.
   """
   def sync_member(bank_member_id, opts \\ []) when is_binary(bank_member_id) do
     case Repo.get(BankMember, bank_member_id) do
-      %BankMember{} = bank_member ->
+      %BankMember{provider: "Plaid"} = bank_member ->
         bank_member = Repo.preload(bank_member, :user)
         scope = Scope.for_system(bank_member.user)
         start_date = opts[:start_date] || Date.add(Date.utc_today(), -@default_days)
@@ -34,6 +36,9 @@ defmodule Spendable.Banks.Actions.SyncMember do
         |> Enum.each(&sync_transactions(&1, scope, bank_member, start_date))
 
         :ok
+
+      %BankMember{} ->
+        {:error, :not_supported}
 
       nil ->
         {:error, :bank_member_not_found}
