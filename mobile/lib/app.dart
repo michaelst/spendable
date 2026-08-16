@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'auth/auth_controller.dart';
 import 'auth/sign_in_screen.dart';
-import 'budgets/budgets_screen.dart';
+import 'shell.dart';
 import 'theme.dart';
 
 class SpendableApp extends ConsumerWidget {
@@ -20,7 +20,7 @@ class SpendableApp extends ConsumerWidget {
       // Null only while the first Keychain read is in flight. Signing in and out never puts this
       // back into loading, so the screen cannot fall back to the splash mid-flow.
       home: switch (auth.value) {
-        true => const BudgetsScreen(),
+        true => const Shell(),
         false => const SignInScreen(),
         null => const _Splash(),
       },
