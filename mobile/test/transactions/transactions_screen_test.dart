@@ -171,10 +171,17 @@ void main() {
 
     await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-more')));
+    await tester.pumpAndSettle();
 
+    // One transaction is not a pair, so there is nothing to link it to.
     expect(find.byKey(const Key('bulk-transfer')), findsNothing);
 
+    await tester.tapAt(const Offset(200, 60));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-txn_2')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-more')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('bulk-transfer')));
     await tester.pumpAndSettle();
@@ -205,6 +212,8 @@ void main() {
     await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-txn_2')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-more')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('bulk-transfer')));
     await tester.pumpAndSettle();
@@ -269,6 +278,8 @@ void main() {
     await tester.longPress(find.byKey(const Key('transaction-txn_1')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('select-txn_2')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-more')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('bulk-delete')));
     await tester.pumpAndSettle();

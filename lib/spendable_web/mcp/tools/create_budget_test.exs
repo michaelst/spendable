@@ -29,7 +29,7 @@ defmodule SpendableWeb.MCP.Tools.CreateBudgetTest do
 
   test "records an adjustment when a starting balance is given", %{frame: frame, scope: scope} do
     assert {:reply, %Response{isError: false}, ^frame} =
-             CreateBudget.execute(%{name: "Groceries", type: :goal, balance: "40.00"}, frame)
+             CreateBudget.execute(%{name: "Groceries", type: "goal", balance: "40.00"}, frame)
 
     assert [%{type: :goal, balance: balance}] = Budgets.list_budgets(scope)
     assert Decimal.eq?(balance, "40.00")

@@ -6,6 +6,7 @@ import 'tokens.dart';
 /// The Phosphor glyphs, vendored under assets/icons from the same set the web app draws from so the
 /// two products share an icon language.
 enum Glyph {
+  appleLogo,
   bank,
   bankFill,
   caretDown,

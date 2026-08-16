@@ -10,7 +10,8 @@ defmodule Spendable.Transactions.Actions.MarkAsTransfer do
 
   The pair has to be one transaction going out and one coming in, since a transfer moves money
   rather than spending it. Clearing their allocations parks the whole of each amount on
-  Spendable, where the two opposite signs cancel.
+  Spendable, where the two opposite signs cancel, and both sides are marked reviewed because
+  saying what a pair is leaves nothing else to decide about it.
   """
   def mark_as_transfer(
         %Scope{user: %{id: user_id}},
@@ -39,7 +40,11 @@ defmodule Spendable.Transactions.Actions.MarkAsTransfer do
   defp link(transaction, transfer_id) do
     transaction
     |> Repo.preload(:budget_allocations)
-    |> Transaction.changeset(%{"transfer_id" => transfer_id, "budget_allocations" => []})
+    |> Transaction.changeset(%{
+      "transfer_id" => transfer_id,
+      "budget_allocations" => [],
+      "reviewed" => true
+    })
     |> Repo.update!()
   end
 end

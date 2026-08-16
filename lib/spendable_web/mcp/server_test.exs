@@ -49,12 +49,6 @@ defmodule SpendableWeb.MCP.ServerTest do
       |> put_req_header("content-type", "application/json")
       |> put_req_header("accept", "application/json")
 
-    %{conn: conn, scope: scope}
-  end
-
-  test "runs a tool as the user the token was issued to", %{conn: conn, scope: scope} do
-    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
-
     initialized =
       post(conn, ~p"/mcp", %{
         "jsonrpc" => "2.0",
@@ -74,6 +68,12 @@ defmodule SpendableWeb.MCP.ServerTest do
 
     post(conn, ~p"/mcp", %{"jsonrpc" => "2.0", "method" => "notifications/initialized"})
 
+    %{conn: conn, scope: scope}
+  end
+
+  test "runs a tool as the user the token was issued to", %{conn: conn, scope: scope} do
+    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+
     called =
       post(conn, ~p"/mcp", %{
         "jsonrpc" => "2.0",
@@ -83,6 +83,37 @@ defmodule SpendableWeb.MCP.ServerTest do
       })
 
     assert %{"result" => %{"structuredContent" => %{"budgets" => [%{"name" => "Groceries"}]}}} =
+             json_response(called, 200)
+  end
+
+  # The type arrives as a JSON string and is validated before anything casts it, so an enum of
+  # atoms rejected every call that named one.
+  test "takes a budget type as the JSON string a client sends", %{conn: conn} do
+    called =
+      post(conn, ~p"/mcp", %{
+        "jsonrpc" => "2.0",
+        "id" => 2,
+        "method" => "tools/call",
+        "params" => %{
+          "name" => "create_budget",
+          "arguments" => %{"name" => "Home Renovation", "type" => "tracking"}
+        }
+      })
+
+    assert %{"result" => %{"structuredContent" => %{"budget" => %{"type" => "tracking"}}}} =
+             json_response(called, 200)
+  end
+
+  test "keeps an ampersand in a name it is given", %{conn: conn} do
+    called =
+      post(conn, ~p"/mcp", %{
+        "jsonrpc" => "2.0",
+        "id" => 2,
+        "method" => "tools/call",
+        "params" => %{"name" => "create_budget", "arguments" => %{"name" => "Auto Insurance & Fees"}}
+      })
+
+    assert %{"result" => %{"structuredContent" => %{"budget" => %{"name" => "Auto Insurance & Fees"}}}} =
              json_response(called, 200)
   end
 

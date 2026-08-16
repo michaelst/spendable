@@ -19,6 +19,7 @@ defmodule SpendableWeb.MCP.Server do
   component(SpendableWeb.MCP.Tools.ListBudgets)
   component(SpendableWeb.MCP.Tools.ListSplits)
   component(SpendableWeb.MCP.Tools.ListTransactions)
+  component(SpendableWeb.MCP.Tools.MarkTransfer)
   component(SpendableWeb.MCP.Tools.UpdateBudget)
   component(SpendableWeb.MCP.Tools.UpdateSplit)
 end

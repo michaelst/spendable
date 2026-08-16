@@ -16,6 +16,7 @@ import '../design/tokens.dart';
 import '../design/typography.dart';
 import '../finance_kit/wallet_sync.dart';
 import '../money.dart';
+import 'account_label.dart';
 import 'banks_controller.dart';
 import 'banks_providers.dart';
 
@@ -103,9 +104,16 @@ class _MemberState extends ConsumerState<_Member> {
               SizedBox(
                 width: 32,
                 height: 32,
-                child: member.hasLogo
-                    ? _Logo(memberId: member.id)
-                    : GlyphIcon(Glyph.bank, size: 24, color: colors.secondary),
+                // Wallet is not an institution Plaid has a logo for, so Apple's own mark stands in.
+                child: switch (member) {
+                  _ when member.provider == financeKitProvider => GlyphIcon(
+                    Glyph.appleLogo,
+                    size: 24,
+                    color: colors.primary,
+                  ),
+                  _ when member.hasLogo => _Logo(memberId: member.id),
+                  _ => GlyphIcon(Glyph.bank, size: 24, color: colors.secondary),
+                },
               ),
               const SizedBox(width: SpendableSpace.step),
               Expanded(
@@ -131,7 +139,8 @@ class _MemberState extends ConsumerState<_Member> {
           ),
         ),
         if (_open)
-          for (final account in member.bankAccounts) _Account(account: account),
+          for (final account in member.bankAccounts)
+            _Account(account: account, fromWallet: member.provider == financeKitProvider),
       ],
     );
   }
@@ -152,9 +161,18 @@ class _Logo extends ConsumerWidget {
 }
 
 class _Account extends ConsumerWidget {
-  const _Account({required this.account});
+  const _Account({required this.account, required this.fromWallet});
+
+  /// Apple Card, Apple Cash and Apple Savings all arrive under the one Apple connection and read
+  /// alike, so each one carries the glyph for what it is.
+  static const _walletGlyphs = {
+    'credit card': Glyph.creditCard,
+    'checking': Glyph.wallet,
+    'savings': Glyph.bank,
+  };
 
   final BankAccount account;
+  final bool fromWallet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -177,12 +195,20 @@ class _Account extends ConsumerWidget {
         children: [
           Row(
             children: [
+              if (fromWallet) ...[
+                GlyphIcon(
+                  _walletGlyphs[account.subType] ?? Glyph.appleLogo,
+                  size: 20,
+                  color: colors.secondary,
+                ),
+                const SizedBox(width: SpendableSpace.tight),
+              ],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${account.name} ••••${account.number ?? ''}',
+                      accountLabel(account.name, account.number),
                       style: SpendableType.body.copyWith(color: colors.primary),
                       overflow: TextOverflow.ellipsis,
                     ),

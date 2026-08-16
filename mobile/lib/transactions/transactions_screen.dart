@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
+import '../banks/account_label.dart';
 import '../budgets/budget_picker.dart';
 import '../design/band_button.dart';
-import '../design/caption.dart';
 import '../design/glass.dart';
 import '../design/glass_sheet.dart';
 import '../design/glyph_icon.dart';
@@ -119,130 +118,72 @@ class _Row extends ConsumerWidget {
     final controller = ref.read(transactionsControllerProvider.notifier);
     final source = transaction.source_;
 
-    // An excluded row and one already paired as a transfer are both out of the running.
-    final dimmed = transaction.excluded || transaction.transferId != null;
-
-    return Slidable(
-      key: ValueKey(transaction.id),
-      startActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        extentRatio: 0.3,
+    return LedgerRow(
+      key: Key('transaction-${transaction.id}'),
+      selected: selected,
+      dimmed: transaction.excluded,
+      onTap: () => showGlassSheet<void>(context, (_) => TransactionDetail(transaction: transaction)),
+      onLongPress: () {
+        HapticFeedback.selectionClick();
+        ref.read(selectionProvider.notifier).toggle(transaction.id);
+      },
+      child: Row(
         children: [
-          _SwipeAction(
-            label: transaction.reviewed ? 'Unreview' : 'Review',
-            color: colors.positive,
-            onPressed: () => controller.toggleReviewed(transaction),
-          ),
-        ],
-      ),
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        extentRatio: 0.35,
-        children: [
-          _SwipeAction(label: 'Spend from', color: colors.accent, onPressed: () => _spendFrom(context, ref)),
-        ],
-      ),
-      child: LedgerRow(
-        key: Key('transaction-${transaction.id}'),
-        selected: selected,
-        dimmed: dimmed,
-        onTap: () => showGlassSheet<void>(context, (_) => TransactionDetail(transaction: transaction)),
-        onLongPress: () {
-          HapticFeedback.selectionClick();
-          ref.read(selectionProvider.notifier).toggle(transaction.id);
-        },
-        child: Row(
-          children: [
-            if (selecting) ...[
-              GestureDetector(
-                key: Key('select-${transaction.id}'),
-                behavior: HitTestBehavior.opaque,
-                onTap: () => ref.read(selectionProvider.notifier).toggle(transaction.id),
-                child: Padding(
-                  padding: const EdgeInsets.only(right: SpendableSpace.step),
-                  child: GlyphIcon(
-                    selected ? Glyph.checkCircleFill : Glyph.circle,
-                    size: 22,
-                    color: selected ? colors.accent : colors.tertiary,
-                  ),
-                ),
-              ),
-            ],
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    transaction.name,
-                    overflow: TextOverflow.ellipsis,
-                    style: SpendableType.title.copyWith(color: colors.primary),
-                  ),
-                  Text(
-                    [
-                      shortDate(transaction.date),
-                      if (source != null) '${source.accountName} ••••${source.accountNumber ?? ''}',
-                      if (transaction.transferId != null) 'Transfer',
-                    ].join(' · '),
-                    style: SpendableType.subhead.copyWith(color: colors.secondary),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: SpendableSpace.step),
-            MoneyText(money(transaction.amount), style: SpendableType.moneyRow, creditIsPositive: true),
+          if (selecting) ...[
             GestureDetector(
-              key: Key('reviewed-${transaction.id}'),
+              key: Key('select-${transaction.id}'),
               behavior: HitTestBehavior.opaque,
-              onTap: () => controller.toggleReviewed(transaction),
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Center(
-                  child: GlyphIcon(
-                    transaction.reviewed ? Glyph.checkCircleFill : Glyph.circle,
-                    size: 22,
-                    color: transaction.reviewed ? colors.positive : colors.tertiary,
-                  ),
+              onTap: () => ref.read(selectionProvider.notifier).toggle(transaction.id),
+              child: Padding(
+                padding: const EdgeInsets.only(right: SpendableSpace.step),
+                child: GlyphIcon(
+                  selected ? Glyph.checkCircleFill : Glyph.circle,
+                  size: 22,
+                  color: selected ? colors.accent : colors.tertiary,
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _spendFrom(BuildContext context, WidgetRef ref) async {
-    final chosen = await pickBudget(context, ref);
-
-    if (chosen == null) return;
-
-    await ref.read(transactionsControllerProvider.notifier).bulk(ids: {transaction.id}, budgetId: chosen.id);
-  }
-}
-
-class _SwipeAction extends StatelessWidget {
-  const _SwipeAction({required this.label, required this.color, required this.onPressed});
-
-  final String label;
-  final Color color;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          HapticFeedback.lightImpact();
-          Slidable.of(context)?.close();
-          onPressed();
-        },
-        child: ColoredBox(
-          color: color,
-          child: Center(child: Caption(label, color: SpendableColors.of(context).ground)),
-        ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  transaction.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: SpendableType.title.copyWith(color: colors.primary),
+                ),
+                Text(
+                  [
+                    shortDate(transaction.date),
+                    if (source != null) accountLabel(source.accountName, source.accountNumber),
+                    if (transaction.transferId != null) 'Transfer',
+                  ].join(' · '),
+                  style: SpendableType.subhead.copyWith(color: colors.secondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: SpendableSpace.step),
+          MoneyText(money(transaction.amount), style: SpendableType.moneyRow, creditIsPositive: true),
+          GestureDetector(
+            key: Key('reviewed-${transaction.id}'),
+            behavior: HitTestBehavior.opaque,
+            onTap: () => controller.toggleReviewed(transaction),
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Center(
+                child: GlyphIcon(
+                  transaction.reviewed ? Glyph.checkCircleFill : Glyph.circle,
+                  size: 22,
+                  color: transaction.reviewed ? colors.positive : colors.tertiary,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -346,51 +287,24 @@ class _BulkActions extends ConsumerWidget {
                 behavior: HitTestBehavior.opaque,
                 onTap: () => ref.read(selectionProvider.notifier).clear(),
                 child: SizedBox(
-                  width: 50,
+                  width: 44,
                   child: Center(child: GlyphIcon(Glyph.x, size: 18, color: colors.secondary)),
                 ),
               ),
               Text('${selection.length}', style: SpendableType.moneyInline.copyWith(color: colors.primary)),
-              // The actions do not fit across a phone, and one of them appearing only for a pair
-              // means the width changes as the selection does.
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  reverse: true,
-                  child: Row(
-                    children: [
-                      _Action(
-                        actionKey: const Key('bulk-review'),
-                        label: 'Review',
-                        onPressed: () => controller.bulk(ids: selection, reviewed: true),
-                      ),
-                      _Action(
-                        actionKey: const Key('bulk-exclude'),
-                        label: 'Exclude',
-                        onPressed: () => controller.bulk(ids: selection, excluded: true),
-                      ),
-                      _Action(
-                        actionKey: const Key('bulk-spend-from'),
-                        label: 'Spend from',
-                        onPressed: () => _pick(context, ref),
-                      ),
-                      // A transfer is one transaction leaving an account and one arriving in another.
-                      if (selection.length == 2)
-                        _Action(
-                          actionKey: const Key('bulk-transfer'),
-                          label: 'Transfer',
-                          onPressed: () => controller.markAsTransfer(selection),
-                        ),
-                      _Action(
-                        actionKey: const Key('bulk-delete'),
-                        label: 'Delete',
-                        color: colors.negative,
-                        onPressed: () => controller.deleteAll(selection),
-                      ),
-                    ],
-                  ),
-                ),
+              // Three actions are what fits across a phone without the count crowding them, so the
+              // rest of them are a sheet away rather than scrolled off the end of the bar.
+              _Action(
+                actionKey: const Key('bulk-review'),
+                label: 'Review',
+                onPressed: () => controller.bulk(ids: selection, reviewed: true),
               ),
+              _Action(
+                actionKey: const Key('bulk-spend-from'),
+                label: 'Spend from',
+                onPressed: () => _pick(context, ref),
+              ),
+              _Action(actionKey: const Key('bulk-more'), label: 'More', onPressed: () => _more(context, ref)),
             ],
           ),
         ),
@@ -403,40 +317,99 @@ class _BulkActions extends ConsumerWidget {
 
     if (chosen == null) return;
 
-    await ref.read(transactionsControllerProvider.notifier).bulk(ids: selection, budgetId: chosen.id);
+    await ref
+        .read(transactionsControllerProvider.notifier)
+        .bulk(ids: selection, budgetId: chosen.id, reviewed: true);
+  }
+
+  Future<void> _more(BuildContext context, WidgetRef ref) async {
+    final controller = ref.read(transactionsControllerProvider.notifier);
+
+    final chosen = await showGlassSheet<VoidCallback>(
+      context,
+      (context) => _MoreActions(selection: selection, controller: controller),
+    );
+
+    chosen?.call();
   }
 }
 
-class _Action extends StatelessWidget {
-  const _Action({required this.actionKey, required this.label, required this.onPressed, this.color});
+/// What did not fit on the bar. A transfer is one transaction leaving an account and one arriving
+/// in another, so it is offered only for a pair.
+class _MoreActions extends StatelessWidget {
+  const _MoreActions({required this.selection, required this.controller});
 
-  final Key actionKey;
-  final String label;
-  final VoidCallback onPressed;
-  final Color? color;
+  final Set<String> selection;
+  final TransactionsController controller;
 
   @override
   Widget build(BuildContext context) {
     final colors = SpendableColors.of(context);
 
-    return Row(
-      children: [
-        Container(width: 1, height: 22, color: colors.separator),
-        GestureDetector(
-          key: actionKey,
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onPressed();
-          },
-          child: Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(horizontal: SpendableSpace.step),
-            alignment: Alignment.center,
-            child: Text(label, style: SpendableType.body.copyWith(color: color ?? colors.accent)),
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          LedgerRow(
+            key: const Key('bulk-exclude'),
+            onTap: () => Navigator.of(context).pop(() => controller.bulk(ids: selection, excluded: true)),
+            child: Text('Exclude', style: SpendableType.title.copyWith(color: colors.primary)),
           ),
-        ),
-      ],
+          if (selection.length == 2)
+            LedgerRow(
+              key: const Key('bulk-transfer'),
+              onTap: () => Navigator.of(context).pop(() => controller.markAsTransfer(selection)),
+              child: Text('Mark as transfer', style: SpendableType.title.copyWith(color: colors.primary)),
+            ),
+          LedgerRow(
+            key: const Key('bulk-delete'),
+            onTap: () => Navigator.of(context).pop(() => controller.deleteAll(selection)),
+            child: Text('Delete', style: SpendableType.title.copyWith(color: colors.negative)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Action extends StatelessWidget {
+  const _Action({required this.actionKey, required this.label, required this.onPressed});
+
+  final Key actionKey;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = SpendableColors.of(context);
+
+    return Expanded(
+      child: Row(
+        children: [
+          Container(width: 1, height: 22, color: colors.separator),
+          Expanded(
+            child: GestureDetector(
+              key: actionKey,
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                HapticFeedback.lightImpact();
+                onPressed();
+              },
+              child: Container(
+                height: 50,
+                alignment: Alignment.center,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: SpendableType.body.copyWith(color: colors.accent),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

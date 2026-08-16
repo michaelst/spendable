@@ -34,4 +34,28 @@ defmodule Spendable.Budgets.Actions.CalculateSpentByMonthTest do
     assert [%{month: ^current_month, spent: spent}] = Budgets.calculate_spent_by_month(scope)
     assert Decimal.eq?(spent, "-25.00")
   end
+
+  # A transfer moves money between the user's own accounts, so neither side is spending.
+  test "leaves a transfer out of the month", %{scope: scope} do
+    current_month = Date.beginning_of_month(Date.utc_today())
+
+    {:ok, out} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-500.00",
+        "date" => Date.utc_today(),
+        "name" => "Transfer to savings"
+      })
+
+    {:ok, into} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "500.00",
+        "date" => Date.utc_today(),
+        "name" => "Transfer from checking"
+      })
+
+    {:ok, _pair} = Transactions.mark_as_transfer(scope, out, into)
+
+    assert [%{month: ^current_month, spent: spent}] = Budgets.calculate_spent_by_month(scope)
+    assert Decimal.eq?(spent, 0)
+  end
 end

@@ -14,7 +14,8 @@ defmodule SpendableWeb.MCP.Tools.CreateBudget do
   schema do
     field :name, {:required, :string}, description: "What the budget is called, e.g. \"Groceries\"."
 
-    field :type, {:enum, [:envelope, :goal, :tracking]},
+    # Strings, not atoms: the value arrives from JSON and is compared before anything casts it.
+    field :type, {:enum, ["envelope", "goal", "tracking"]},
       description:
         "envelope reserves money for a purpose, goal saves toward a target, tracking records spending " <>
           "without reserving anything. Defaults to envelope."

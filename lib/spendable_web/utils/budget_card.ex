@@ -18,11 +18,11 @@ defmodule SpendableWeb.Utils.BudgetCard do
   end
 
   def build_budget_card(%Budget{type: :tracking}, spent, _current_month_is_selected) do
-    %{amount: spent, label: "SPENT", percent: nil, bar: nil, footer: "No limit set"}
+    %{amount: spent, label: "SPENT", percent: nil, bar: nil, footer: nil}
   end
 
   def build_budget_card(%Budget{type: :envelope, budgeted_amount: nil} = budget, _spent, _current) do
-    %{amount: budget.balance, label: "LEFT", percent: nil, bar: nil, footer: "No limit set"}
+    %{amount: budget.balance, label: "LEFT", percent: nil, bar: nil, footer: nil}
   end
 
   def build_budget_card(%Budget{type: :envelope} = budget, spent, _current_month_is_selected) do

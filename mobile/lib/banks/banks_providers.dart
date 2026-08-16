@@ -8,6 +8,9 @@ import '../api/api_error.dart';
 
 part 'banks_providers.g.dart';
 
+/// The one connection whose accounts the device reads out of Wallet rather than Plaid supplying.
+const financeKitProvider = 'FinanceKit';
+
 @riverpod
 Future<List<BankMember>> bankMembers(Ref ref) async {
   final response = await ref.watch(apiProvider).getBanksApi().listBanks().orApiError();

@@ -48,6 +48,14 @@ defmodule Spendable.Transactions.Actions.MarkAsTransferTest do
              Transactions.get_transaction(scope, id: in_id)
   end
 
+  # Saying what a pair is leaves nothing else to decide, so neither side stays in the review queue.
+  test "marks both sides reviewed", %{scope: scope, out: out, out_id: out_id, in: in_, in_id: in_id} do
+    assert {:ok, _pair} = Transactions.mark_as_transfer(scope, out, in_)
+
+    assert {:ok, %Transaction{reviewed: true}} = Transactions.get_transaction(scope, id: out_id)
+    assert {:ok, %Transaction{reviewed: true}} = Transactions.get_transaction(scope, id: in_id)
+  end
+
   # A transfer moves money rather than spending it, so an envelope it was assigned to gets it back.
   test "moves the whole amount to Spendable", %{scope: scope, out: out, in: in_} do
     {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})

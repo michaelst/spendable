@@ -9,6 +9,9 @@ Future<T?> showGlassSheet<T>(BuildContext context, WidgetBuilder builder) {
   return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: true,
+    // Without this a long sheet runs up under the status bar, where its own grabber is the part
+    // that ends up unreachable and there is nothing left to close it with.
+    useSafeArea: true,
     backgroundColor: Colors.transparent,
     barrierColor: const Color(0x59000000),
     builder: (context) => _GlassSheet(child: builder(context)),

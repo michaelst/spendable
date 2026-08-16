@@ -3,7 +3,9 @@ defmodule SpendableWeb.MCP.Tools.ListTransactions do
   Lists the user's transactions newest first, with how each one is allocated across budgets. A
   transaction is negative when money left the user and positive when it arrived, and is always
   fully allocated - whatever is not assigned elsewhere sits in the Spendable budget. Transactions
-  the user has already reviewed, or excluded from spending, are left out unless asked for.
+  the user has already reviewed, or excluded from spending, are left out unless asked for. A
+  `transfer_id` is the other side of a move between the user's own accounts, and counts as neither
+  spending nor income.
   """
   use Anubis.Server.Component, type: :tool, annotations: %{readOnlyHint: true}
 
@@ -47,6 +49,7 @@ defmodule SpendableWeb.MCP.Tools.ListTransactions do
           note: &1.note,
           reviewed: &1.reviewed,
           excluded: &1.excluded,
+          transfer_id: &1.transfer_id,
           allocations:
             Enum.map(
               &1.budget_allocations,

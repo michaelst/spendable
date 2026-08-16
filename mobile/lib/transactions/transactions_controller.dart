@@ -27,21 +27,6 @@ class TransactionsController extends _$TransactionsController {
   Future<bool> toggleReviewed(Transaction transaction) =>
       update(transaction, TransactionRequest((builder) => builder.reviewed = !transaction.reviewed));
 
-  /// A transaction with one allocation splits nothing, so the row can move the whole amount to a
-  /// different budget in one go.
-  Future<bool> spendFrom(Transaction transaction, String budgetId) => update(
-    transaction,
-    TransactionRequest(
-      (builder) => builder.budgetAllocations = ListBuilder([
-        BudgetAllocationRequest(
-          (line) => line
-            ..amount = transaction.amount
-            ..budgetId = budgetId,
-        ),
-      ]),
-    ),
-  );
-
   Future<bool> bulk({required Set<String> ids, bool? reviewed, bool? excluded, String? budgetId}) =>
       _write(() async {
         final request = BulkRequest(

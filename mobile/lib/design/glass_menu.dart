@@ -55,31 +55,33 @@ class _GlassMenuRoute<T> extends PopupRoute<T> {
     final colors = SpendableColors.of(context);
     final eased = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
 
-    return FadeTransition(
-      opacity: eased,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: ColoredBox(color: colors.ground.withValues(alpha: 0.25)),
-              ),
+    return Stack(
+      children: [
+        // Outside the fade: a backdrop filter that fades in samples the screen on every frame of
+        // the transition, which is what reads as the blur arriving late.
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: ColoredBox(color: colors.ground.withValues(alpha: 0.25)),
             ),
           ),
-          Positioned(
-            top: anchor.dy,
-            left: anchor.dx,
-            width: 280,
-            // However many months there are, the menu stops short of the bottom of the screen and
-            // scrolls the rest.
-            height:
-                (MediaQuery.sizeOf(context).height -
-                        anchor.dy -
-                        MediaQuery.paddingOf(context).bottom -
-                        SpendableSpace.block)
-                    .clamp(0.0, _maxHeight),
+        ),
+        Positioned(
+          top: anchor.dy,
+          left: anchor.dx,
+          width: 280,
+          // However many months there are, the menu stops short of the bottom of the screen and
+          // scrolls the rest.
+          height:
+              (MediaQuery.sizeOf(context).height -
+                      anchor.dy -
+                      MediaQuery.paddingOf(context).bottom -
+                      SpendableSpace.block)
+                  .clamp(0.0, _maxHeight),
+          child: FadeTransition(
+            opacity: eased,
             child: ScaleTransition(
               scale: Tween(begin: 0.94, end: 1.0).animate(eased),
               alignment: Alignment.topLeft,
@@ -122,8 +124,8 @@ class _GlassMenuRoute<T> extends PopupRoute<T> {
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
