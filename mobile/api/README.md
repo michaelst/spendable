@@ -48,13 +48,14 @@ import 'package:spendable_api/spendable_api.dart';
 
 
 final api = SpendableApi().getBanksApi();
-final ConnectRequest connectRequest = ; // ConnectRequest | Public token
+final String id = id_example; // String | 
+final FinanceKitChanges financeKitChanges = ; // FinanceKitChanges | One batch of changes
 
 try {
-    final response = await api.createBank(connectRequest);
+    final response = await api.applyFinanceKitChanges(id, financeKitChanges);
     print(response);
 } catch on DioException (e) {
-    print("Exception when calling BanksApi->createBank: $e\n");
+    print("Exception when calling BanksApi->applyFinanceKitChanges: $e\n");
 }
 
 ```
@@ -65,6 +66,8 @@ All URIs are relative to *https://spendable.money*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+[*BanksApi*](doc/BanksApi.md) | [**applyFinanceKitChanges**](doc/BanksApi.md#applyfinancekitchanges) | **POST** /api/banks/{id}/finance_kit/changes | Send what the device read out of Wallet
+[*BanksApi*](doc/BanksApi.md) | [**connectFinanceKit**](doc/BanksApi.md#connectfinancekit) | **POST** /api/banks/finance_kit | Claim the connection Wallet reports into
 [*BanksApi*](doc/BanksApi.md) | [**createBank**](doc/BanksApi.md#createbank) | **POST** /api/banks | Finish connecting a bank
 [*BanksApi*](doc/BanksApi.md) | [**createLinkToken**](doc/BanksApi.md#createlinktoken) | **POST** /api/banks/link_token | Start connecting a bank
 [*BanksApi*](doc/BanksApi.md) | [**createUpdateLinkToken**](doc/BanksApi.md#createupdatelinktoken) | **POST** /api/banks/{id}/link_token | Reopen an existing connection
@@ -116,6 +119,11 @@ Class | Method | HTTP request | Description
  - [Errors](doc/Errors.md)
  - [ErrorsErrorsInner](doc/ErrorsErrorsInner.md)
  - [ErrorsErrorsInnerSource](doc/ErrorsErrorsInnerSource.md)
+ - [FinanceKitAccount](doc/FinanceKitAccount.md)
+ - [FinanceKitChanges](doc/FinanceKitChanges.md)
+ - [FinanceKitCharge](doc/FinanceKitCharge.md)
+ - [FinanceKitConnection](doc/FinanceKitConnection.md)
+ - [FinanceKitResult](doc/FinanceKitResult.md)
  - [Identity](doc/Identity.md)
  - [LinkToken](doc/LinkToken.md)
  - [MonthSpend](doc/MonthSpend.md)

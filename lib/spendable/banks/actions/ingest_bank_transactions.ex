@@ -28,7 +28,9 @@ defmodule Spendable.Banks.Actions.IngestBankTransactions do
 
         %BankTransaction{user_id: user_id, bank_account_id: bank_account.id}
         |> BankTransaction.changeset(attrs)
-        |> Repo.insert()
+        # A duplicate is the normal case, so it rolls back to a savepoint. Without one it would
+        # abort an enclosing transaction and take the rest of the batch with it.
+        |> Repo.insert(mode: :savepoint)
         |> case do
           {:ok, bank_transaction} ->
             create_transaction(bank_transaction, replaces, scope)

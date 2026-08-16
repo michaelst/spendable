@@ -29,6 +29,11 @@ import 'package:spendable_api/src/model/connect_request.dart';
 import 'package:spendable_api/src/model/errors.dart';
 import 'package:spendable_api/src/model/errors_errors_inner.dart';
 import 'package:spendable_api/src/model/errors_errors_inner_source.dart';
+import 'package:spendable_api/src/model/finance_kit_account.dart';
+import 'package:spendable_api/src/model/finance_kit_changes.dart';
+import 'package:spendable_api/src/model/finance_kit_charge.dart';
+import 'package:spendable_api/src/model/finance_kit_connection.dart';
+import 'package:spendable_api/src/model/finance_kit_result.dart';
 import 'package:spendable_api/src/model/identity.dart';
 import 'package:spendable_api/src/model/link_token.dart';
 import 'package:spendable_api/src/model/month_spend.dart';
@@ -62,6 +67,11 @@ part 'serializers.g.dart';
   Errors,
   ErrorsErrorsInner,
   ErrorsErrorsInnerSource,
+  FinanceKitAccount,
+  FinanceKitChanges,
+  FinanceKitCharge,
+  FinanceKitConnection,
+  FinanceKitResult,
   Identity,
   LinkToken,
   MonthSpend,
