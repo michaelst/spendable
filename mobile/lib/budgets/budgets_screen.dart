@@ -264,7 +264,7 @@ class _Row extends StatelessWidget {
         SpendableSpace.step,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -295,9 +295,17 @@ class _Row extends StatelessWidget {
               Caption(label),
             ],
           ),
+          // Ranged right, under the figure it explains, but laid out across the whole row so it
+          // never decides how much room the name gets.
           if (card.footer case final footer?) ...[
             const SizedBox(height: 1),
-            Text(footer, style: SpendableType.subhead.copyWith(color: colors.secondary)),
+            Text(
+              footer,
+              textAlign: TextAlign.end,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: SpendableType.subhead.copyWith(color: colors.secondary),
+            ),
           ],
         ],
       ),

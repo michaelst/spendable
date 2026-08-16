@@ -221,6 +221,36 @@ void main() {
     expect(find.text('needs one leaving and one arriving'), findsOneWidget);
   });
 
+  // Nothing on this screen loads the budget list, so a picker that only read it opened a sheet
+  // with no rows in it - and a sheet sized to its contents with no contents never appears.
+  testWidgets('spend from opens the budget picker and marks what it moves reviewed', (tester) async {
+    final api = await _pump(
+      tester,
+      replies: _replies({
+        'PATCH /api/transactions/bulk': (
+          status: 200,
+          body: {
+            'transactions': [_transaction('txn_1', 'Market', reviewed: true)],
+            'failed': <Object>[],
+          },
+        ),
+      }),
+    );
+
+    await tester.longPress(find.byKey(const Key('transaction-txn_1')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('bulk-spend-from')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('budget-bgt_fun')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('budget-bgt_fun')));
+    await tester.pumpAndSettle();
+
+    expect(api.requests.last.data, containsPair('budget_id', 'bgt_fun'));
+    expect(api.requests.last.data, containsPair('reviewed', true));
+  });
+
   testWidgets('bulk review applies to everything selected and clears the selection', (tester) async {
     final api = await _pump(
       tester,

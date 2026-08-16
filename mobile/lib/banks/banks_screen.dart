@@ -17,6 +17,7 @@ import '../design/typography.dart';
 import '../finance_kit/wallet_sync.dart';
 import '../money.dart';
 import 'account_label.dart';
+import 'apple_mark.dart';
 import 'banks_controller.dart';
 import 'banks_providers.dart';
 
@@ -106,10 +107,8 @@ class _MemberState extends ConsumerState<_Member> {
                 height: 32,
                 // Wallet is not an institution Plaid has a logo for, so Apple's own mark stands in.
                 child: switch (member) {
-                  _ when member.provider == financeKitProvider => GlyphIcon(
-                    Glyph.appleLogo,
-                    size: 24,
-                    color: colors.primary,
+                  _ when member.provider == financeKitProvider => Center(
+                    child: AppleMark(size: 24, color: colors.primary),
                   ),
                   _ when member.hasLogo => _Logo(memberId: member.id),
                   _ => GlyphIcon(Glyph.bank, size: 24, color: colors.secondary),
@@ -171,6 +170,8 @@ class _Account extends ConsumerWidget {
     'savings': Glyph.bank,
   };
 
+  static const _fallbackGlyph = Glyph.wallet;
+
   final BankAccount account;
   final bool fromWallet;
 
@@ -197,7 +198,7 @@ class _Account extends ConsumerWidget {
             children: [
               if (fromWallet) ...[
                 GlyphIcon(
-                  _walletGlyphs[account.subType] ?? Glyph.appleLogo,
+                  _walletGlyphs[account.subType] ?? _fallbackGlyph,
                   size: 20,
                   color: colors.secondary,
                 ),
@@ -230,7 +231,7 @@ class _Account extends ConsumerWidget {
             label: 'Assign to budget',
             value: budgets.where((budget) => budget.id == account.budgetId).firstOrNull?.name,
             onTap: () async {
-              final chosen = await pickBudget(context, ref);
+              final chosen = await pickBudget(context);
 
               if (chosen != null) await controller.assignBudget(account, chosen.id);
             },

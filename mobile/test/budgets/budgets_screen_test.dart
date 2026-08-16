@@ -186,14 +186,24 @@ void main() {
     expect(find.byKey(const Key('budget-save')), findsNothing);
   });
 
-  // Spendable is whatever the other budgets have not claimed, so there is nothing to edit on it.
-  testWidgets('Spendable is not editable', (tester) async {
+  // The figure over the list is Spendable, so a row saying it again is the same word twice about
+  // two different numbers.
+  testWidgets('says Spendable once on the current month', (tester) async {
     await _pump(tester);
 
-    await tester.tap(find.text('Spendable').last);
-    await tester.pumpAndSettle();
+    expect(find.text('Spendable'), findsNothing);
+    expect(find.byKey(const Key('spendable-total')), findsOneWidget);
+  });
 
-    expect(find.byKey(const Key('budget-save')), findsNothing);
+  // A past month has no figure over the list, so the budget is the only place left to read it.
+  testWidgets('keeps the Spendable row on a past month', (tester) async {
+    await _pump(
+      tester,
+      replies: {'GET /api/budgets/summary': (status: 200, body: _summary(currentMonth: false))},
+    );
+
+    expect(find.text('Spendable'), findsOneWidget);
+    expect(find.byKey(const Key('spendable-total')), findsNothing);
   });
 
   // Card debt is not an envelope with something left in it, it is what is owed right now.

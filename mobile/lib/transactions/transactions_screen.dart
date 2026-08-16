@@ -166,7 +166,7 @@ class _Row extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: SpendableSpace.step),
-          MoneyText(money(transaction.amount), style: SpendableType.moneyRow, creditIsPositive: true),
+          MoneyText(money(transaction.amount), style: SpendableType.moneyListRow, neutral: true),
           GestureDetector(
             key: Key('reviewed-${transaction.id}'),
             behavior: HitTestBehavior.opaque,
@@ -297,6 +297,7 @@ class _BulkActions extends ConsumerWidget {
               _Action(
                 actionKey: const Key('bulk-review'),
                 label: 'Review',
+                divided: false,
                 onPressed: () => controller.bulk(ids: selection, reviewed: true),
               ),
               _Action(
@@ -313,7 +314,7 @@ class _BulkActions extends ConsumerWidget {
   }
 
   Future<void> _pick(BuildContext context, WidgetRef ref) async {
-    final chosen = await pickBudget(context, ref);
+    final chosen = await pickBudget(context);
 
     if (chosen == null) return;
 
@@ -374,11 +375,14 @@ class _MoreActions extends StatelessWidget {
 }
 
 class _Action extends StatelessWidget {
-  const _Action({required this.actionKey, required this.label, required this.onPressed});
+  const _Action({required this.actionKey, required this.label, required this.onPressed, this.divided = true});
 
   final Key actionKey;
   final String label;
   final VoidCallback onPressed;
+
+  /// The first action sits against the count, which is not another action to be ruled off from.
+  final bool divided;
 
   @override
   Widget build(BuildContext context) {
@@ -387,7 +391,7 @@ class _Action extends StatelessWidget {
     return Expanded(
       child: Row(
         children: [
-          Container(width: 1, height: 22, color: colors.separator),
+          if (divided) Container(width: 1, height: 22, color: colors.separator),
           Expanded(
             child: GestureDetector(
               key: actionKey,

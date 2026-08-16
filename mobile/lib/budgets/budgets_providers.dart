@@ -60,6 +60,8 @@ List<Budget> listedBudgets(BudgetSummary summary) {
       return byType == 0 ? a.name.compareTo(b.name) : byType;
     });
 
+  // A past month has no Spendable figure over the list, so the budget is the only place to read
+  // what came out of it.
   if (!summary.currentMonth) return [?spendable, ...rest];
 
   final creditCards = Budget(
@@ -70,8 +72,9 @@ List<Budget> listedBudgets(BudgetSummary summary) {
       ..balance = (-money(summary.creditCardBalance)).toString(),
   );
 
-  // Spendable stays first; the card total sits beside it.
-  return [?spendable, creditCards, ...rest];
+  // Spendable is the figure the screen opens with, so listing it again underneath only says the
+  // same word twice about two different numbers. The card total takes the first row instead.
+  return [creditCards, ...rest];
 }
 
 int _typeOrder(BudgetTypeEnum type) => switch (type) {

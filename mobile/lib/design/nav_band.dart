@@ -93,16 +93,19 @@ class _NavBandDelegate extends SliverPersistentHeaderDelegate {
                     ? const SizedBox.shrink()
                     : Opacity(
                         opacity: compact,
-                        child: Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: SpendableType.title.copyWith(color: colors.primary),
+                        // Left, where the large title it replaces was, so the title does not travel
+                        // across the band as the list scrolls under it.
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: SpendableSpace.tight),
+                          child: Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            style: SpendableType.title.copyWith(color: colors.primary),
+                          ),
                         ),
                       ),
               ),
               ...actions,
-              // Keeps the compact title centred on the screen rather than on what is left of the row.
-              if (leading != null && actions.isEmpty) const SizedBox(width: 44),
             ],
           ),
         ),
