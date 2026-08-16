@@ -44,7 +44,14 @@ defmodule SpendableWeb.Live.Banks do
             </div>
             <div class="min-w-0">
               <div class="flex items-center">
-                <img src={~p"/banks/#{bank_member.id}/logo"} alt="bank logo" class="h-8 mr-2" />
+                <!-- Wallet is not an institution Plaid has a logo for, so Apple's own mark stands in. -->
+                <.apple_mark :if={bank_member.provider == "FinanceKit"} class="h-8 mr-2 text-white" />
+                <img
+                  :if={bank_member.provider != "FinanceKit"}
+                  src={~p"/banks/#{bank_member.id}/logo"}
+                  alt="bank logo"
+                  class="h-8 mr-2"
+                />
                 <h2 class="min-w-0 text-sm font-semibold leading-6 text-white">
                   <span class="truncate">{bank_member.name}</span>
                 </h2>

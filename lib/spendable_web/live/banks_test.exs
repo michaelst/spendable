@@ -58,6 +58,23 @@ defmodule SpendableWeb.Live.BanksTest do
     assert html =~ "Tartan Bank"
   end
 
+  # Wallet is not an institution Plaid has a logo for, so the logo endpoint has nothing to serve.
+  test "stands Apple's mark in for the Wallet connection", %{conn: conn, scope: scope} do
+    {:ok, wallet} =
+      Repo.insert(%BankMember{
+        user_id: scope.user.id,
+        external_id: "finance_kit",
+        name: "Apple",
+        provider: "FinanceKit",
+        status: "CONNECTED"
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/banks")
+
+    assert html =~ "Apple"
+    refute html =~ "/banks/#{wallet.id}/logo"
+  end
+
   # An Apple Cash balance has no number to print, and dots with nothing after them say less than
   # the name on its own.
   test "reads an account with no number as just its name", %{conn: conn, member: member} do
