@@ -10,6 +10,9 @@ x-app: &app
     # this has to be the tunnel's public hostname or LiveView will refuse to connect.
     PHX_HOST: "${PHX_HOST:-localhost}"
     PORT: "4000"
+    # An OAuth client id is a public identifier, not a secret, so it rides in the environment
+    # rather than in .secrets. The iOS app sends ID tokens with this as their audience.
+    GOOGLE_IOS_CLIENT_ID: "${GOOGLE_IOS_CLIENT_ID:-}"
   volumes:
     - ./.secrets:/etc/secrets:ro
 

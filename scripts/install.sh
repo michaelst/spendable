@@ -54,6 +54,20 @@ ask_secret() {
   write_secret "$name" "$value"
 }
 
+# A public identifier rather than a credential, so it stays out of .secrets and lands in
+# .env.prod, which is where compose reads it from. Answers may be empty. $1 name, $2 prompt.
+ask_public() {
+  local name="$1" label="$2" current="" suffix="" value=""
+
+  [ -f "$ENV_FILE" ] && current="$(sed -n "s/^$name=//p" "$ENV_FILE")"
+
+  [ -n "$current" ] && suffix=" [keep existing]"
+
+  read -rp "$label$suffix: " value
+
+  printf -v "$name" '%s' "${value:-$current}"
+}
+
 echo "Spendable production install"
 echo
 
@@ -64,6 +78,9 @@ echo
 echo "Google OAuth (console.cloud.google.com)"
 ask_secret GOOGLE_CLIENT_ID "  Client ID"
 ask_secret GOOGLE_CLIENT_SECRET "  Client secret" hidden
+# Without this the iOS app can sign in nowhere: its ID tokens carry the iOS client as audience,
+# and the web client id above will not match them. Blank is fine until the app ships.
+ask_public GOOGLE_IOS_CLIENT_ID "  iOS client ID (blank if there is no iOS app yet)"
 
 echo
 echo "Plaid (dashboard.plaid.com)"
@@ -97,12 +114,13 @@ if [[ "$use_tunnel" =~ ^[Yy] ]]; then
   tunnel_token="$(cat "$SECRETS/CLOUDFLARE_TUNNEL_TOKEN")"
 fi
 
-# Compose needs three of these for its own variable substitution, so they are duplicated out of
-# .secrets into a file only this user can read. The rest never leave .secrets.
+# Compose needs these for its own variable substitution, so the credentials among them are
+# duplicated out of .secrets into a file only this user can read. The rest never leave .secrets.
 {
   echo "PHX_HOST=$hostname"
   echo "POSTGRES_PASSWORD=$(cat "$SECRETS/DB_PASSWORD")"
   echo "TUNNEL_TOKEN=$tunnel_token"
+  echo "GOOGLE_IOS_CLIENT_ID=$GOOGLE_IOS_CLIENT_ID"
   # Behind a tunnel nothing needs to reach the app from outside this machine, so bind loopback only.
   if [ -n "$tunnel_token" ]; then
     echo "PROD_PORT=127.0.0.1:4000"
