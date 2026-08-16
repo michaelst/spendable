@@ -7,7 +7,6 @@ defmodule Spendable.Accounts.Schemas.User do
   @primary_key {:id, UXID, autogenerate: true, prefix: "usr"}
   schema "users" do
     field :bank_limit, :integer, default: 0
-    field :email, :string
     field :image, :string
 
     has_many :user_identities, UserIdentity
@@ -17,8 +16,7 @@ defmodule Spendable.Accounts.Schemas.User do
 
   def changeset(user \\ %__MODULE__{}, attrs) do
     user
-    |> cast(attrs, [:bank_limit, :email, :image])
+    |> cast(attrs, [:bank_limit, :image])
     |> validate_required([:bank_limit])
-    |> unique_constraint(:email)
   end
 end

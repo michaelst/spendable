@@ -50,7 +50,8 @@ defmodule SpendableWeb.Api.SessionControllerTest do
     assert {:ok, _api_token} = Accounts.authenticate_api_token(response["token"])
   end
 
-  test "signing in with either provider reaches the same account", %{conn: conn} do
+  # Signing in is not how two providers reach one account - linking from inside one is.
+  test "each provider signs into its own account until they are linked", %{conn: conn} do
     google = %{"provider" => "google", "id_token" => TestData.Google.id_token()}
     apple = %{"provider" => "apple", "id_token" => TestData.Apple.id_token()}
 
@@ -58,8 +59,9 @@ defmodule SpendableWeb.Api.SessionControllerTest do
     %{"token" => apple_token} = conn |> post(~p"/api/session", apple) |> json_response(201)
 
     {:ok, %{user: %{id: user_id}}} = Accounts.authenticate_api_token(google_token)
+    {:ok, %{user: %{id: apple_user_id}}} = Accounts.authenticate_api_token(apple_token)
 
-    assert {:ok, %{user: %{id: ^user_id}}} = Accounts.authenticate_api_token(apple_token)
+    refute apple_user_id == user_id
   end
 
   test "rejects an ID token Google did not sign", %{conn: conn} do

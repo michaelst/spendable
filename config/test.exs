@@ -33,7 +33,9 @@ config :spendable, Spendable.Banks.Clients.Plaid,
   client_id: "test",
   secret_key: "test"
 
-config :spendable, Spendable.Accounts.Actions.SignInWithGoogle, audiences: ["spendable-ios.apps.googleusercontent.com"]
+config :spendable, Spendable.Accounts.Clients.Google,
+  base_url: "https://www.googleapis.com",
+  audiences: ["spendable-ios.apps.googleusercontent.com"]
 
 config :tesla, adapter: TeslaMock
 

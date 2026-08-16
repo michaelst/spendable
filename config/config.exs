@@ -72,10 +72,11 @@ config :ueberauth, Ueberauth,
   ]
 
 config :spendable, Spendable.Accounts.Clients.Google, base_url: "https://www.googleapis.com"
-config :spendable, Spendable.Accounts.Clients.Apple, base_url: "https://appleid.apple.com"
 
 # Sign in with Apple's audience is the bundle id, which is fixed and public.
-config :spendable, Spendable.Accounts.Actions.SignInWithApple, audiences: ["fiftysevenmedia.Spendable"]
+config :spendable, Spendable.Accounts.Clients.Apple,
+  base_url: "https://appleid.apple.com",
+  audiences: ["fiftysevenmedia.Spendable"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

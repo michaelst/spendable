@@ -96,6 +96,9 @@ defmodule SpendableWeb.Router do
     delete "/session", SessionController, :delete
     get "/me", MeController, :show
 
+    post "/identities", IdentityController, :create
+    delete "/identities/:id", IdentityController, :delete
+
     # Ahead of "/budgets/:id" so the literal segment is not read as an id.
     get "/budgets/summary", BudgetSummaryController, :show
     resources "/budgets", BudgetController, only: [:index, :show, :create, :update, :delete]

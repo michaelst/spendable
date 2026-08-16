@@ -5,6 +5,9 @@ defmodule SpendableWeb.Api.FallbackController do
     :already_archived,
     :already_transferred,
     :bank_limit_reached,
+    :identity_already_linked,
+    :identity_claimed,
+    :last_identity,
     :not_a_transfer,
     :transfer_not_allowed
   ]

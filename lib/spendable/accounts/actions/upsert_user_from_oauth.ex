@@ -10,10 +10,12 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauth do
   @doc """
   Signs in the account behind a provider's subject, creating one on first sign-in.
 
-  The email is what ties two providers to one account, so signing in with Apple on a phone lands
-  on the account Google already made for the same address. Only what the provider owns is
-  refreshed, and only when it sends it - bank_limit is ours to set, and a provider that omits an
-  email must not erase the one we have.
+  An unrecognised subject is always a new account. Nothing is stored that would identify the same
+  person at two providers, so the app cannot guess that a Google and an Apple sign-in belong
+  together - the user says so, from inside the account, with `link_identity/3`.
+
+  Only what the provider owns is refreshed, and only when it sends it: bank_limit is ours to set,
+  and a provider that omits a picture must not erase the one we have.
   """
   def upsert_user_from_oauth(%{provider: provider, external_id: external_id} = attrs) do
     query =
@@ -25,14 +27,14 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauth do
 
     case Repo.one(query) do
       %UserIdentity{user: user} -> {:ok, refresh(user, attrs)}
-      nil -> link_identity(attrs)
+      nil -> create_user_with_identity(attrs)
     end
   end
 
-  defp link_identity(%{provider: provider, external_id: external_id} = attrs) do
+  defp create_user_with_identity(%{provider: provider, external_id: external_id} = attrs) do
     {:ok, user} =
       Repo.transaction(fn ->
-        user = find_or_create_user(attrs)
+        user = %User{} |> User.changeset(attrs) |> Repo.insert!()
 
         Repo.insert!(%UserIdentity{
           user_id: user.id,
@@ -45,16 +47,6 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauth do
 
     {:ok, user}
   end
-
-  defp find_or_create_user(attrs) do
-    case find_by_email(attrs[:email]) do
-      %User{} = user -> refresh(user, attrs)
-      nil -> %User{} |> User.changeset(attrs) |> Repo.insert!()
-    end
-  end
-
-  defp find_by_email(email) when is_binary(email), do: Repo.get_by(User, email: email)
-  defp find_by_email(_email), do: nil
 
   defp refresh(user, attrs) do
     user

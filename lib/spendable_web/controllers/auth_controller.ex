@@ -23,7 +23,6 @@ defmodule SpendableWeb.AuthController do
       uid: uid,
       provider: provider,
       info: %Ueberauth.Auth.Info{
-        email: email,
         image: image
       }
     } = auth
@@ -33,7 +32,6 @@ defmodule SpendableWeb.AuthController do
       Accounts.upsert_user_from_oauth(%{
         external_id: uid,
         provider: to_string(provider),
-        email: email,
         image: image
       })
 

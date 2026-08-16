@@ -44,41 +44,9 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauthTest do
              Accounts.upsert_user_from_oauth(%{external_id: external_id, provider: "google"})
   end
 
-  test "a second provider with the same email signs into the same account" do
-    {:ok, %{id: user_id}} =
-      Accounts.upsert_user_from_oauth(%{
-        external_id: Ecto.UUID.generate(),
-        provider: "google",
-        email: "michael@dishbooks.com"
-      })
-
-    assert {:ok, %User{id: ^user_id}} =
-             Accounts.upsert_user_from_oauth(%{
-               external_id: Ecto.UUID.generate(),
-               provider: "apple",
-               email: "michael@dishbooks.com"
-             })
-  end
-
-  test "a second provider with a different email gets its own account" do
-    {:ok, %{id: user_id}} =
-      Accounts.upsert_user_from_oauth(%{
-        external_id: Ecto.UUID.generate(),
-        provider: "google",
-        email: "michael@dishbooks.com"
-      })
-
-    {:ok, %User{id: other_id}} =
-      Accounts.upsert_user_from_oauth(%{
-        external_id: Ecto.UUID.generate(),
-        provider: "apple",
-        email: "relay@privaterelay.appleid.com"
-      })
-
-    refute other_id == user_id
-  end
-
-  test "a sign-in with no email gets its own account" do
+  # Nothing stored identifies a person across providers, so a second one is always a new account
+  # until the user links it from inside the first.
+  test "an unrecognised subject is always a new account" do
     {:ok, %{id: user_id}} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})
 
@@ -88,19 +56,18 @@ defmodule Spendable.Accounts.Actions.UpsertUserFromOauthTest do
     refute other_id == user_id
   end
 
-  # Apple sends the email on the first authorization and can leave it out later.
-  test "a provider that omits the email does not erase the one on record" do
+  test "a provider that omits the picture does not erase the one on record" do
     external_id = Ecto.UUID.generate()
 
     {:ok, _first} =
       Accounts.upsert_user_from_oauth(%{
         external_id: external_id,
-        provider: "apple",
-        email: "michael@dishbooks.com"
+        provider: "google",
+        image: "https://example.com/photo.png"
       })
 
-    assert {:ok, %User{email: "michael@dishbooks.com"}} =
-             Accounts.upsert_user_from_oauth(%{external_id: external_id, provider: "apple"})
+    assert {:ok, %User{image: "https://example.com/photo.png"}} =
+             Accounts.upsert_user_from_oauth(%{external_id: external_id, provider: "google"})
   end
 
   test "the same subject from two providers is two identities" do

@@ -3,15 +3,10 @@ defmodule Spendable.Repo.Migrations.AddUserIdentities do
 
   @doc """
   A user can sign in with more than one provider, so the provider's subject moves off the user and
-  onto its own row. The email is what ties them together.
+  onto its own row. Nothing identifies the person across providers - a second one is attached by
+  hand from inside the account.
   """
   def up() do
-    alter table(:users) do
-      add :email, :citext
-    end
-
-    create unique_index(:users, [:email])
-
     create table(:user_identities) do
       add :provider, :text, null: false
       add :external_id, :text, null: false
@@ -47,11 +42,6 @@ defmodule Spendable.Repo.Migrations.AddUserIdentities do
     """
 
     drop table(:user_identities)
-    drop unique_index(:users, [:email])
-
-    alter table(:users) do
-      remove :email
-    end
   end
 
   defp backfill_identities() do

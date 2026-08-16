@@ -22,7 +22,7 @@ defmodule SpendableWeb.Api.SessionController do
   )
 
   def create(conn, params) do
-    with {:ok, user} <- sign_in(params["provider"], params["id_token"]),
+    with {:ok, user} <- Accounts.sign_in_with_oauth(params["provider"], params["id_token"]),
          {:ok, api_token} <-
            Accounts.create_api_token(Scope.for_user(user), Map.take(params, ["device_name"])) do
       conn
@@ -46,7 +46,4 @@ defmodule SpendableWeb.Api.SessionController do
 
     send_resp(conn, :no_content, "")
   end
-
-  defp sign_in("apple", id_token), do: Accounts.sign_in_with_apple(id_token)
-  defp sign_in("google", id_token), do: Accounts.sign_in_with_google(id_token)
 end

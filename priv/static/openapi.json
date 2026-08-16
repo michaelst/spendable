@@ -500,6 +500,33 @@
         "x-struct": "Elixir.SpendableWeb.Api.Schemas.Errors",
         "x-validate": null
       },
+      "Identity": {
+        "description": "A way of signing into an account.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "provider": {
+            "enum": [
+              "apple",
+              "google"
+            ],
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          }
+        },
+        "required": [
+          "id",
+          "provider"
+        ],
+        "title": "Identity",
+        "type": "object",
+        "x-struct": "Elixir.SpendableWeb.Api.Schemas.Identity",
+        "x-validate": null
+      },
       "LinkToken": {
         "description": "Hand this to the Plaid Link SDK. Short-lived.",
         "properties": {
@@ -987,15 +1014,39 @@
             "x-struct": null,
             "x-validate": null
           },
-          "email": {
-            "description": "What ties a Google and an Apple sign-in to one account.",
-            "nullable": true,
+          "id": {
             "type": "string",
             "x-struct": null,
             "x-validate": null
           },
-          "id": {
-            "type": "string",
+          "identities": {
+            "description": "The ways this account can be signed into.",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                },
+                "provider": {
+                  "enum": [
+                    "apple",
+                    "google"
+                  ],
+                  "type": "string",
+                  "x-struct": null,
+                  "x-validate": null
+                }
+              },
+              "required": [
+                "id",
+                "provider"
+              ],
+              "type": "object",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "type": "array",
             "x-struct": null,
             "x-validate": null
           },
@@ -1008,7 +1059,8 @@
         },
         "required": [
           "id",
-          "bank_limit"
+          "bank_limit",
+          "identities"
         ],
         "title": "User",
         "type": "object",
@@ -1780,9 +1832,117 @@
         ]
       }
     },
+    "/api/identities": {
+      "post": {
+        "callbacks": {},
+        "description": "Attaches a second provider to the account making the request. Nothing about a person is stored\nthat would let the app match them across providers, so this is the only way two sign-in\nmethods reach one account - and it has to be done from inside it.\n",
+        "operationId": "SpendableWeb.Api.IdentityController.create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionRequest"
+              }
+            }
+          },
+          "description": "Credentials",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            },
+            "description": "Identity"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Add another way to sign in",
+        "tags": [
+          "session"
+        ]
+      }
+    },
+    "/api/identities/{id}": {
+      "delete": {
+        "callbacks": {},
+        "description": "Refused for the last one, which would leave an account nobody can get back into.",
+        "operationId": "SpendableWeb.Api.IdentityController.delete",
+        "parameters": [
+          {
+            "description": "",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Removed"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description": "Errors"
+          }
+        },
+        "summary": "Remove a way to sign in",
+        "tags": [
+          "session"
+        ]
+      }
+    },
     "/api/me": {
       "get": {
         "callbacks": {},
+        "description": "Carries the sign-in methods on the account, so the client can offer to add one.",
         "operationId": "SpendableWeb.Api.MeController.show",
         "parameters": [],
         "responses": {
