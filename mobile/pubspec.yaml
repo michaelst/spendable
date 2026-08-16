@@ -16,6 +16,7 @@ dependencies:
   flutter_riverpod: ^3.4.2
   flutter_secure_storage: ^11.0.0
   google_sign_in: ^7.2.0
+  plaid_flutter: ^5.2.1
   riverpod_annotation: ^4.0.6
   sign_in_with_apple: ^8.1.0
 

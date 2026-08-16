@@ -6,8 +6,9 @@ import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
 import '../theme.dart';
+import '../budgets/budgets_providers.dart';
+import '../splits/splits_providers.dart';
 import 'transactions_controller.dart';
-import 'transactions_providers.dart';
 
 /// One allocation being edited. Kept apart from the wire type because a line the user is still
 /// typing has no valid amount yet.
@@ -64,7 +65,7 @@ class _TransactionDetailState extends ConsumerState<TransactionDetail> {
     final budgets = ref.watch(budgetOptionsProvider).value ?? const <Budget>[];
 
     // Watched rather than read in the picker, so the splits are already loaded when it opens.
-    final splits = ref.watch(splitOptionsProvider).value ?? const <Split>[];
+    final splits = ref.watch(splitsProvider).value ?? const <Split>[];
 
     return Padding(
       padding: EdgeInsets.only(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_error.dart';
+import '../budgets/budgets_providers.dart';
 import '../money.dart';
 import '../theme.dart';
 import 'transaction_detail.dart';

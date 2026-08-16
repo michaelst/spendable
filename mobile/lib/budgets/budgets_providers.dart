@@ -54,3 +54,11 @@ List<Budget> listedBudgets(BudgetSummary summary) {
   // Spendable stays first; the card total sits beside it.
   return [summary.budgets.first, creditCards, ...summary.budgets.skip(1)];
 }
+
+/// The budget picker every other screen offers.
+@riverpod
+Future<List<Budget>> budgetOptions(Ref ref) async {
+  final response = await ref.watch(apiProvider).getBudgetsApi().listBudgets().orApiError();
+
+  return response.data!.toList();
+}
