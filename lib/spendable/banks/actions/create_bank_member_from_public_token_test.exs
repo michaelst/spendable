@@ -65,6 +65,25 @@ defmodule Spendable.Banks.Actions.CreateBankMemberFromPublicTokenTest do
     assert %{external_id: ["has already been taken"]} = errors_on(changeset)
   end
 
+  # An external id is only unique within the provider that issued it, so it cannot be unique
+  # across users - FinanceKit names its connection the same thing on every device.
+  test "two users may hold a connection under the same external id", %{scope: scope} do
+    {:ok, _mine} = Banks.create_bank_member_from_public_token(scope, "public-sandbox-token")
+
+    {:ok, other_user} =
+      Accounts.upsert_user_from_oauth(%{
+        external_id: Ecto.UUID.generate(),
+        provider: "google",
+        bank_limit: 1
+      })
+
+    assert {:ok, %BankMember{}} =
+             Banks.create_bank_member_from_public_token(
+               Scope.for_user(other_user),
+               "public-sandbox-token"
+             )
+  end
+
   test "refuses once the user is at their bank limit", %{scope: scope} do
     {:ok, _first} = Banks.create_bank_member_from_public_token(scope, "public-sandbox-token")
 
