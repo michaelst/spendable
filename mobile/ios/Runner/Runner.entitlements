@@ -9,6 +9,12 @@
 	<!-- Lets the app claim spendable.money links, which is how a bank's OAuth page returns to
 	     Plaid Link instead of stranding the user in Safari. The server answers the matching
 	     apple-app-site-association. -->
+	<!-- Granted for this bundle id. Reading Wallet is the only way to get Apple Card activity;
+	     Plaid does not carry it. -->
+	<key>com.apple.developer.financekit</key>
+	<array>
+		<string>financial-data</string>
+	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:spendable.money</string>

@@ -12,5 +12,8 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+
+    // Registered by hand: FinanceKit is ours rather than a pub package, so nothing generates this.
+    FinanceKitPlugin.register(with: engineBridge.applicationRegistrar.messenger())
   }
 }

@@ -3,6 +3,7 @@ import 'package:spendable_api/spendable_api.dart';
 
 import '../api/api_client.dart';
 import '../api/api_error.dart';
+import '../finance_kit/wallet_sync.dart';
 import 'banks_providers.dart';
 import 'pending_plaid_session.dart';
 import 'plaid_link_flow.dart';
@@ -55,15 +56,16 @@ class BanksController extends _$BanksController {
     }
   });
 
+  /// Reading Wallet is a device thing, so unlike a bank there is nothing to connect to - the
+  /// user authorizes it and the first read goes up straight away.
+  Future<bool> connectApple() => _write(() => ref.read(walletSyncProvider).connect());
+
   Future<bool> setSync(BankAccount account, {required bool sync}) =>
       _updateAccount(account.id, BankAccountRequest((builder) => builder.sync_ = sync));
 
   /// A null budget unassigns, putting the balance back into Spendable.
   Future<bool> assignBudget(BankAccount account, String? budgetId) =>
       _updateAccount(account.id, BankAccountRequest((builder) => builder.budgetId = budgetId));
-
-  /// Two years of history, queued. There is no completion signal, so the user pulls to refresh.
-  Future<bool> syncHistory(String memberId) => _write(() => _api.syncBank(id: memberId).orApiError());
 
   BanksApi get _api => ref.read(apiProvider).getBanksApi();
 

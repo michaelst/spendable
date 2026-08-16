@@ -28,9 +28,11 @@ jobs:
       - run: flutter pub get
 
       # Regenerated rather than trusted, so a .g.dart left behind by a change to the file it is
-      # generated from fails here instead of confusing the next person to run build_runner.
+      # generated from fails here instead of confusing the next person to run build_runner. Pigeon
+      # first: build_runner reads what it writes.
+      - run: ./tool/generate_pigeon.sh
       - run: dart run build_runner build
-      - run: git diff --exit-code lib
+      - run: git diff --exit-code lib ios/Runner/FinanceKit
 
       # Generated files are excluded: build_runner writes them at its own width, so formatting
       # them would put every regeneration at odds with the check above.

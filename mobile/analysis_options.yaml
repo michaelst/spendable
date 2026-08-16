@@ -6,6 +6,8 @@ analyzer:
     - ios/**
     # Generated from the OpenAPI spec, and not ours to lint.
     - api/**
+    # Read by pigeon rather than compiled, so it imports a package the app does not depend on.
+    - pigeons/**
     - android/**
     - web/**
     - windows/**

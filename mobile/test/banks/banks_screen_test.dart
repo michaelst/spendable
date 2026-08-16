@@ -5,6 +5,8 @@ import 'package:spendable/api/api_client.dart';
 import 'package:spendable/banks/banks_screen.dart';
 import 'package:spendable/banks/pending_plaid_session.dart';
 import 'package:spendable/banks/plaid_link_flow.dart';
+import 'package:spendable/finance_kit/wallet.g.dart';
+import 'package:spendable/finance_kit/wallet_sync.dart';
 
 import '../support/fakes.dart';
 
@@ -84,6 +86,53 @@ const _budgets = [
   },
 ];
 
+class FakeWallet implements Wallet {
+  FakeWallet({this.available = true, this.granted = true});
+
+  final bool available;
+
+  /// What the user taps in the system prompt.
+  final bool granted;
+
+  var authorization = WalletAuthorization.notDetermined;
+  var requested = false;
+  final reads = <String?>[];
+
+  @override
+  Future<bool> isAvailable() async => available;
+
+  @override
+  Future<WalletAuthorization> authorizationStatus() async => authorization;
+
+  @override
+  Future<WalletAuthorization> requestAuthorization() async {
+    requested = true;
+
+    return authorization = granted ? WalletAuthorization.authorized : WalletAuthorization.denied;
+  }
+
+  @override
+  Future<WalletChanges> read(String? historyToken) async {
+    reads.add(historyToken);
+
+    return WalletChanges(
+      accounts: [
+        WalletAccount(
+          externalId: 'apple-card',
+          name: 'Apple Card',
+          kind: WalletAccountKind.creditCard,
+          balance: '42.00',
+          creditDebit: WalletCreditDebit.debit,
+        ),
+      ],
+      inserted: [],
+      updated: [],
+      deleted: [],
+      historyToken: 'tok-2',
+    );
+  }
+}
+
 Map<String, ({int status, Object? body})> _replies([Map<String, ({int status, Object? body})>? extra]) => {
   'GET /api/banks': (status: 200, body: [_member()]),
   'GET /api/budgets': (status: 200, body: _budgets),
@@ -95,6 +144,7 @@ Future<(FakeApi, FakePlaidLinkFlow)> _pump(
   Map<String, ({int status, Object? body})>? replies,
   FakePlaidLinkFlow? plaid,
   FakePendingPlaidSession? session,
+  FakeWallet? wallet,
 }) async {
   final api = FakeApi(replies ?? _replies());
   final link = plaid ?? FakePlaidLinkFlow();
@@ -105,6 +155,7 @@ Future<(FakeApi, FakePlaidLinkFlow)> _pump(
         apiProvider.overrideWithValue(api.build()),
         plaidLinkFlowProvider.overrideWithValue(link),
         pendingPlaidSessionProvider.overrideWithValue(session ?? FakePendingPlaidSession()),
+        walletProvider.overrideWithValue(wallet ?? FakeWallet(available: false)),
       ],
       child: const MaterialApp(home: BanksScreen()),
     ),
@@ -253,16 +304,54 @@ void main() {
     expect(patch.data, containsPair('budget_id', 'bgt_rent'));
   });
 
-  testWidgets('a history sync is queued and says there is nothing to wait for', (tester) async {
+  // Offering it where FinanceKit has nothing to give - below iOS 17.4, or outside the US - would
+  // be a dead end.
+  testWidgets('offers Apple only where the device can read Wallet', (tester) async {
+    await _pump(tester);
+
+    expect(find.byKey(const Key('connect-apple')), findsNothing);
+  });
+
+  testWidgets('connecting Apple authorizes and sends the first read', (tester) async {
+    final wallet = FakeWallet();
+
     final (api, _) = await _pump(
       tester,
-      replies: _replies({'POST /api/banks/bkm_1/sync': (status: 202, body: null)}),
+      wallet: wallet,
+      replies: _replies({
+        'POST /api/banks/finance_kit': (
+          status: 200,
+          body: {'id': 'bkm_apple', 'name': 'Apple', 'history_token': null, 'bank_accounts': []},
+        ),
+        'POST /api/banks/bkm_apple/finance_kit/changes': (
+          status: 200,
+          body: {'applied': 0, 'history_token': 'tok-2'},
+        ),
+      }),
     );
 
-    await tester.tap(find.byKey(const Key('sync-bkm_1')));
+    await tester.tap(find.byKey(const Key('connect-apple')));
     await tester.pumpAndSettle();
 
-    expect(api.requests.map((request) => request.path), contains('/api/banks/bkm_1/sync'));
-    expect(find.textContaining('Pull to refresh'), findsOneWidget);
+    expect(wallet.requested, isTrue);
+    // Read from where the server says it is, which is nowhere on a first connect.
+    expect(wallet.reads, [null]);
+
+    final sent = api.requests.firstWhere((request) => request.path.endsWith('/changes'));
+
+    expect(sent.data, containsPair('history_token_after', 'tok-2'));
+  });
+
+  testWidgets('declining Apple sends nothing and says nothing', (tester) async {
+    final wallet = FakeWallet(granted: false);
+
+    final (api, _) = await _pump(tester, wallet: wallet);
+
+    await tester.tap(find.byKey(const Key('connect-apple')));
+    await tester.pumpAndSettle();
+
+    expect(wallet.reads, isEmpty);
+    expect(api.requests.map((request) => request.path), isNot(contains('/api/banks/finance_kit')));
+    expect(find.byType(SnackBar), findsNothing);
   });
 }
