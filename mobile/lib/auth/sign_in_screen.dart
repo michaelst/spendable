@@ -96,10 +96,7 @@ class _LogoTile extends StatelessWidget {
       width: 76,
       height: 76,
       alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: const Color(0xFF121110),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: BoxDecoration(color: const Color(0xFF121110), borderRadius: BorderRadius.circular(20)),
       child: SvgPicture.asset(
         'assets/brand/mark.svg',
         width: 42,
