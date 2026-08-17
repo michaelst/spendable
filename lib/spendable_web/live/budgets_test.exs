@@ -465,4 +465,31 @@ defmodule SpendableWeb.Live.BudgetsTest do
     refute html =~ "Fund Each Month"
     refute html =~ "Funded This Month"
   end
+
+  # Ecto records no change when the posted type matches what is stored, so the form falls back to
+  # the raw param - a string. Comparing that to an atom hid every envelope field.
+  test "keeps the envelope fields while the form is being typed into", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+
+    html =
+      view
+      |> element(~s(form[phx-submit="submit"]))
+      |> render_change(%{
+        budget: %{
+          "name" => "Groceries",
+          "type" => "envelope",
+          "funding_amount" => "300.00",
+          "balance" => "-19"
+        }
+      })
+
+    assert html =~ "Budget Per Month"
+    assert html =~ "Remaining"
+    refute html =~ "Budgeted Amount"
+  end
 end

@@ -177,19 +177,19 @@ defmodule SpendableWeb.Live.Budgets do
             <!-- An envelope has one amount: what a month puts in, which is also what its
             spending is read against. Two numbers for one idea is what confused the card. -->
             <.input
-              :if={f[:type].value == :envelope}
+              :if={budget_type(f) == :envelope}
               type="text"
               label="Budget Per Month"
               field={f[:funding_amount]}
             />
             <.input
-              :if={f[:type].value != :envelope}
+              :if={budget_type(f) != :envelope}
               type="text"
-              label={amount_label(f[:type].value)}
+              label={amount_label(budget_type(f))}
               field={f[:budgeted_amount]}
             />
             <.input
-              :if={f[:type].value == :goal}
+              :if={budget_type(f) == :goal}
               type="text"
               label="Monthly Contribution"
               field={f[:funding_amount]}
@@ -197,15 +197,15 @@ defmodule SpendableWeb.Live.Budgets do
             <!-- Named for what the card calls it, so the figure the user reads and the figure they
             correct are plainly the same one. -->
             <.input
-              :if={f[:type].value in [:envelope, :goal]}
+              :if={budget_type(f) in [:envelope, :goal]}
               type="text"
-              label={if f[:type].value == :envelope, do: "Remaining", else: "Allocated"}
+              label={if budget_type(f) == :envelope, do: "Remaining", else: "Allocated"}
               field={f[:balance]}
             />
             <!-- Off means the month tops the envelope back up to its amount, so an overspend does
             not follow it into the next month and leftover does not pile up. -->
             <.input
-              :if={f[:type].value == :envelope}
+              :if={budget_type(f) == :envelope}
               type="checkbox"
               label="Carry the balance into next month"
               field={f[:rollover]}
@@ -387,10 +387,17 @@ defmodule SpendableWeb.Live.Budgets do
     if Decimal.negative?(amount), do: "text-red-400", else: "text-white"
   end
 
+  # The select posts a string, and Ecto records no change when it matches what is stored, so the
+  # form falls back to that raw string rather than the cast atom. Comparing the two hid every field.
+  defp budget_type(form) do
+    Ecto.Enum.values(Budget, :type)
+    |> Enum.find(:envelope, &(to_string(&1) == to_string(form[:type].value)))
+  end
+
+  # Only reached by the types that keep a budgeted amount; an envelope has none to label.
   defp amount_label(:goal), do: "Goal Amount"
   defp amount_label(:income), do: "Expected Each Month"
   defp amount_label(:tracking), do: "Monthly Limit"
-  defp amount_label(_envelope), do: "Budgeted Amount"
 
   defp bar_class("over"), do: "bg-red-500"
   defp bar_class("under"), do: "bg-blue-500"
