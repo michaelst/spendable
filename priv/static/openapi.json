@@ -154,12 +154,19 @@
             "x-validate": null
           },
           "balance": {
-            "description": "What the allocations add up to, or the bank account's balance when assigned.",
+            "description": "What the fundings and allocations add up to, or the bank account's balance when assigned.\n",
             "type": "string",
             "x-struct": null,
             "x-validate": null
           },
           "budgeted_amount": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "funding_amount": {
+            "description": "What the budget puts into itself each month. Null means it does not fund itself.",
             "nullable": true,
             "type": "string",
             "x-struct": null,
@@ -175,11 +182,18 @@
             "x-struct": null,
             "x-validate": null
           },
+          "rollover": {
+            "description": "Whether the balance carries into next month. False means the month tops the budget back up\nto its funding amount instead, so an overspend does not follow it and leftover does not\naccumulate. Only an envelope can decline to roll over.\n",
+            "type": "boolean",
+            "x-struct": null,
+            "x-validate": null
+          },
           "type": {
             "enum": [
               "tracking",
               "envelope",
-              "goal"
+              "goal",
+              "income"
             ],
             "type": "string",
             "x-struct": null,
@@ -190,7 +204,8 @@
           "id",
           "name",
           "type",
-          "balance"
+          "balance",
+          "rollover"
         ],
         "title": "Budget",
         "type": "object",
@@ -256,9 +271,10 @@
         "x-validate": null
       },
       "BudgetRequest": {
-        "description": "Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server\nworks out the adjustment that gets it there, so never send `adjustment`.\n",
+        "description": "Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server\nworks out the adjustment that gets it there, so never send `adjustment`.\n\n`funding_amount` is what the budget puts into itself each month; setting it is what makes a\nbudget fill on its own instead of being fed by hand. Only an envelope or a goal can hold\nmoney, so it is ignored on a tracking or income budget.\n\n`rollover` says whether the balance carries into next month. Send false and each month tops the\nbudget back up to its funding amount instead. Only an envelope can decline to roll over.\n",
         "example": {
           "budgeted_amount": "400.00",
+          "funding_amount": "400.00",
           "name": "Groceries",
           "type": "envelope"
         },
@@ -274,8 +290,19 @@
             "x-struct": null,
             "x-validate": null
           },
+          "funding_amount": {
+            "nullable": true,
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
           "name": {
             "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "rollover": {
+            "type": "boolean",
             "x-struct": null,
             "x-validate": null
           },
@@ -283,7 +310,8 @@
             "enum": [
               "tracking",
               "envelope",
-              "goal"
+              "goal",
+              "income"
             ],
             "type": "string",
             "x-struct": null,
@@ -323,9 +351,43 @@
             "x-struct": null,
             "x-validate": null
           },
+          "earned_total": {
+            "description": "Taken in across income budgets this month.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "funded": {
+            "additionalProperties": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "description": "Funded this month, keyed by budget id. Every listed budget has an entry.",
+            "type": "object",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "funded_total": {
+            "description": "Put into envelopes this month.",
+            "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
           "month": {
             "format": "date",
             "type": "string",
+            "x-struct": null,
+            "x-validate": null
+          },
+          "received": {
+            "additionalProperties": {
+              "type": "string",
+              "x-struct": null,
+              "x-validate": null
+            },
+            "description": "Taken in this month, keyed by budget id. Only an income budget receives; every other\nbudget is zero here, and money arriving in one of those is a refund counted against its\nspending instead.\n",
+            "type": "object",
             "x-struct": null,
             "x-validate": null
           },
@@ -367,10 +429,14 @@
           "current_month",
           "spendable",
           "allocated_total",
+          "funded_total",
+          "earned_total",
           "spent_total",
           "credit_card_balance",
           "budgets",
           "spent",
+          "received",
+          "funded",
           "spent_by_month"
         ],
         "title": "BudgetSummary",

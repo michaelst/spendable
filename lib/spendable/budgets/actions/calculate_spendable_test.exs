@@ -32,6 +32,32 @@ defmodule Spendable.Budgets.Actions.CalculateSpendableTest do
     assert Decimal.eq?(Budgets.calculate_spendable(scope), "0.00")
   end
 
+  test "ignores income budgets", %{scope: scope} do
+    {:ok, salary} = Budgets.create_budget(scope, %{"name" => "Salary", "type" => "income"})
+
+    {:ok, _paycheck} =
+      Transactions.create_transaction(scope, %{
+        "name" => "Payday",
+        "amount" => "4200.00",
+        "date" => "2026-08-15",
+        "budget_allocations" => %{"0" => %{"amount" => "4200.00", "budget_id" => salary.id}}
+      })
+
+    assert Decimal.eq?(Budgets.calculate_spendable(scope), "0.00")
+  end
+
+  # An overspent envelope has borrowed against the pool, and that money already left the bank.
+  # Counting the shortfall as a claim would take it off a second time.
+  test "adds back what an overspent envelope is short", %{scope: scope} do
+    {:ok, groceries} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+    {:ok, _adjusted} = Budgets.update_budget(scope, groceries, %{"balance" => "300.00"})
+
+    {:ok, rent} = Budgets.create_budget(scope, %{"name" => "Rent"})
+    {:ok, _overspent} = Budgets.update_budget(scope, rent, %{"balance" => "-50.00"})
+
+    assert Decimal.eq?(Budgets.calculate_spendable(scope), "-250.00")
+  end
+
   test "ignores other users' budgets", %{scope: scope} do
     {:ok, other_user} =
       Accounts.upsert_user_from_oauth(%{external_id: Ecto.UUID.generate(), provider: "google"})

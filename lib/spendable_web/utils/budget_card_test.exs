@@ -15,14 +15,21 @@ defmodule SpendableWeb.Utils.BudgetCardTest do
 
     test @fixture["name"] do
       budgeted_amount = @fixture["budget"]["budgeted_amount"]
+      funding_amount = @fixture["budget"]["funding_amount"]
 
       budget = %Budget{
         type: String.to_existing_atom(@fixture["budget"]["type"]),
         balance: Decimal.new(@fixture["budget"]["balance"]),
-        budgeted_amount: budgeted_amount && Decimal.new(budgeted_amount)
+        budgeted_amount: budgeted_amount && Decimal.new(budgeted_amount),
+        funding_amount: funding_amount && Decimal.new(funding_amount)
       }
 
-      card = build_budget_card(budget, Decimal.new(@fixture["spent"]), @fixture["current_month"])
+      month =
+        Map.new(@fixture["month"], fn {figure, amount} ->
+          {String.to_existing_atom(figure), Decimal.new(amount)}
+        end)
+
+      card = build_budget_card(budget, month, @fixture["current_month"])
 
       assert card.label == @fixture["card"]["label"]
       assert card.percent == @fixture["card"]["percent"]

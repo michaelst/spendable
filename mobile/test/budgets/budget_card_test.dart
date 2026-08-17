@@ -11,7 +11,12 @@ import 'package:spendable_api/spendable_api.dart';
 /// side that the other did not follow fails here.
 final _fixtures = jsonDecode(File('../shared/budget_cards.json').readAsStringSync()) as Map<String, dynamic>;
 
-const _bars = {'under': CardBar.under, 'over': CardBar.over, 'goal': CardBar.goal};
+const _bars = {
+  'under': CardBar.under,
+  'over': CardBar.over,
+  'goal': CardBar.goal,
+  'income': CardBar.income,
+};
 
 void main() {
   for (final entry in _fixtures['cards'] as List) {
@@ -26,12 +31,20 @@ void main() {
           ..name = 'Fixture'
           ..type = BudgetTypeEnum.valueOf(source['type'] as String)
           ..balance = source['balance'] as String
-          ..budgetedAmount = source['budgeted_amount'] as String?,
+          ..budgetedAmount = source['budgeted_amount'] as String?
+          ..fundingAmount = source['funding_amount'] as String?
+          ..rollover = (source['rollover'] as bool?) ?? true,
       );
+
+      final figures = fixture['month'] as Map<String, dynamic>;
 
       final card = BudgetCard.build(
         budget: budget,
-        spent: money(fixture['spent'] as String),
+        month: BudgetMonth(
+          spent: money(figures['spent'] as String),
+          received: money(figures['received'] as String),
+          funded: money(figures['funded'] as String),
+        ),
         currentMonth: fixture['current_month'] as bool,
       );
 

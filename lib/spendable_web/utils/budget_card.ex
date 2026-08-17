@@ -5,51 +5,113 @@ defmodule SpendableWeb.Utils.BudgetCard do
 
   Extracted from the LiveView rather than left private because the iOS client has to reach the
   same six answers, and `shared/budget_cards.json` drives a table test on both sides. Colours
-  stay with each client - `bar` says which of the three bars this is, not what it looks like.
+  stay with each client - `bar` says which of the four bars this is, not what it looks like.
+
+  The month is passed as one map of what moved - `spent`, `received` and `funded` - because which
+  of them a card reads depends on what kind of budget it is, and a budget that spends never
+  receives.
   """
 
   import Spendable.Utils
 
   alias Spendable.Budgets.Schemas.Budget
 
-  # A past month is a record of what was spent, so a balance read now says nothing about it.
-  def build_budget_card(_budget, spent, false = _current_month_is_selected) do
+  # A past month is a record of what moved, so a balance read now says nothing about it.
+  def build_budget_card(%Budget{type: :income}, %{received: received}, false = _current_month) do
+    %{amount: received, label: "EARNED", percent: nil, bar: nil, footer: nil}
+  end
+
+  def build_budget_card(_budget, %{spent: spent}, false = _current_month_is_selected) do
     %{amount: spent, label: "SPENT", percent: nil, bar: nil, footer: nil}
   end
 
-  def build_budget_card(%Budget{type: :tracking}, spent, _current_month_is_selected) do
+  def build_budget_card(%Budget{type: :tracking, budgeted_amount: nil}, %{spent: spent}, _current) do
     %{amount: spent, label: "SPENT", percent: nil, bar: nil, footer: nil}
   end
 
-  def build_budget_card(%Budget{type: :envelope, budgeted_amount: nil} = budget, _spent, _current) do
-    %{amount: budget.balance, label: "LEFT", percent: nil, bar: nil, footer: nil}
-  end
-
-  def build_budget_card(%Budget{type: :envelope} = budget, spent, _current_month_is_selected) do
-    over_budget? = Decimal.compare(spent, budget.budgeted_amount) == :gt
-
+  def build_budget_card(%Budget{type: :tracking} = budget, %{spent: spent}, _current) do
     %{
-      amount: budget.balance,
-      label: "LEFT",
+      amount: spent,
+      label: "SPENT",
       percent: percent(spent, budget.budgeted_amount),
-      bar: if(over_budget?, do: "over", else: "under"),
+      bar: spending_bar(spent, budget.budgeted_amount),
       footer: "#{format_currency(spent)} of #{format_currency(budget.budgeted_amount)} spent"
     }
   end
 
-  def build_budget_card(%Budget{type: :goal, budgeted_amount: nil} = budget, _spent, _current) do
+  def build_budget_card(%Budget{type: :income, budgeted_amount: nil}, %{received: received}, _current) do
+    %{amount: received, label: "EARNED", percent: nil, bar: nil, footer: nil}
+  end
+
+  # Money in is the point here, so there is no bar to be the wrong side of: it fills as the month
+  # earns and the footer says how far along that is.
+  def build_budget_card(%Budget{type: :income} = budget, %{received: received}, _current) do
+    %{
+      amount: received,
+      label: "EARNED",
+      percent: percent(received, budget.budgeted_amount),
+      bar: "income",
+      footer: "#{format_currency(received)} of #{format_currency(budget.budgeted_amount)} received"
+    }
+  end
+
+  def build_budget_card(%Budget{type: :envelope, budgeted_amount: nil} = budget, %{funded: funded}, _current) do
+    %{held(budget) | percent: nil, bar: nil, footer: funded_footer(funded)}
+  end
+
+  def build_budget_card(%Budget{type: :envelope} = budget, %{spent: spent, funded: funded}, _current) do
+    spend_line = "#{format_currency(spent)} of #{format_currency(budget.budgeted_amount)} spent"
+
+    %{
+      held(budget)
+      | percent: percent(spent, budget.budgeted_amount),
+        bar: spending_bar(spent, budget.budgeted_amount),
+        footer: prefix_funded(spend_line, funded)
+    }
+  end
+
+  def build_budget_card(%Budget{type: :goal, budgeted_amount: nil} = budget, _month, _current) do
     %{amount: budget.balance, label: "SAVED", percent: nil, bar: nil, footer: "No goal set"}
   end
 
-  def build_budget_card(%Budget{type: :goal} = budget, _spent, _current_month_is_selected) do
+  def build_budget_card(%Budget{type: :goal} = budget, _month, _current_month_is_selected) do
+    saved_line =
+      "#{format_currency(budget.balance)} of #{format_currency(budget.budgeted_amount)} saved"
+
     %{
       amount: Decimal.sub(budget.budgeted_amount, budget.balance),
       label: "TO GO",
       percent: percent(budget.balance, budget.budgeted_amount),
       bar: "goal",
-      footer: "#{format_currency(budget.balance)} of #{format_currency(budget.budgeted_amount)} saved"
+      footer: suffix_monthly(saved_line, budget.funding_amount)
     }
   end
+
+  # An envelope in the hole is not holding a negative amount, it is short by a positive one - the
+  # same way a goal counts what is still TO GO rather than a negative saving. Clients colour the
+  # label, since the figure no longer carries a minus sign to key off.
+  defp held(%Budget{balance: balance} = budget) do
+    if Decimal.negative?(balance) do
+      %{amount: Decimal.abs(balance), label: "OVERSPENT", percent: nil, bar: nil, footer: nil}
+    else
+      %{amount: budget.balance, label: "LEFT", percent: nil, bar: nil, footer: nil}
+    end
+  end
+
+  defp spending_bar(spent, budgeted_amount) do
+    if Decimal.compare(spent, budgeted_amount) == :gt, do: "over", else: "under"
+  end
+
+  # What the month put in is only worth saying when a month put something in, so a budget the user
+  # fills by hand reads exactly as it did before funding existed.
+  defp funded_footer(%Decimal{coef: 0}), do: nil
+  defp funded_footer(funded), do: "#{format_currency(funded)} funded"
+
+  defp prefix_funded(line, %Decimal{coef: 0}), do: line
+  defp prefix_funded(line, funded), do: "#{format_currency(funded)} funded · #{line}"
+
+  defp suffix_monthly(line, nil), do: line
+  defp suffix_monthly(line, funding_amount), do: "#{line} · #{format_currency(funding_amount)}/mo"
 
   defp percent(_part, %Decimal{coef: 0}), do: 0.0
 

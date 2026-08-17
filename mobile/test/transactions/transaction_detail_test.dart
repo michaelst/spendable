@@ -35,6 +35,7 @@ const _budgets = [
     'type': 'envelope',
     'balance': '50.00',
     'budgeted_amount': '200.00',
+    'rollover': true,
     'archived_at': null,
   },
   {
@@ -43,6 +44,7 @@ const _budgets = [
     'type': 'envelope',
     'balance': '30.00',
     'budgeted_amount': '100.00',
+    'rollover': true,
     'archived_at': null,
   },
 ];
@@ -51,6 +53,7 @@ const _splits = [
   {
     'id': 'spl_payday',
     'name': 'Payday',
+    'rollover': true,
     'archived_at': null,
     'split_lines': [
       {'id': 'spll_1', 'amount': '-12.00', 'budget_id': 'bgt_food'},

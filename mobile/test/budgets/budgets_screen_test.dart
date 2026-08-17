@@ -13,12 +13,14 @@ Map<String, Object?> _budget(
   String type = 'envelope',
   String balance = '0.00',
   String? budgetedAmount,
+  bool rollover = true,
 }) => {
   'id': id,
   'name': name,
   'type': type,
   'balance': balance,
   'budgeted_amount': budgetedAmount,
+  'rollover': rollover,
   'archived_at': null,
 };
 
@@ -27,11 +29,15 @@ Map<String, Object?> _summary({
   String creditCardBalance = '0.00',
   List<Map<String, Object?>>? budgets,
   Map<String, String>? spent,
+  Map<String, String>? funded,
+  Map<String, String>? received,
 }) => {
   'month': '2026-08-01',
   'current_month': currentMonth,
   'spendable': '420.00',
   'allocated_total': '1000.00',
+  'funded_total': '1000.00',
+  'earned_total': '0.00',
   'spent_total': '250.00',
   'credit_card_balance': creditCardBalance,
   'budgets':
@@ -40,7 +46,9 @@ Map<String, Object?> _summary({
         _budget('bgt_spendable', 'Spendable'),
         _budget('bgt_food', 'Food', balance: '50.00', budgetedAmount: '200.00'),
       ],
-  'spent': spent ?? {'bgt_spendable': '0.00', 'bgt_food': '-150.00'},
+  'spent': spent ?? {'bgt_spendable': '0.00', 'bgt_food': '150.00'},
+  'funded': funded ?? {'bgt_spendable': '0.00', 'bgt_food': '0.00'},
+  'received': received ?? {'bgt_spendable': '0.00', 'bgt_food': '0.00'},
   'spent_by_month': [
     {'month': '2026-08-01', 'spent': '-250.00'},
     {'month': '2026-07-01', 'spent': '-310.00'},
@@ -258,5 +266,98 @@ void main() {
     final rows = ['Food', 'Rent', 'Amazon', 'Vacation'].map((name) => tester.getTopLeft(find.text(name)).dy);
 
     expect(rows, orderedEquals(rows.toList()..sort()));
+  });
+
+  testWidgets('setting an amount makes an envelope fund itself', (tester) async {
+    final api = await _pump(
+      tester,
+      replies: {
+        'GET /api/budgets/summary': (status: 200, body: _summary()),
+        'PATCH /api/budgets/bgt_food': (
+          status: 200,
+          body: _budget('bgt_food', 'Food', balance: '200.00', budgetedAmount: '200.00'),
+        ),
+      },
+    );
+
+    await tester.tap(find.text('Food'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('budget-funding')), '150.00');
+    await tester.tap(find.byKey(const Key('budget-save')));
+    await tester.pumpAndSettle();
+
+    final sent = api.requests.firstWhere((request) => request.method == 'PATCH').data as Map;
+
+    // The two amounts are separate questions: measure against 200, put 150 in.
+    expect(sent['budgeted_amount'], '200.00');
+    expect(sent['funding_amount'], '150.00');
+  });
+
+  testWidgets('an income budget is asked what it expects, not what it allocates', (tester) async {
+    await _pump(tester);
+
+    await tester.tap(find.text('Food'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Income'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Expected each month'), findsOneWidget);
+    expect(find.byKey(const Key('budget-balance')), findsNothing);
+    expect(find.byKey(const Key('budget-funding')), findsNothing);
+  });
+
+  testWidgets('a goal names its own monthly contribution', (tester) async {
+    await _pump(tester);
+
+    await tester.tap(find.text('Food'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Goal'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Monthly contribution'), findsOneWidget);
+  });
+
+
+  testWidgets('an envelope can decline to carry its balance into next month', (tester) async {
+    final api = await _pump(
+      tester,
+      replies: {
+        'GET /api/budgets/summary': (status: 200, body: _summary()),
+        'PATCH /api/budgets/bgt_food': (
+          status: 200,
+          body: _budget('bgt_food', 'Food', balance: '50.00', budgetedAmount: '200.00'),
+        ),
+      },
+    );
+
+    await tester.tap(find.text('Food'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('budget-rollover')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('budget-save')));
+    await tester.pumpAndSettle();
+
+    final sent = api.requests.firstWhere((request) => request.method == 'PATCH').data;
+
+    expect((sent! as Map)['rollover'], false);
+  });
+
+  testWidgets('only an envelope is offered the rollover switch', (tester) async {
+    await _pump(tester);
+
+    await tester.tap(find.text('Food'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('budget-rollover')), findsOneWidget);
+
+    await tester.tap(find.text('Goal'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('budget-rollover')), findsNothing);
   });
 }

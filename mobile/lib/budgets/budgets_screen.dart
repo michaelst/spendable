@@ -171,28 +171,33 @@ class _Totals extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if (summary.currentMonth)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Caption('Spendable'),
-                      MoneyText(
-                        money(summary.spendable),
-                        key: const Key('spendable-total'),
-                        style: SpendableType.moneyHero,
-                        creditIsPositive: true,
-                      ),
-                    ],
-                  ),
+          if (summary.currentMonth) ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Caption('Spendable'),
+                MoneyText(
+                  money(summary.spendable),
+                  key: const Key('spendable-total'),
+                  style: SpendableType.moneyHero,
+                  creditIsPositive: true,
                 ),
-              if (summary.currentMonth) ...[
-                _Total(label: 'Allocated', amount: money(summary.allocatedTotal)),
-                const SizedBox(width: SpendableSpace.gutter),
               ],
+            ),
+            const SizedBox(height: SpendableSpace.tight),
+          ],
+          // Three figures will not sit beside the hero on a phone, so they take the line under it,
+          // and wrap rather than overflow when the amounts run long. Earned beside Funded is the
+          // check the whole method rests on: budgets that promise more each month than the month
+          // brings in are the thing worth noticing.
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: SpendableSpace.gutter,
+            runSpacing: SpendableSpace.tight,
+            children: [
+              _Total(label: 'Earned', amount: money(summary.earnedTotal)),
+              if (summary.currentMonth)
+                _Total(label: 'Funded', amount: money(summary.fundedTotal)),
               _Total(label: 'Spent', amount: money(summary.spentTotal)),
             ],
           ),
@@ -233,21 +238,31 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = SpendableColors.of(context);
 
+    // No `abs` here: spending arrives already netted and signed, so a month refunded more than it
+    // spent has to stay negative rather than read as that much spending.
     final card = BudgetCard.build(
       budget: budget,
-      spent: money(summary.spent[budget.id] ?? '0').abs(),
+      month: BudgetMonth(
+        spent: money(summary.spent[budget.id] ?? '0'),
+        received: money(summary.received[budget.id] ?? '0'),
+        funded: money(summary.funded[budget.id] ?? '0'),
+      ),
       currentMonth: summary.currentMonth,
     );
 
     // Card debt is not an envelope with something left in it, it is what is owed right now, and
     // calling it an envelope in the margin is only there to satisfy the card it is built from.
+    // What is owed reads as a negative balance rather than as an overspend, which is what the
+    // card would otherwise make of an envelope in the hole.
     final creditCards = budget.id == creditCardsId;
     final label = creditCards ? 'BALANCE' : card.label;
+    final amount = creditCards ? money(budget.balance) : card.amount;
 
     final barColors = {
       CardBar.under: colors.accent,
       CardBar.over: colors.negative,
       CardBar.goal: colors.positive,
+      CardBar.income: colors.positive,
     };
 
     return LedgerRow(
@@ -306,7 +321,12 @@ class _Row extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              MoneyText(card.amount, key: Key('amount-${budget.id}'), style: SpendableType.moneyRow),
+              MoneyText(
+                amount,
+                key: Key('amount-${budget.id}'),
+                style: SpendableType.moneyRow,
+                danger: label == 'OVERSPENT',
+              ),
               Caption(label),
             ],
           ),

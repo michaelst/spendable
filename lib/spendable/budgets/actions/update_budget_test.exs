@@ -21,6 +21,29 @@ defmodule Spendable.Budgets.Actions.UpdateBudgetTest do
              Budgets.update_budget(scope, budget, %{"name" => "Food"})
   end
 
+  test "fills the month as soon as a budget starts funding itself", %{scope: scope, budget: budget} do
+    assert {:ok, %Budget{balance: balance}} =
+             Budgets.update_budget(scope, budget, %{"funding_amount" => "300.00"})
+
+    assert Decimal.eq?(balance, "300.00")
+  end
+
+  test "does not fund the month twice when something else is edited", %{scope: scope, budget: budget} do
+    {:ok, funding} = Budgets.update_budget(scope, budget, %{"funding_amount" => "300.00"})
+    {:ok, renamed} = Budgets.update_budget(scope, funding, %{"name" => "Food"})
+
+    assert Decimal.eq?(renamed.balance, "300.00")
+  end
+
+  test "stops funding the month when the amount is cleared", %{scope: scope, budget: budget} do
+    {:ok, funding} = Budgets.update_budget(scope, budget, %{"funding_amount" => "300.00"})
+
+    assert {:ok, %Budget{funding_amount: nil, balance: balance}} =
+             Budgets.update_budget(scope, funding, %{"funding_amount" => ""})
+
+    assert Decimal.eq?(balance, "300.00")
+  end
+
   # The user sets a balance; the adjustment is what the app derives to make that balance true.
   test "writes the adjustment needed to reach a requested balance", %{
     scope: scope,

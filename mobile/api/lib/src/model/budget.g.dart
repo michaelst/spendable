@@ -11,6 +11,7 @@ const BudgetTypeEnum _$budgetTypeEnum_tracking =
 const BudgetTypeEnum _$budgetTypeEnum_envelope =
     const BudgetTypeEnum._('envelope');
 const BudgetTypeEnum _$budgetTypeEnum_goal = const BudgetTypeEnum._('goal');
+const BudgetTypeEnum _$budgetTypeEnum_income = const BudgetTypeEnum._('income');
 
 BudgetTypeEnum _$budgetTypeEnumValueOf(String name) {
   switch (name) {
@@ -20,6 +21,8 @@ BudgetTypeEnum _$budgetTypeEnumValueOf(String name) {
       return _$budgetTypeEnum_envelope;
     case 'goal':
       return _$budgetTypeEnum_goal;
+    case 'income':
+      return _$budgetTypeEnum_income;
     default:
       throw ArgumentError(name);
   }
@@ -30,6 +33,7 @@ final BuiltSet<BudgetTypeEnum> _$budgetTypeEnumValues =
   _$budgetTypeEnum_tracking,
   _$budgetTypeEnum_envelope,
   _$budgetTypeEnum_goal,
+  _$budgetTypeEnum_income,
 ]);
 
 Serializer<BudgetTypeEnum> _$budgetTypeEnumSerializer =
@@ -41,11 +45,13 @@ class _$BudgetTypeEnumSerializer
     'tracking': 'tracking',
     'envelope': 'envelope',
     'goal': 'goal',
+    'income': 'income',
   };
   static const Map<Object, String> _fromWire = const <Object, String>{
     'tracking': 'tracking',
     'envelope': 'envelope',
     'goal': 'goal',
+    'income': 'income',
   };
 
   @override
@@ -73,9 +79,13 @@ class _$Budget extends Budget {
   @override
   final String? budgetedAmount;
   @override
+  final String? fundingAmount;
+  @override
   final String id;
   @override
   final String name;
+  @override
+  final bool rollover;
   @override
   final BudgetTypeEnum type;
 
@@ -86,8 +96,10 @@ class _$Budget extends Budget {
       {this.archivedAt,
       required this.balance,
       this.budgetedAmount,
+      this.fundingAmount,
       required this.id,
       required this.name,
+      required this.rollover,
       required this.type})
       : super._();
   @override
@@ -104,8 +116,10 @@ class _$Budget extends Budget {
         archivedAt == other.archivedAt &&
         balance == other.balance &&
         budgetedAmount == other.budgetedAmount &&
+        fundingAmount == other.fundingAmount &&
         id == other.id &&
         name == other.name &&
+        rollover == other.rollover &&
         type == other.type;
   }
 
@@ -115,8 +129,10 @@ class _$Budget extends Budget {
     _$hash = $jc(_$hash, archivedAt.hashCode);
     _$hash = $jc(_$hash, balance.hashCode);
     _$hash = $jc(_$hash, budgetedAmount.hashCode);
+    _$hash = $jc(_$hash, fundingAmount.hashCode);
     _$hash = $jc(_$hash, id.hashCode);
     _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jc(_$hash, rollover.hashCode);
     _$hash = $jc(_$hash, type.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
@@ -128,8 +144,10 @@ class _$Budget extends Budget {
           ..add('archivedAt', archivedAt)
           ..add('balance', balance)
           ..add('budgetedAmount', budgetedAmount)
+          ..add('fundingAmount', fundingAmount)
           ..add('id', id)
           ..add('name', name)
+          ..add('rollover', rollover)
           ..add('type', type))
         .toString();
   }
@@ -151,6 +169,11 @@ class BudgetBuilder implements Builder<Budget, BudgetBuilder> {
   set budgetedAmount(String? budgetedAmount) =>
       _$this._budgetedAmount = budgetedAmount;
 
+  String? _fundingAmount;
+  String? get fundingAmount => _$this._fundingAmount;
+  set fundingAmount(String? fundingAmount) =>
+      _$this._fundingAmount = fundingAmount;
+
   String? _id;
   String? get id => _$this._id;
   set id(String? id) => _$this._id = id;
@@ -158,6 +181,10 @@ class BudgetBuilder implements Builder<Budget, BudgetBuilder> {
   String? _name;
   String? get name => _$this._name;
   set name(String? name) => _$this._name = name;
+
+  bool? _rollover;
+  bool? get rollover => _$this._rollover;
+  set rollover(bool? rollover) => _$this._rollover = rollover;
 
   BudgetTypeEnum? _type;
   BudgetTypeEnum? get type => _$this._type;
@@ -173,8 +200,10 @@ class BudgetBuilder implements Builder<Budget, BudgetBuilder> {
       _archivedAt = $v.archivedAt;
       _balance = $v.balance;
       _budgetedAmount = $v.budgetedAmount;
+      _fundingAmount = $v.fundingAmount;
       _id = $v.id;
       _name = $v.name;
+      _rollover = $v.rollover;
       _type = $v.type;
       _$v = null;
     }
@@ -201,8 +230,11 @@ class BudgetBuilder implements Builder<Budget, BudgetBuilder> {
           balance: BuiltValueNullFieldError.checkNotNull(
               balance, r'Budget', 'balance'),
           budgetedAmount: budgetedAmount,
+          fundingAmount: fundingAmount,
           id: BuiltValueNullFieldError.checkNotNull(id, r'Budget', 'id'),
           name: BuiltValueNullFieldError.checkNotNull(name, r'Budget', 'name'),
+          rollover: BuiltValueNullFieldError.checkNotNull(
+              rollover, r'Budget', 'rollover'),
           type: BuiltValueNullFieldError.checkNotNull(type, r'Budget', 'type'),
         );
     replace(_$result);

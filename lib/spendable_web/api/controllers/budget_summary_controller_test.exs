@@ -50,7 +50,7 @@ defmodule SpendableWeb.Api.BudgetSummaryControllerTest do
              "month" => "2026-08-01",
              "allocated_total" => "400.00",
              "spent_total" => "30.00",
-             "spent" => %{^budget_id => "-30.00"}
+             "spent" => %{^budget_id => "30.00"}
            } = response
 
     assert_schema(response, "BudgetSummary", @api_spec)

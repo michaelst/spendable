@@ -13,6 +13,7 @@ class MoneyText extends StatelessWidget {
     required this.style,
     this.creditIsPositive = false,
     this.neutral = false,
+    this.danger = false,
   });
 
   final Decimal amount;
@@ -23,11 +24,16 @@ class MoneyText extends StatelessWidget {
   /// nothing - the sign is already in the figure.
   final bool neutral;
 
+  /// Set where the figure is bad news but carries no minus sign to say so, as an overspend does:
+  /// it is what is short, written as a positive amount.
+  final bool danger;
+
   @override
   Widget build(BuildContext context) {
     final colors = SpendableColors.of(context);
 
     final color = switch (amount.sign) {
+      _ when danger => colors.negative,
       _ when neutral => colors.primary,
       < 0 => colors.negative,
       _ => creditIsPositive ? colors.positive : colors.primary,

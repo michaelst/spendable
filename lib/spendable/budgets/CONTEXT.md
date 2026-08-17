@@ -11,7 +11,8 @@ A named envelope a user assigns money to.
 _Avoid_: Category, bucket, envelope
 
 **Budget Type**:
-Whether a **Budget** reserves money, saves toward an amount, or only records spending.
+Whether a **Budget** reserves money, saves toward an amount, records spending, or records money
+arriving.
 _Avoid_: Kind, mode
 
 **Envelope**:
@@ -24,13 +25,37 @@ A **Budget** saving toward a target amount.
 A **Budget** that records spending without reserving anything against it.
 _Avoid_: Track-only, spending-only
 
+**Income**:
+A **Budget** that records money arriving.
+_Avoid_: Revenue, deposit, inflow, earnings
+
+**Received**:
+What an **Income** budget took in over a month.
+_Avoid_: Earned, credited, incoming
+
 **Balance**:
-What a **Budget** currently holds. Never stored - see **Relationships** for what it comes from.
+What a **Budget** currently holds.
 _Avoid_: Total, amount
 
 **Budgeted Amount**:
 What the user intends a **Budget** to hold, against which its **Balance** is read.
 _Avoid_: Target, limit, cap
+
+**Funding Amount**:
+What a **Budget** puts into itself each month.
+_Avoid_: Contribution, auto-fill, monthly target
+
+**Funding**:
+Money put into a **Budget** for one month.
+_Avoid_: Deposit, top-up, assignment
+
+**Rollover**:
+Whether a **Budget**'s **Balance** carries into the next month.
+_Avoid_: Carry over, reset, accumulate
+
+**Overspent**:
+An **Envelope** whose **Balance** has gone below zero.
+_Avoid_: Over budget, in the red, negative
 
 **Adjustment**:
 The correction that makes a **Budget**'s **Balance** the figure the user asked for.
@@ -62,10 +87,14 @@ _Avoid_: Row, item, split allocation
 
 - A **Budget** has many **Allocations**
 - An **Allocation** belongs to exactly one **Budget** and one **Transaction**
-- A **Budget**'s **Balance** is the sum of its **Allocations** plus its **Adjustment**, unless a **Bank Account** is assigned to it, in which case the **Balance** is that account's
+- A **Budget** has many **Fundings**, at most one per month
+- A **Budget**'s **Balance** is the sum of its **Fundings** and its **Allocations** plus its **Adjustment**, unless a **Bank Account** is assigned to it, in which case the **Balance** is that account's
+- Only an **Envelope** or a **Goal** has a **Funding Amount**
+- Only an **Envelope** has a **Rollover** the user can turn off
 - A **Split** has many **Lines**; a **Line** names one **Budget**
 - A **User** has at most one **Spendable** budget, created the first time one is needed
 - Spending is read per month and is derived from **Allocations**, so it belongs to a month rather than to a **Budget**
+- **Received** belongs to an **Income** budget; spending belongs to every other **Budget Type**
 
 ## Example dialogue
 
@@ -74,6 +103,15 @@ _Avoid_: Row, item, split allocation
 
 > **Dev:** "So what does editing a **Budget**'s **Balance** actually write?"
 > **Domain expert:** "The **Adjustment**. You're telling it what the balance ought to be, and the adjustment is the difference."
+
+> **Dev:** "Groceries is 50 **Overspent**. Does next month put in 300, or 350 to cover it?"
+> **Domain expert:** "300 if it rolls over, and it starts at 250. 350 if it doesn't, and it starts whole."
+
+> **Dev:** "Where does the money a **Funding** puts in come from? Nothing comes out anywhere."
+> **Domain expert:** "**Spendable**. It's what no budget has claimed, so a budget claiming more leaves less."
+
+> **Dev:** "A friend paid me back for something I bought from Groceries. Where does the money go?"
+> **Domain expert:** "Back into Groceries, where it cancels the spend. A **Budget** records what it is left holding, not where the money came from - which is why a paycheck belongs in an **Income** budget instead."
 
 ## Flagged ambiguities
 

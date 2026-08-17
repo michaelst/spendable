@@ -70,6 +70,7 @@ List<Budget> listedBudgets(BudgetSummary summary) {
       ..id = creditCardsId
       ..name = 'Credit Cards'
       ..type = BudgetTypeEnum.envelope
+      ..rollover = true
       ..balance = (-money(summary.creditCardBalance)).toString(),
   );
 
@@ -80,7 +81,8 @@ List<Budget> listedBudgets(BudgetSummary summary) {
 
 int _typeOrder(BudgetTypeEnum type) => switch (type) {
   BudgetTypeEnum.envelope => 0,
-  BudgetTypeEnum.goal => 2,
+  BudgetTypeEnum.income => 2,
+  BudgetTypeEnum.goal => 3,
   _ => 1,
 };
 

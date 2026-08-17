@@ -26,7 +26,8 @@ defmodule Spendable.Transactions.Utils.AllocateSpendable do
 
   defp put_remainder(changeset) do
     user_id = get_field(changeset, :user_id)
-    {:ok, spendable} = Budgets.find_or_create_spendable_budget(Scope.for_user(%User{id: user_id}))
+    user = changeset.repo.get!(User, user_id)
+    {:ok, spendable} = Budgets.find_or_create_spendable_budget(Scope.for_user(user))
 
     changeset = load_allocations(changeset)
 

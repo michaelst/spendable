@@ -16,6 +16,7 @@ defmodule SpendableWeb.MCP.Server do
   component(SpendableWeb.MCP.Tools.ArchiveSplit)
   component(SpendableWeb.MCP.Tools.CreateBudget)
   component(SpendableWeb.MCP.Tools.CreateSplit)
+  component(SpendableWeb.MCP.Tools.FundBudget)
   component(SpendableWeb.MCP.Tools.ListBudgets)
   component(SpendableWeb.MCP.Tools.ListSplits)
   component(SpendableWeb.MCP.Tools.ListTransactions)
