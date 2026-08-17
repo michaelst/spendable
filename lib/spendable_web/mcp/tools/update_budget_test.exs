@@ -20,9 +20,9 @@ defmodule SpendableWeb.MCP.Tools.UpdateBudgetTest do
 
   test "changes only the fields it is given", %{budget: budget, frame: frame} do
     assert {:reply,
-            %Response{structured_content: %{budget: %{name: "Food", type: :envelope, budgeted_amount: "300.00"}}},
+            %Response{structured_content: %{budget: %{name: "Food", type: :envelope, funding_amount: "300.00"}}},
             ^frame} =
-             UpdateBudget.execute(%{budget_id: budget.id, name: "Food", budgeted_amount: "300.00"}, frame)
+             UpdateBudget.execute(%{budget_id: budget.id, name: "Food", funding_amount: "300.00"}, frame)
   end
 
   test "sets the balance the user asks for", %{budget: budget, frame: frame, scope: scope} do

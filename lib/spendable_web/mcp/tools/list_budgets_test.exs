@@ -18,13 +18,13 @@ defmodule SpendableWeb.MCP.Tools.ListBudgetsTest do
   end
 
   test "lists the budgets of the user the frame acts as", %{frame: frame, scope: scope} do
-    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Groceries", "budgeted_amount" => "250.00"})
+    {:ok, _budget} = Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "250.00"})
 
     assert {:reply,
             %Response{
               structured_content: %{
                 budgets: [
-                  %{name: "Groceries", type: :envelope, balance: "0.00", budgeted_amount: "250.00"}
+                  %{name: "Groceries", type: :envelope, balance: "250.00", funding_amount: "250.00"}
                 ]
               }
             }, ^frame} = ListBudgets.execute(%{}, frame)
@@ -34,7 +34,7 @@ defmodule SpendableWeb.MCP.Tools.ListBudgetsTest do
     {:ok, _groceries} = Budgets.create_budget(scope, %{"name" => "Groceries"})
     {:ok, _rent} = Budgets.create_budget(scope, %{"name" => "Rent"})
 
-    assert {:reply, %Response{structured_content: %{budgets: [%{name: "Rent", budgeted_amount: nil}]}}, ^frame} =
+    assert {:reply, %Response{structured_content: %{budgets: [%{name: "Rent", funding_amount: nil}]}}, ^frame} =
              ListBudgets.execute(%{search: "Ren"}, frame)
   end
 

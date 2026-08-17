@@ -1,5 +1,11 @@
 defmodule Spendable.Budgets.Schemas.Funding do
-  @moduledoc false
+  @moduledoc """
+  What one month put into one budget.
+
+  There is no changeset: a funding is never written one at a time from user input. `fund_budgets/2`
+  inserts a month for every budget at once, which is what lets the unique index on
+  `[:budget_id, :month]` make funding a month safe to repeat.
+  """
   use Spendable.Schema
 
   alias Spendable.Accounts.Schemas.User
@@ -14,23 +20,5 @@ defmodule Spendable.Budgets.Schemas.Funding do
     belongs_to :user, User
 
     timestamps()
-  end
-
-  def changeset(funding \\ %__MODULE__{}, attrs) do
-    funding
-    |> cast(attrs, [:amount, :month, :budget_id])
-    |> validate_required([:amount, :month, :budget_id])
-    |> put_beginning_of_month()
-    |> validate_relationships([:budget])
-  end
-
-  # A funding belongs to a month, not a day, so any date in that month names the same row. Pinning
-  # it here rather than in the caller is what makes the unique index on [:budget_id, :month] mean
-  # "funded once this month".
-  defp put_beginning_of_month(changeset) do
-    case fetch_change(changeset, :month) do
-      {:ok, %Date{} = month} -> put_change(changeset, :month, Date.beginning_of_month(month))
-      _no_month -> changeset
-    end
   end
 end

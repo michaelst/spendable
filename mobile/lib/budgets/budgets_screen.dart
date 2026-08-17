@@ -245,7 +245,6 @@ class _Row extends StatelessWidget {
       month: BudgetMonth(
         spent: money(summary.spent[budget.id] ?? '0'),
         received: money(summary.received[budget.id] ?? '0'),
-        funded: money(summary.funded[budget.id] ?? '0'),
       ),
       currentMonth: summary.currentMonth,
     );

@@ -16,7 +16,7 @@ defmodule Spendable.Budgets.Actions.CalculateMonthSummaryTest do
       Budgets.create_budget(scope, %{
         "name" => "Groceries",
         "type" => "envelope",
-        "budgeted_amount" => "400.00"
+        "funding_amount" => "400.00"
       })
 
     {:ok, transaction} =

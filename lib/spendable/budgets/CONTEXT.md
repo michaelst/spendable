@@ -38,12 +38,12 @@ What a **Budget** currently holds.
 _Avoid_: Total, amount
 
 **Budgeted Amount**:
-What the user intends a **Budget** to hold, against which its **Balance** is read.
+The figure a **Budget** that holds nothing is measured against for a month.
 _Avoid_: Target, limit, cap
 
 **Funding Amount**:
 What a **Budget** puts into itself each month.
-_Avoid_: Contribution, auto-fill, monthly target
+_Avoid_: Contribution, auto-fill, budgeted amount
 
 **Funding**:
 Money put into a **Budget** for one month.
@@ -89,7 +89,7 @@ _Avoid_: Row, item, split allocation
 - An **Allocation** belongs to exactly one **Budget** and one **Transaction**
 - A **Budget** has many **Fundings**, at most one per month
 - A **Budget**'s **Balance** is the sum of its **Fundings** and its **Allocations** plus its **Adjustment**, unless a **Bank Account** is assigned to it, in which case the **Balance** is that account's
-- Only an **Envelope** or a **Goal** has a **Funding Amount**
+- An **Envelope** has a **Funding Amount** and no **Budgeted Amount**; **Tracking** and **Income** have the reverse; a **Goal** has both
 - Only an **Envelope** has a **Rollover** the user can turn off
 - A **Split** has many **Lines**; a **Line** names one **Budget**
 - A **User** has at most one **Spendable** budget, created the first time one is needed

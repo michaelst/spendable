@@ -174,17 +174,33 @@ defmodule SpendableWeb.Live.Budgets do
                 {"Track Spending Only", :tracking}
               ]}
             />
-            <.input type="text" label={amount_label(f[:type].value)} field={f[:budgeted_amount]} />
-            <!-- An envelope is asked whether it funds itself, not how much: the amount it funds
-            is the amount it is budgeted, and two numbers that are always equal read as a bug. -->
-            <!-- Its own amount rather than a switch tied to the budgeted one: a user can measure
-            spending against 400 while only being able to put 300 in. Blank means it does not fund
-            itself and the user fills it. -->
+            <!-- An envelope has one amount: what a month puts in, which is also what its
+            spending is read against. Two numbers for one idea is what confused the card. -->
             <.input
               :if={f[:type].value == :envelope}
               type="text"
-              label="Fund Each Month"
+              label="Budget Per Month"
               field={f[:funding_amount]}
+            />
+            <.input
+              :if={f[:type].value != :envelope}
+              type="text"
+              label={amount_label(f[:type].value)}
+              field={f[:budgeted_amount]}
+            />
+            <.input
+              :if={f[:type].value == :goal}
+              type="text"
+              label="Monthly Contribution"
+              field={f[:funding_amount]}
+            />
+            <!-- Named for what the card calls it, so the figure the user reads and the figure they
+            correct are plainly the same one. -->
+            <.input
+              :if={f[:type].value in [:envelope, :goal]}
+              type="text"
+              label={if f[:type].value == :envelope, do: "Remaining", else: "Allocated"}
+              field={f[:balance]}
             />
             <!-- Off means the month tops the envelope back up to its amount, so an overspend does
             not follow it into the next month and leftover does not pile up. -->
@@ -193,18 +209,6 @@ defmodule SpendableWeb.Live.Budgets do
               type="checkbox"
               label="Carry the balance into next month"
               field={f[:rollover]}
-            />
-            <.input
-              :if={f[:type].value == :goal}
-              type="text"
-              label="Monthly Contribution"
-              field={f[:funding_amount]}
-            />
-            <.input
-              :if={f[:type].value in [:envelope, :goal]}
-              type="text"
-              label="Allocated"
-              field={f[:balance]}
             />
             <button
               :if={@changeset.data.id}
@@ -217,29 +221,6 @@ defmodule SpendableWeb.Live.Budgets do
             </button>
           </div>
         </.simple_form>
-        <!-- Deviating for one month is its own act: it moves money into the budget rather than
-        changing what every month puts in, so it is a separate form writing a separate record. -->
-        <form
-          :if={fundable?(@changeset, @current_month_is_selected)}
-          id="funding-form"
-          phx-change="fund_change"
-          phx-submit="fund"
-          class="space-y-6 border-t border-white/5 m-6 pt-6"
-        >
-          <.input
-            type="text"
-            label="Funded This Month"
-            name="funding[amount]"
-            value={@funded_this_month}
-          />
-          <button
-            id="fund"
-            type="submit"
-            class="cursor-pointer text-sm font-semibold leading-6 text-blue-400 hover:text-blue-300"
-          >
-            Fund this month
-          </button>
-        </form>
       </aside>
     </div>
     """
@@ -294,27 +275,7 @@ defmodule SpendableWeb.Live.Budgets do
   def handle_event("select_budget", params, socket) do
     budget = Enum.find(socket.assigns.budgets, &(&1.id == params["id"]))
 
-    funded = Map.get(socket.assigns.funded, budget.id, Decimal.new("0.00"))
-
-    socket
-    |> assign(:changeset, Budget.changeset(budget, %{}))
-    |> assign(:funded_this_month, Decimal.to_string(funded))
-    |> noreply()
-  end
-
-  # Holds what was typed, so the figure does not snap back to what the month already funded.
-  def handle_event("fund_change", %{"funding" => %{"amount" => amount}}, socket) do
-    {:noreply, assign(socket, :funded_this_month, amount)}
-  end
-
-  def handle_event("fund", %{"funding" => %{"amount" => amount}}, socket) do
-    scope = socket.assigns.current_scope
-    budget = socket.assigns.changeset.data
-
-    case Budgets.update_funding(scope, budget, socket.assigns.selected_month, amount) do
-      {:ok, _funding} -> socket |> fetch_data() |> noreply()
-      {:error, _changeset} -> socket |> assign(:funded_this_month, amount) |> noreply()
-    end
+    {:noreply, assign(socket, :changeset, Budget.changeset(budget, %{}))}
   end
 
   def handle_event("archive", _params, socket) do
@@ -354,8 +315,6 @@ defmodule SpendableWeb.Live.Budgets do
     |> assign(:spent_by_month, summary.spent_by_month)
     |> assign(:selected_month, selected_month)
     |> assign(:budgets, listed)
-    |> assign(:funded, summary.funded)
-    |> assign(:funded_this_month, "0.00")
     |> assign(:cards, build_cards(listed, summary, summary.current_month))
     |> assign(:funded_total, summary.funded_total)
     |> assign(:earned_total, summary.earned_total)
@@ -397,8 +356,7 @@ defmodule SpendableWeb.Live.Budgets do
     Enum.map(budgets, fn budget ->
       month = %{
         spent: figure(summary.spent, budget.id),
-        received: figure(summary.received, budget.id),
-        funded: figure(summary.funded, budget.id)
+        received: figure(summary.received, budget.id)
       }
 
       credit_cards? = is_nil(budget.id)
@@ -420,14 +378,6 @@ defmodule SpendableWeb.Live.Budgets do
   # Only reached when there is a percent to draw, and a card has a bar exactly when it has one.
   # The synthetic Credit Cards row has no id, so it is in none of the month's maps.
   defp figure(figures, budget_id), do: Map.get(figures, budget_id, Decimal.new("0.00"))
-
-  # Only a saved budget that holds money can have a month's funding edited, and only the month the
-  # user is actually looking at.
-  defp fundable?(%{data: %{id: id, type: type}}, true = _current_month_is_selected)
-       when is_binary(id),
-       do: type in [:envelope, :goal]
-
-  defp fundable?(_changeset, _current_month_is_selected), do: false
 
   # An overspend reads as a positive figure, so the label is what says it is bad rather than a
   # minus sign.

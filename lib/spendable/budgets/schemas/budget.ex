@@ -42,7 +42,7 @@ defmodule Spendable.Budgets.Schemas.Budget do
       :balance
     ])
     |> validate_required([:name, :type])
-    |> clear_funding_amount()
+    |> clear_unused_amounts()
     |> force_rollover()
     |> put_adjustment()
   end
@@ -51,12 +51,15 @@ defmodule Spendable.Budgets.Schemas.Budget do
     cast(budget, attrs, [:archived_at])
   end
 
-  # Only a budget that holds money can fund itself. Tracking and income record a month and keep no
-  # balance, so a funding amount on either would be money with nowhere to land.
-  defp clear_funding_amount(changeset) do
+  # Each type carries exactly the amounts it means. An envelope has one - what a month puts in,
+  # which is also what its spending is read against. A goal has two, because a target and a monthly
+  # contribution are different numbers. Tracking and income hold nothing, so they only have a figure
+  # to be measured against.
+  defp clear_unused_amounts(changeset) do
     case get_field(changeset, :type) do
-      type when type in [:tracking, :income] -> put_change(changeset, :funding_amount, nil)
-      _holds_money -> changeset
+      :envelope -> put_change(changeset, :budgeted_amount, nil)
+      :goal -> changeset
+      _holds_nothing -> put_change(changeset, :funding_amount, nil)
     end
   end
 

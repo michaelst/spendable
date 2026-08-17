@@ -101,31 +101,31 @@ class _BudgetFormState extends ConsumerState<BudgetForm> {
             onValueChanged: (value) => setState(() => _type = value ?? _type),
           ),
           const SizedBox(height: SpendableSpace.tight),
-          TextField(
-            key: const Key('budget-amount'),
-            controller: _budgetedAmount,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: SpendableType.moneyInline.copyWith(color: colors.primary),
-            decoration: InputDecoration(
-              labelText: _amountLabel,
-              errorText: errors['/budgeted_amount'],
-            ),
-          ),
-          if (_type == BudgetRequestTypeEnum.envelope) ...[
-            const SizedBox(height: SpendableSpace.gutter),
-            // Its own amount rather than a switch tied to the budgeted one: a user can measure
-            // spending against 400 while only being able to put 300 in. Blank means it does not
-            // fund itself and the user fills it.
+          // An envelope has one amount: what a month puts in, which is also what its spending is
+          // read against. Two numbers for one idea is what confused the card.
+          if (_type == BudgetRequestTypeEnum.envelope)
             TextField(
               key: const Key('budget-funding'),
               controller: _fundingAmount,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               style: SpendableType.moneyInline.copyWith(color: colors.primary),
               decoration: InputDecoration(
-                labelText: 'Fund each month',
+                labelText: 'Budget per month',
                 errorText: errors['/funding_amount'],
               ),
+            )
+          else
+            TextField(
+              key: const Key('budget-amount'),
+              controller: _budgetedAmount,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: SpendableType.moneyInline.copyWith(color: colors.primary),
+              decoration: InputDecoration(
+                labelText: _amountLabel,
+                errorText: errors['/budgeted_amount'],
+              ),
             ),
+          if (_type == BudgetRequestTypeEnum.envelope) ...[
             const SizedBox(height: SpendableSpace.tight),
             Row(
               children: [
@@ -163,7 +163,12 @@ class _BudgetFormState extends ConsumerState<BudgetForm> {
               controller: _balance,
               keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
               style: SpendableType.moneyInline.copyWith(color: colors.primary),
-              decoration: InputDecoration(labelText: 'Allocated', errorText: errors['/balance']),
+              // Named for what the card calls it, so the figure the user reads and the figure
+              // they correct are plainly the same one.
+              decoration: InputDecoration(
+                labelText: _type == BudgetRequestTypeEnum.envelope ? 'Remaining' : 'Allocated',
+                errorText: errors['/balance'],
+              ),
             ),
           ],
           const SizedBox(height: SpendableSpace.block),
@@ -194,7 +199,8 @@ class _BudgetFormState extends ConsumerState<BudgetForm> {
       (builder) => builder
         ..name = _name.text
         ..type = _type
-        ..budgetedAmount = _blankToNull(_budgetedAmount.text)
+        ..budgetedAmount =
+            _type == BudgetRequestTypeEnum.envelope ? null : _blankToNull(_budgetedAmount.text)
         ..fundingAmount = _fundsItself()
         ..rollover = _type == BudgetRequestTypeEnum.envelope ? _rollover : true
         ..balance = holdsMoney ? _blankToNull(_balance.text) : null,
@@ -215,10 +221,9 @@ class _BudgetFormState extends ConsumerState<BudgetForm> {
   String? _blankToNull(String value) => value.trim().isEmpty ? null : value.trim();
 
   String get _amountLabel => switch (_type) {
-    BudgetRequestTypeEnum.goal => 'Goal amount',
     BudgetRequestTypeEnum.income => 'Expected each month',
     BudgetRequestTypeEnum.tracking => 'Monthly limit',
-    _ => 'Budgeted amount',
+    _ => 'Goal amount',
   };
 
   /// Only a budget that holds money can fund itself. Blank means it does not, and the user fills

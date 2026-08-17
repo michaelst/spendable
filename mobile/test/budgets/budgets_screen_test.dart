@@ -13,6 +13,7 @@ Map<String, Object?> _budget(
   String type = 'envelope',
   String balance = '0.00',
   String? budgetedAmount,
+  String? fundingAmount,
   bool rollover = true,
 }) => {
   'id': id,
@@ -20,6 +21,7 @@ Map<String, Object?> _budget(
   'type': type,
   'balance': balance,
   'budgeted_amount': budgetedAmount,
+  'funding_amount': fundingAmount,
   'rollover': rollover,
   'archived_at': null,
 };
@@ -44,7 +46,7 @@ Map<String, Object?> _summary({
       budgets ??
       [
         _budget('bgt_spendable', 'Spendable'),
-        _budget('bgt_food', 'Food', balance: '50.00', budgetedAmount: '200.00'),
+        _budget('bgt_food', 'Food', balance: '50.00', fundingAmount: '200.00'),
       ],
   'spent': spent ?? {'bgt_spendable': '0.00', 'bgt_food': '150.00'},
   'funded': funded ?? {'bgt_spendable': '0.00', 'bgt_food': '0.00'},
@@ -84,7 +86,7 @@ void main() {
     await _pump(tester);
 
     expect(find.text('Food'), findsOneWidget);
-    expect(find.text('LEFT'), findsWidgets);
+    expect(find.text('REMAINING'), findsWidgets);
     expect(find.text(r'$150.00 of $200.00 spent'), findsOneWidget);
   });
 
@@ -132,7 +134,7 @@ void main() {
         'GET /api/budgets/summary': (status: 200, body: _summary()),
         'PATCH /api/budgets/bgt_food': (
           status: 200,
-          body: _budget('bgt_food', 'Groceries', balance: '50.00', budgetedAmount: '200.00'),
+          body: _budget('bgt_food', 'Groceries', balance: '50.00', fundingAmount: '200.00'),
         ),
       },
     );
@@ -275,7 +277,7 @@ void main() {
         'GET /api/budgets/summary': (status: 200, body: _summary()),
         'PATCH /api/budgets/bgt_food': (
           status: 200,
-          body: _budget('bgt_food', 'Food', balance: '200.00', budgetedAmount: '200.00'),
+          body: _budget('bgt_food', 'Food', balance: '200.00', fundingAmount: '200.00'),
         ),
       },
     );
@@ -289,9 +291,9 @@ void main() {
 
     final sent = api.requests.firstWhere((request) => request.method == 'PATCH').data as Map;
 
-    // The two amounts are separate questions: measure against 200, put 150 in.
-    expect(sent['budgeted_amount'], '200.00');
+    // One amount for an envelope, and it is the one a month puts in.
     expect(sent['funding_amount'], '150.00');
+    expect(sent['budgeted_amount'], isNull);
   });
 
   testWidgets('an income budget is asked what it expects, not what it allocates', (tester) async {
@@ -328,7 +330,7 @@ void main() {
         'GET /api/budgets/summary': (status: 200, body: _summary()),
         'PATCH /api/budgets/bgt_food': (
           status: 200,
-          body: _budget('bgt_food', 'Food', balance: '50.00', budgetedAmount: '200.00'),
+          body: _budget('bgt_food', 'Food', balance: '50.00', fundingAmount: '200.00'),
         ),
       },
     );

@@ -33,7 +33,7 @@ defmodule Spendable.Budgets.Actions.CalculateMonthSummary do
       funded: funded,
       spent_by_month: Budgets.calculate_spent_by_month(scope),
       spendable: Budgets.calculate_spendable(scope),
-      allocated_total: total(envelopes, & &1.budgeted_amount),
+      allocated_total: total(envelopes, & &1.funding_amount),
       funded_total: total(envelopes, &Map.get(funded, &1.id)),
       earned_total: total(income, &Map.get(received, &1.id)),
       spent_total: total(envelopes, &Map.get(spent, &1.id))

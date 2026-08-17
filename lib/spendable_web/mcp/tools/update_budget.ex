@@ -23,12 +23,14 @@ defmodule SpendableWeb.MCP.Tools.UpdateBudget do
 
     field :budgeted_amount, :string,
       description:
-        "What the user intends this budget to hold - the figure its balance is read against. It is a " <>
-          "target on its own; use funding_amount to actually put money in. Decimal string, e.g. \"250.00\"."
+        "The figure a month is measured against, for a budget that holds nothing - a tracking limit, or " <>
+          "what an income budget expects to take in. A goal uses it for the target it saves toward. An " <>
+          "envelope has no budgeted amount; its one figure is funding_amount. Decimal string."
 
     field :funding_amount, :string,
       description:
-        "What this budget puts into itself at the start of every month, drawn from what is spendable. " <>
+        "What this budget puts into itself at the start of every month, drawn from what is spendable. For " <>
+          "an envelope this is its only amount, and it is what its spending is read against too. " <>
           "Setting it makes the budget fill on its own rather than being fed from a paycheck by hand, " <>
           "and funds the current month straight away. Only an envelope or a goal can hold money, so it " <>
           "is ignored on tracking and income. Decimal string, e.g. \"250.00\"."

@@ -7,9 +7,8 @@ defmodule SpendableWeb.Utils.BudgetCard do
   same six answers, and `shared/budget_cards.json` drives a table test on both sides. Colours
   stay with each client - `bar` says which of the four bars this is, not what it looks like.
 
-  The month is passed as one map of what moved - `spent`, `received` and `funded` - because which
-  of them a card reads depends on what kind of budget it is, and a budget that spends never
-  receives.
+  The month is passed as one map of what moved - `spent` and `received` - because which of them a
+  card reads depends on what kind of budget it is, and a budget that spends never receives.
   """
 
   import Spendable.Utils
@@ -55,18 +54,18 @@ defmodule SpendableWeb.Utils.BudgetCard do
     }
   end
 
-  def build_budget_card(%Budget{type: :envelope, budgeted_amount: nil} = budget, %{funded: funded}, _current) do
-    %{held(budget) | percent: nil, bar: nil, footer: funded_footer(funded)}
+  def build_budget_card(%Budget{type: :envelope, funding_amount: nil} = budget, _month, _current) do
+    held(budget)
   end
 
-  def build_budget_card(%Budget{type: :envelope} = budget, %{spent: spent, funded: funded}, _current) do
-    spend_line = "#{format_currency(spent)} of #{format_currency(budget.budgeted_amount)} spent"
-
+  # An envelope has one amount: what a month puts in, which is also what its spending is read
+  # against. There is nothing to say about funding separately because they are the same figure.
+  def build_budget_card(%Budget{type: :envelope} = budget, %{spent: spent}, _current) do
     %{
       held(budget)
-      | percent: percent(spent, budget.budgeted_amount),
-        bar: spending_bar(spent, budget.budgeted_amount),
-        footer: prefix_funded(spend_line, funded)
+      | percent: percent(spent, budget.funding_amount),
+        bar: spending_bar(spent, budget.funding_amount),
+        footer: "#{format_currency(spent)} of #{format_currency(budget.funding_amount)} spent"
     }
   end
 
@@ -94,21 +93,13 @@ defmodule SpendableWeb.Utils.BudgetCard do
     if Decimal.negative?(balance) do
       %{amount: Decimal.abs(balance), label: "OVERSPENT", percent: nil, bar: nil, footer: nil}
     else
-      %{amount: budget.balance, label: "LEFT", percent: nil, bar: nil, footer: nil}
+      %{amount: budget.balance, label: "REMAINING", percent: nil, bar: nil, footer: nil}
     end
   end
 
   defp spending_bar(spent, budgeted_amount) do
     if Decimal.compare(spent, budgeted_amount) == :gt, do: "over", else: "under"
   end
-
-  # What the month put in is only worth saying when a month put something in, so a budget the user
-  # fills by hand reads exactly as it did before funding existed.
-  defp funded_footer(%Decimal{coef: 0}), do: nil
-  defp funded_footer(funded), do: "#{format_currency(funded)} funded"
-
-  defp prefix_funded(line, %Decimal{coef: 0}), do: line
-  defp prefix_funded(line, funded), do: "#{format_currency(funded)} funded · #{line}"
 
   defp suffix_monthly(line, nil), do: line
   defp suffix_monthly(line, funding_amount), do: "#{line} · #{format_currency(funding_amount)}/mo"

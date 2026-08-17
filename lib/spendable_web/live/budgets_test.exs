@@ -111,7 +111,6 @@ defmodule SpendableWeb.Live.BudgetsTest do
       Budgets.create_budget(scope, %{
         "name" => "Groceries",
         "type" => "envelope",
-        "budgeted_amount" => "650.00",
         "funding_amount" => "650.00"
       })
 
@@ -125,7 +124,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     {:ok, _view, html} = live(conn, ~p"/budgets")
 
-    assert html =~ "LEFT"
+    assert html =~ "REMAINING"
     assert html =~ "$488.12 of $650.00 spent"
     # The month summary pairs what went into the envelopes against what went out of them.
     assert html =~ "Funded"
@@ -139,7 +138,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
       Budgets.create_budget(scope, %{
         "name" => "Dining out",
         "type" => "envelope",
-        "budgeted_amount" => "200.00"
+        "funding_amount" => "200.00"
       })
 
     {:ok, _transaction} =
@@ -196,7 +195,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
       Budgets.create_budget(scope, %{
         "name" => "Gifts",
         "type" => "envelope",
-        "budgeted_amount" => "0.00"
+        "funding_amount" => "0.00"
       })
 
     {:ok, _view, html} = live(conn, ~p"/budgets")
@@ -363,27 +362,6 @@ defmodule SpendableWeb.Live.BudgetsTest do
     assert Decimal.eq?(stopped.balance, "300.00")
   end
 
-  test "funds a single month from the drawer", %{conn: conn, scope: scope} do
-    {:ok, budget} =
-      Budgets.create_budget(scope, %{
-        "name" => "Groceries",
-        "budgeted_amount" => "300.00",
-        "funding_amount" => "300.00"
-      })
-
-    {:ok, view, _html} = live(conn, ~p"/budgets")
-
-    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
-
-    view
-    |> element(~s(form[phx-submit="fund"]))
-    |> render_submit(%{funding: %{"amount" => "200.00"}})
-
-    {:ok, funded} = Budgets.get_budget(scope, id: budget.id)
-
-    assert Decimal.eq?(funded.balance, "200.00")
-  end
-
   test "reads an income budget as what it took in", %{conn: conn, scope: scope} do
     {:ok, salary} =
       Budgets.create_budget(scope, %{
@@ -404,41 +382,6 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     assert html =~ "EARNED"
     assert html =~ "$4,200.00 of $4,200.00 received"
-  end
-
-  test "keeps a typed funding amount while it is being typed", %{conn: conn, scope: scope} do
-    {:ok, budget} =
-      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
-
-    {:ok, view, _html} = live(conn, ~p"/budgets")
-
-    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
-
-    html =
-      view
-      |> element(~s(form[phx-submit="fund"]))
-      |> render_change(%{funding: %{"amount" => "12"}})
-
-    assert html =~ ~s(value="12")
-  end
-
-  test "keeps the funding form open when the amount will not parse", %{conn: conn, scope: scope} do
-    {:ok, budget} =
-      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
-
-    {:ok, view, _html} = live(conn, ~p"/budgets")
-
-    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
-
-    html =
-      view
-      |> element(~s(form[phx-submit="fund"]))
-      |> render_submit(%{funding: %{"amount" => "not money"}})
-
-    assert html =~ ~s(phx-submit="fund")
-
-    {:ok, unchanged} = Budgets.get_budget(scope, id: budget.id)
-    assert Decimal.eq?(unchanged.balance, "300.00")
   end
 
   test "asks a tracking budget for a limit and an income budget for what it expects", %{conn: conn} do
@@ -480,14 +423,14 @@ defmodule SpendableWeb.Live.BudgetsTest do
     refute html =~ "Fund automatically each month"
   end
 
-  # An envelope holds what it was funded less what it spent, so one that was never funded and has
-  # been spent from is genuinely in the hole - the money came out of Spendable.
+  # An envelope holds what it was funded less what it spent: funded 200, spent 264.50, so it is
+  # 64.50 in the hole and that money came out of Spendable.
   test "reads an envelope in the hole as overspent", %{conn: conn, scope: scope} do
     {:ok, budget} =
       Budgets.create_budget(scope, %{
         "name" => "Dining out",
         "type" => "envelope",
-        "budgeted_amount" => "200.00"
+        "funding_amount" => "200.00"
       })
 
     {:ok, _transaction} =
@@ -503,33 +446,23 @@ defmodule SpendableWeb.Live.BudgetsTest do
     # The shortfall reads as a positive figure, so the label is what says it is bad. The month
     # picker still reports the month's spending as negative, so this looks at the card itself.
     assert html =~ "OVERSPENT"
-    assert html =~ ~r/text-red-400[^>]*">\s*\$264\.50\s*</
+    assert html =~ ~r/text-red-400[^>]*">\s*\$64\.50\s*</
   end
 
-  # The two amounts are not the same question: one is what spending is measured against, the other
-  # is what the month can actually put in.
-  test "lets an envelope budget one amount and fund another", %{conn: conn, scope: scope} do
-    {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+  # An envelope asks two questions and no more: what goes in each month, and what it holds now.
+  test "offers an envelope only its budget and what remains", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
 
     {:ok, view, _html} = live(conn, ~p"/budgets")
 
-    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+    html = view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
 
-    view
-    |> element(~s(form[phx-submit="submit"]))
-    |> render_submit(%{
-      budget: %{
-        "name" => "Groceries",
-        "type" => "envelope",
-        "budgeted_amount" => "400.00",
-        "funding_amount" => "300.00"
-      }
-    })
-
-    {:ok, saved} = Budgets.get_budget(scope, id: budget.id)
-
-    assert Decimal.eq?(saved.budgeted_amount, "400.00")
-    assert Decimal.eq?(saved.funding_amount, "300.00")
-    assert Decimal.eq?(saved.balance, "300.00")
+    assert html =~ "Budget Per Month"
+    assert html =~ "Remaining"
+    refute html =~ "Budgeted Amount"
+    refute html =~ "Allocated"
+    refute html =~ "Fund Each Month"
+    refute html =~ "Funded This Month"
   end
 end

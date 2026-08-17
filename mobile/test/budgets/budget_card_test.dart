@@ -43,7 +43,6 @@ void main() {
         month: BudgetMonth(
           spent: money(figures['spent'] as String),
           received: money(figures['received'] as String),
-          funded: money(figures['funded'] as String),
         ),
         currentMonth: fixture['current_month'] as bool,
       );

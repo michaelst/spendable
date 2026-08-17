@@ -8,32 +8,32 @@
     {
       "name": "a past month is a record of what was spent",
       "current_month": false,
-      "budget": { "type": "envelope", "balance": "50.00", "budgeted_amount": "200.00", "funding_amount": null },
-      "month": { "spent": "45.50", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "50.00", "budgeted_amount": null, "funding_amount": "200.00" },
+      "month": { "spent": "45.50", "received": "0.00" },
       "card": { "amount": "45.50", "label": "SPENT", "percent": null, "bar": null, "footer": null }
     },
     {
       "name": "a tracking budget only ever reports the spend",
       "current_month": true,
       "budget": { "type": "tracking", "balance": "0.00", "budgeted_amount": null, "funding_amount": null },
-      "month": { "spent": "12.34", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "12.34", "received": "0.00" },
       "card": { "amount": "12.34", "label": "SPENT", "percent": null, "bar": null, "footer": null }
     },
     {
       "name": "an envelope with no amount budgeted has nothing to be a fraction of",
       "current_month": true,
       "budget": { "type": "envelope", "balance": "80.00", "budgeted_amount": null, "funding_amount": null },
-      "month": { "spent": "10.00", "received": "0.00", "funded": "0.00" },
-      "card": { "amount": "80.00", "label": "LEFT", "percent": null, "bar": null, "footer": null }
+      "month": { "spent": "10.00", "received": "0.00" },
+      "card": { "amount": "80.00", "label": "REMAINING", "percent": null, "bar": null, "footer": null }
     },
     {
       "name": "an envelope under budget",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "50.00", "budgeted_amount": "200.00", "funding_amount": null },
-      "month": { "spent": "150.00", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "50.00", "budgeted_amount": null, "funding_amount": "200.00" },
+      "month": { "spent": "150.00", "received": "0.00" },
       "card": {
         "amount": "50.00",
-        "label": "LEFT",
+        "label": "REMAINING",
         "percent": 75.0,
         "bar": "under",
         "footer": "$150.00 of $200.00 spent"
@@ -42,11 +42,11 @@
     {
       "name": "spending exactly the budget is not over it",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "0.00", "budgeted_amount": "200.00", "funding_amount": null },
-      "month": { "spent": "200.00", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "0.00", "budgeted_amount": null, "funding_amount": "200.00" },
+      "month": { "spent": "200.00", "received": "0.00" },
       "card": {
         "amount": "0.00",
-        "label": "LEFT",
+        "label": "REMAINING",
         "percent": 100.0,
         "bar": "under",
         "footer": "$200.00 of $200.00 spent"
@@ -55,8 +55,8 @@
     {
       "name": "an envelope over budget keeps the bar full",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "-25.00", "budgeted_amount": "200.00", "funding_amount": null },
-      "month": { "spent": "225.00", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "-25.00", "budgeted_amount": null, "funding_amount": "200.00" },
+      "month": { "spent": "225.00", "received": "0.00" },
       "card": {
         "amount": "25.00",
         "label": "OVERSPENT",
@@ -68,11 +68,11 @@
     {
       "name": "a budget of zero divides by nothing and is over the moment anything is spent",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "10.00", "budgeted_amount": "0.00", "funding_amount": null },
-      "month": { "spent": "5.00", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "10.00", "budgeted_amount": null, "funding_amount": "0.00" },
+      "month": { "spent": "5.00", "received": "0.00" },
       "card": {
         "amount": "10.00",
-        "label": "LEFT",
+        "label": "REMAINING",
         "percent": 0.0,
         "bar": "over",
         "footer": "$5.00 of $0.00 spent"
@@ -81,11 +81,11 @@
     {
       "name": "a percentage that does not divide evenly rounds to one place",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "100.00", "budgeted_amount": "300.00", "funding_amount": null },
-      "month": { "spent": "200.00", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "100.00", "budgeted_amount": null, "funding_amount": "300.00" },
+      "month": { "spent": "200.00", "received": "0.00" },
       "card": {
         "amount": "100.00",
-        "label": "LEFT",
+        "label": "REMAINING",
         "percent": 66.7,
         "bar": "under",
         "footer": "$200.00 of $300.00 spent"
@@ -94,8 +94,8 @@
     {
       "name": "thousands are grouped on both sides of the footer",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "-1500.75", "budgeted_amount": "1000.00", "funding_amount": null },
-      "month": { "spent": "2500.75", "received": "0.00", "funded": "0.00" },
+      "budget": { "type": "envelope", "balance": "-1500.75", "budgeted_amount": null, "funding_amount": "1000.00" },
+      "month": { "spent": "2500.75", "received": "0.00" },
       "card": {
         "amount": "1500.75",
         "label": "OVERSPENT",
@@ -108,14 +108,14 @@
       "name": "a goal with no target has nothing to go",
       "current_month": true,
       "budget": { "type": "goal", "balance": "500.00", "budgeted_amount": null, "funding_amount": null },
-      "month": { "spent": "0.00", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "0.00" },
       "card": { "amount": "500.00", "label": "SAVED", "percent": null, "bar": null, "footer": "No goal set" }
     },
     {
       "name": "a goal counts down to the target rather than up from zero",
       "current_month": true,
       "budget": { "type": "goal", "balance": "250.00", "budgeted_amount": "1000.00", "funding_amount": null },
-      "month": { "spent": "0.00", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "0.00" },
       "card": {
         "amount": "750.00",
         "label": "TO GO",
@@ -128,7 +128,7 @@
       "name": "saving past the goal goes negative and the bar stops at full",
       "current_month": true,
       "budget": { "type": "goal", "balance": "1200.00", "budgeted_amount": "1000.00", "funding_amount": null },
-      "month": { "spent": "0.00", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "0.00" },
       "card": {
         "amount": "-200.00",
         "label": "TO GO",
@@ -141,7 +141,7 @@
       "name": "a tracking budget with a monthly amount reads like an envelope's bar",
       "current_month": true,
       "budget": { "type": "tracking", "balance": "0.00", "budgeted_amount": "200.00", "funding_amount": null },
-      "month": { "spent": "150.00", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "150.00", "received": "0.00" },
       "card": {
         "amount": "150.00",
         "label": "SPENT",
@@ -154,7 +154,7 @@
       "name": "a tracking budget over its monthly amount",
       "current_month": true,
       "budget": { "type": "tracking", "balance": "0.00", "budgeted_amount": "200.00", "funding_amount": null },
-      "month": { "spent": "225.00", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "225.00", "received": "0.00" },
       "card": {
         "amount": "225.00",
         "label": "SPENT",
@@ -167,14 +167,14 @@
       "name": "an income budget reads as what it took in",
       "current_month": true,
       "budget": { "type": "income", "balance": "0.00", "budgeted_amount": null, "funding_amount": null },
-      "month": { "spent": "0.00", "received": "4200.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "4200.00" },
       "card": { "amount": "4200.00", "label": "EARNED", "percent": null, "bar": null, "footer": null }
     },
     {
       "name": "income short of what the month expected",
       "current_month": true,
       "budget": { "type": "income", "balance": "0.00", "budgeted_amount": "4200.00", "funding_amount": null },
-      "month": { "spent": "0.00", "received": "3150.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "3150.00" },
       "card": {
         "amount": "3150.00",
         "label": "EARNED",
@@ -187,7 +187,7 @@
       "name": "earning past what the month expected stops the bar at full",
       "current_month": true,
       "budget": { "type": "income", "balance": "0.00", "budgeted_amount": "4200.00", "funding_amount": null },
-      "month": { "spent": "0.00", "received": "5000.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "5000.00" },
       "card": {
         "amount": "5000.00",
         "label": "EARNED",
@@ -200,53 +200,27 @@
       "name": "a past month reports what an income budget took in, not what it spent",
       "current_month": false,
       "budget": { "type": "income", "balance": "0.00", "budgeted_amount": "4200.00", "funding_amount": null },
-      "month": { "spent": "0.00", "received": "4200.00", "funded": "0.00" },
+      "month": { "spent": "0.00", "received": "4200.00" },
       "card": { "amount": "4200.00", "label": "EARNED", "percent": null, "bar": null, "footer": null }
     },
     {
       "name": "an envelope says what the month funded it with",
       "current_month": true,
-      "budget": { "type": "envelope", "balance": "160.00", "budgeted_amount": "300.00", "funding_amount": "300.00" },
-      "month": { "spent": "140.00", "received": "0.00", "funded": "300.00" },
+      "budget": { "type": "envelope", "balance": "160.00", "budgeted_amount": null, "funding_amount": "300.00" },
+      "month": { "spent": "140.00", "received": "0.00" },
       "card": {
         "amount": "160.00",
-        "label": "LEFT",
+        "label": "REMAINING",
         "percent": 46.7,
         "bar": "under",
-        "footer": "$300.00 funded \u00b7 $140.00 of $300.00 spent"
-      }
-    },
-    {
-      "name": "a month funded below the usual amount says so",
-      "current_month": true,
-      "budget": { "type": "envelope", "balance": "60.00", "budgeted_amount": "300.00", "funding_amount": "300.00" },
-      "month": { "spent": "140.00", "received": "0.00", "funded": "200.00" },
-      "card": {
-        "amount": "60.00",
-        "label": "LEFT",
-        "percent": 46.7,
-        "bar": "under",
-        "footer": "$200.00 funded \u00b7 $140.00 of $300.00 spent"
-      }
-    },
-    {
-      "name": "an envelope with no amount budgeted still says what went in",
-      "current_month": true,
-      "budget": { "type": "envelope", "balance": "300.00", "budgeted_amount": null, "funding_amount": "300.00" },
-      "month": { "spent": "0.00", "received": "0.00", "funded": "300.00" },
-      "card": {
-        "amount": "300.00",
-        "label": "LEFT",
-        "percent": null,
-        "bar": null,
-        "footer": "$300.00 funded"
+        "footer": "$140.00 of $300.00 spent"
       }
     },
     {
       "name": "a goal saving monthly says what it puts away",
       "current_month": true,
       "budget": { "type": "goal", "balance": "250.00", "budgeted_amount": "1000.00", "funding_amount": "50.00" },
-      "month": { "spent": "0.00", "received": "0.00", "funded": "50.00" },
+      "month": { "spent": "0.00", "received": "0.00" },
       "card": {
         "amount": "750.00",
         "label": "TO GO",
@@ -256,23 +230,10 @@
       }
     },
     {
-      "name": "an envelope that does not roll over is topped back up rather than left short",
-      "current_month": true,
-      "budget": { "type": "envelope", "balance": "300.00", "budgeted_amount": "300.00", "funding_amount": "300.00" },
-      "month": { "spent": "0.00", "received": "0.00", "funded": "350.00" },
-      "card": {
-        "amount": "300.00",
-        "label": "LEFT",
-        "percent": 0.0,
-        "bar": "under",
-        "footer": "$350.00 funded \u00b7 $0.00 of $300.00 spent"
-      }
-    },
-    {
       "name": "an envelope with no budgeted amount still reads as overspent",
       "current_month": true,
       "budget": { "type": "envelope", "balance": "-15.00", "budgeted_amount": null, "funding_amount": null },
-      "month": { "spent": "15.00", "received": "0.00", "funded": "0.00" },
+      "month": { "spent": "15.00", "received": "0.00" },
       "card": { "amount": "15.00", "label": "OVERSPENT", "percent": null, "bar": null, "footer": null }
     }
   ],

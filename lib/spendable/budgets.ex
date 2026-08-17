@@ -10,7 +10,6 @@ defmodule Spendable.Budgets do
   defdelegate archive_budget(scope, budget), to: Actions.ArchiveBudget
   defdelegate find_or_create_spendable_budget(scope), to: Actions.FindOrCreateSpendableBudget
   defdelegate fund_budgets(scope, month), to: Actions.FundBudgets
-  defdelegate update_funding(scope, budget, month, amount), to: Actions.UpdateFunding
   defdelegate calculate_spendable(scope), to: Actions.CalculateSpendable
   defdelegate calculate_funded(scope, budgets, month), to: Actions.CalculateFunded
   defdelegate calculate_received(scope, budgets, month), to: Actions.CalculateReceived

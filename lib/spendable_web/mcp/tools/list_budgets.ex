@@ -24,7 +24,8 @@ defmodule SpendableWeb.MCP.Tools.ListBudgets do
           name: &1.name,
           type: &1.type,
           balance: Decimal.to_string(&1.balance),
-          budgeted_amount: &1.budgeted_amount && Decimal.to_string(&1.budgeted_amount)
+          budgeted_amount: &1.budgeted_amount && Decimal.to_string(&1.budgeted_amount),
+          funding_amount: &1.funding_amount && Decimal.to_string(&1.funding_amount)
         }
       )
 
