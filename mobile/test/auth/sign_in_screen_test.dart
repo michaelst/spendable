@@ -39,6 +39,13 @@ void main() {
     expect(find.byKey(const Key('sign-in-google')), findsOneWidget);
   });
 
+  testWidgets('says what the app promises before asking to sign in', (tester) async {
+    await _pump(tester, identities: FakeIdentityTokens(), api: FakeApi({}));
+
+    expect(find.text('Open source. No ads. Your financial data is never sold.'), findsOneWidget);
+    expect(find.byKey(const Key('privacy-policy')), findsOneWidget);
+  });
+
   testWidgets('tapping a provider signs in with it', (tester) async {
     final identities = FakeIdentityTokens(token: 'id-token');
     final storage = FakeTokenStorage();
