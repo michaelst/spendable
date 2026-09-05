@@ -13,22 +13,28 @@ part 'budget.g.dart';
 ///
 /// Properties:
 /// * [archivedAt] 
-/// * [balance] - What the allocations add up to, or the bank account's balance when assigned.
+/// * [balance] - What the fundings and allocations add up to, or the bank account's balance when assigned. 
 /// * [budgetedAmount] 
+/// * [fundingAmount] - What the budget puts into itself each month. Null means it does not fund itself.
 /// * [id] 
 /// * [name] 
+/// * [rollover] - Whether the balance carries into next month. False means the month tops the budget back up to its funding amount instead, so an overspend does not follow it and leftover does not accumulate. Only an envelope can decline to roll over. 
 /// * [type] 
 @BuiltValue()
 abstract class Budget implements Built<Budget, BudgetBuilder> {
   @BuiltValueField(wireName: r'archived_at')
   DateTime? get archivedAt;
 
-  /// What the allocations add up to, or the bank account's balance when assigned.
+  /// What the fundings and allocations add up to, or the bank account's balance when assigned. 
   @BuiltValueField(wireName: r'balance')
   String get balance;
 
   @BuiltValueField(wireName: r'budgeted_amount')
   String? get budgetedAmount;
+
+  /// What the budget puts into itself each month. Null means it does not fund itself.
+  @BuiltValueField(wireName: r'funding_amount')
+  String? get fundingAmount;
 
   @BuiltValueField(wireName: r'id')
   String get id;
@@ -36,9 +42,13 @@ abstract class Budget implements Built<Budget, BudgetBuilder> {
   @BuiltValueField(wireName: r'name')
   String get name;
 
+  /// Whether the balance carries into next month. False means the month tops the budget back up to its funding amount instead, so an overspend does not follow it and leftover does not accumulate. Only an envelope can decline to roll over. 
+  @BuiltValueField(wireName: r'rollover')
+  bool get rollover;
+
   @BuiltValueField(wireName: r'type')
   BudgetTypeEnum get type;
-  // enum typeEnum {  tracking,  envelope,  goal,  };
+  // enum typeEnum {  tracking,  envelope,  goal,  income,  };
 
   Budget._();
 
@@ -82,6 +92,13 @@ class _$BudgetSerializer implements PrimitiveSerializer<Budget> {
         specifiedType: const FullType.nullable(String),
       );
     }
+    if (object.fundingAmount != null) {
+      yield r'funding_amount';
+      yield serializers.serialize(
+        object.fundingAmount,
+        specifiedType: const FullType.nullable(String),
+      );
+    }
     yield r'id';
     yield serializers.serialize(
       object.id,
@@ -91,6 +108,11 @@ class _$BudgetSerializer implements PrimitiveSerializer<Budget> {
     yield serializers.serialize(
       object.name,
       specifiedType: const FullType(String),
+    );
+    yield r'rollover';
+    yield serializers.serialize(
+      object.rollover,
+      specifiedType: const FullType(bool),
     );
     yield r'type';
     yield serializers.serialize(
@@ -143,6 +165,14 @@ class _$BudgetSerializer implements PrimitiveSerializer<Budget> {
           if (valueDes == null) continue;
           result.budgetedAmount = valueDes;
           break;
+        case r'funding_amount':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType.nullable(String),
+          ) as String?;
+          if (valueDes == null) continue;
+          result.fundingAmount = valueDes;
+          break;
         case r'id':
           final valueDes = serializers.deserialize(
             value,
@@ -156,6 +186,13 @@ class _$BudgetSerializer implements PrimitiveSerializer<Budget> {
             specifiedType: const FullType(String),
           ) as String;
           result.name = valueDes;
+          break;
+        case r'rollover':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool;
+          result.rollover = valueDes;
           break;
         case r'type':
           final valueDes = serializers.deserialize(
@@ -201,6 +238,8 @@ class BudgetTypeEnum extends EnumClass {
   static const BudgetTypeEnum envelope = _$budgetTypeEnum_envelope;
   @BuiltValueEnumConst(wireName: r'goal')
   static const BudgetTypeEnum goal = _$budgetTypeEnum_goal;
+  @BuiltValueEnumConst(wireName: r'income')
+  static const BudgetTypeEnum income = _$budgetTypeEnum_income;
 
   static Serializer<BudgetTypeEnum> get serializer => _$budgetTypeEnumSerializer;
 

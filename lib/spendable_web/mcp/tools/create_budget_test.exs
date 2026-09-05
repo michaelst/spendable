@@ -20,9 +20,9 @@ defmodule SpendableWeb.MCP.Tools.CreateBudgetTest do
   test "creates a budget the user can then list", %{frame: frame, scope: scope} do
     assert {:reply,
             %Response{
-              structured_content: %{budget: %{name: "Groceries", type: :envelope, budgeted_amount: "250.00"}}
+              structured_content: %{budget: %{name: "Groceries", type: :envelope, funding_amount: "250.00"}}
             }, ^frame} =
-             CreateBudget.execute(%{name: "Groceries", budgeted_amount: "250.00"}, frame)
+             CreateBudget.execute(%{name: "Groceries", funding_amount: "250.00"}, frame)
 
     assert [%{name: "Groceries"}] = Budgets.list_budgets(scope)
   end

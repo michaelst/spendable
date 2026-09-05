@@ -9,12 +9,14 @@ import 'package:built_value/serializer.dart';
 
 part 'budget_request.g.dart';
 
-/// Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server works out the adjustment that gets it there, so never send `adjustment`. 
+/// Amounts are decimal strings. `balance` is what the user wants the budget to hold - the server works out the adjustment that gets it there, so never send `adjustment`.  `funding_amount` is what the budget puts into itself each month; setting it is what makes a budget fill on its own instead of being fed by hand. Only an envelope or a goal can hold money, so it is ignored on a tracking or income budget.  `rollover` says whether the balance carries into next month. Send false and each month tops the budget back up to its funding amount instead. Only an envelope can decline to roll over. 
 ///
 /// Properties:
 /// * [balance] 
 /// * [budgetedAmount] 
+/// * [fundingAmount] 
 /// * [name] 
+/// * [rollover] 
 /// * [type] 
 @BuiltValue()
 abstract class BudgetRequest implements Built<BudgetRequest, BudgetRequestBuilder> {
@@ -24,12 +26,18 @@ abstract class BudgetRequest implements Built<BudgetRequest, BudgetRequestBuilde
   @BuiltValueField(wireName: r'budgeted_amount')
   String? get budgetedAmount;
 
+  @BuiltValueField(wireName: r'funding_amount')
+  String? get fundingAmount;
+
   @BuiltValueField(wireName: r'name')
   String? get name;
 
+  @BuiltValueField(wireName: r'rollover')
+  bool? get rollover;
+
   @BuiltValueField(wireName: r'type')
   BudgetRequestTypeEnum? get type;
-  // enum typeEnum {  tracking,  envelope,  goal,  };
+  // enum typeEnum {  tracking,  envelope,  goal,  income,  };
 
   BudgetRequest._();
 
@@ -68,11 +76,25 @@ class _$BudgetRequestSerializer implements PrimitiveSerializer<BudgetRequest> {
         specifiedType: const FullType.nullable(String),
       );
     }
+    if (object.fundingAmount != null) {
+      yield r'funding_amount';
+      yield serializers.serialize(
+        object.fundingAmount,
+        specifiedType: const FullType.nullable(String),
+      );
+    }
     if (object.name != null) {
       yield r'name';
       yield serializers.serialize(
         object.name,
         specifiedType: const FullType(String),
+      );
+    }
+    if (object.rollover != null) {
+      yield r'rollover';
+      yield serializers.serialize(
+        object.rollover,
+        specifiedType: const FullType(bool),
       );
     }
     if (object.type != null) {
@@ -120,12 +142,27 @@ class _$BudgetRequestSerializer implements PrimitiveSerializer<BudgetRequest> {
           if (valueDes == null) continue;
           result.budgetedAmount = valueDes;
           break;
+        case r'funding_amount':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType.nullable(String),
+          ) as String?;
+          if (valueDes == null) continue;
+          result.fundingAmount = valueDes;
+          break;
         case r'name':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(String),
           ) as String;
           result.name = valueDes;
+          break;
+        case r'rollover':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(bool),
+          ) as bool;
+          result.rollover = valueDes;
           break;
         case r'type':
           final valueDes = serializers.deserialize(
@@ -171,6 +208,8 @@ class BudgetRequestTypeEnum extends EnumClass {
   static const BudgetRequestTypeEnum envelope = _$budgetRequestTypeEnum_envelope;
   @BuiltValueEnumConst(wireName: r'goal')
   static const BudgetRequestTypeEnum goal = _$budgetRequestTypeEnum_goal;
+  @BuiltValueEnumConst(wireName: r'income')
+  static const BudgetRequestTypeEnum income = _$budgetRequestTypeEnum_income;
 
   static Serializer<BudgetRequestTypeEnum> get serializer => _$budgetRequestTypeEnumSerializer;
 

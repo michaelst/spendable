@@ -6,16 +6,21 @@ defmodule Spendable.Budgets.Utils.CalculateBalances do
   alias Spendable.Banks.Schemas.BankAccount
   alias Spendable.Budgets.Schemas.Budget
   alias Spendable.Budgets.Schemas.BudgetAllocation
+  alias Spendable.Budgets.Schemas.Funding
   alias Spendable.Repo
 
   @zero Decimal.new("0.00")
 
   @doc """
-  Fills in the virtual balance for a list of budgets in two queries rather than one per budget.
+  Fills in the virtual balance for a list of budgets in three queries rather than one per budget.
 
   A budget backed by a bank account reports that account's balance; every other budget reports
-  what its allocations add up to, plus its manual adjustment. Allocations belonging to an
-  excluded transaction or to a transfer are left out: neither is money the budget spent.
+  what it has been funded, plus what its allocations add up to, plus its manual adjustment.
+  Funding is what the budget was given and allocations are what it then spent, so a budget funded
+  300 that spent 140 reads as 160 left, and one that spent 350 reads as 50 short.
+
+  Allocations belonging to an excluded transaction or to a transfer are left out: neither is money
+  the budget spent.
   """
   def calculate_balance(%Budget{} = budget) do
     [budget] = calculate_balances([budget])
@@ -48,10 +53,23 @@ defmodule Spendable.Budgets.Utils.CalculateBalances do
       |> Repo.all()
       |> Map.new()
 
-    Enum.map(budgets, fn budget ->
-      from_allocations = allocated |> Map.get(budget.id, @zero) |> Decimal.add(budget.adjustment)
+    funded =
+      from(funding in Funding,
+        select: {funding.budget_id, sum(funding.amount)},
+        group_by: funding.budget_id,
+        where: funding.budget_id in ^budget_ids
+      )
+      |> Repo.all()
+      |> Map.new()
 
-      %{budget | balance: Map.get(bank_balances, budget.id, from_allocations)}
+    Enum.map(budgets, fn budget ->
+      from_the_ledger =
+        allocated
+        |> Map.get(budget.id, @zero)
+        |> Decimal.add(Map.get(funded, budget.id, @zero))
+        |> Decimal.add(budget.adjustment)
+
+      %{budget | balance: Map.get(bank_balances, budget.id, from_the_ledger)}
     end)
   end
 end

@@ -16,7 +16,7 @@ defmodule Spendable.Budgets.Actions.CalculateMonthSummaryTest do
       Budgets.create_budget(scope, %{
         "name" => "Groceries",
         "type" => "envelope",
-        "budgeted_amount" => "400.00"
+        "funding_amount" => "400.00"
       })
 
     {:ok, transaction} =
@@ -40,7 +40,7 @@ defmodule Spendable.Budgets.Actions.CalculateMonthSummaryTest do
 
     assert Decimal.eq?(summary.allocated_total, "400.00")
     assert Decimal.eq?(summary.spent_total, "30.00")
-    assert Decimal.eq?(summary.spent[budget_id], "-30.00")
+    assert Decimal.eq?(summary.spent[budget_id], "30.00")
   end
 
   test "any date in a month selects that whole month", %{scope: scope} do
@@ -82,7 +82,7 @@ defmodule Spendable.Budgets.Actions.CalculateMonthSummaryTest do
     summary = Budgets.calculate_month_summary(scope, ~D[2026-08-15])
 
     assert Decimal.eq?(summary.spent_total, "30.00")
-    assert Decimal.eq?(summary.spent[tracked_id], "-50.00")
+    assert Decimal.eq?(summary.spent[tracked_id], "50.00")
   end
 
   test "narrows the budgets to a search", %{scope: scope} do

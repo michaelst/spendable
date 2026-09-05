@@ -16,7 +16,15 @@ class _$BudgetSummary extends BudgetSummary {
   @override
   final bool currentMonth;
   @override
+  final String earnedTotal;
+  @override
+  final BuiltMap<String, String> funded;
+  @override
+  final String fundedTotal;
+  @override
   final Date month;
+  @override
+  final BuiltMap<String, String> received;
   @override
   final String spendable;
   @override
@@ -34,7 +42,11 @@ class _$BudgetSummary extends BudgetSummary {
       required this.budgets,
       required this.creditCardBalance,
       required this.currentMonth,
+      required this.earnedTotal,
+      required this.funded,
+      required this.fundedTotal,
       required this.month,
+      required this.received,
       required this.spendable,
       required this.spent,
       required this.spentByMonth,
@@ -55,7 +67,11 @@ class _$BudgetSummary extends BudgetSummary {
         budgets == other.budgets &&
         creditCardBalance == other.creditCardBalance &&
         currentMonth == other.currentMonth &&
+        earnedTotal == other.earnedTotal &&
+        funded == other.funded &&
+        fundedTotal == other.fundedTotal &&
         month == other.month &&
+        received == other.received &&
         spendable == other.spendable &&
         spent == other.spent &&
         spentByMonth == other.spentByMonth &&
@@ -69,7 +85,11 @@ class _$BudgetSummary extends BudgetSummary {
     _$hash = $jc(_$hash, budgets.hashCode);
     _$hash = $jc(_$hash, creditCardBalance.hashCode);
     _$hash = $jc(_$hash, currentMonth.hashCode);
+    _$hash = $jc(_$hash, earnedTotal.hashCode);
+    _$hash = $jc(_$hash, funded.hashCode);
+    _$hash = $jc(_$hash, fundedTotal.hashCode);
     _$hash = $jc(_$hash, month.hashCode);
+    _$hash = $jc(_$hash, received.hashCode);
     _$hash = $jc(_$hash, spendable.hashCode);
     _$hash = $jc(_$hash, spent.hashCode);
     _$hash = $jc(_$hash, spentByMonth.hashCode);
@@ -85,7 +105,11 @@ class _$BudgetSummary extends BudgetSummary {
           ..add('budgets', budgets)
           ..add('creditCardBalance', creditCardBalance)
           ..add('currentMonth', currentMonth)
+          ..add('earnedTotal', earnedTotal)
+          ..add('funded', funded)
+          ..add('fundedTotal', fundedTotal)
           ..add('month', month)
+          ..add('received', received)
           ..add('spendable', spendable)
           ..add('spent', spent)
           ..add('spentByMonth', spentByMonth)
@@ -116,9 +140,28 @@ class BudgetSummaryBuilder
   bool? get currentMonth => _$this._currentMonth;
   set currentMonth(bool? currentMonth) => _$this._currentMonth = currentMonth;
 
+  String? _earnedTotal;
+  String? get earnedTotal => _$this._earnedTotal;
+  set earnedTotal(String? earnedTotal) => _$this._earnedTotal = earnedTotal;
+
+  MapBuilder<String, String>? _funded;
+  MapBuilder<String, String> get funded =>
+      _$this._funded ??= MapBuilder<String, String>();
+  set funded(MapBuilder<String, String>? funded) => _$this._funded = funded;
+
+  String? _fundedTotal;
+  String? get fundedTotal => _$this._fundedTotal;
+  set fundedTotal(String? fundedTotal) => _$this._fundedTotal = fundedTotal;
+
   Date? _month;
   Date? get month => _$this._month;
   set month(Date? month) => _$this._month = month;
+
+  MapBuilder<String, String>? _received;
+  MapBuilder<String, String> get received =>
+      _$this._received ??= MapBuilder<String, String>();
+  set received(MapBuilder<String, String>? received) =>
+      _$this._received = received;
 
   String? _spendable;
   String? get spendable => _$this._spendable;
@@ -150,7 +193,11 @@ class BudgetSummaryBuilder
       _budgets = $v.budgets.toBuilder();
       _creditCardBalance = $v.creditCardBalance;
       _currentMonth = $v.currentMonth;
+      _earnedTotal = $v.earnedTotal;
+      _funded = $v.funded.toBuilder();
+      _fundedTotal = $v.fundedTotal;
       _month = $v.month;
+      _received = $v.received.toBuilder();
       _spendable = $v.spendable;
       _spent = $v.spent.toBuilder();
       _spentByMonth = $v.spentByMonth.toBuilder();
@@ -185,8 +232,14 @@ class BudgetSummaryBuilder
                 creditCardBalance, r'BudgetSummary', 'creditCardBalance'),
             currentMonth: BuiltValueNullFieldError.checkNotNull(
                 currentMonth, r'BudgetSummary', 'currentMonth'),
+            earnedTotal: BuiltValueNullFieldError.checkNotNull(
+                earnedTotal, r'BudgetSummary', 'earnedTotal'),
+            funded: funded.build(),
+            fundedTotal: BuiltValueNullFieldError.checkNotNull(
+                fundedTotal, r'BudgetSummary', 'fundedTotal'),
             month: BuiltValueNullFieldError.checkNotNull(
                 month, r'BudgetSummary', 'month'),
+            received: received.build(),
             spendable: BuiltValueNullFieldError.checkNotNull(
                 spendable, r'BudgetSummary', 'spendable'),
             spent: spent.build(),
@@ -199,6 +252,12 @@ class BudgetSummaryBuilder
       try {
         _$failedField = 'budgets';
         budgets.build();
+
+        _$failedField = 'funded';
+        funded.build();
+
+        _$failedField = 'received';
+        received.build();
 
         _$failedField = 'spent';
         spent.build();

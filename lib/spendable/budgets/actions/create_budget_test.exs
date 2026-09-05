@@ -47,6 +47,51 @@ defmodule Spendable.Budgets.Actions.CreateBudgetTest do
     assert Decimal.eq?(budgeted_amount, "500.00")
   end
 
+  test "accepts a funding amount", %{scope: scope} do
+    assert {:ok, %Budget{funding_amount: funding_amount}} =
+             Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
+
+    assert Decimal.eq?(funding_amount, "300.00")
+  end
+
+  test "leaves the funding amount unset, so a budget does not fund itself by default", %{scope: scope} do
+    assert {:ok, %Budget{funding_amount: nil}} = Budgets.create_budget(scope, %{"name" => "Groceries"})
+  end
+
+  test "accepts the income type, for money arriving", %{scope: scope} do
+    assert {:ok, %Budget{type: :income}} =
+             Budgets.create_budget(scope, %{"name" => "Card Rewards", "type" => "income"})
+  end
+
+  test "fills itself straight away when it funds itself", %{scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
+
+    assert Decimal.eq?(budget.balance, "300.00")
+  end
+
+  test "refuses a funding amount on a budget that keeps no balance", %{scope: scope} do
+    for type <- ["tracking", "income"] do
+      assert {:ok, %Budget{funding_amount: nil}} =
+               Budgets.create_budget(scope, %{
+                 "name" => "Rewards #{type}",
+                 "type" => type,
+                 "funding_amount" => "300.00"
+               })
+    end
+  end
+
+  test "accepts a budgeted amount on a tracking budget", %{scope: scope} do
+    assert {:ok, %Budget{type: :tracking, budgeted_amount: budgeted_amount}} =
+             Budgets.create_budget(scope, %{
+               "name" => "Dining",
+               "type" => "tracking",
+               "budgeted_amount" => "200.00"
+             })
+
+    assert Decimal.eq?(budgeted_amount, "200.00")
+  end
+
   test "comes back with its balance filled in", %{scope: scope} do
     {:ok, budget} = Budgets.create_budget(scope, %{"name" => "Holiday", "balance" => "500.00"})
 

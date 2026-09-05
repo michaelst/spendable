@@ -18,7 +18,12 @@ config :spendable,
 
 config :spendable, Oban,
   repo: Spendable.Repo,
-  queues: [banks: 5]
+  queues: [banks: 5, budgets: 1],
+  plugins: [
+    # Daily rather than monthly: funding a month is idempotent, so a missed run heals itself the
+    # next day instead of leaving the month unfunded until someone notices.
+    {Oban.Plugins.Cron, crontab: [{"0 4 * * *", Spendable.Budgets.Jobs.FundBudgets}]}
+  ]
 
 config :spendable, Spendable.Repo,
   migration_primary_key: [type: :text],

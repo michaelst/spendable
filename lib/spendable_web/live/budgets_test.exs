@@ -111,7 +111,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
       Budgets.create_budget(scope, %{
         "name" => "Groceries",
         "type" => "envelope",
-        "budgeted_amount" => "650.00"
+        "funding_amount" => "650.00"
       })
 
     {:ok, _transaction} =
@@ -124,11 +124,11 @@ defmodule SpendableWeb.Live.BudgetsTest do
 
     {:ok, _view, html} = live(conn, ~p"/budgets")
 
-    assert html =~ "LEFT"
+    assert html =~ "REMAINING"
     assert html =~ "$488.12 of $650.00 spent"
-    # The month summary pairs what the envelopes hold against what went out of them.
-    assert html =~ "Allocated"
-    assert html =~ "$650.00"
+    # The month summary pairs what went into the envelopes against what went out of them.
+    assert html =~ "Funded"
+    assert html =~ "Earned"
     assert html =~ "$488.12"
   end
 
@@ -138,7 +138,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
       Budgets.create_budget(scope, %{
         "name" => "Dining out",
         "type" => "envelope",
-        "budgeted_amount" => "200.00"
+        "funding_amount" => "200.00"
       })
 
     {:ok, _transaction} =
@@ -195,7 +195,7 @@ defmodule SpendableWeb.Live.BudgetsTest do
       Budgets.create_budget(scope, %{
         "name" => "Gifts",
         "type" => "envelope",
-        "budgeted_amount" => "0.00"
+        "funding_amount" => "0.00"
       })
 
     {:ok, _view, html} = live(conn, ~p"/budgets")
@@ -303,5 +303,193 @@ defmodule SpendableWeb.Live.BudgetsTest do
     conn = Plug.Test.init_test_session(build_conn(), %{})
 
     assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/budgets")
+  end
+
+  test "sets an envelope to fund itself each month", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{"name" => "Groceries", "budgeted_amount" => "300.00"})
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+
+    view
+    |> element(~s(form[phx-submit="submit"]))
+    |> render_submit(%{
+      budget: %{
+        "name" => "Groceries",
+        "type" => "envelope",
+        "budgeted_amount" => "300.00",
+        "funding_amount" => "300.00"
+      }
+    })
+
+    {:ok, funded} = Budgets.get_budget(scope, id: budget.id)
+
+    assert Decimal.eq?(funded.funding_amount, "300.00")
+    assert Decimal.eq?(funded.balance, "300.00")
+  end
+
+  test "stops funding an envelope without unpicking what it already holds", %{
+    conn: conn,
+    scope: scope
+  } do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Groceries",
+        "budgeted_amount" => "300.00",
+        "funding_amount" => "300.00"
+      })
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+
+    view
+    |> element(~s(form[phx-submit="submit"]))
+    |> render_submit(%{
+      budget: %{
+        "name" => "Groceries",
+        "type" => "envelope",
+        "budgeted_amount" => "300.00",
+        "funding_amount" => ""
+      }
+    })
+
+    {:ok, stopped} = Budgets.get_budget(scope, id: budget.id)
+
+    assert is_nil(stopped.funding_amount)
+    assert Decimal.eq?(stopped.balance, "300.00")
+  end
+
+  test "reads an income budget as what it took in", %{conn: conn, scope: scope} do
+    {:ok, salary} =
+      Budgets.create_budget(scope, %{
+        "name" => "Salary",
+        "type" => "income",
+        "budgeted_amount" => "4200.00"
+      })
+
+    {:ok, _paycheck} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "4200.00",
+        "date" => Date.utc_today(),
+        "name" => "Payday",
+        "budget_allocations" => %{"0" => %{"amount" => "4200.00", "budget_id" => salary.id}}
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    assert html =~ "EARNED"
+    assert html =~ "$4,200.00 of $4,200.00 received"
+  end
+
+  test "asks a tracking budget for a limit and an income budget for what it expects", %{conn: conn} do
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    view |> element("#new-budget") |> render_click()
+
+    tracking =
+      view
+      |> element(~s(form[phx-submit="submit"]))
+      |> render_change(%{budget: %{"name" => "Fuel", "type" => "tracking"}})
+
+    assert tracking =~ "Monthly Limit"
+    refute tracking =~ "Allocated"
+
+    income =
+      view
+      |> element(~s(form[phx-submit="submit"]))
+      |> render_change(%{budget: %{"name" => "Salary", "type" => "income"}})
+
+    assert income =~ "Expected Each Month"
+    refute income =~ "Allocated"
+  end
+
+  test "asks a goal for its target and its monthly contribution", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Holiday",
+        "type" => "goal",
+        "budgeted_amount" => "2000.00"
+      })
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    html = view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+
+    assert html =~ "Goal Amount"
+    assert html =~ "Monthly Contribution"
+    refute html =~ "Fund automatically each month"
+  end
+
+  # An envelope holds what it was funded less what it spent: funded 200, spent 264.50, so it is
+  # 64.50 in the hole and that money came out of Spendable.
+  test "reads an envelope in the hole as overspent", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{
+        "name" => "Dining out",
+        "type" => "envelope",
+        "funding_amount" => "200.00"
+      })
+
+    {:ok, _transaction} =
+      Transactions.create_transaction(scope, %{
+        "amount" => "-264.50",
+        "date" => Date.utc_today(),
+        "name" => "Dinner",
+        "budget_allocations" => %{"0" => %{"amount" => "-264.50", "budget_id" => budget.id}}
+      })
+
+    {:ok, _view, html} = live(conn, ~p"/budgets")
+
+    # The shortfall reads as a positive figure, so the label is what says it is bad. The month
+    # picker still reports the month's spending as negative, so this looks at the card itself.
+    assert html =~ "OVERSPENT"
+    assert html =~ ~r/text-red-400[^>]*">\s*\$64\.50\s*</
+  end
+
+  # An envelope asks two questions and no more: what goes in each month, and what it holds now.
+  test "offers an envelope only its budget and what remains", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    html = view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+
+    assert html =~ "Budget Per Month"
+    assert html =~ "Remaining"
+    refute html =~ "Budgeted Amount"
+    refute html =~ "Allocated"
+    refute html =~ "Fund Each Month"
+    refute html =~ "Funded This Month"
+  end
+
+  # Ecto records no change when the posted type matches what is stored, so the form falls back to
+  # the raw param - a string. Comparing that to an atom hid every envelope field.
+  test "keeps the envelope fields while the form is being typed into", %{conn: conn, scope: scope} do
+    {:ok, budget} =
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "300.00"})
+
+    {:ok, view, _html} = live(conn, ~p"/budgets")
+
+    view |> element(~s(button[phx-value-id="#{budget.id}"])) |> render_click()
+
+    html =
+      view
+      |> element(~s(form[phx-submit="submit"]))
+      |> render_change(%{
+        budget: %{
+          "name" => "Groceries",
+          "type" => "envelope",
+          "funding_amount" => "300.00",
+          "balance" => "-19"
+        }
+      })
+
+    assert html =~ "Budget Per Month"
+    assert html =~ "Remaining"
+    refute html =~ "Budgeted Amount"
   end
 end

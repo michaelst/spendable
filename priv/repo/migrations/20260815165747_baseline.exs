@@ -17,8 +17,8 @@ defmodule Spendable.Repo.Migrations.Baseline do
 
     create table(:budgets) do
       add :name, :citext, null: false
-      add :adjustment, :numeric, null: false, default: 0.00
-      add :budgeted_amount, :numeric
+      add :adjustment, :decimal, null: false, default: 0.00
+      add :budgeted_amount, :decimal
       add :type, :text, null: false, default: "envelope"
       add :archived_at, :utc_datetime_usec
       add :user_id, references(:users), null: false
@@ -46,7 +46,7 @@ defmodule Spendable.Repo.Migrations.Baseline do
 
     create table(:bank_accounts) do
       add :external_id, :text, null: false
-      add :balance, :numeric, null: false
+      add :balance, :decimal, null: false
       add :name, :text, null: false
       add :number, :text
       add :sub_type, :text, null: false
@@ -64,7 +64,7 @@ defmodule Spendable.Repo.Migrations.Baseline do
 
     create table(:bank_transactions) do
       add :external_id, :text, null: false
-      add :amount, :numeric, precision: 17, scale: 2, null: false
+      add :amount, :decimal, precision: 17, scale: 2, null: false
       add :date, :date, null: false
       add :name, :text, null: false
       add :pending, :boolean, null: false
@@ -79,7 +79,7 @@ defmodule Spendable.Repo.Migrations.Baseline do
     create index(:bank_transactions, [:user_id])
 
     create table(:transactions) do
-      add :amount, :numeric, null: false
+      add :amount, :decimal, null: false
       add :date, :date, null: false
       add :name, :citext, null: false
       add :note, :citext
@@ -95,7 +95,7 @@ defmodule Spendable.Repo.Migrations.Baseline do
     create index(:transactions, [:user_id])
 
     create table(:budget_allocations) do
-      add :amount, :numeric, precision: 17, scale: 2, null: false
+      add :amount, :decimal, precision: 17, scale: 2, null: false
       add :user_id, references(:users), null: false
       add :budget_id, references(:budgets), null: false
       add :transaction_id, references(:transactions, on_delete: :delete_all), null: false
@@ -118,7 +118,7 @@ defmodule Spendable.Repo.Migrations.Baseline do
     create index(:budget_allocation_templates, [:user_id])
 
     create table(:budget_allocation_template_lines) do
-      add :amount, :numeric, precision: 17, scale: 2, null: false
+      add :amount, :decimal, precision: 17, scale: 2, null: false
       add :user_id, references(:users), null: false
       add :budget_id, references(:budgets), null: false
 

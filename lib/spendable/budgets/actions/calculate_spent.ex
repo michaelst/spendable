@@ -1,46 +1,37 @@
 defmodule Spendable.Budgets.Actions.CalculateSpent do
   @moduledoc false
 
-  import Ecto.Query
+  import Spendable.Budgets.Utils.SumAllocations
 
-  alias Spendable.Budgets.Schemas.BudgetAllocation
-  alias Spendable.Repo
   alias Spendable.Scope
-  alias Spendable.Transactions.Schemas.Transaction
 
   @zero Decimal.new("0.00")
 
   @doc """
   What each of the given budgets was spent against in one month, keyed by budget id.
 
-  Only outgoing allocations count as spending, and an excluded transaction never does. Returns a
-  map rather than decorating the budgets: spending belongs to a month, not to a budget, so a
-  budget struct is the wrong place to keep it. Every id asked for comes back, at zero if unspent.
+  Every positive allocation reduces spending: money coming back to a budget cancels money that
+  went out of it, so a reimbursement settles the spend it repays and a refund reduces it. That
+  holds whatever the money was - a budget records what it is left holding, not where the money
+  came from.
+
+  An income budget records money arriving and never spends, so it is left out entirely and comes
+  back at zero. `calculate_received/3` is what reads those. An excluded transaction never counts.
+
+  Returns a map rather than decorating the budgets: spending belongs to a month, not to a budget,
+  so a budget struct is the wrong place to keep it. Every id asked for comes back, at zero if
+  nothing moved.
   """
   def calculate_spent(_scope, [], _month), do: %{}
 
   def calculate_spent(%Scope{user: %{id: user_id}}, budgets, month) do
-    start_date = Date.beginning_of_month(month)
-    end_date = Date.end_of_month(month)
-    budget_ids = Enum.map(budgets, & &1.id)
+    spending = Enum.reject(budgets, &(&1.type == :income))
 
     spent =
-      from(allocation in BudgetAllocation,
-        join: transaction in Transaction,
-        on: allocation.transaction_id == transaction.id,
-        select: {allocation.budget_id, coalesce(sum(allocation.amount), ^@zero)},
-        where: allocation.user_id == ^user_id,
-        where: allocation.budget_id in ^budget_ids,
-        where: transaction.date >= ^start_date,
-        where: transaction.date <= ^end_date,
-        where: not transaction.excluded,
-        where: is_nil(transaction.transfer_id),
-        where: allocation.amount < 0,
-        group_by: allocation.budget_id
-      )
-      |> Repo.all()
-      |> Map.new()
+      user_id
+      |> sum_allocations(Enum.map(spending, & &1.id), month)
+      |> Map.new(fn {budget_id, net} -> {budget_id, Decimal.negate(net)} end)
 
-    Map.new(budget_ids, &{&1, Map.get(spent, &1, @zero)})
+    Map.new(budgets, &{&1.id, Map.get(spent, &1.id, @zero)})
   end
 end

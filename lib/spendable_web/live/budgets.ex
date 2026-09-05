@@ -81,9 +81,15 @@ defmodule SpendableWeb.Live.Budgets do
             </p>
           </div>
           <div class="ml-auto flex items-end gap-x-10 text-right">
+            <!-- Earned beside Funded is the check the whole method rests on: budgets that promise
+            more each month than the month brings in are the thing worth noticing. -->
+            <div>
+              <p class="text-2xl font-semibold text-white">{Utils.format_currency(@earned_total)}</p>
+              <p class="text-xs uppercase tracking-wide text-gray-400">Earned</p>
+            </div>
             <div :if={@current_month_is_selected}>
-              <p class="text-2xl font-semibold text-white">{Utils.format_currency(@allocated_total)}</p>
-              <p class="text-xs uppercase tracking-wide text-gray-400">Allocated</p>
+              <p class="text-2xl font-semibold text-white">{Utils.format_currency(@funded_total)}</p>
+              <p class="text-xs uppercase tracking-wide text-gray-400">Funded</p>
             </div>
             <div>
               <p class="text-2xl font-semibold text-white">{Utils.format_currency(@spent_total)}</p>
@@ -123,7 +129,7 @@ defmodule SpendableWeb.Live.Budgets do
             <div class="mt-4">
               <p class={[
                 "text-3xl font-semibold",
-                if(Decimal.negative?(card.amount), do: "text-red-400", else: "text-white")
+                amount_class(card)
               ]}>
                 {Utils.format_currency(card.amount)}
               </p>
@@ -161,15 +167,49 @@ defmodule SpendableWeb.Live.Budgets do
               type="select"
               label="Budget Type"
               field={f[:type]}
-              options={[{"Envelope", :envelope}, {"Goal", :goal}, {"Track Spending Only", :tracking}]}
+              options={[
+                {"Envelope", :envelope},
+                {"Goal", :goal},
+                {"Income", :income},
+                {"Track Spending Only", :tracking}
+              ]}
+            />
+            <!-- An envelope has one amount: what a month puts in, which is also what its
+            spending is read against. Two numbers for one idea is what confused the card. -->
+            <.input
+              :if={budget_type(f) == :envelope}
+              type="text"
+              label="Budget Per Month"
+              field={f[:funding_amount]}
             />
             <.input
-              :if={f[:type].value != :tracking}
+              :if={budget_type(f) != :envelope}
               type="text"
-              label={if f[:type].value == :envelope, do: "Budgeted Amount", else: "Goal Amount"}
+              label={amount_label(budget_type(f))}
               field={f[:budgeted_amount]}
             />
-            <.input :if={f[:type].value != :tracking} type="text" label="Allocated" field={f[:balance]} />
+            <.input
+              :if={budget_type(f) == :goal}
+              type="text"
+              label="Monthly Contribution"
+              field={f[:funding_amount]}
+            />
+            <!-- Named for what the card calls it, so the figure the user reads and the figure they
+            correct are plainly the same one. -->
+            <.input
+              :if={budget_type(f) in [:envelope, :goal]}
+              type="text"
+              label={if budget_type(f) == :envelope, do: "Remaining", else: "Allocated"}
+              field={f[:balance]}
+            />
+            <!-- Off means the month tops the envelope back up to its amount, so an overspend does
+            not follow it into the next month and leftover does not pile up. -->
+            <.input
+              :if={budget_type(f) == :envelope}
+              type="checkbox"
+              label="Carry the balance into next month"
+              field={f[:rollover]}
+            />
             <button
               :if={@changeset.data.id}
               id="archive"
@@ -275,8 +315,9 @@ defmodule SpendableWeb.Live.Budgets do
     |> assign(:spent_by_month, summary.spent_by_month)
     |> assign(:selected_month, selected_month)
     |> assign(:budgets, listed)
-    |> assign(:cards, build_cards(listed, summary.spent, summary.current_month))
-    |> assign(:allocated_total, summary.allocated_total)
+    |> assign(:cards, build_cards(listed, summary, summary.current_month))
+    |> assign(:funded_total, summary.funded_total)
+    |> assign(:earned_total, summary.earned_total)
     |> assign(:spent_total, summary.spent_total)
     |> assign(:current_month_is_selected, summary.current_month)
     |> assign(:changeset, nil)
@@ -302,24 +343,30 @@ defmodule SpendableWeb.Live.Budgets do
   end
 
   # Envelopes, then what is only tracked, alphabetical inside each. Grouping them by what they are
-  # does the work a heading over each group would, without the headings. Goals go last: a goal is
-  # money going in rather than out, so it is not what the month is about.
+  # does the work a heading over each group would, without the headings. Income and goals go last:
+  # both are money going in rather than out, so neither is what the month is about.
   defp by_type(budgets), do: Enum.sort_by(budgets, &{type_order(&1.type), &1.name})
 
   defp type_order(:envelope), do: 0
   defp type_order(:tracking), do: 1
-  defp type_order(:goal), do: 2
+  defp type_order(:income), do: 2
+  defp type_order(:goal), do: 3
 
-  defp build_cards(budgets, spent, current_month_is_selected) do
+  defp build_cards(budgets, summary, current_month_is_selected) do
     Enum.map(budgets, fn budget ->
-      spent_here = spent |> Map.get(budget.id, Decimal.new(0)) |> Decimal.abs()
+      month = %{
+        spent: figure(summary.spent, budget.id),
+        received: figure(summary.received, budget.id)
+      }
+
       credit_cards? = is_nil(budget.id)
-      card = build_budget_card(budget, spent_here, current_month_is_selected)
+      card = build_budget_card(budget, month, current_month_is_selected)
 
       # Card debt is not an envelope with something left in it, it is what is owed right now, and
       # the pill calling it one is only there to satisfy the card it is built from.
       Map.merge(card, %{
         budget: budget,
+        amount: if(credit_cards?, do: budget.balance, else: card.amount),
         label: if(credit_cards?, do: "BALANCE", else: card.label),
         pill: if(credit_cards?, do: nil, else: pill(budget.type)),
         pill_class: pill_class(budget.type),
@@ -329,15 +376,43 @@ defmodule SpendableWeb.Live.Budgets do
   end
 
   # Only reached when there is a percent to draw, and a card has a bar exactly when it has one.
+  # The synthetic Credit Cards row has no id, so it is in none of the month's maps.
+  defp figure(figures, budget_id), do: Map.get(figures, budget_id, Decimal.new("0.00"))
+
+  # An overspend reads as a positive figure, so the label is what says it is bad rather than a
+  # minus sign.
+  defp amount_class(%{label: "OVERSPENT"}), do: "text-red-400"
+
+  defp amount_class(%{amount: amount}) do
+    if Decimal.negative?(amount), do: "text-red-400", else: "text-white"
+  end
+
+  # The select posts a string, and Ecto records no change when it matches what is stored, so the
+  # form falls back to that raw string rather than the cast atom. Comparing the two hid every field.
+  defp budget_type(form) do
+    Ecto.Enum.values(Budget, :type)
+    |> Enum.find(:envelope, &(to_string(&1) == to_string(form[:type].value)))
+  end
+
+  # Only reached by the types that keep a budgeted amount; an envelope has none to label.
+  defp amount_label(:goal), do: "Goal Amount"
+  defp amount_label(:income), do: "Expected Each Month"
+  defp amount_label(:tracking), do: "Monthly Limit"
+
   defp bar_class("over"), do: "bg-red-500"
   defp bar_class("under"), do: "bg-blue-500"
   defp bar_class("goal"), do: "bg-green-500"
+  defp bar_class("income"), do: "bg-emerald-400"
 
   defp pill(:tracking), do: "Tracking"
   defp pill(:envelope), do: "Envelope"
   defp pill(:goal), do: "Goal"
+  defp pill(:income), do: "Income"
 
   defp pill_class(:tracking), do: "text-gray-400 bg-gray-400/10 ring-gray-400/20 group-hover:ring-gray-400/50"
   defp pill_class(:envelope), do: "text-blue-400 bg-blue-400/10 ring-blue-400/20 group-hover:ring-blue-400/50"
   defp pill_class(:goal), do: "text-green-400 bg-green-400/10 ring-green-400/20 group-hover:ring-green-400/50"
+
+  defp pill_class(:income),
+    do: "text-emerald-400 bg-emerald-400/10 ring-emerald-400/20 group-hover:ring-emerald-400/50"
 end

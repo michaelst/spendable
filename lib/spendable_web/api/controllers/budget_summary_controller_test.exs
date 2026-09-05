@@ -22,7 +22,7 @@ defmodule SpendableWeb.Api.BudgetSummaryControllerTest do
       Budgets.create_budget(scope, %{
         "name" => "Groceries",
         "type" => "envelope",
-        "budgeted_amount" => "400.00"
+        "funding_amount" => "400.00"
       })
 
     {:ok, transaction} =
@@ -50,7 +50,7 @@ defmodule SpendableWeb.Api.BudgetSummaryControllerTest do
              "month" => "2026-08-01",
              "allocated_total" => "400.00",
              "spent_total" => "30.00",
-             "spent" => %{^budget_id => "-30.00"}
+             "spent" => %{^budget_id => "30.00"}
            } = response
 
     assert_schema(response, "BudgetSummary", @api_spec)
@@ -72,7 +72,7 @@ defmodule SpendableWeb.Api.BudgetSummaryControllerTest do
     assert %{
              "budgets" => [
                %{"name" => "Spendable"},
-               %{"name" => "Groceries", "budgeted_amount" => "400.00", "balance" => "-30.00"}
+               %{"name" => "Groceries", "funding_amount" => "400.00", "balance" => "370.00"}
              ]
            } = conn |> get(~p"/api/budgets/summary?month=2026-08-01") |> json_response(200)
   end

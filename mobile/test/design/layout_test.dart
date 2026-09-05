@@ -22,6 +22,8 @@ class _Api implements HttpClientAdapter {
         'current_month': true,
         'spendable': '1284.55',
         'allocated_total': '4200.00',
+        'funded_total': '4200.00',
+        'earned_total': '5100.00',
         'spent_total': '2915.45',
         'credit_card_balance': '1204.66',
         'budgets': [
@@ -31,6 +33,7 @@ class _Api implements HttpClientAdapter {
             'type': 'envelope',
             'balance': '142.18',
             'budgeted_amount': '500.00',
+            'rollover': true,
             'archived_at': null,
           },
           {
@@ -39,6 +42,7 @@ class _Api implements HttpClientAdapter {
             'type': 'envelope',
             'balance': '-63.40',
             'budgeted_amount': '200.00',
+            'rollover': true,
             'archived_at': null,
           },
           {
@@ -47,6 +51,7 @@ class _Api implements HttpClientAdapter {
             'type': 'goal',
             'balance': '1500.00',
             'budgeted_amount': '5000.00',
+            'rollover': true,
             'archived_at': null,
           },
           {
@@ -55,10 +60,13 @@ class _Api implements HttpClientAdapter {
             'type': 'tracking',
             'balance': '0.00',
             'budgeted_amount': null,
+            'rollover': true,
             'archived_at': null,
           },
         ],
-        'spent': {'b1': '-357.82', 'b2': '-263.40', 'b3': '0.00', 'b4': '-88.02'},
+        'spent': {'b1': '357.82', 'b2': '263.40', 'b3': '0.00', 'b4': '88.02'},
+        'funded': {'b1': '500.00', 'b2': '200.00', 'b3': '0.00', 'b4': '0.00'},
+        'received': {'b1': '0.00', 'b2': '0.00', 'b3': '0.00', 'b4': '0.00'},
         'spent_by_month': [
           {'month': '2026-08-01', 'spent': '-2915.45'},
           {'month': '2026-07-01', 'spent': '-2480.19'},
@@ -126,7 +134,8 @@ class _Api implements HttpClientAdapter {
         {
           'id': 's1',
           'name': 'Payday',
-          'archived_at': null,
+          'rollover': true,
+            'archived_at': null,
           'split_lines': [
             {'id': 'sl1', 'budget_id': 'b1', 'amount': '100.00'},
           ],

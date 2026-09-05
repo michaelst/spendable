@@ -19,7 +19,11 @@ part 'budget_summary.g.dart';
 /// * [budgets] 
 /// * [creditCardBalance] 
 /// * [currentMonth] - Spendable, allocated and credit cards only apply to the current month.
+/// * [earnedTotal] - Taken in across income budgets this month.
+/// * [funded] - Funded this month, keyed by budget id. Every listed budget has an entry.
+/// * [fundedTotal] - Put into envelopes this month.
 /// * [month] 
+/// * [received] - Taken in this month, keyed by budget id. Only an income budget receives; every other budget is zero here, and money arriving in one of those is a refund counted against its spending instead. 
 /// * [spendable] - Synced money no budget has claimed.
 /// * [spent] - Spent this month, keyed by budget id. Every listed budget has an entry.
 /// * [spentByMonth] - Newest first, for the month picker.
@@ -40,8 +44,24 @@ abstract class BudgetSummary implements Built<BudgetSummary, BudgetSummaryBuilde
   @BuiltValueField(wireName: r'current_month')
   bool get currentMonth;
 
+  /// Taken in across income budgets this month.
+  @BuiltValueField(wireName: r'earned_total')
+  String get earnedTotal;
+
+  /// Funded this month, keyed by budget id. Every listed budget has an entry.
+  @BuiltValueField(wireName: r'funded')
+  BuiltMap<String, String> get funded;
+
+  /// Put into envelopes this month.
+  @BuiltValueField(wireName: r'funded_total')
+  String get fundedTotal;
+
   @BuiltValueField(wireName: r'month')
   Date get month;
+
+  /// Taken in this month, keyed by budget id. Only an income budget receives; every other budget is zero here, and money arriving in one of those is a refund counted against its spending instead. 
+  @BuiltValueField(wireName: r'received')
+  BuiltMap<String, String> get received;
 
   /// Synced money no budget has claimed.
   @BuiltValueField(wireName: r'spendable')
@@ -102,10 +122,30 @@ class _$BudgetSummarySerializer implements PrimitiveSerializer<BudgetSummary> {
       object.currentMonth,
       specifiedType: const FullType(bool),
     );
+    yield r'earned_total';
+    yield serializers.serialize(
+      object.earnedTotal,
+      specifiedType: const FullType(String),
+    );
+    yield r'funded';
+    yield serializers.serialize(
+      object.funded,
+      specifiedType: const FullType(BuiltMap, [FullType(String), FullType(String)]),
+    );
+    yield r'funded_total';
+    yield serializers.serialize(
+      object.fundedTotal,
+      specifiedType: const FullType(String),
+    );
     yield r'month';
     yield serializers.serialize(
       object.month,
       specifiedType: const FullType(Date),
+    );
+    yield r'received';
+    yield serializers.serialize(
+      object.received,
+      specifiedType: const FullType(BuiltMap, [FullType(String), FullType(String)]),
     );
     yield r'spendable';
     yield serializers.serialize(
@@ -178,12 +218,40 @@ class _$BudgetSummarySerializer implements PrimitiveSerializer<BudgetSummary> {
           ) as bool;
           result.currentMonth = valueDes;
           break;
+        case r'earned_total':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.earnedTotal = valueDes;
+          break;
+        case r'funded':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltMap, [FullType(String), FullType(String)]),
+          ) as BuiltMap<String, String>;
+          result.funded.replace(valueDes);
+          break;
+        case r'funded_total':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(String),
+          ) as String;
+          result.fundedTotal = valueDes;
+          break;
         case r'month':
           final valueDes = serializers.deserialize(
             value,
             specifiedType: const FullType(Date),
           ) as Date;
           result.month = valueDes;
+          break;
+        case r'received':
+          final valueDes = serializers.deserialize(
+            value,
+            specifiedType: const FullType(BuiltMap, [FullType(String), FullType(String)]),
+          ) as BuiltMap<String, String>;
+          result.received.replace(valueDes);
           break;
         case r'spendable':
           final valueDes = serializers.deserialize(

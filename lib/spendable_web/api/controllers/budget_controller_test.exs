@@ -107,9 +107,9 @@ defmodule SpendableWeb.Api.BudgetControllerTest do
 
   test "omitting a field on update leaves it alone", %{conn: conn, scope: scope} do
     {:ok, budget} =
-      Budgets.create_budget(scope, %{"name" => "Groceries", "budgeted_amount" => "400.00"})
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "400.00"})
 
-    assert %{"name" => "Food", "budgeted_amount" => "400.00"} =
+    assert %{"name" => "Food", "funding_amount" => "400.00"} =
              conn
              |> patch(~p"/api/budgets/#{budget.id}", %{"name" => "Food"})
              |> json_response(200)
@@ -117,11 +117,11 @@ defmodule SpendableWeb.Api.BudgetControllerTest do
 
   test "clearing a budgeted amount is distinct from omitting it", %{conn: conn, scope: scope} do
     {:ok, budget} =
-      Budgets.create_budget(scope, %{"name" => "Groceries", "budgeted_amount" => "400.00"})
+      Budgets.create_budget(scope, %{"name" => "Groceries", "funding_amount" => "400.00"})
 
-    assert %{"budgeted_amount" => nil} =
+    assert %{"funding_amount" => nil} =
              conn
-             |> patch(~p"/api/budgets/#{budget.id}", %{"budgeted_amount" => nil})
+             |> patch(~p"/api/budgets/#{budget.id}", %{"funding_amount" => nil})
              |> json_response(200)
   end
 

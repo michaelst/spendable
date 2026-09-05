@@ -83,6 +83,7 @@ const _budgets = [
     'type': 'envelope',
     'balance': '900.00',
     'budgeted_amount': '1000.00',
+    'rollover': true,
     'archived_at': null,
   },
 ];
