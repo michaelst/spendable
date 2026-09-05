@@ -67,6 +67,7 @@ defmodule Spendable.Banks.Clients.Plaid do
   def account_transactions(token, account_id, %Date{} = start_date, opts \\ []) do
     count = opts[:count] || 500
     offset = opts[:offset] || 0
+    end_date = opts[:end_date] || Date.add(Date.utc_today(), 14)
 
     client()
     |> Tesla.post("/transactions/get", %{
@@ -74,7 +75,7 @@ defmodule Spendable.Banks.Clients.Plaid do
       secret: config()[:secret_key],
       access_token: token,
       start_date: start_date,
-      end_date: Date.utc_today(),
+      end_date: end_date,
       options: %{
         account_ids: [account_id],
         count: count,

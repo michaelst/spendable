@@ -29,6 +29,46 @@ defmodule SpendableWeb.PlaidControllerTest do
     assert_enqueued(worker: SyncMember, args: %{bank_member_id: bank_member.id})
   end
 
+  test "queues a historical sync when webhook code is HISTORICAL_UPDATE", %{
+    conn: conn,
+    bank_member: bank_member
+  } do
+    start_date = Date.shift(Date.utc_today(), month: -24)
+
+    conn =
+      post(conn, ~p"/plaid/webhook", %{
+        "item_id" => "webhook_test",
+        "webhook_code" => "HISTORICAL_UPDATE"
+      })
+
+    assert response(conn, 200)
+
+    assert_enqueued(
+      worker: SyncMember,
+      args: %{bank_member_id: bank_member.id, start_date: Date.to_iso8601(start_date)}
+    )
+  end
+
+  test "queues a historical sync when historical_update_complete is true", %{
+    conn: conn,
+    bank_member: bank_member
+  } do
+    start_date = Date.shift(Date.utc_today(), month: -24)
+
+    conn =
+      post(conn, ~p"/plaid/webhook", %{
+        "item_id" => "webhook_test",
+        "historical_update_complete" => true
+      })
+
+    assert response(conn, 200)
+
+    assert_enqueued(
+      worker: SyncMember,
+      args: %{bank_member_id: bank_member.id, start_date: Date.to_iso8601(start_date)}
+    )
+  end
+
   test "404s for an item we do not hold", %{conn: conn} do
     conn = post(conn, ~p"/plaid/webhook", %{"item_id" => "unknown"})
 

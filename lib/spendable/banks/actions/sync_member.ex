@@ -94,7 +94,7 @@ defmodule Spendable.Banks.Actions.SyncMember do
 
   defp format_bank_account(details) do
     available = Decimal.new("#{details["balances"]["available"] || 0}")
-    current = Decimal.new("#{details["balances"]["current"]}")
+    current = Decimal.new("#{details["balances"]["current"] || details["balances"]["available"] || 0}")
 
     balance =
       cond do
@@ -108,7 +108,7 @@ defmodule Spendable.Banks.Actions.SyncMember do
       external_id: details["account_id"],
       name: details["official_name"] || details["name"],
       number: details["mask"],
-      sub_type: details["subtype"],
+      sub_type: details["subtype"] || details["type"] || "other",
       type: details["type"]
     }
   end
@@ -119,7 +119,7 @@ defmodule Spendable.Banks.Actions.SyncMember do
       amount: details["amount"] |> to_string() |> Decimal.new() |> Decimal.negate() |> Decimal.round(2),
       date: details["date"],
       external_id: details["transaction_id"],
-      name: details["name"],
+      name: details["name"] || details["merchant_name"] || "Transaction",
       pending: details["pending"],
       replaces: details["pending_transaction_id"]
     }

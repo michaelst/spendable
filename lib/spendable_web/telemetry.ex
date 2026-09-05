@@ -7,6 +7,8 @@ defmodule SpendableWeb.Telemetry do
 
   @impl true
   def init(_arg) do
+    attach_oban_logger()
+
     children = [
       # Telemetry poller will execute the given period measurements
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
@@ -14,6 +16,13 @@ defmodule SpendableWeb.Telemetry do
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  defp attach_oban_logger() do
+    case Oban.Telemetry.attach_default_logger() do
+      :ok -> :ok
+      {:error, :already_exists} -> :ok
+    end
   end
 
   defp periodic_measurements() do

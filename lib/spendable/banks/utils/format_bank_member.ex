@@ -10,8 +10,7 @@ defmodule Spendable.Banks.Utils.FormatBankMember do
   picked up either way. No error code means the connection is healthy.
   """
   def format_bank_member(%{"item" => details}) do
-    {:ok, %{body: %{"institution" => %{"name" => name, "logo" => logo}}}} =
-      Plaid.institution(details["institution_id"])
+    {name, logo} = institution_details(details["institution_id"])
 
     %{
       external_id: details["item_id"],
@@ -22,4 +21,16 @@ defmodule Spendable.Banks.Utils.FormatBankMember do
       status: details["error"]["error_code"] || "CONNECTED"
     }
   end
+
+  defp institution_details(institution_id) when is_binary(institution_id) do
+    case Plaid.institution(institution_id) do
+      {:ok, %{body: %{"institution" => institution}}} ->
+        {institution["name"] || "Bank", institution["logo"]}
+
+      _error ->
+        {"Bank", nil}
+    end
+  end
+
+  defp institution_details(_institution_id), do: {"Bank", nil}
 end
